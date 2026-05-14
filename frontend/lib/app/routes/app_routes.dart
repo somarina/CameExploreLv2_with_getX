@@ -14,6 +14,7 @@ abstract class Routes {
   static const FAVORITE_SCREEN = _Paths.FAVORITE_SCREEN;
   static const ONBOARDING_SCREEN = _Paths.ONBOARDING_SCREEN;
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
+  static const LOGIN_SCREEN = _Paths.LOGIN_SCREEN;
 }
 
 abstract class _Paths {
@@ -27,4 +28,5 @@ abstract class _Paths {
   static const FAVORITE_SCREEN = '/favorite-screen';
   static const ONBOARDING_SCREEN = '/onboarding-screen';
   static const SPLASH_SCREEN = '/splash-screen';
+  static const LOGIN_SCREEN = '/login-screen';
 }
