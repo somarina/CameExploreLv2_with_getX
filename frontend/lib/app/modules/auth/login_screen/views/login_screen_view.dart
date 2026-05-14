@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import '../controllers/auth_screen_controller.dart';
+import '../controllers/login_screen_controller.dart';
 
-class AuthScreenView extends GetView<AuthScreenController> {
-  const AuthScreenView({super.key});
+class LoginScreenView extends GetView<LoginScreenController> {
+  const LoginScreenView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AuthScreenView'),
+        title: const Text('LoginScreenView'),
         centerTitle: true,
       ),
       body: const Center(
         child: Text(
-          'AuthScreenView is working',
+          'LoginScreenView is working',
           style: TextStyle(fontSize: 20),
         ),
       ),

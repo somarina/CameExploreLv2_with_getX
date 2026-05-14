@@ -4,8 +4,8 @@ import '../modules/ai_screen/bindings/ai_screen_binding.dart';
 import '../modules/ai_screen/views/ai_screen_view.dart';
 import '../modules/ar_screen/bindings/ar_screen_binding.dart';
 import '../modules/ar_screen/views/ar_screen_view.dart';
-import '../modules/auth_screen/bindings/auth_screen_binding.dart';
-import '../modules/auth_screen/views/auth_screen_view.dart';
+import '../modules/auth/login_screen/bindings/login_screen_binding.dart';
+import '../modules/auth/login_screen/views/login_screen_view.dart';
 import '../modules/button_navbar/bindings/button_navbar_binding.dart';
 import '../modules/button_navbar/views/button_navbar_view.dart';
 import '../modules/detail_screen/bindings/detail_screen_binding.dart';
@@ -45,11 +45,6 @@ class AppPages {
       binding: ArScreenBinding(),
     ),
     GetPage(
-      name: _Paths.AUTH_SCREEN,
-      page: () => const AuthScreenView(),
-      binding: AuthScreenBinding(),
-    ),
-    GetPage(
       name: _Paths.BUTTON_NAVBAR,
       page: () => const ButtonNavbarView(),
       binding: ButtonNavbarBinding(),
@@ -79,6 +74,11 @@ class AppPages {
       name: _Paths.SPLASH_SCREEN,
       page: () => const SplashScreenView(),
       binding: SplashScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOGIN_SCREEN,
+      page: () => const LoginScreenView(),
+      binding: LoginScreenBinding(),
     ),
   ];
 }
