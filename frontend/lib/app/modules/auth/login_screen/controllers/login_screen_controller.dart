@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-class AuthScreenController extends GetxController {
-  //TODO: Implement AuthScreenController
+class LoginScreenController extends GetxController {
+  //TODO: Implement LoginScreenController
 
   final count = 0.obs;
   @override
