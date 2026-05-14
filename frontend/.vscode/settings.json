@@ -1,0 +1,9 @@
+{
+  "java.import.gradle.enabled": false,
+  "java.import.gradle.wrapper.enabled": false,
+  "gradle.nestedProjects": false,
+  "files.exclude": {
+    "**/.dart_tool": true,
+    "**/build": true
+  }
+}
