@@ -1,8 +1,10 @@
 import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:frontend/app/localization/app_translatation.dart';
 import 'package:frontend/app/routes/app_pages.dart';
-import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -90,6 +92,9 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      // language
+      translations: AppTranslatation(),
+      locale: Locale("kmKH"), // enUS
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.LOGIN_SCREEN,
       getPages: AppPages.routes,

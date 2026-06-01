@@ -1,3 +1,5 @@
+import 'package:frontend/app/modules/profile_screen/edit_screen/edit_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/private_security_screen/private_security_screen_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/ai_screen/bindings/ai_screen_binding.dart';
@@ -22,6 +24,7 @@ import '../modules/onboarding_screen/bindings/onboarding_screen_binding.dart';
 import '../modules/onboarding_screen/views/onboarding_screen_view.dart';
 import '../modules/auth/register_screen/bindings/register_screen_binding.dart';
 import '../modules/auth/register_screen/views/register_screen_view.dart';
+import '../modules/profile_screen/userProfile_screen/user_profile_screen_view.dart';
 import '../modules/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/splash_screen/views/splash_screen_view.dart';
 
@@ -30,7 +33,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static final INITIAL = Routes.SPLASH_SCREEN;
+  static final INITIAL = Routes.USERPROFILE_SCREEN;
 
   static final routes = [
     GetPage(
@@ -93,6 +96,20 @@ class AppPages {
       name: _Paths.REGISTER_SCREEN,
       page: () => const RegisterScreenView(),
       binding: RegisterScreenBinding(),
+    ),
+      name: _Paths.USERPROFILE_SCREEN,
+      page: () => UserProfileScreenView(),
+      binding: UserProfileScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.EDIT_SCREEN,
+      page: () => EditScreenView(),
+      binding: EditScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.SECURITY_SCREEN,
+      page: () => PrivateSecurityScreenView(),
+      binding: PrivateSecurityScreenViewBinding(),
     ),
   ];
 }

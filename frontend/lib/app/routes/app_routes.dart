@@ -17,6 +17,9 @@ abstract class Routes {
   static const LOGIN_SCREEN = _Paths.LOGIN_SCREEN;
   static const FORGET_PASSWORD = _Paths.FORGET_PASSWORD;
   static const REGISTER_SCREEN = _Paths.REGISTER_SCREEN;
+  static const USERPROFILE_SCREEN = _Paths.USERPROFILE_SCREEN;
+  static const EDIT_SCREEN = _Paths.EDIT_SCREEN;
+  static const SECURITY_SCREEN = _Paths.SECURITY_SCREEN;
 }
 
 abstract class _Paths {
@@ -33,4 +36,7 @@ abstract class _Paths {
   static const LOGIN_SCREEN = '/login-screen';
   static const FORGET_PASSWORD = '/forget-password';
   static const REGISTER_SCREEN = '/register-screen';
+  static const USERPROFILE_SCREEN = '/userprofile-screen';
+  static const EDIT_SCREEN = '/edit-screen';
+  static const SECURITY_SCREEN = '/security-screen';
 }
