@@ -13,7 +13,7 @@ class SplashScreenView extends GetView<SplashScreenController> {
       body: Center(
         child: TweenAnimationBuilder<double>(
           tween: Tween(begin: 0.4, end: 1.0),
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 1),
           curve: Curves.easeOutBack,
           builder: (context, value, child) {
             return Opacity(
