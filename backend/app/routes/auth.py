@@ -1,7 +1,7 @@
 import hashlib
 import hmac
 import os
-import random
+import secrets
 import time
 from datetime import datetime, timedelta
 from typing import Optional
@@ -33,43 +33,65 @@ users_collection = db["users"]
 otp_collection = db["otp_codes"]
 
 
-def serialize_user(user: dict):
+def ok(message: str, data: dict = None):
+    """Standard success response matching teacher's API style."""
     return {
+        "result": True,
+        "message": message,
+        "data": data or {},
+    }
+
+
+def err(message: str, status_code: int = 400):
+    """Raise a standard error with teacher's API style."""
+    raise HTTPException(
+        status_code=status_code,
+        detail={
+            "result": False,
+            "message": message,
+            "data": {},
+        }
+    )
+
+
+def serialize_user(user: dict, token: str = None) -> dict:
+    """Serialize user to match teacher's API data shape."""
+    result = {
         "id": str(user["_id"]),
         "name": user.get("name", ""),
-        "gender": user.get("gender", ""),
+        "avatar": user.get("profile_image", ""),
         "email": user.get("email", ""),
         "phone": user.get("phone", ""),
-        "profile_image": user.get("profile_image", ""),
+        "gender": user.get("gender", ""),
+        "role": user.get("role", "user"),
         "auth_provider": user.get("auth_provider", "email"),
         "created_at": user.get("created_at"),
         "updated_at": user.get("updated_at"),
     }
+    if token is not None:
+        result["token"] = token
+    return result
 
 
-def auth_response(user: dict, message: str):
-    token = create_access_token({
+def make_token(user: dict) -> str:
+    return create_access_token({
         "user_id": str(user["_id"]),
         "email": user.get("email", ""),
     })
-    return {
-        "message": message,
-        "access_token": token,
-        "token_type": "bearer",
-        "user": serialize_user(user),
-    }
 
+
+# ─── Register ────────────────────────────────────────────────────────────────
 
 @router.post("/register", summary="to register new account")
 async def register_user(payload: RegisterSchema):
     if payload.password != payload.confirm_password:
-        raise HTTPException(status_code=400, detail="Password and confirm password do not match")
+        err("Password and confirm password do not match")
 
     if await users_collection.find_one({"email": payload.email.lower()}):
-        raise HTTPException(status_code=400, detail="Email already registered")
+        err("Email already registered")
 
     if await users_collection.find_one({"phone": payload.phone}):
-        raise HTTPException(status_code=400, detail="Phone number already registered")
+        err("Phone number already registered")
 
     now = datetime.utcnow()
     new_user = {
@@ -79,6 +101,7 @@ async def register_user(payload: RegisterSchema):
         "phone": payload.phone,
         "password": hash_password(payload.password),
         "profile_image": "",
+        "role": "user",
         "auth_provider": "email",
         "created_at": now,
         "updated_at": now,
@@ -86,8 +109,11 @@ async def register_user(payload: RegisterSchema):
 
     result = await users_collection.insert_one(new_user)
     user = await users_collection.find_one({"_id": result.inserted_id})
-    return auth_response(user, "Register successful")
+    token = make_token(user)
+    return ok("Register successful", serialize_user(user, token))
 
+
+# ─── Login ────────────────────────────────────────────────────────────────────
 
 @router.post("/login", summary="to login into system")
 async def login_user(payload: LoginSchema):
@@ -101,16 +127,19 @@ async def login_user(payload: LoginSchema):
     })
 
     if not user:
-        raise HTTPException(status_code=404, detail="Account not found")
+        err("Account not found", 404)
 
     if not user.get("password"):
-        raise HTTPException(status_code=400, detail="This account uses social login")
+        err("This account uses social login. Please login with Google or Telegram.")
 
     if not verify_password(payload.password, user["password"]):
-        raise HTTPException(status_code=400, detail="Invalid password")
+        err("Invalid password")
 
-    return auth_response(user, "Login successful")
+    token = make_token(user)
+    return ok("Login successful", serialize_user(user, token))
 
+
+# ─── Google Login ─────────────────────────────────────────────────────────────
 
 @router.post("/google-login", summary="to login with Google")
 async def google_login(payload: GoogleLoginSchema):
@@ -142,6 +171,7 @@ async def google_login(payload: GoogleLoginSchema):
             "password": None,
             "profile_image": payload.profile_image or "",
             "google_id": payload.google_id,
+            "role": "user",
             "auth_provider": "google",
             "created_at": now,
             "updated_at": now,
@@ -149,14 +179,18 @@ async def google_login(payload: GoogleLoginSchema):
         result = await users_collection.insert_one(new_user)
         user = await users_collection.find_one({"_id": result.inserted_id})
 
-    return auth_response(user, "Google login successful")
+    token = make_token(user)
+    return ok("Google login successful", serialize_user(user, token))
 
+
+# ─── Telegram Login ───────────────────────────────────────────────────────────
 
 def verify_telegram_payload(data: dict) -> bool:
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     if not bot_token:
         return False
 
+    data = data.copy()
     received_hash = data.pop("hash", None)
     if not received_hash:
         return False
@@ -185,9 +219,8 @@ def verify_telegram_payload(data: dict) -> bool:
 
 @router.post("/telegram-login", summary="to login with Telegram")
 async def telegram_login(payload: TelegramLoginSchema):
-    data = payload.model_dump()
-    if not verify_telegram_payload(data.copy()):
-        raise HTTPException(status_code=401, detail="Invalid Telegram login data")
+    if not verify_telegram_payload(payload.model_dump()):
+        err("Invalid Telegram login data", 401)
 
     telegram_id = str(payload.id)
     user = await users_collection.find_one({"telegram_id": telegram_id})
@@ -218,6 +251,7 @@ async def telegram_login(payload: TelegramLoginSchema):
             "profile_image": payload.photo_url or "",
             "telegram_id": telegram_id,
             "telegram_username": payload.username,
+            "role": "user",
             "auth_provider": "telegram",
             "created_at": now,
             "updated_at": now,
@@ -225,8 +259,11 @@ async def telegram_login(payload: TelegramLoginSchema):
         result = await users_collection.insert_one(new_user)
         user = await users_collection.find_one({"_id": result.inserted_id})
 
-    return auth_response(user, "Telegram login successful")
+    token = make_token(user)
+    return ok("Telegram login successful", serialize_user(user, token))
 
+
+# ─── Forgot Password ──────────────────────────────────────────────────────────
 
 @router.post("/forgot-password", summary="to request OTP for password reset")
 async def forgot_password(payload: ForgotPasswordSchema):
@@ -240,9 +277,10 @@ async def forgot_password(payload: ForgotPasswordSchema):
     })
 
     if not user:
-        raise HTTPException(status_code=404, detail="Account not found")
+        err("Account not found", 404)
 
-    otp = str(random.randint(10000, 99999))
+    # Use secrets module for cryptographically secure OTP
+    otp = str(secrets.randbelow(90000) + 10000)
 
     await otp_collection.delete_many({"email_or_phone": payload.email_or_phone})
     await otp_collection.delete_many({"email_or_phone": account})
@@ -255,13 +293,14 @@ async def forgot_password(payload: ForgotPasswordSchema):
         "created_at": datetime.utcnow(),
     })
 
-    # For Swagger/testing. Later replace with real Email/SMS sender.
-    return {
-        "message": "OTP sent successfully",
+    # TODO: replace dev_otp with real Email/SMS sender before production
+    return ok("OTP sent successfully", {
         "dev_otp": otp,
         "expires_in_minutes": 5,
-    }
+    })
 
+
+# ─── Verify OTP ───────────────────────────────────────────────────────────────
 
 @router.post("/verify-otp", summary="to verify OTP code")
 async def verify_otp(payload: VerifyOtpSchema):
@@ -271,23 +310,25 @@ async def verify_otp(payload: VerifyOtpSchema):
     })
 
     if not otp_data:
-        raise HTTPException(status_code=400, detail="Invalid OTP")
+        err("Invalid OTP")
 
     if otp_data["expires_at"] < datetime.utcnow():
-        raise HTTPException(status_code=400, detail="OTP expired")
+        err("OTP expired")
 
     await otp_collection.update_one(
         {"_id": otp_data["_id"]},
         {"$set": {"verified": True}}
     )
 
-    return {"message": "OTP verified successfully"}
+    return ok("OTP verified successfully")
 
+
+# ─── Reset Password ───────────────────────────────────────────────────────────
 
 @router.post("/reset-password", summary="to reset password")
 async def reset_password(payload: ResetPasswordSchema):
     if payload.new_password != payload.confirm_password:
-        raise HTTPException(status_code=400, detail="Password and confirm password do not match")
+        err("Password and confirm password do not match")
 
     otp_data = await otp_collection.find_one({
         "email_or_phone": payload.email_or_phone,
@@ -296,10 +337,10 @@ async def reset_password(payload: ResetPasswordSchema):
     })
 
     if not otp_data:
-        raise HTTPException(status_code=400, detail="OTP not verified")
+        err("OTP not verified")
 
     if otp_data["expires_at"] < datetime.utcnow():
-        raise HTTPException(status_code=400, detail="OTP expired")
+        err("OTP expired")
 
     account = payload.email_or_phone.lower()
 
@@ -317,17 +358,17 @@ async def reset_password(payload: ResetPasswordSchema):
     )
 
     if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Account not found")
+        err("Account not found", 404)
 
     await otp_collection.delete_many({"email_or_phone": payload.email_or_phone})
 
-    return {"message": "Password reset successfully"}
+    return ok("Password reset successfully")
 
-@router.delete(
-    "/logout",
-    summary="to logout from system"
-)
-async def logout():
-    return {
-        "message": "Logout successful"
-    }
+
+# ─── Logout ───────────────────────────────────────────────────────────────────
+
+@router.delete("/logout", summary="to logout from system")
+async def logout(current_user: dict = Depends(get_current_user)):
+    # Stateless JWT: client should discard the token.
+    # For true invalidation, add a token blacklist collection.
+    return ok("Logout successful")
