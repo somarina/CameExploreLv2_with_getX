@@ -257,65 +257,46 @@ class LoginScreenController extends GetxController
     try {
       isLoading.value = true;
 
-      // ← Replace with your actual bot username (without @)
-      // const botUsername = 'CamExploreBot';
-      const botUsername = 'CamExploreBot';
-      // Telegram OAuth URL
+      const botId = '8720092780'; // ✅ your bot ID
+      const origin = 'https://staleness-antirust-shrapnel.ngrok-free.dev'; // your ngrok URL
       final url = Uri.parse(
         'https://oauth.telegram.org/auth'
-        '?bot_id=$botUsername'
-        '&origin=https://staleness-antirust-shrapnel.ngrok-free.dev' // ← changed
-        '&return_to=camexplore://telegram-login'
-        '&request_access=write',
+            '?bot_id=$botId'
+            '&origin=$origin'
+            '&return_to=camexplore://telegram-login'
+            '&request_access=write',
       );
 
-      // final url = Uri.parse(
-      //   'https://oauth.telegram.org/auth'
-      //   '?bot_id=CamExploreBot'
-      //   '&origin=https://staleness-antirust-shrapnel.ngrok-free.dev'
-      //   '&return_to=camexplore://telegram-login'
-      //   '&request_access=write',
-      // );
-
       if (await canLaunchUrl(url)) {
-        // Open Telegram OAuth in browser
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
-        // Telegram not installed → show download dialog
         Get.dialog(
           AlertDialog(
-            title: Text(
-              'មិនអាចបើក Telegram',
-              style: GoogleFonts.kantumruyPro(),
-            ),
+            title: Text('មិនអាចបើក Telegram',
+                style: GoogleFonts.kantumruyPro()),
             content: Text(
-              'សូមដំឡើង Telegram ជាមុនសិន ដើម្បីចូលគណនីតាមរបៀបនេះ។',
-            ),
+                'សូមដំឡើង Telegram ជាមុនសិន ដើម្បីចូលគណនីតាមរបៀបនេះ។'),
             actions: [
-              TextButton(onPressed: () => Get.back(), child: Text('បោះបង់')),
               TextButton(
-                onPressed: () async {
-                  final storeUrl = Platform.isIOS
-                      ? Uri.parse(
-                          'https://apps.apple.com/app/telegram/id686449807',
-                        )
-                      : Uri.parse(
-                          'https://play.google.com/store/apps/details?id=org.telegram.messenger',
-                        );
-                  await launchUrl(
-                    storeUrl,
-                    mode: LaunchMode.externalApplication,
-                  );
-                  Get.back();
-                },
-                child: Text('ដំឡើង Telegram'),
-              ),
+                  onPressed: () => Get.back(),
+                  child: Text('បោះបង់')),
+              TextButton(
+                  onPressed: () async {
+                    final storeUrl = Platform.isIOS
+                        ? Uri.parse('https://apps.apple.com/app/telegram/id686449807')
+                        : Uri.parse('https://play.google.com/store/apps/details?id=org.telegram.messenger');
+                    await launchUrl(storeUrl,
+                        mode: LaunchMode.externalApplication);
+                    Get.back();
+                  },
+                  child: Text('ដំឡើង Telegram')),
             ],
           ),
         );
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', e.toString(),
+          snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;
     }

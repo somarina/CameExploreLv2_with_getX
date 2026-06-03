@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/app/localization/app_translatation.dart';
 import 'package:frontend/app/routes/app_pages.dart';
+import 'package:get/get.dart';
 import 'package:frontend/firebase_options.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -100,6 +101,7 @@ class MainApp extends StatelessWidget {
     return GetMaterialApp(
       // language
       translations: AppTranslatation(),
+      locale: Locale("kmKH"), //khmer
       locale: Locale("enUS"), // enUS
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.USERPROFILE_SCREEN,

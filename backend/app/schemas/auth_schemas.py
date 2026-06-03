@@ -56,17 +56,17 @@ class TelegramLoginSchema(BaseModel):
 
 
 class ForgotPasswordSchema(BaseModel):
-    email_or_phone: str
+    email: str
 
 
 class VerifyOtpSchema(BaseModel):
-    email_or_phone: str
-    otp: str = Field(min_length=5, max_length=5)
+    email: str
+    otp: str = Field(min_length=6, max_length=6)
 
 
 class ResetPasswordSchema(BaseModel):
-    email_or_phone: str
-    otp: str = Field(min_length=5, max_length=5)
+    email: str
+    otp: str = Field(min_length=6, max_length=6)
     new_password: str = Field(min_length=6)
     confirm_password: str = Field(min_length=6)
 
