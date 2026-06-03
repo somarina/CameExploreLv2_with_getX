@@ -20,6 +20,8 @@ class ApiConfig {
         // Real device → your PC IP e.g. 192.168.1.x:8000
         // Production → your Railway URL
         // baseUrl: "http://10.0.2.2:8000",
+        
+        // baseUrl: "http://10.0.2.2:8000",
         baseUrl: "https://staleness-antirust-shrapnel.ngrok-free.dev",
         connectTimeout: Duration(seconds: 10),
         receiveTimeout: Duration(seconds: 10),

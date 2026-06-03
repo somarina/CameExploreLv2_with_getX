@@ -69,31 +69,29 @@ class AuthServices {
   }
 
   // ── Forgot Password ───────────────────────────────────────────────────────
-  Future<dynamic> forgotPasswordService({
-    required String emailOrPhone,
-  }) async {
+  Future<dynamic> forgotPasswordService({required String email}) async {
     var response = await baseApi.post(
       endpoint: "/api/auth/forgot-password",
-      data: {"email_or_phone": emailOrPhone},
+      data: {"email": email},
     );
     return response;
   }
 
   // ── Verify OTP ────────────────────────────────────────────────────────────
   Future<dynamic> verifyOtpService({
-    required String emailOrPhone,
+    required String email,
     required String otp,
   }) async {
     var response = await baseApi.post(
       endpoint: "/api/auth/verify-otp",
-      data: {"email_or_phone": emailOrPhone, "otp": otp},
+      data: {"email": email, "otp": otp},
     );
     return response;
   }
 
   // ── Reset Password ────────────────────────────────────────────────────────
   Future<dynamic> resetPasswordService({
-    required String emailOrPhone,
+    required String email,
     required String otp,
     required String newPassword,
     required String confirmPassword,
@@ -101,7 +99,7 @@ class AuthServices {
     var response = await baseApi.post(
       endpoint: "/api/auth/reset-password",
       data: {
-        "email_or_phone": emailOrPhone,
+        "email": email,
         "otp": otp,
         "new_password": newPassword,
         "confirm_password": confirmPassword,
