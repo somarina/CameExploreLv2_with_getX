@@ -33,47 +33,62 @@ class EditScreenView extends GetView<EditScreenViewController> {
           crossAxisAlignment: .start,
           children: [
             Center(child: CircleAvatar(radius: 60)),
-            _textfield(text: "First Name"),
-            SizedBox(height: 20),
-            _textfield(text: "Last Name"),
-            SizedBox(height: 20),
-            _textfield(text: "Email"),
-            SizedBox(height: 20),
-            _textfield(text: "Forget Password"),
+            _label(text: "fristName".tr),
+            _textField(controller.firstNameCtrl)
           ],
         ),
       ),
     );
   }
 
-  Widget _textfield({required String text}) {
-    return Column(
-      crossAxisAlignment: .start,
-      children: [
-        Text(
+  Widget _label({required String text}) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: EdgeInsets.only(top: 15, bottom: 8),
+        child: Text(
           text,
           style: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: .bold),
         ),
-        TextField(
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.black26, width: 2),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: AppColors.lightPrimaryColor,
-                width: 2,
-              ),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.red, width: 2),
-            ),
+      ),
+    );
+  }
+
+  Widget _textField(
+    TextEditingController ctrl, {
+    TextInputType keyboard = TextInputType.text,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: ctrl,
+      keyboardType: keyboard,
+      validator: validator,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+    );
+  }
+
+  Widget _gender(String text, bool selected, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: selected ? AppColors.lightPrimaryColor : Colors.grey,
           ),
+          borderRadius: BorderRadius.circular(20),
         ),
-      ],
+        child: Row(
+          children: [
+            Text(text),
+            const Spacer(),
+            if (selected)
+              const Icon(Icons.circle, size: 10, color: Colors.green),
+          ],
+        ),
+      ),
     );
   }
 }

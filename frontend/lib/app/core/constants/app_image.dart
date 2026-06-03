@@ -14,4 +14,9 @@ class AppImage {
   static const String verifyIcon = "assets/svg/Verify.svg";
   static const String keyIcon = "assets/svg/key.svg";
   static const String phoneIcon = "assets/svg/phone.svg";
+  static const String warningIcon = "assets/svg/warning.svg";
+  static const String doneIcon = "assets/svg/done.svg";
+  static const String messageIcon = "assets/svg/message.svg";
+
+  static const String warningImage = "assets/svg/warning.png";
 }

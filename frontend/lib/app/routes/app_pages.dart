@@ -1,4 +1,8 @@
+import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/comment_screen/comment_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/edit_screen/edit_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/help_support_screen/help_support_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/notification_screen/notification_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/private_security_screen/private_security_screen_view.dart';
 import 'package:get/get.dart';
 
@@ -106,6 +110,26 @@ class AppPages {
       name: _Paths.EDIT_SCREEN,
       page: () => EditScreenView(),
       binding: EditScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUTAPP_SCREEN,
+      page: () => AboutAppScreenView(),
+      binding: AboutAppScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.HELPSUPPORT_SCREEN,
+      page: () => HelpSupportScreenView(),
+      binding: HelpSupportScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.FEEDBACK_SCREEN,
+      page: () => CommentScreenView(),
+      binding: CommentScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATION_SCREEN,
+      page: () => NotificationScreenView(),
+      binding: NotificationScreenViewBinding(),
     ),
     GetPage(
       name: _Paths.SECURITY_SCREEN,
