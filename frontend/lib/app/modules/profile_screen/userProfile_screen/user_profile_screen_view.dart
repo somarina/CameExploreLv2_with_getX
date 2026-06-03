@@ -312,30 +312,55 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                 title: "theme".tr,
                 suffixIcon: AppImage.btnIcon,
               ),
-              _menuItem(
-                prefix: AppImage.notificationIcon,
-                title: "notification".tr,
-                suffixIcon: AppImage.btnIcon,
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(Routes.NOTIFICATION_SCREEN);
+                },
+                child: _menuItem(
+                  prefix: AppImage.notificationIcon,
+                  title: "notification".tr,
+                  suffixIcon: AppImage.btnIcon,
+                ),
               ),
-              _menuItem(
-                prefix: AppImage.securityIcon,
-                title: "security".tr,
-                suffixIcon: AppImage.btnIcon,
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(Routes.SECURITY_SCREEN);
+                },
+                child: _menuItem(
+                  prefix: AppImage.securityIcon,
+                  title: "security".tr,
+                  suffixIcon: AppImage.btnIcon,
+                ),
               ),
-              _menuItem(
-                prefix: AppImage.feedbackIcon,
-                title: "feedback".tr,
-                suffixIcon: AppImage.btnIcon,
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(Routes.FEEDBACK_SCREEN);
+                },
+                child: _menuItem(
+                  prefix: AppImage.feedbackIcon,
+                  title: "feedback".tr,
+                  suffixIcon: AppImage.btnIcon,
+                ),
               ),
-              _menuItem(
-                prefix: AppImage.conditionIcon,
-                title: "condition".tr,
-                suffixIcon: AppImage.btnIcon,
+              GestureDetector(
+                onTap: () { 
+                  Get.toNamed(Routes.HELPSUPPORT_SCREEN);
+                },
+                child: _menuItem(
+                  prefix: AppImage.conditionIcon,
+                  title: "condition".tr,
+                  suffixIcon: AppImage.btnIcon,
+                ),
               ),
-              _menuItem(
-                prefix: AppImage.abouAppIcon,
-                title: "app".tr,
-                suffixIcon: AppImage.btnIcon,
+              GestureDetector(
+                onTap: () {   
+                  Get.toNamed(Routes.ABOUTAPP_SCREEN);
+                },
+                child: _menuItem(
+                  prefix: AppImage.abouAppIcon,
+                  title: "app".tr,
+                  suffixIcon: AppImage.btnIcon,
+                ),
               ),
               _menuItem(
                 prefix: AppImage.developerIcon,

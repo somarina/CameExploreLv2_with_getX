@@ -1,9 +1,8 @@
 part of 'notification_screen_view.dart';
 
 class NotificationScreenViewController extends GetxController {
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  var system = true.obs;
+  var message = true.obs;
+  var like = false.obs;
+  var follow = true.obs;
 }
