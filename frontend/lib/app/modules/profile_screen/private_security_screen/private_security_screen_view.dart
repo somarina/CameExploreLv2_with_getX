@@ -27,7 +27,14 @@ class PrivateSecurityScreenView
           style: GoogleFonts.spaceGrotesk(fontSize: 24, fontWeight: .bold),
         ),
       ),
-      body: Column(children: [_containerText(), _container(), _devices()]),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [_containerText(), _container(), _devices(), _security()],
+          ),
+        ),
+      ),
     );
   }
 
@@ -51,17 +58,14 @@ class PrivateSecurityScreenView
       child: Column(
         crossAxisAlignment: .start,
         children: [
-          Text(
-            "Devices",
-            style: GoogleFonts.spaceGrotesk(fontSize: 18, fontWeight: .bold),
-          ),
+          _label(label: "Devices"),
           SizedBox(height: 20),
           _device_use(
             containerColor: AppColors.lightPrimaryColor.withValues(alpha: 0.1),
             perfix: AppImage.phoneIcon,
             title: "iPhone 14 Pro",
-            subtext1: "Phnom Penh, Cambodia",
-            subtext2: "Lastday: Now",
+            subtext1: "Phnom Penh, Cambodia\nLastday: Now",
+
             textBtn: "Now",
             color: Colors.white,
             bgColor: AppColors.lightPrimaryColor,
@@ -70,8 +74,7 @@ class PrivateSecurityScreenView
             containerColor: Color(0xffF9FAFB),
             perfix: AppImage.phoneIcon,
             title: "Samsung Galaxy S23",
-            subtext1: "Siem Reap, Cambodia",
-            subtext2: "Lastday: yesterday",
+            subtext1: "Siem Reap, Cambodia\nLastday: yesterday",
             textBtn: "Leave",
             color: Colors.red,
             bgColor: Color(0xffF9FAFB),
@@ -81,11 +84,45 @@ class PrivateSecurityScreenView
     );
   }
 
+  Text _label({required String label}) {
+    return Text(
+      label,
+      style: GoogleFonts.spaceGrotesk(fontSize: 18, fontWeight: .bold),
+    );
+  }
+
+  Widget _security() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(16),
+      // height: 50,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 4), // x, y
+          ),
+        ],
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Column(
+        crossAxisAlignment: .start,
+        children: [
+          _label(label: "Safety Recommendations"),
+          _safety(),
+        ],
+      ),
+    );
+  }
+
   Widget _device_use({
     required String perfix,
     required String title,
     required String subtext1,
-    required String subtext2,
+
     required String textBtn,
     required Color color,
     required Color bgColor,
@@ -124,7 +161,6 @@ class PrivateSecurityScreenView
                   ),
                 ),
                 Text(subtext1, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
-                Text(subtext2, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
               ],
             ),
           ),
@@ -141,6 +177,57 @@ class PrivateSecurityScreenView
           ),
         ],
       ),
+    );
+  }
+
+  Widget _safety() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          textbox(
+            perfix: AppImage.warningIcon,
+            title: "Change password regularly",
+            subtext1: "We recommend changing your password every 3 months",
+          ),
+          SizedBox(height: 10),
+          textbox(
+            perfix: AppImage.doneIcon,
+            title: "Do not share your passwords",
+            subtext1: "Do not give your password to anyone",
+          ),
+        ],
+      ),
+    );
+  }
+
+  Row textbox({
+    required String perfix,
+    required String title,
+    required String subtext1,
+  }) {
+    return Row(
+      crossAxisAlignment: .start,
+      children: [
+        SvgPicture.asset(perfix, width: 24, height: 24),
+        SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: .start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 18,
+                  fontWeight: .bold,
+                ),
+              ),
+              Text(subtext1, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
