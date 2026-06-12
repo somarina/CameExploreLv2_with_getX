@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/api/api_config.dart';
 import '../../../../core/api/services/auth_services.dart';
 import '../../../../routes/app_pages.dart';
 
@@ -182,7 +180,7 @@ class LoginScreenController extends GetxController
 
       if (response["result"] == true) {
         _saveUser(response["data"]);
-        Get.offAllNamed(Routes.HOME_SCREEN);
+        Get.offAllNamed(Routes.BUTTON_NAVBAR);
       } else {
         Get.snackbar(
           'Login Failed',
@@ -251,57 +249,90 @@ class LoginScreenController extends GetxController
 
   // ── Replace loginWithTelegram() in login_screen_controller.dart ───────────
 
+  // Future<void> loginWithTelegram() async {
+  //   if (isLoading.value) return;
+  //   try {
+  //     isLoading.value = true;
+  //     const botId = '8720092780';
+  //     const origin = 'https://staleness-antirust-shrapnel.ngrok-free.dev';
+  //     final url = Uri.parse(
+  //       'https://oauth.telegram.org/auth'
+  //       '?bot_id=$botId'
+  //       '&origin=$origin'
+  //       '&return_to=camexplore://telegram-login'
+  //       '&request_access=write',
+  //     );
+  //     if (await canLaunchUrl(url)) {
+  //       await launchUrl(url);
+  //     } else {
+  //       Get.dialog(
+  //         AlertDialog(
+  //           title: Text(
+  //             'មិនអាចបើក Telegram',
+  //             style: GoogleFonts.kantumruyPro(),
+  //           ),
+  //           content: Text(
+  //             'សូមដំឡើង Telegram ជាមុនសិន ដើម្បីចូលគណនីតាមរបៀបនេះ។',
+  //           ),
+  //           actions: [
+  //             TextButton(onPressed: () => Get.back(), child: Text('បោះបង់')),
+  //             TextButton(
+  //               onPressed: () async {
+  //                 final storeUrl = Platform.isIOS
+  //                     ? Uri.parse(
+  //                         'https://apps.apple.com/app/telegram/id686449807',
+  //                       )
+  //                     : Uri.parse(
+  //                         'https://play.google.com/store/apps/details?id=org.telegram.messenger',
+  //                       );
+  //                 await launchUrl(
+  //                   storeUrl,
+  //                   mode: LaunchMode.externalApplication,
+  //                 );
+  //                 Get.back();
+  //               },
+  //               child: Text('ដំឡើង Telegram'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
+
   Future<void> loginWithTelegram() async {
-    if (isLoading.value) return;
+  if (isLoading.value) return;
 
-    try {
-      isLoading.value = true;
+  try {
+    isLoading.value = true;
 
-      const botId = '8720092780'; // ✅ your bot ID
-      const origin = 'https://staleness-antirust-shrapnel.ngrok-free.dev'; // your ngrok URL
-      final url = Uri.parse(
-        'https://oauth.telegram.org/auth'
-            '?bot_id=$botId'
-            '&origin=$origin'
-            '&return_to=camexplore://telegram-login'
-            '&request_access=write',
-      );
+    final returnTo = Uri.encodeComponent('$kBaseUrl/api/auth/telegram-callback');
 
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        Get.dialog(
-          AlertDialog(
-            title: Text('មិនអាចបើក Telegram',
-                style: GoogleFonts.kantumruyPro()),
-            content: Text(
-                'សូមដំឡើង Telegram ជាមុនសិន ដើម្បីចូលគណនីតាមរបៀបនេះ។'),
-            actions: [
-              TextButton(
-                  onPressed: () => Get.back(),
-                  child: Text('បោះបង់')),
-              TextButton(
-                  onPressed: () async {
-                    final storeUrl = Platform.isIOS
-                        ? Uri.parse('https://apps.apple.com/app/telegram/id686449807')
-                        : Uri.parse('https://play.google.com/store/apps/details?id=org.telegram.messenger');
-                    await launchUrl(storeUrl,
-                        mode: LaunchMode.externalApplication);
-                    Get.back();
-                  },
-                  child: Text('ដំឡើង Telegram')),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      Get.snackbar('Error', e.toString(),
-          snackPosition: SnackPosition.BOTTOM);
-    } finally {
-      isLoading.value = false;
-    }
+    final url = Uri.parse(
+      'https://oauth.telegram.org/auth'
+      '?bot_id=$kTelegramBotId'
+      '&origin=$kBaseUrl'
+      '&return_to=$returnTo'   // points to YOUR backend, not camexplore://
+      '&request_access=write',
+    );
+
+    debugPrint('Telegram URL: $url');
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } catch (e) {
+    debugPrint('TELEGRAM ERROR: $e');
+    Get.snackbar(
+      'Telegram Login Failed',
+      e.toString(),
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  } finally {
+    isLoading.value = false;
   }
-
+}
   // ── Guest ─────────────────────────────────────────────────────────────────
 
   Future<void> continueAsGuest() async {

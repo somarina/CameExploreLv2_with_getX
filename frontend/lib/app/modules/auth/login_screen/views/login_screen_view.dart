@@ -79,7 +79,12 @@ class LoginScreenView extends GetView<LoginScreenController> {
 
   Widget _buildTitle() {
     return Text(
-      "ចូលគណនី",
+      "Login".tr,
+      // style: GoogleFonts.spaceGrotesk(
+      //   fontSize: 30,
+      //   fontWeight: FontWeight.bold,
+      //   color: Colors.black,
+      // ),
       style: GoogleFonts.kantumruyPro(
         fontSize: 26,
         fontWeight: FontWeight.bold,
@@ -99,12 +104,12 @@ class LoginScreenView extends GetView<LoginScreenController> {
       child: Row(
         children: [
           _buildSwitchButton(
-            text: "លេខទូរស័ព្ទ",
+            text: "Phone Number".tr,
             selected: !controller.isEmail.value,
             onTap: () => controller.changeLoginType(false),
           ),
           _buildSwitchButton(
-            text: "អ៊ីម៉ែល",
+            text: "Email".tr,
             selected: controller.isEmail.value,
             onTap: () => controller.changeLoginType(true),
           ),
@@ -119,13 +124,13 @@ class LoginScreenView extends GetView<LoginScreenController> {
       children: [
         SizedBox(height: 15),
         Text(
-          controller.isEmail.value ? "អ៊ីម៉ែល" : "លេខទូរស័ព្ទ",
+          controller.isEmail.value ? "Email".tr : "Phone Number".tr,
           style: _generalStyle(),
         ),
         SizedBox(height: 8),
         controller.isEmail.value ? _buildEmailField() : _buildPhoneField(),
         SizedBox(height: 10),
-        Text("ពាក្យសម្ងាត់", style: _generalStyle()),
+        Text("Password".tr, style: _generalStyle()),
         SizedBox(height: 10),
         _buildPasswordField(),
         // SizedBox(height: 8),
@@ -179,7 +184,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
         ),
         SizedBox(width: 20),
         Text(
-          "ឬ",
+          "Or".tr,
           style: GoogleFonts.kantumruyPro(
             fontSize: 20,
             fontWeight: .w500,
