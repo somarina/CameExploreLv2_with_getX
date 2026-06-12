@@ -1,6 +1,7 @@
 import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/app/localization/app_translatation.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/firebase_options.dart';
@@ -12,47 +13,41 @@ import 'app/core/api/services/auth_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+   await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
+  // Google Sign In
   await GoogleSignIn.instance.initialize(
     serverClientId:
-        "1038064506820-tfiojqrdrabj7sv9qqfvacdeb636ot1o.apps.googleusercontent.com",
+        "1038064506820-tfiojqrdrabj7sv9qqfvacdeb636ot1o.apps.googleusercontent.com", // ← replace this
   );
 
   await GetStorage.init();
 
-  runApp(const MainApp());
-
-  // MOVED AFTER runApp — GetX is now ready
+  // ── Telegram deep link handler ──────────────────────────────────────────
   final appLinks = AppLinks();
 
-  // When app is already open
+  // When app is already open and Telegram returns
   appLinks.uriLinkStream.listen((uri) {
     if (uri.scheme == 'camexplore' && uri.host == 'telegram-login') {
       _handleTelegramCallback(uri.queryParameters);
     }
   });
 
-  // When app was closed and reopened by deep link
+  // When app was closed and Telegram opens it
   final initialUri = await appLinks.getInitialLink();
   if (initialUri != null &&
       initialUri.scheme == 'camexplore' &&
       initialUri.host == 'telegram-login') {
-    // Delay to let app fully initialize first
-    await Future.delayed(const Duration(seconds: 1));
     _handleTelegramCallback(initialUri.queryParameters);
   }
+
+  runApp(const MainApp());
 }
 
+// ── Handle Telegram callback data ───────────────────────────────────────────
 void _handleTelegramCallback(Map<String, String> params) async {
-  debugPrint('TELEGRAM CALLBACK PARAMS: $params');
-
-  // Guard: make sure params are not empty
-  if (params['hash'] == null || params['id'] == null) {
-    debugPrint('Missing required Telegram params');
-    return;
-  }
-
   final authServices = AuthServices();
   final box = GetStorage();
 
@@ -69,28 +64,23 @@ void _handleTelegramCallback(Map<String, String> params) async {
       },
     );
 
-    if (response != null && response["result"] == true) {
+    if (response["result"] == true) {
       box.write('token', response["data"]["token"] ?? '');
       box.write('userId', response["data"]["id"] ?? '');
       box.write('userName', response["data"]["name"] ?? '');
       box.write('userEmail', response["data"]["email"] ?? '');
       box.write('userAvatar', response["data"]["avatar"] ?? '');
-      box.write('userRole', response["data"]["role"] ?? 'user');
       box.write('isLogin', true);
       box.write('userMode', 'user');
-
-      //  Small delay to ensure navigator is ready
-      await Future.delayed(const Duration(milliseconds: 300));
       Get.offAllNamed('/button-navigation');
     } else {
       Get.snackbar(
         'Telegram Login Failed',
-        response?["message"] ?? 'Something went wrong',
+        response["message"] ?? 'Something went wrong',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
   } catch (e) {
-    debugPrint('TELEGRAM LOGIN ERROR: $e');
     Get.snackbar(
       'Telegram Login Failed',
       e.toString(),
@@ -105,10 +95,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      // language
       translations: AppTranslatation(),
-      locale: Locale("kmKH"),
+      locale: Locale("kmKH"), //khmer
+      // locale: Locale("enUS"), // enUS
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.SPLASH_SCREEN,
+      initialRoute: Routes.LOGIN_SCREEN,
       getPages: AppPages.routes,
     );
   }

@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -73,29 +70,34 @@ class RegisterScreenController extends GetxController
   }
 
   AnimationController _makeCtrl() => AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: shakeDurationMs),
-      );
+    vsync: this,
+    duration: const Duration(milliseconds: shakeDurationMs),
+  );
 
   Animation<double> _makeAnim(AnimationController ctrl) {
     final items = <TweenSequenceItem<double>>[];
     const int count = 7;
     const double d = shakeDistance;
     for (int i = 0; i < count; i++) {
-      items.add(TweenSequenceItem<double>(
-        tween: Tween<double>(
-          begin: i.isEven ? 0 : -d,
-          end: i.isEven ? d : -d,
+      items.add(
+        TweenSequenceItem<double>(
+          tween: Tween<double>(
+            begin: i.isEven ? 0 : -d,
+            end: i.isEven ? d : -d,
+          ),
+          weight: 1,
         ),
-        weight: 1,
-      ));
+      );
     }
-    items.add(TweenSequenceItem<double>(
-      tween: Tween<double>(begin: -d, end: 0),
-      weight: 1,
-    ));
-    return TweenSequence(items)
-        .animate(CurvedAnimation(parent: ctrl, curve: Curves.easeInOut));
+    items.add(
+      TweenSequenceItem<double>(
+        tween: Tween<double>(begin: -d, end: 0),
+        weight: 1,
+      ),
+    );
+    return TweenSequence(
+      items,
+    ).animate(CurvedAnimation(parent: ctrl, curve: Curves.easeInOut));
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -182,13 +184,13 @@ class RegisterScreenController extends GetxController
     if (lastNameController.text.trim().isEmpty)
       lastNameShakeCtrl.forward(from: 0);
     if (emailController.text.trim().isEmpty ||
-        !RegExp(r'^[^@]+@[^@]+\.[^@]+')
-            .hasMatch(emailController.text.trim())) {
+        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text.trim())) {
       emailShakeCtrl.forward(from: 0);
     }
     if (phoneController.text.trim().isEmpty ||
-        !RegExp(r'^(?:\+855|855|0)(?:\d{8,9})$')
-            .hasMatch(phoneController.text.trim())) {
+        !RegExp(
+          r'^(?:\+855|855|0)(?:\d{8,9})$',
+        ).hasMatch(phoneController.text.trim())) {
       phoneShakeCtrl.forward(from: 0);
     }
     if (passwordController.text.trim().isEmpty ||
@@ -294,8 +296,11 @@ class RegisterScreenController extends GetxController
       if (e.response?.data != null) {
         message = e.response?.data['message'] ?? message;
       }
-      Get.snackbar('Google Login Failed', message,
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Google Login Failed',
+        message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
       Get.snackbar(
         'Google Login Failed',
@@ -311,6 +316,7 @@ class RegisterScreenController extends GetxController
   // ── Telegram Login ────────────────────────────────────────────────────────
   Future<void> loginWithTelegram() async {
     if (isLoading.value) return;
+
     try {
       isLoading.value = true;
 
@@ -325,38 +331,17 @@ class RegisterScreenController extends GetxController
         '&request_access=write',
       );
 
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        Get.dialog(
-          AlertDialog(
-            title:
-                Text('មិនអាចបើក Telegram', style: GoogleFonts.kantumruyPro()),
-            content: Text(
-                'សូមដំឡើង Telegram ជាមុនសិន ដើម្បីចូលគណនីតាមរបៀបនេះ។'),
-            actions: [
-              TextButton(
-                  onPressed: () => Get.back(), child: Text('បោះបង់')),
-              TextButton(
-                onPressed: () async {
-                  final storeUrl = Platform.isIOS
-                      ? Uri.parse(
-                          'https://apps.apple.com/app/telegram/id686449807')
-                      : Uri.parse(
-                          'https://play.google.com/store/apps/details?id=org.telegram.messenger');
-                  await launchUrl(storeUrl,
-                      mode: LaunchMode.externalApplication);
-                  Get.back();
-                },
-                child: Text('ដំឡើង Telegram'),
-              ),
-            ],
-          ),
-        );
-      }
+      print('Telegram URL: $url');
+
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
-      Get.snackbar('Error', e.toString(),
-          snackPosition: SnackPosition.BOTTOM);
+      print('TELEGRAM ERROR: $e');
+
+      Get.snackbar(
+        'Telegram Login Failed',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -401,7 +386,8 @@ class RegisterScreenController extends GetxController
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF009A3F),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
                   child: Text(
                     'យល់ព្រម',

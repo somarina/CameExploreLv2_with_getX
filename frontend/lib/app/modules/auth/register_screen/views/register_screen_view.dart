@@ -11,6 +11,10 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    final keyboard = MediaQuery.of(context).viewInsets.bottom;
+    final keyboardOpen = keyboard > 0;
+    // ignore: unused_local_variable
+    final topPad = keyboardOpen ? 8.0 : 0.0;
     return Scaffold(
       backgroundColor: AppColors.lightBackgroundColor,
       body: SafeArea(
@@ -19,7 +23,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Obx(
-                  () => Form(
+              () => Form(
                 key: controller.formKey,
                 autovalidateMode: controller.submitted.value
                     ? AutovalidateMode.onUserInteraction
@@ -30,8 +34,10 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                     children: [
                       Center(
                         child: Lottie.asset(
-                          'assets/images/register2.json',
-                          height: 220,
+                          'assets/icons/register_screen_animation.json',
+                          height: keyboardOpen
+          ? MediaQuery.of(context).size.height * 0.18
+          : MediaQuery.of(context).size.height * 0.32,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -70,9 +76,13 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                       SizedBox(height: 10),
 
                       // ── Gender ─────────────────────────────────────────
-                      Text('ភេទ',
-                          style: GoogleFonts.kantumruyPro(
-                              fontSize: 15, fontWeight: FontWeight.w500)),
+                      Text(
+                        'ភេទ',
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       SizedBox(height: 10),
                       _buildGender(),
                       SizedBox(height: 10),
@@ -104,7 +114,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                       _ShakeField(
                         animation: controller.passwordShake,
                         child: Obx(
-                              () => _buildPasswordField(
+                          () => _buildPasswordField(
                             ctrl: controller.passwordController,
                             hintText: 'ពាក្យសម្ងាត់',
                             hide: controller.hidePassword.value,
@@ -114,17 +124,19 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                         ),
                       ),
                       // ── Password hint row ──────────────────────────────
-                      Obx(() => _buildPasswordHints(
-                        controller.passwordController.text,
-                        controller.submitted.value,
-                      )),
+                      Obx(
+                        () => _buildPasswordHints(
+                          controller.passwordController.text,
+                          controller.submitted.value,
+                        ),
+                      ),
                       SizedBox(height: 10),
 
                       // ── Confirm Password ───────────────────────────────
                       _ShakeField(
                         animation: controller.confirmPasswordShake,
                         child: Obx(
-                              () => _buildPasswordField(
+                          () => _buildPasswordField(
                             ctrl: controller.confirmPasswordController,
                             hintText: 'បញ្ជាក់ពាក្យសម្ងាត់',
                             hide: controller.hideConfirmPassword.value,
@@ -137,36 +149,44 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
 
                       // ── Checkbox ───────────────────────────────────────
                       Obx(
-                            () => Row(
+                        () => Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Checkbox(
                               value: controller.isChecked.value,
                               onChanged: controller.toggleCheckbox,
                               activeColor: AppColors.lightPrimaryColor,
-                              
+
                               side: BorderSide(
-                                  width: 2, color: AppColors.lightPrimaryColor, ),
+                                width: 2,
+                                color: AppColors.lightPrimaryColor,
+                              ),
                             ),
                             Expanded(
                               child: Wrap(
                                 spacing: 4,
                                 runSpacing: 2,
                                 children: [
-                                  Text('ខ្ញុំបានអាន',
-                                      style: GoogleFonts.kantumruyPro(
-                                          fontSize: 15)),
+                                  Text(
+                                    'ខ្ញុំបានអាន',
+                                    style: GoogleFonts.kantumruyPro(
+                                      fontSize: 13,
+                                    ),
+                                  ),
                                   Text(
                                     'យល់ព្រម​ & ចូលរួម',
                                     style: GoogleFonts.kantumruyPro(
-                                      fontSize: 15,
+                                      fontSize: 13,
                                       color: AppColors.lightPrimaryColor,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  Text('ហើយខ្ញុំទទួលយក',
-                                      style: GoogleFonts.kantumruyPro(
-                                          fontSize: 15)),
+                                  Text(
+                                    'ហើយខ្ញុំទទួលយក',
+                                    style: GoogleFonts.kantumruyPro(
+                                      fontSize: 13,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -193,8 +213,10 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('មានគណនីរួចហើយ?',
-                              style: GoogleFonts.kantumruyPro(fontSize: 16)),
+                          Text(
+                            'មានគណនីរួចហើយ?',
+                            style: GoogleFonts.kantumruyPro(fontSize: 16),
+                          ),
                           SizedBox(width: 10),
                           GestureDetector(
                             onTap: controller.goToLogin,
@@ -325,7 +347,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
   // ── Gender Widget ──────────────────────────────────────────────────────────
   Widget _buildGender() {
     return Obx(
-          () => Row(
+      () => Row(
         children: [
           _buildGenderItem('ប្រុស'),
           SizedBox(width: 10),
@@ -344,8 +366,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
           height: 45,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border:
-            Border.all(color: isSelected ? Colors.black : Colors.grey),
+            border: Border.all(color: isSelected ? Colors.black : Colors.grey),
           ),
           child: Row(
             children: [
@@ -355,8 +376,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                   value,
                   style: GoogleFonts.kantumruyPro(
                     fontSize: 14,
-                    fontWeight:
-                    isSelected ? FontWeight.w700 : FontWeight.w400,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
                   ),
                 ),
               ),
@@ -365,8 +385,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                 isSelected
                     ? Icons.radio_button_checked
                     : Icons.radio_button_off,
-                color:
-                isSelected ? AppColors.lightPrimaryColor : Colors.grey,
+                color: isSelected ? AppColors.lightPrimaryColor : Colors.grey,
               ),
               SizedBox(width: 20),
             ],
@@ -379,7 +398,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
   // ── Signup Button ──────────────────────────────────────────────────────────
   Widget _buildSignupButton() {
     return Obx(
-          () => GestureDetector(
+      () => GestureDetector(
         onTapDown: (_) => controller.downSignup.value = true,
         onTapCancel: () => controller.downSignup.value = false,
         onTapUp: (_) => controller.downSignup.value = false,
@@ -388,30 +407,32 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
           duration: const Duration(milliseconds: 120),
           curve: Curves.easeOut,
           child: ElevatedButton(
-            onPressed:
-            controller.isLoading.value ? null : controller.register,
+            onPressed: controller.isLoading.value ? null : controller.register,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.lightPrimaryColor,
               minimumSize: const Size(double.infinity, 52),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(26)),
+                borderRadius: BorderRadius.circular(26),
+              ),
               elevation: 0,
             ),
             child: controller.isLoading.value
                 ? SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(
-                  color: Colors.white, strokeWidth: 2.5),
-            )
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.5,
+                    ),
+                  )
                 : Text(
-              'ចុះឈ្មោះ',
-              style: GoogleFonts.kantumruyPro(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
-            ),
+                    'ចុះឈ្មោះ',
+                    style: GoogleFonts.kantumruyPro(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
         ),
       ),
@@ -421,7 +442,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
   // ── Guest Button ───────────────────────────────────────────────────────────
   Widget _buildGuestButton() {
     return Obx(
-          () => GestureDetector(
+      () => GestureDetector(
         onTapDown: (_) => controller.downGuest.value = true,
         onTapCancel: () => controller.downGuest.value = false,
         onTapUp: (_) => controller.downGuest.value = false,
@@ -435,7 +456,8 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
               backgroundColor: const Color(0xFF6D6D6D),
               minimumSize: const Size(double.infinity, 52),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(26)),
+                borderRadius: BorderRadius.circular(26),
+              ),
               elevation: 0,
             ),
             child: Text(
@@ -500,8 +522,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
       suffixIcon: suffixIcon,
       filled: true,
       fillColor: Colors.white,
-      contentPadding:
-      const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       errorStyle: GoogleFonts.kantumruyPro(
         color: Colors.red,
         fontSize: 13,
@@ -514,8 +535,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
-        borderSide:
-        BorderSide(color: AppColors.lightPrimaryColor, width: 1.2),
+        borderSide: BorderSide(color: AppColors.lightPrimaryColor, width: 1.2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),

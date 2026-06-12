@@ -8,11 +8,10 @@ from app.utils.auth_dependency import get_current_user
 
 router = APIRouter(
     prefix="/api/reviews",
-    tags=["Reviews"]
+    tags=["Feedback"],
 )
 
 reviews_collection = db["app_reviews"]
-
 
 def serialize_review(review: dict):
     return {
@@ -26,8 +25,7 @@ def serialize_review(review: dict):
         "created_at": review.get("created_at"),
     }
 
-
-@router.post("/create", summary="to write app review")
+@router.post("/create", summary="to write app feedback")
 async def create_review(
     payload: ReviewCreate,
     current_user: dict = Depends(get_current_user),
@@ -51,7 +49,7 @@ async def create_review(
     return serialize_review(created_review)
 
 
-@router.get("/all", summary="to get all app reviews")
+@router.get("/all", summary="to get all app feedback")
 async def get_all_reviews():
     reviews = []
 

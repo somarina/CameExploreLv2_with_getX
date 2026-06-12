@@ -11,10 +11,17 @@ class SplashScreenController extends GetxController {
 
     Future.delayed(const Duration(seconds: 2), () {
       final seenOnboarding = box.read('seenOnboarding') ?? false;
+      final isLogin = box.read('isLogin') ?? false;
+      final userMode = box.read('userMode') ?? '';
 
-      if (seenOnboarding == true) {
+      if (isLogin || userMode == 'guest') {
+        // Already logged in → skip login, go home
+        Get.offAllNamed(Routes.BUTTON_NAVBAR);
+      } else if (seenOnboarding) {
+        // Seen onboarding but not logged in → go to login
         Get.offAllNamed(Routes.LOGIN_SCREEN);
       } else {
+        // First time ever → show onboarding
         Get.offAllNamed(Routes.ONBOARDING_SCREEN);
       }
     });

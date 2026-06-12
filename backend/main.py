@@ -4,6 +4,12 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi import HTTPException
 from app.routes import places, auth, reviews, profile
+from app.routes import favorites
+from app.routes import search
+from app.routes import discover
+from app.routes import categories
+from app.config.cloudinary_config import *
+import cloudinary.uploader
 
 app = FastAPI(
     title="CamExplore API",
@@ -61,6 +67,10 @@ app.include_router(auth.router)
 app.include_router(reviews.router)
 app.include_router(places.router)
 app.include_router(profile.router)
+app.include_router(favorites.router)
+app.include_router(search.router)
+app.include_router(discover.router)
+app.include_router(categories.router)
 
 
 @app.get("/")
