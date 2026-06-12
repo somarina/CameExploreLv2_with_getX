@@ -105,4 +105,14 @@ Map<String, String> enUS = {
   "related_docs": "Related Documents",
   "privacy_policy": "Privacy Policy\nLearn how we collect and use your data",
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////     Login Screen
+  "Login": "Login",
+  "Phone Number": "Phone Number",
+  "Email": "Email",
+  "Password": "Password",
+  "Or": "Or",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+
 };

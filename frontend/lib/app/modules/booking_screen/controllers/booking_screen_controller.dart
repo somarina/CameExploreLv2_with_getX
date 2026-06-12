@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-class DiscoverScreenController extends GetxController {
-  //TODO: Implement DiscoverScreenController
+class BookingScreenController extends GetxController {
+  //TODO: Implement BookingScreenController
 
   final count = 0.obs;
   @override

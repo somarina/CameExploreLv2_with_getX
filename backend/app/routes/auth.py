@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from app.db.daatabase import db
 from app.schemas.auth_schemas import (
     RegisterSchema,
@@ -27,7 +28,7 @@ from app.utils.password import hash_password, verify_password
 import smtplib
 from email.mime.text import MIMEText
 import httpx
-from twilio.rest import Client  # Added for SMS
+from twilio.rest import Client
 
 router = APIRouter(
     prefix="/api/auth",
@@ -36,10 +37,9 @@ router = APIRouter(
 
 users_collection = db["users"]
 otp_collection = db["otp_codes"]
-otp_attempts_collection = db["otp_attempts"]  # Rate limiting
+otp_attempts_collection = db["otp_attempts"]
 
 def ok(message: str, data: dict = None):
-    """Standard success response matching teacher's API style."""
     return {
         "result": True,
         "message": message,
@@ -48,7 +48,6 @@ def ok(message: str, data: dict = None):
 
 
 def err(message: str, status_code: int = 400):
-    """Raise a standard error with teacher's API style."""
     raise HTTPException(
         status_code=status_code,
         detail={
@@ -60,7 +59,6 @@ def err(message: str, status_code: int = 400):
 
 
 def serialize_user(user: dict, token: str = None) -> dict:
-    """Serialize user to match teacher's API data shape."""
     result = {
         "id": str(user["_id"]),
         "name": user.get("name", ""),
@@ -87,7 +85,6 @@ def make_token(user: dict) -> str:
 
 # ====================== RATE LIMITING ======================
 async def check_otp_rate_limit(identifier: str) -> None:
-    """Prevent abuse: max 3 OTPs per 10 minutes, 5 per hour"""
     now = datetime.utcnow()
     window_10min = now - timedelta(minutes=10)
     window_1hour = now - timedelta(hours=1)
@@ -110,7 +107,6 @@ async def check_otp_rate_limit(identifier: str) -> None:
 
 
 async def cleanup_old_attempts():
-    """Clean up old rate limit records (older than 1 day)"""
     try:
         one_day_ago = datetime.utcnow() - timedelta(days=1)
         result = await otp_attempts_collection.delete_many({
@@ -132,7 +128,7 @@ async def send_otp_telegram(telegram_id: str, otp: str):
 
                 ⏰ This code expires in 3 minutes.
                 Do not share this code with anyone."""
-    
+
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     async with httpx.AsyncClient() as client:
         res = await client.post(url, json={
@@ -148,16 +144,16 @@ def send_otp_email(to_email: str, otp: str):
     app_password = os.getenv("GMAIL_APP_PASSWORD")
     if not sender or not app_password:
         return False
-    
+
     body = f"""Your CamExplore OTP code is: {otp}
 
 This code expires in 3 minutes. Do not share it with anyone."""
-    
+
     msg = MIMEText(body)
     msg["Subject"] = "CamExplore - Password Reset OTP"
     msg["From"] = sender
     msg["To"] = to_email
-    
+
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             smtp.login(sender, app_password)
@@ -166,28 +162,6 @@ This code expires in 3 minutes. Do not share it with anyone."""
     except Exception as e:
         print(f"Email send failed: {e}")
         return False
-
-
-# def send_otp_sms(phone: str, otp: str):
-#     """Send OTP via Twilio SMS"""
-#     account_sid = os.getenv("TWILIO_ACCOUNT_SID")
-#     auth_token = os.getenv("TWILIO_AUTH_TOKEN")
-#     twilio_phone = os.getenv("TWILIO_PHONE_NUMBER")
-
-#     if not all([account_sid, auth_token, twilio_phone]):
-#         return False
-
-#     try:
-#         client = Client(account_sid, auth_token)
-#         message = client.messages.create(
-#             body=f"Your CamExplore OTP is: {otp}. Expires in 5 minutes.",
-#             from_=twilio_phone,
-#             to=phone
-#         )
-#         return True
-#     except Exception as e:
-#         print(f"Twilio SMS failed: {e}")
-#         return False
 
 
 # ====================== MAIN ROUTES ======================
@@ -247,9 +221,6 @@ async def login_user(payload: LoginSchema):
     return ok("Login successful", serialize_user(user, token))
 
 
-
-
-
 @router.post("/google-login", summary="to login with Google")
 async def google_login(payload: GoogleLoginSchema):
     user = await users_collection.find_one({"google_id": payload.google_id})
@@ -291,6 +262,18 @@ async def google_login(payload: GoogleLoginSchema):
     token = make_token(user)
     return ok("Google login successful", serialize_user(user, token))
 
+
+# ====================== TELEGRAM CALLBACK (bridge for deep link) ======================
+@router.get("/telegram-callback", summary="Telegram OAuth callback bridge")
+async def telegram_callback(request: Request):
+    params = dict(request.query_params)
+    query_string = "&".join(f"{k}={v}" for k, v in params.items())
+    deep_link = f"camexplore://telegram-login?{query_string}"
+    print(f"📲 Telegram callback → redirecting to: {deep_link}")
+    return RedirectResponse(
+        url=deep_link,
+        headers={"ngrok-skip-browser-warning": "true"},  # ← add this
+    )
 
 @router.post("/telegram-login", summary="to login with Telegram")
 async def telegram_login(payload: TelegramLoginSchema):
@@ -338,110 +321,22 @@ async def telegram_login(payload: TelegramLoginSchema):
     return ok("Telegram login successful", serialize_user(user, token))
 
 
-# ====================== FORGOT PASSWORD (NOW SUPPORTS PHONE PROPERLY) ======================
-# @router.post("/forgot-password", summary="to request OTP for password reset")
-# async def forgot_password(payload: ForgotPasswordSchema):
-#     account = payload.email_or_phone.lower()
-
-#     user = await users_collection.find_one({
-#         "$or": [
-#             {"email": account},
-#             {"phone": payload.email_or_phone},
-#         ]
-#     })
-
-#     if not user:
-#         err("Account not found", 404)
-
-#     # Rate Limiting
-#     await check_otp_rate_limit(account)
-
-#     otp = str(secrets.randbelow(900000) + 100000)
-
-#     # Clean old OTPs
-#     await otp_collection.delete_many({"email_or_phone": payload.email_or_phone})
-#     await otp_collection.delete_many({"email_or_phone": account})
-
-#     # Save new OTP
-#     await otp_collection.insert_one({
-#         "email_or_phone": payload.email_or_phone,
-#         "otp": otp,
-#         "expires_at": datetime.utcnow() + timedelta(minutes=5),
-#         "verified": False,
-#         "created_at": datetime.utcnow(),
-#     })
-
-#     # Record attempt
-#     await otp_attempts_collection.insert_one({
-#         "identifier": account,
-#         "created_at": datetime.utcnow()
-#     })
-
-#     sent = False
-#     channel = "unknown"
-#     is_email = "@" in payload.email_or_phone
-
-#     if is_email:
-#         sent = send_otp_email(user.get("email", ""), otp)
-#         channel = "email"
-#     # else:
-#     #     # Phone number - Try SMS first
-#     #     phone = payload.email_or_phone
-#     #     if phone.startswith("0"):
-#     #         phone = "+855" + phone[1:]  # Convert Cambodian 0XX to +855XX
-
-#     #     sent = send_otp_sms(phone, otp)
-#     #     channel = "sms"
-
-#     #     # Fallback to Telegram if SMS not configured or failed
-#     #     if not sent:
-#     #         telegram_id = user.get("telegram_id")
-#     #         if telegram_id:
-#     #             sent = await send_otp_telegram(telegram_id, otp)
-#     #             channel = "telegram"
-#     else:
-#         email = user.get("email")
-
-#         if not email:
-#             err(
-#                 "This account has no email address linked."
-#             )
-
-#     sent = send_otp_email(email, otp)
-#     channel = "email"
-#     if not sent:
-#         err("Failed to send OTP. Please try again later.")
-
-#     return ok(f"OTP sent via {channel}", {
-#         "channel": channel,
-#         "message": f"Check your {channel} for the verification code"
-#     })
-
 @router.post("/forgot-password", summary="to request OTP for password reset")
 async def forgot_password(payload: ForgotPasswordSchema):
     try:
         email = payload.email.strip().lower()
 
-        # Find user
-        user = await users_collection.find_one({
-            "email": email
-        })
+        user = await users_collection.find_one({"email": email})
 
         if not user:
             err("Account not found", 404)
 
-        # Rate limiting
         await check_otp_rate_limit(email)
 
-        # Generate OTP
         otp = str(secrets.randbelow(900000) + 100000)
 
-        # Delete old OTPs
-        await otp_collection.delete_many({
-            "email": email
-        })
+        await otp_collection.delete_many({"email": email})
 
-        # Save new OTP
         await otp_collection.insert_one({
             "email": email,
             "otp": otp,
@@ -450,28 +345,20 @@ async def forgot_password(payload: ForgotPasswordSchema):
             "created_at": datetime.utcnow(),
         })
 
-        # Record request for rate limiting
         await otp_attempts_collection.insert_one({
             "identifier": email,
             "created_at": datetime.utcnow()
         })
 
-        # Send email
         sent = send_otp_email(email, otp)
 
         if not sent:
-            err(
-                "Failed to send OTP. Check GMAIL_SENDER and GMAIL_APP_PASSWORD",
-                500
-            )
+            err("Failed to send OTP. Check GMAIL_SENDER and GMAIL_APP_PASSWORD", 500)
 
-        return ok(
-            "OTP sent successfully",
-            {
-                "channel": "email",
-                "message": "Check your email for the verification code"
-            }
-        )
+        return ok("OTP sent successfully", {
+            "channel": "email",
+            "message": "Check your email for the verification code"
+        })
 
     except HTTPException:
         raise
@@ -482,7 +369,8 @@ async def forgot_password(payload: ForgotPasswordSchema):
             status_code=500,
             detail=f"Internal error: {str(e)}"
         )
-    
+
+
 @router.post("/verify-otp", summary="to verify OTP code")
 async def verify_otp(payload: VerifyOtpSchema):
     otp_data = await otp_collection.find_one({
@@ -502,6 +390,7 @@ async def verify_otp(payload: VerifyOtpSchema):
     )
 
     return ok("OTP verified successfully")
+
 
 @router.post("/reset-password", summary="to reset password")
 async def reset_password(payload: ResetPasswordSchema):
@@ -535,9 +424,7 @@ async def reset_password(payload: ResetPasswordSchema):
     if result.matched_count == 0:
         err("Account not found", 404)
 
-    await otp_collection.delete_many({
-        "email": payload.email.lower()
-    })
+    await otp_collection.delete_many({"email": payload.email.lower()})
 
     return ok("Password reset successful")
 
@@ -547,7 +434,7 @@ async def logout(current_user: dict = Depends(get_current_user)):
     return ok("Logout successful")
 
 
-# Helper function for Telegram verification
+# ====================== TELEGRAM HASH VERIFICATION ======================
 def verify_telegram_payload(data: dict) -> bool:
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     if not bot_token:

@@ -9,6 +9,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   irondash_engine_context
   super_native_extensions
+  share_plus
   url_launcher_windows
 )
 

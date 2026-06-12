@@ -35,6 +35,8 @@ class ForgetPasswordController extends GetxController {
   String get emailOrPhone => emailOrPhoneController.text.trim();
   String get otp => otpControllers.map((c) => c.text).join();
 
+  final showValidation = false.obs;
+
   @override
   void onClose() {
     emailOrPhoneController.dispose();
