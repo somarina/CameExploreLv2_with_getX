@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class DiscoverScreenController extends GetxController {
+class NearbyScreenController extends GetxController {
   //TODO: Implement DiscoverScreenController
 
   final count = 0.obs;

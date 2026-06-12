@@ -10,11 +10,15 @@ abstract class Routes {
   static const AUTH_SCREEN = _Paths.AUTH_SCREEN;
   static const BUTTON_NAVBAR = _Paths.BUTTON_NAVBAR;
   static const DETAIL_SCREEN = _Paths.DETAIL_SCREEN;
-  static const DISCOVER_SCREEN = _Paths.DISCOVER_SCREEN;
+  static const SEARCH_SCREEN = _Paths.SEARCH_SCREEN;
   static const FAVORITE_SCREEN = _Paths.FAVORITE_SCREEN;
   static const ONBOARDING_SCREEN = _Paths.ONBOARDING_SCREEN;
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
   static const LOGIN_SCREEN = _Paths.LOGIN_SCREEN;
+  static const FAV_SCREEN_2 = _Paths.FAV_SCREEN_2;
+  static const EXPLORE_SCREEN = _Paths.EXPLORE_SCREEN;
+  static const NEARBY_SCREEN = _Paths.NEARBY_SCREEN;
+
   static const FORGET_PASSWORD = _Paths.FORGET_PASSWORD;
   static const REGISTER_SCREEN = _Paths.REGISTER_SCREEN;
   static const USERPROFILE_SCREEN = _Paths.USERPROFILE_SCREEN;
@@ -33,11 +37,14 @@ abstract class _Paths {
   static const AUTH_SCREEN = '/auth-screen';
   static const BUTTON_NAVBAR = '/button-navbar';
   static const DETAIL_SCREEN = '/detail-screen';
-  static const DISCOVER_SCREEN = '/discover-screen';
+  static const SEARCH_SCREEN = '/search-screen';
   static const FAVORITE_SCREEN = '/favorite-screen';
   static const ONBOARDING_SCREEN = '/onboarding-screen';
   static const SPLASH_SCREEN = '/splash-screen';
   static const LOGIN_SCREEN = '/login-screen';
+  static const FAV_SCREEN_2 = '/fav-screen-2';
+  static const EXPLORE_SCREEN = '/explore-screen';
+  static const NEARBY_SCREEN = '/nearby-screen';
   static const FORGET_PASSWORD = '/forget-password';
   static const REGISTER_SCREEN = '/register-screen';
   static const USERPROFILE_SCREEN = '/userprofile-screen';

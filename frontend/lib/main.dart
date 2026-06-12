@@ -104,7 +104,7 @@ class MainApp extends StatelessWidget {
       locale: Locale("kmKH"), //khmer
       locale: Locale("enUS"), // enUS
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.USERPROFILE_SCREEN,
+      initialRoute: Routes.SEARCH_SCREEN,
       getPages: AppPages.routes,
     );
   }

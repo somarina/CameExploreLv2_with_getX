@@ -1,3 +1,5 @@
+import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_binding.dart';
+import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_view.dart';
 import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/comment_screen/comment_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/edit_screen/edit_screen_view.dart';
@@ -20,8 +22,10 @@ import '../modules/button_navbar/bindings/button_navbar_binding.dart';
 import '../modules/button_navbar/views/button_navbar_view.dart';
 import '../modules/detail_screen/bindings/detail_screen_binding.dart';
 import '../modules/detail_screen/views/detail_screen_view.dart';
-import '../modules/discover_screen/bindings/discover_screen_binding.dart';
-import '../modules/discover_screen/views/discover_screen_view.dart';
+import '../modules/discover_screen/explore_screen/explore_screen_view.dart';
+import '../modules/discover_screen/nearby_screen/nearby_screen_binding.dart';
+import '../modules/discover_screen/nearby_screen/nearby_screen_view.dart';
+import '../modules/discover_screen/search_screen/search_screen_view.dart';
 import '../modules/favorite_screen/bindings/favorite_screen_binding.dart';
 import '../modules/favorite_screen/views/favorite_screen_view.dart';
 import '../modules/home_screen/bindings/home_screen_binding.dart';
@@ -66,9 +70,9 @@ class AppPages {
       binding: DetailScreenBinding(),
     ),
     GetPage(
-      name: _Paths.DISCOVER_SCREEN,
-      page: () => const DiscoverScreenView(),
-      binding: DiscoverScreenBinding(),
+      name: _Paths.SEARCH_SCREEN,
+      page: () => const SearchScreenView(),
+      binding: SearchScreenBinding(),
     ),
     GetPage(
       name: _Paths.FAVORITE_SCREEN,
@@ -91,6 +95,21 @@ class AppPages {
       page: () => const LoginScreenView(),
       binding: LoginScreenBinding(),
     ),
+    GetPage(
+      name: _Paths.FAV_SCREEN_2,
+      page: () => const FavScreen2View(),
+      binding: FavScreen2ViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.EXPLORE_SCREEN,
+      page: () => const ExploreView(),
+      binding: ExploreScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.NEARBY_SCREEN,
+      page: () => NearbyScreenView(),
+      binding: NearbyScreenBinding(),
+   ),
     GetPage(
       name: _Paths.FORGET_PASSWORD,
       page: () => const ForgetPasswordView(),

@@ -17,6 +17,7 @@ dependencies:
   firebase_core: ^4.9.0
   flutter:
     sdk: flutter
+  flutter_bounceable: ^1.2.0
   flutter_rating_bar: ^4.0.1
   flutter_svg: ^2.3.0
   get: ^4.7.3
@@ -28,6 +29,7 @@ dependencies:
   lottie: ^3.3.0
   pinput: ^6.0.2
   pretty_dio_logger: ^1.4.0
+  share_plus: ^12.0.2
   url_launcher: ^6.3.2
   svg_provider: ^1.0.1
   dotted_border: ^3.1.0
