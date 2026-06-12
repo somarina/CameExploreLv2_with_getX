@@ -11,6 +11,13 @@ import cloudinary.uploader
 
 from app.config.cloudinary_config import *
 
+from app.utils.logger import (
+    log_success,
+    log_error,
+    log_info,
+    log_upload
+)
+
 router = APIRouter(
     prefix="/api/profile",
     tags=["Profile"]
@@ -136,34 +143,67 @@ async def upload_avatar(
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user),
 ):
-    print("===== UPLOAD AVATAR =====")
+    try:
+        # print("===== UPLOAD AVATAR =====")
+        # print("USER ID:", current_user["_id"])
+        # print("FILE:", file.filename)
 
-    result = cloudinary.uploader.upload(
-        file.file,
-        folder="camexplore/profile"
-    )
+        log_info("Avatar Upload Started")
 
-    image_url = result["secure_url"]
+        log_info(
+            f"User ID: {current_user['_id']}"
+        )
 
-    await users_collection.update_one(
-        {"_id": current_user["_id"]},
-        {
-            "$set": {
-                "profile_image": image_url,
-                "updated_at": datetime.utcnow(),
+        log_upload(file.filename)
+
+
+        result = cloudinary.uploader.upload(
+            file.file,
+            folder="camexplore/profile"
+        )
+
+        image_url = result["secure_url"]
+
+        log_success(
+            f"Cloudinary Upload Success\n{image_url}"
+        )
+
+        log_info("CLOUDINARY RESULT:")
+        log_info(result)
+
+        image_url = result["secure_url"]
+
+        await users_collection.update_one(
+            {"_id": current_user["_id"]},
+            {
+                "$set": {
+                    "profile_image": image_url,
+                    "updated_at": datetime.utcnow(),
+                }
             }
-        }
-    )
+        )
 
-    updated_user = await users_collection.find_one(
-        {"_id": current_user["_id"]}
-    )
+        log_success(
+            "MongoDB Profile Updated"
+        )
 
-    return {
-        "result": True,
-        "message": "Avatar uploaded successfully",
-        "data": serialize_user(updated_user)
-    }
+        updated_user = await users_collection.find_one(
+            {"_id": current_user["_id"]}
+        )
+
+        return ok(
+            "Avatar uploaded successfully",
+            serialize_user(updated_user)
+        )
+
+    except Exception as e:
+        print("UPLOAD ERROR:", str(e))
+        err(str(e), 500)
+    # return {
+    #     "result": True,
+    #     "message": "Avatar uploaded successfully",
+    #     "data": serialize_user(updated_user)
+    # }
 
 @router.delete("/avatar", summary="to delete profile avatar")
 async def delete_avatar(
