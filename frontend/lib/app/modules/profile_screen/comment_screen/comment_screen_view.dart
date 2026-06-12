@@ -14,9 +14,10 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Get.theme.scaffoldBackgroundColor,
+
         elevation: 0,
         leading: IconButton(
           onPressed: Get.back,
@@ -25,7 +26,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
         title: Text(
           "Feedback",
           style: GoogleFonts.kantumruyPro(
-            color: Colors.black,
+            color: Get.theme.colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -46,7 +47,10 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Get.isDarkMode ? null : Get.theme.scaffoldBackgroundColor,
+        border: Get.isDarkMode
+            ? Border.all(color: Get.theme.colorScheme.primary)
+            : null,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -244,7 +248,10 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
       width: Get.width * 100,
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Get.isDarkMode ? null : Get.theme.scaffoldBackgroundColor,
+        border: Get.isDarkMode
+            ? Border.all(color: Get.theme.colorScheme.primary)
+            : null,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(

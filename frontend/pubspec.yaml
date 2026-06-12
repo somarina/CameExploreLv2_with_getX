@@ -33,6 +33,8 @@ dependencies:
   url_launcher: ^6.3.2
   svg_provider: ^1.0.1
   dotted_border: ^3.1.0
+  super_context_menu: ^0.9.1
+  pull_down_button: ^0.10.2
 
 dev_dependencies:
   flutter_test:

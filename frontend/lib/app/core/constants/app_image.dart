@@ -17,6 +17,15 @@ class AppImage {
   static const String warningIcon = "assets/svg/warning.svg";
   static const String doneIcon = "assets/svg/done.svg";
   static const String messageIcon = "assets/svg/message.svg";
+  static const String leaveIcon = "assets/svg/leave.svg";
+  static const String changePWDIcon = "assets/svg/changePWD.svg";
+  static const String khmerIcon = "assets/svg/cambodia.svg";
+  static const String englishIcon = "assets/svg/english.svg";
+  static const String lightIcon = "assets/svg/Light.svg";
 
   static const String warningImage = "assets/svg/warning.png";
+  static const String khmerImage = "assets/images/cambodia.png";
+  static const String englishImage = "assets/images/english.png";
+  static const String lightImage = "assets/svg/light.png";
+  static const String darkImage = "assets/images/dark.png";
 }

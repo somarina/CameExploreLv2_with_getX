@@ -28,6 +28,8 @@ abstract class Routes {
   static const FEEDBACK_SCREEN = _Paths.FEEDBACK_SCREEN;
   static const NOTIFICATION_SCREEN = _Paths.NOTIFICATION_SCREEN;
   static const SECURITY_SCREEN = _Paths.SECURITY_SCREEN;
+  static const CHANGEPWD_SCREEN = _Paths.CHANGEPWD_SCREEN;
+  static const THEME_SCREEN = _Paths.THEME_SCREEN;
   static const BOOKING_SCREEN = _Paths.BOOKING_SCREEN;
   static const OTP_SCREEN = _Paths.OTP_SCREEN;
 }
@@ -56,6 +58,8 @@ abstract class _Paths {
   static const FEEDBACK_SCREEN = '/feedback-screen';
   static const NOTIFICATION_SCREEN = '/notification-screen';
   static const SECURITY_SCREEN = '/security-screen';
+  static const CHANGEPWD_SCREEN = '/changePWD-screen';
+  static const THEME_SCREEN = '/theme-screen';
   static const BOOKING_SCREEN = '/booking-screen';
   static const OTP_SCREEN = '/otp-screen';
 }

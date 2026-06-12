@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/utils.dart';
 
 class SectionCard extends StatelessWidget {
   final String title;
@@ -17,7 +19,11 @@ class SectionCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Get.theme.colorScheme.secondary,
+              ),
             ),
             child,
           ],

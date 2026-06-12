@@ -1,6 +1,7 @@
 import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/localization/app_translatation.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/firebase_options.dart';
@@ -104,10 +105,24 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    var box = GetStorage();
+    var isdark = box.read("isdark")?? false;
+    
     return GetMaterialApp(
+      
+      // theme
+      theme: AppColors.lightMode(),
+      darkTheme: AppColors.darkMode(),
+      themeMode: isdark? ThemeMode.dark : ThemeMode.light, // ☀️🌙 Auto
+      
+      // language
       translations: AppTranslatation(),
       locale: Locale("kmKH"),
+      fallbackLocale:  Locale("enUS"),
       debugShowCheckedModeBanner: false,
+      
+      // Call Screen
       initialRoute: Routes.SPLASH_SCREEN,
       getPages: AppPages.routes,
     );

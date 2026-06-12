@@ -1,9 +1,9 @@
-part of 'change_pwd_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_controller.dart';
+import 'package:get/get.dart';
 
-class ChangePwdScreenViewBinding extends Bindings {
-
-   @override
-   void dependencies() {
-       Get.lazyPut(() => ChangePwdScreenViewController());
-   }
+class ChangePasswordBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put(ChangePasswordController());
+  }
 }

@@ -5,4 +5,5 @@ class NotificationScreenViewController extends GetxController {
   var message = true.obs;
   var like = false.obs;
   var follow = true.obs;
+  var pushNot= true.obs;
 }
