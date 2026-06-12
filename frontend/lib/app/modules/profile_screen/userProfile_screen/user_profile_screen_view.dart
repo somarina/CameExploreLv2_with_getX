@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/core/constants/app_image.dart';
+import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/constants/app_colors/app_colors.dart';
@@ -17,6 +19,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
 
   @override
   Widget build(BuildContext context) {
+     
     return Scaffold(
       backgroundColor: AppColors.lightPrimaryColor,
       body: SingleChildScrollView(
@@ -24,9 +27,9 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
         child: SafeArea(
           child: Column(
             children: [
-              _header(),
+              _header(context),
               SizedBox(height: 20),
-              controller.isLogin.value ? _login() : _guestUser(),
+              controller.isLogin.value ? _login(context) : _guestUser(),
             ],
           ),
         ),
@@ -34,16 +37,18 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
-  Widget _container({required Widget child}) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+ Widget _container(BuildContext context, {required Widget child}) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      borderRadius: const BorderRadius.vertical(
+        top: Radius.circular(30),
       ),
-      child: child,
-    );
-  }
+    ),
+    child: child,
+  );
+}
 
   Widget _menuItem({
     required String prefix,
@@ -55,19 +60,28 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       height: 50,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black45),
+        border: Border.all(color: Get.theme.colorScheme.secondary),
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
         children: [
           // Prefix icon
-          SvgPicture.asset(prefix, width: 24, height: 24),
+          SvgPicture.asset(
+            prefix,
+            width: 24,
+            height: 24,
+            colorFilter: ColorFilter.mode(
+              Get.theme.colorScheme.primary,
+              BlendMode.srcIn,
+            ),
+          ),
           SizedBox(width: 12),
           // Title
           Expanded(
             child: Text(
               title,
               style: GoogleFonts.spaceGrotesk(
+                color: Get.theme.colorScheme.secondary,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -80,7 +94,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
-  Widget _header() {
+  Widget _header(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -91,7 +105,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             onTap: () {
               controller.isLogin.value
                   ? Get.toNamed(Routes.EDIT_SCREEN)
-                  : Get.toNamed(Routes.SECURITY_SCREEN);
+                  : Get.toNamed(Routes.SECURITY_SCREEN); ////
             },
             child: SvgPicture.asset(AppImage.editIcon),
           ),
@@ -105,7 +119,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
       crossAxisAlignment: .center,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 70),
+          padding: EdgeInsets.only(left: 70),
           child: Row(
             // crossAxisAlignment: .end,
             children: [
@@ -118,6 +132,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                 ),
                 child: CircleAvatar(
                   radius: 45,
+                  // profile
                   backgroundImage: AssetImage('assets/images/profile.png'),
                 ),
               ),
@@ -182,6 +197,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
         ),
         SizedBox(height: 20),
         _container(
+          Get.context!,
           child: Column(
             children: [
               _language(),
@@ -227,19 +243,27 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
-  Container _language() {
+  Widget _language() {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.symmetric(horizontal: 16),
       height: 50,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black45),
+        border: Border.all(color: Get.theme.colorScheme.secondary),
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
         children: [
           // Prefix icon
-          SvgPicture.asset(AppImage.languageIcon, width: 24, height: 24),
+          SvgPicture.asset(
+            AppImage.languageIcon,
+            width: 24,
+            height: 24,
+            colorFilter: ColorFilter.mode(
+              Get.theme.colorScheme.primary,
+              BlendMode.srcIn,
+            ),
+          ),
           SizedBox(width: 12),
           // Title
           Expanded(
@@ -258,15 +282,188 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
               color: Colors.black45,
             ),
           ),
+
           SizedBox(width: 10),
-          // Suffix icon
-          SvgPicture.asset(AppImage.btnIcon),
+
+          GestureDetector(
+            onTapDown: (detail) {
+              showCustomPopupMenu(
+                child: Column(
+                  children: [
+                    Text(
+                      "Language",
+                      style: GoogleFonts.spaceGrotesk(
+                        color: Get.theme.colorScheme.secondary,
+                        fontSize: 16,
+                        fontWeight: .bold,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    _languageItem(
+                      text: "Khmer",
+                      image: AppImage.khmerImage,
+                      onTap: () {
+                        controller.updateLocale("khmer");
+
+
+
+                         Get.back();
+                      },
+                    ),
+                    SizedBox(height: 5),
+                    _languageItem(
+                      text: "English",
+                      image: AppImage.englishImage,
+                      onTap: () {
+                        controller.updateLocale("enUS");
+                         Get.back();
+                      },
+                    ),
+                  ],
+                ),
+                context: Get.context!,
+                position: detail.globalPosition,
+                alignment: Alignment.topLeft,
+              );
+            },
+            child: SvgPicture.asset(AppImage.btnIcon, width: 30, height: 30),
+          ),
         ],
       ),
     );
   }
 
-  Widget _login() {
+  Widget _languageItem({
+    required String text,
+    required String image,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.green, width: 2),
+          // border: Border.all(
+          //   color: isActive ? Get.theme.colorScheme.primary : Colors.grey,
+          //   width: isActive ? 2 : 1,
+          // ),
+        ),
+        child: Row(
+          children: [
+            Text(
+              text,
+              style: GoogleFonts.spaceGrotesk(
+                color: Get.theme.colorScheme.secondary,
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(width: 5),
+            Image.asset(image),
+            // SvgPicture.asset(AppImage.khmerIcon)
+            Spacer(),
+            SvgPicture.asset(AppImage.doneIcon),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<T?> showCustomPopupMenu<T>({
+    required BuildContext context,
+    required Widget child,
+    Offset? position,
+    Alignment alignment = Alignment.topRight,
+    double width = 200,
+  }) {
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Custom Popup',
+      barrierColor: Colors.black.withValues(alpha: 0.15),
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (_, _, _) {
+        const edgePadding = 12.0;
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final screenWidth = constraints.maxWidth;
+            final maxMenuWidth = (screenWidth - edgePadding * 2)
+                .clamp(0.0, width)
+                .toDouble();
+            final minMenuWidth = maxMenuWidth < 180 ? maxMenuWidth : 180.0;
+            final maxLeft = screenWidth - maxMenuWidth - edgePadding;
+            final left = position?.dx
+                .clamp(
+                  edgePadding,
+                  maxLeft < edgePadding ? edgePadding : maxLeft,
+                )
+                .toDouble();
+
+            final menu = Material(
+              color: Colors.transparent,
+              child: Container(
+                constraints: BoxConstraints(
+                  minWidth: minMenuWidth,
+                  maxWidth: maxMenuWidth,
+                ),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Get.theme.scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 30,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                ),
+                child: child,
+              ),
+            );
+
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(color: Colors.transparent),
+                  ),
+                ),
+                if (position == null)
+                  Align(
+                    alignment: alignment,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 80, right: 16),
+                      child: menu,
+                    ),
+                  )
+                else
+                  Positioned(left: left, top: position.dy - 24, child: menu),
+              ],
+            );
+          },
+        );
+      },
+      transitionBuilder: (_, anim, _, child) {
+        return FadeTransition(
+          opacity: anim,
+          child: ScaleTransition(
+            alignment: Alignment.topLeft,
+            scale: Tween<double>(
+              begin: 0.92,
+              end: 1,
+            ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutBack)),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _login(BuildContext context) {
     return Column(
       crossAxisAlignment: .center,
       children: [
@@ -299,18 +496,33 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
         ),
         SizedBox(height: 20),
         _container(
+         context,
           child: Column(
             children: [
-              _menuItem(
-                prefix: AppImage.themeIcon,
-                title: "cpwd".tr,
-                suffixIcon: AppImage.btnIcon,
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(Routes.CHANGEPWD_SCREEN);
+                },
+                child: _menuItem(
+                  prefix: AppImage.themeIcon,
+                  title: "cpwd".tr,
+                  suffixIcon: AppImage.btnIcon,
+                ),
               ),
               _language(),
-              _menuItem(
-                prefix: AppImage.themeIcon,
-                title: "theme".tr,
-                suffixIcon: AppImage.btnIcon,
+
+              GestureDetector(
+                onTap: () async {
+                await  Get.toNamed(Routes.THEME_SCREEN);
+                    
+                  // controller.changeTheme(ThemeMode.dark);
+                  // Get.changeThemeMode(.dark);
+                },
+                child: _menuItem(
+                  prefix: AppImage.themeIcon,
+                  title: "theme".tr,
+                  suffixIcon: AppImage.btnIcon,
+                ),
               ),
               GestureDetector(
                 onTap: () {
@@ -343,7 +555,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                 ),
               ),
               GestureDetector(
-                onTap: () { 
+                onTap: () {
                   Get.toNamed(Routes.HELPSUPPORT_SCREEN);
                 },
                 child: _menuItem(
@@ -353,7 +565,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                 ),
               ),
               GestureDetector(
-                onTap: () {   
+                onTap: () {
                   Get.toNamed(Routes.ABOUTAPP_SCREEN);
                 },
                 child: _menuItem(
@@ -367,7 +579,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                 title: "developer".tr,
                 suffixIcon: AppImage.btnIcon,
               ),
-              btn(),
+              btn(context),
             ],
           ),
         ),
@@ -375,10 +587,33 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
-  Widget btn() {
+  Widget btn(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
-      child: Text("logout".tr, style: GoogleFonts.spaceGrotesk()),
+      style: ElevatedButton.styleFrom(
+        minimumSize: Size(double.infinity, 45),
+        backgroundColor:Theme.of(context).colorScheme.tertiary,
+        // foregroundColor: Theme.of(context).colorScheme.secondary,
+      ),
+      onPressed: () {
+        controller.logout();
+        // Navigate to login screen after logout
+        Get.toNamed(Routes.LOGIN_SCREEN);
+      },
+      child: Row(
+        mainAxisAlignment: .center,
+        children: [
+          SvgPicture.asset(AppImage.leaveIcon),
+          SizedBox(width: 10),
+          Text(
+            "logout".tr,
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 16,
+              fontWeight: .bold,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

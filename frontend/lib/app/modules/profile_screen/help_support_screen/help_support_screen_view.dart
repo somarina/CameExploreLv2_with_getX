@@ -13,15 +13,17 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       appBar: AppBar(
+        backgroundColor: Get.theme.scaffoldBackgroundColor,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
         ),
         title: Text(
-          "condition".tr,
+          "terms_conditions".tr,
           style: GoogleFonts.spaceGrotesk(
-            color: Colors.black,
+            color: Get.theme.colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -35,7 +37,10 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                 width: double.infinity,
 
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Get.isDarkMode ? null : Colors.white,
+                  border: Get.isDarkMode
+                      ? Border.all(color: Get.theme.colorScheme.primary)
+                      : null,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Padding(
@@ -59,12 +64,12 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Padding(
-                        padding: const EdgeInsets.only(left: 30),
+                        padding: EdgeInsets.only(left: 30),
                         child: Row(
                           children: [
                             Icon(Icons.calendar_today),
                             Text(
-                              "last_updated",
+                              "last_updated".tr,
                               style: GoogleFonts.spaceGrotesk(fontSize: 16),
                             ),
                           ],
@@ -72,7 +77,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "១. ការទទួលយកលក្ខខណ្ឌ",
+                        "tc_acceptance_title".tr,
                         style: GoogleFonts.kantumruyPro(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -80,7 +85,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "ដោយការចូលប្រើកម្មវិធីនេះ អ្នកយល់ព្រមទទួលយកលក្ខខណ្ឌទាំងនេះ។ ប្រសិនបើអ្នកមិនយល់ព្រមជាមួយលក្ខខណ្ឌទាំងនេះទេ សូមកុំប្រើកម្មវិធី។",
+                        "tc_acceptance_desc".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                       SizedBox(height: 10),
@@ -98,7 +103,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "២. ការប្រើប្រាស់កម្មវិធី",
+                        "tc_use_title".tr,
                         style: GoogleFonts.kantumruyPro(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -106,17 +111,17 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "អ្នកយល់ព្រមថា:",
+                        "tc_use_desc".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        " នឹងប្រើកម្មវិធីក្នុងគោលបំណងស្របច្បាប់ប៉ុណ្ណោះ\n នឹងមិនរំលោភបំពានសិទ្ធិអ្នកប្រើផ្សេងទៀត\n នឹងមិនផ្ញើមាតិកាមិនសមរម្យ\n នឹងរក្សាទុកព័ត៌មានគណនីរបស់អ្នកឱ្យមានសុវត្ថិភាព",
+                        "tc_use_rule".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "៣. ភាពឯកជន",
+                        "tc_privacy_title".tr,
                         style: GoogleFonts.kantumruyPro(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -124,12 +129,12 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "យើងយកចិត្តទុកដាក់ខ្លាំងចំពោះភាពឯកជនរបស់អ្នក។ ព័ត៌មានផ្ទាល់ខ្លួនរបស់អ្នកនឹងត្រូវបានរក្សាទុកដោយសុវត្ថិភាព និងនឹងមិនត្រូវបានចែករំលែកជាមួយភាគីទីបីដោយមិនមានការយល់ព្រមរបស់អ្នកនោះទេ។",
+                        "tc_privacy_desc".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "៤. កម្មសិទ្ធិបញ្ញា",
+                        "tc_ip_title".tr,
                         style: GoogleFonts.kantumruyPro(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -137,12 +142,12 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "មាតិកាទាំងអស់នៅក្នុងកម្មវិធីនេះ រួមទាំងប៉ុន្តែមិនកំណត់ចំពោះអត្ថបទ រូបភាព និងកូដកម្មវិធី គឺជាកម្មសិទ្ធិរបស់យើង។",
+                        "tc_ip_desc".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "៥. ការកំណត់ទំនួលខុសត្រូវ",
+                        "tc_liability_title".tr,
                         style: GoogleFonts.kantumruyPro(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -150,12 +155,12 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "កម្មវិធីត្រូវបានផ្តល់ជូន 'តាមដែលមាន'។ យើងមិនធានាអំពីភាពពេញលេញ សុក្រិតភាព ឬភាពត្រឹមត្រូវនៃកម្មវិធីនោះទេ។",
+                        "tc_liability_desc".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "៦. ការផ្លាស់ប្តូរលក្ខខណ្ឌ",
+                        "tc_changes_title".tr,
                         style: GoogleFonts.kantumruyPro(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -163,12 +168,12 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "យើងរក្សាសិទ្ធិក្នុងការកែប្រែលក្ខខណ្ឌទាំងនេះគ្រប់ពេល។ ការប្រើប្រាស់បន្តរបស់អ្នកបន្ទាប់ពីការផ្លាស់ប្តូរនឹងត្រូវបានចាត់ទុកថាជាការទទួលយកការផ្លាស់ប្តូរទាំងនោះ។",
+                        "tc_changes_desc".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "៧. ទំនាក់ទំនង",
+                        "tc_contact_title".tr,
                         style: GoogleFonts.kantumruyPro(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -176,7 +181,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "ប្រសិនបើអ្នកមានសំណួរអំពីលក្ខខណ្ឌទាំងនេះ សូមទាក់ទងមកយើងតាមរយៈ support@camexplore.com",
+                        "tc_contact_desc".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                     ],
@@ -187,7 +192,10 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Get.isDarkMode ? null : Colors.white,
+                  border: Get.isDarkMode
+                      ? Border.all(color: Get.theme.colorScheme.primary)
+                      : null,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Padding(
@@ -196,7 +204,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "ឯកសារពាក់ព័ន្ធ",
+                        "related_docs".tr,
                         style: GoogleFonts.kantumruyPro(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -204,7 +212,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "គោលការណ៍ភាពឯកជន\nអានពីរបៀបដែលយើងប្រើប្រាស់ទិន្នន័យរបស់អ្នក",
+                        "privacy_policy".tr,
                         style: GoogleFonts.kantumruyPro(fontSize: 16),
                       ),
                     ],

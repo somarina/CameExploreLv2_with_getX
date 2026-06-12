@@ -72,7 +72,7 @@ Map<String, String> enUS = {
   // ===== Terms & Conditions =====
   "terms_conditions" : "Terms & Conditions",
   "terms_of_use": "Terms of Use",
-  "last_updated": "Last updated: January 15, 2026",
+  "last_updated": "January 15, 2026",
 
   "tc_acceptance_title": "1. Acceptance of Terms",
   "tc_acceptance_desc":
@@ -80,10 +80,7 @@ Map<String, String> enUS = {
 
   "tc_use_title": "2. Use of the Application",
   "tc_use_desc": "You agree to:",
-  "tc_use_1": "Use the application only for lawful purposes",
-  "tc_use_2": "Not violate the rights of other users",
-  "tc_use_3": "Not submit or share inappropriate content",
-  "tc_use_4": "Keep your account information secure",
+  "tc_use_rule": "- Use the application only for lawful purposes\n- Not violate the rights of other users\n- Not submit or share inappropriate content\n- Keep your account information secure",
 
   "tc_privacy_title": "3. Privacy",
   "tc_privacy_desc":
@@ -103,11 +100,9 @@ Map<String, String> enUS = {
 
   "tc_contact_title": "7. Contact Us",
   "tc_contact_desc":
-      "If you have any questions regarding these Terms and Conditions, please contact us at:",
-  "tc_contact_email": "support@camexplore.com",
+      "If you have any questions regarding these Terms and Conditions, please contact us at:\nsupport@camexplore.com",
 
   "related_docs": "Related Documents",
-  "privacy_policy": "Privacy Policy",
-  "privacy_policy_desc": "Learn how we collect and use your data",
+  "privacy_policy": "Privacy Policy\nLearn how we collect and use your data",
 
 };

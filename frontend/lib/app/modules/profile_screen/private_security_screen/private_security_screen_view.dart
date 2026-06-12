@@ -15,7 +15,9 @@ class PrivateSecurityScreenView
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       appBar: AppBar(
+        backgroundColor: Get.theme.scaffoldBackgroundColor,
         leading: IconButton(
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
           onPressed: () {
@@ -24,7 +26,11 @@ class PrivateSecurityScreenView
         ),
         title: Text(
           "Privacy & Security",
-          style: GoogleFonts.spaceGrotesk(fontSize: 24, fontWeight: .bold),
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 24,
+            fontWeight: .bold,
+            color: Get.theme.colorScheme.secondary,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -44,7 +50,12 @@ class PrivateSecurityScreenView
       padding: EdgeInsets.all(16),
       // height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
+        border: Get.isDarkMode
+            ? Border.all(color: Get.theme.colorScheme.primary, width: 2)
+            : null,
+        color: Get.isDarkMode
+            ? Get.theme.scaffoldBackgroundColor
+            : Get.theme.scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -61,7 +72,9 @@ class PrivateSecurityScreenView
           _label(label: "Devices"),
           SizedBox(height: 20),
           _device_use(
-            containerColor: AppColors.lightPrimaryColor.withValues(alpha: 0.1),
+            containerColor: Get.isDarkMode
+                ? Get.theme.colorScheme.primary
+                : Get.theme.colorScheme.primary.withValues(alpha: 0.1),
             perfix: AppImage.phoneIcon,
             title: "iPhone 14 Pro",
             subtext1: "Phnom Penh, Cambodia\nLastday: Now",
@@ -71,7 +84,7 @@ class PrivateSecurityScreenView
             bgColor: AppColors.lightPrimaryColor,
           ),
           _device_use(
-            containerColor: Color(0xffF9FAFB),
+            containerColor: Get.isDarkMode ? Color(0xff2a2a2a) : Colors.white,
             perfix: AppImage.phoneIcon,
             title: "Samsung Galaxy S23",
             subtext1: "Siem Reap, Cambodia\nLastday: yesterday",
@@ -97,7 +110,10 @@ class PrivateSecurityScreenView
       padding: EdgeInsets.all(16),
       // height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Get.isDarkMode ? null : Colors.white,
+        border: Get.isDarkMode
+            ? Border.all(color: Get.theme.colorScheme.primary)
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -126,7 +142,7 @@ class PrivateSecurityScreenView
     required String textBtn,
     required Color color,
     required Color bgColor,
-    required Color containerColor,
+    Color? containerColor,
   }) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
@@ -160,12 +176,21 @@ class PrivateSecurityScreenView
                     fontWeight: .bold,
                   ),
                 ),
-                Text(subtext1, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
+                Text(
+                  subtext1,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 16,
+                    color: Get.theme.colorScheme.secondary.withValues(
+                      alpha: 0.6,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
+
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+            padding: EdgeInsets.symmetric(horizontal: 7, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: bgColor,
@@ -223,7 +248,13 @@ class PrivateSecurityScreenView
                   fontWeight: .bold,
                 ),
               ),
-              Text(subtext1, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
+              Text(
+                subtext1,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 16,
+                  color: Get.theme.colorScheme.secondary.withValues(alpha: 0.5),
+                ),
+              ),
             ],
           ),
         ),
@@ -237,7 +268,10 @@ class PrivateSecurityScreenView
       padding: EdgeInsets.all(16),
       // height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Get.isDarkMode ? null : Get.theme.scaffoldBackgroundColor,
+        border: Get.isDarkMode
+            ? Border.all(color: Get.theme.colorScheme.primary)
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -253,7 +287,11 @@ class PrivateSecurityScreenView
         children: [
           Text(
             "Login & safely",
-            style: GoogleFonts.spaceGrotesk(fontSize: 18, fontWeight: .bold),
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 18,
+              fontWeight: .bold,
+              color: Get.theme.colorScheme.secondary,
+            ),
           ),
           SizedBox(height: 10),
           _smallbox(
@@ -291,7 +329,8 @@ class PrivateSecurityScreenView
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 18,
 
-                  color: Colors.black,
+                  // color: Colors.black,
+                  color: Get.theme.colorScheme.secondary,
                 ),
               ),
               Text(
@@ -299,7 +338,7 @@ class PrivateSecurityScreenView
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 16,
 
-                  color: Colors.black38,
+                  color: Get.theme.colorScheme.secondary.withValues(alpha: 0.5),
                 ),
               ),
             ],

@@ -1,9 +1,12 @@
 import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_binding.dart';
+import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/comment_screen/comment_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/edit_screen/edit_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/help_support_screen/help_support_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/notification_screen/notification_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/private_security_screen/private_security_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/ai_screen/bindings/ai_screen_binding.dart';
@@ -135,6 +138,16 @@ class AppPages {
       name: _Paths.SECURITY_SCREEN,
       page: () => PrivateSecurityScreenView(),
       binding: PrivateSecurityScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHANGEPWD_SCREEN,
+      page: () => ChangePasswordView(),
+      binding: ChangePasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.THEME_SCREEN,
+      page: () => ThemeModeView(),
+      binding: ThemeModeViewBinding(),
     ),
   ];
 }

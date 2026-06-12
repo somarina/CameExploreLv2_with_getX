@@ -14,9 +14,9 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Get.theme.scaffoldBackgroundColor,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
@@ -24,7 +24,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
         title: Text(
           "aboutcam".tr,
           style: GoogleFonts.spaceGrotesk(
-            color: Colors.black,
+            color: Get.theme.colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -59,8 +59,6 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
               ),
               SizedBox(height: 20),
               buildContainer2(
-                color: Color(0xFFFFFFFF),
-
                 text: "disAboutApp".tr,
                 icon: Icons.home,
                 iconcolor: AppColors.lightPrimaryColor,
@@ -90,7 +88,8 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
     return Container(
       width: Get.width * 0.35,
       decoration: BoxDecoration(
-        color: Color(0xFFE4FCEC),
+        // color: Color(0xFFE4FCEC),
+        border: Border.all(color: Get.theme.colorScheme.primary),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Padding(
@@ -121,7 +120,10 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
             offset: Offset(0, 5), // x, y
           ),
         ],
-        color: Color(0xFFFFFFFF),
+        // color: Color(0xFFFFFFFF),
+        border: Get.isDarkMode
+            ? Border.all(color: Get.theme.colorScheme.primary)
+            : null,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -204,7 +206,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
 
   Widget buildTitle({required String text}) {
     return Padding(
-      padding:  EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       child: Container(
         width: 150,
         height: 40,
@@ -230,7 +232,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
   }
 
   Widget buildContainer2({
-    required Color color,
+    // required Color color,
     required String text,
     required IconData icon,
     required Color iconcolor,
@@ -240,6 +242,10 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
+        border: Get.isDarkMode
+            ? Border.all(color: Get.theme.colorScheme.primary)
+            : null,
+
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -248,7 +254,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
             offset: Offset(0, 5), // x, y
           ),
         ],
-        color: color,
+        // color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Padding(
@@ -301,7 +307,10 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
             offset: Offset(0, 5), // x, y
           ),
         ],
-        gradient: gradient,
+        // gradient: gradient,
+        border: Get.isDarkMode
+            ? Border.all(color: Get.theme.colorScheme.primary)
+            : null,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -309,7 +318,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
         children: [
           buildTitle(text: "goal".tr),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(text, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
           ),
           SizedBox(height: 20),

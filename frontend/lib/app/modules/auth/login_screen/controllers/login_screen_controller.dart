@@ -182,7 +182,7 @@ class LoginScreenController extends GetxController
 
       if (response["result"] == true) {
         _saveUser(response["data"]);
-        Get.offAllNamed(Routes.HOME_SCREEN);
+        Get.offAllNamed(Routes.USERPROFILE_SCREEN);
       } else {
         Get.snackbar(
           'Login Failed',

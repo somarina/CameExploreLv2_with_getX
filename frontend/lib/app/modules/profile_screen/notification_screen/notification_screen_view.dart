@@ -15,8 +15,9 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Get.theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           onPressed: Get.back,
@@ -24,8 +25,8 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
         ),
         title: Text(
           "Notification",
-          style: GoogleFonts.kantumruyPro(
-            color: Colors.black,
+          style: GoogleFonts.spaceGrotesk(
+            color: Get.theme.colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -43,8 +44,13 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                     style: GoogleFonts.spaceGrotesk(fontSize: 16),
                   ),
                   inactiveThumbColor: Colors.white,
+                  activeThumbColor: Colors.white,
+                  // inactiveTrackColor: Color,
                   activeTrackColor: AppColors.lightPrimaryColor,
-                  trackOutlineColor: WidgetStateProperty.all(Colors.grey[100]),
+                  inactiveTrackColor: Colors.grey[500],
+                  trackOutlineColor: WidgetStateProperty.all(
+                    Colors.transparent,
+                  ),
                   value: controller.system.value,
                   onChanged: (v) => controller.system.value = v,
                 ),
@@ -59,17 +65,27 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                     () => SwitchListTile(
                       title: Row(
                         children: [
-                          SvgPicture.asset(AppImage.messageIcon),
+                          SvgPicture.asset(
+                            AppImage.messageIcon,
+                            color: Get.theme.colorScheme.primary,
+                          ),
+                          SizedBox(width: 5),
                           Text(
                             "សារ",
-                            style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 16,
+                              color: Get.theme.colorScheme.secondary,
+                            ),
                           ),
                         ],
                       ),
                       inactiveThumbColor: Colors.white,
+                      activeThumbColor: Colors.white,
+                      // inactiveTrackColor: Color,
                       activeTrackColor: AppColors.lightPrimaryColor,
+                      inactiveTrackColor: Colors.grey[500],
                       trackOutlineColor: WidgetStateProperty.all(
-                        Colors.grey[100],
+                        Colors.transparent,
                       ),
                       value: controller.message.value,
                       onChanged: (v) => controller.message.value = v,
@@ -79,18 +95,45 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                     () => SwitchListTile(
                       title: Text(
                         'ចូលចិត្ត',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 16,
+                          color: Get.theme.colorScheme.secondary,
+                        ),
                       ),
                       inactiveThumbColor: Colors.white,
+                      activeThumbColor: Colors.white,
+                      // inactiveTrackColor: Color,
                       activeTrackColor: AppColors.lightPrimaryColor,
+                      inactiveTrackColor: Colors.grey[500],
                       trackOutlineColor: WidgetStateProperty.all(
-                        Colors.grey[100],
+                        Colors.transparent,
                       ),
                       value: controller.like.value,
                       onChanged: (v) => controller.like.value = v,
                     ),
                   ),
                 ],
+              ),
+            ),
+            SectionCard(
+              title: "ការជូនដំណឹងរុញ",
+              child: Obx(
+                () => SwitchListTile(
+                  title: Text(
+                    "ការធ្វើបច្ចុប្បន្នភាពកម្មវិធី\nមុខងារថ្មី និងការធ្វើបច្ចុប្បន្នភាព",
+                    style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                  ),
+                  inactiveThumbColor: Colors.white,
+                  activeThumbColor: Colors.white,
+                  // inactiveTrackColor: Color,
+                  activeTrackColor: AppColors.lightPrimaryColor,
+                  inactiveTrackColor: Colors.grey[500],
+                  trackOutlineColor: WidgetStateProperty.all(
+                    Colors.transparent,
+                  ),
+                  value: controller.pushNot.value,
+                  onChanged: (v) => controller.pushNot.value = v,
+                ),
               ),
             ),
           ],

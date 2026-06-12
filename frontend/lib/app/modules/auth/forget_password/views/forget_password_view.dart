@@ -80,7 +80,7 @@ class ForgetPasswordView extends GetView<ForgetPasswordController> {
         style: GoogleFonts.kantumruyPro(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: AppColors.lightTextPrimaryColor,
+          color: AppColors.lightTextColor,
         ),
       ),
       centerTitle: true,
@@ -108,7 +108,7 @@ class _Step1 extends StatelessWidget {
               style: GoogleFonts.kantumruyPro(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppColors.lightTextPrimaryColor,
+                color: AppColors.lightTextColor,
               ),
             ),
             SizedBox(height: 20),
@@ -206,7 +206,7 @@ class _Step2 extends StatelessWidget {
             text: TextSpan(
               style: GoogleFonts.kantumruyPro(
                   fontSize: 16,
-                  color: AppColors.lightTextPrimaryColor,
+                  color: AppColors.lightTextColor,
                   fontWeight: FontWeight.w600),
               children: [
                 TextSpan(text: 'បញ្ចូល '),
@@ -371,7 +371,7 @@ class _Step3 extends StatelessWidget {
             style: GoogleFonts.kantumruyPro(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
-                color: AppColors.lightTextPrimaryColor),
+                color: AppColors.lightTextColor),
           ),
           SizedBox(height: 10),
           Text(
@@ -443,7 +443,7 @@ class _Step4 extends StatelessWidget {
               style: GoogleFonts.kantumruyPro(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.lightTextPrimaryColor),
+                  color: AppColors.lightTextColor),
             ),
             SizedBox(height: 8),
             Text(
@@ -456,7 +456,7 @@ class _Step4 extends StatelessWidget {
                 style: GoogleFonts.kantumruyPro(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.lightTextPrimaryColor)),
+                    color: AppColors.lightTextColor)),
             SizedBox(height: 8),
             // Fixed: password visibility icon toggles correctly
             Obx(() => TextFormField(
@@ -500,7 +500,7 @@ class _Step4 extends StatelessWidget {
                 style: GoogleFonts.kantumruyPro(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.lightTextPrimaryColor)),
+                    color: AppColors.lightTextColor)),
             SizedBox(height: 8),
             // Fixed: confirm password visibility icon toggles correctly
             Obx(() => TextFormField(

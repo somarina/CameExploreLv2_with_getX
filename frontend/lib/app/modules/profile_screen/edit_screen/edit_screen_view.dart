@@ -14,8 +14,10 @@ class EditScreenView extends GetView<EditScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.lightBackgroundColor,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        backgroundColor: AppColors.lightBackgroundColor,
         leading: IconButton(
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
           onPressed: () {
@@ -33,43 +35,87 @@ class EditScreenView extends GetView<EditScreenViewController> {
           crossAxisAlignment: .start,
           children: [
             Center(child: CircleAvatar(radius: 60)),
-            _label(text: "fristName".tr),
-            _textField(controller.firstNameCtrl)
+            _label("fristName".tr),
+            SizedBox(height: 5),
+            _textField(controller.firstNameCtrl),
+            SizedBox(height: 20),
+            _label("lastName".tr),
+            SizedBox(height: 5),
+            _textField(controller.lastNameCtrl),
+            SizedBox(height: 20),
+            _label("email".tr),
+            SizedBox(height: 5),
+            _textField(controller.emailCtrl),
+            SizedBox(height: 20),
+            _label("forgetPWD".tr),
+            SizedBox(height: 5),
+            _textField(controller.forgetPWDCtrl),
+            SizedBox(height: 20),
+            _label("gender".tr),
+            SizedBox(height: 5),
+            Row(
+              children: [
+                Expanded(
+                  child: Obx(
+                    () => _gender(
+                      "Male",
+                      controller.selectedGender.value == "Male",
+                      () => controller.selectGender("Male"),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20),
+                Expanded(
+                  child: Obx(
+                    () => _gender(
+                      "Female",
+                      controller.selectedGender.value == "Female",
+                      () => controller.selectGender("Female"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: _btn(text: "cancel".tr, color: Colors.red),
+                ),
+                SizedBox(width: 20),
+                Expanded(
+                  child: _btn(
+                    text: "save".tr,
+                    color: AppColors.lightPrimaryColor,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _label({required String text}) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.only(top: 15, bottom: 8),
-        child: Text(
-          text,
-          style: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: .bold),
+  Widget _btn({required String text, required Color color}) {
+    return ElevatedButton(
+      onPressed: () {
+        controller.saveProfile();
+      },
+      style: ElevatedButton.styleFrom(backgroundColor: color),
+      child: SizedBox(
+        height: 45,
+        child: Center(
+          child: Text(
+            text,
+            style: GoogleFonts.spaceGrotesk(fontSize: 16, color: Colors.white),
+          ),
         ),
       ),
     );
   }
 
-  Widget _textField(
-    TextEditingController ctrl, {
-    TextInputType keyboard = TextInputType.text,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: ctrl,
-      keyboardType: keyboard,
-      validator: validator,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-    );
-  }
-
-  Widget _gender(String text, bool selected, VoidCallback onTap) {
+  Widget _gender(String gender, bool selected, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -82,11 +128,43 @@ class EditScreenView extends GetView<EditScreenViewController> {
         ),
         child: Row(
           children: [
-            Text(text),
+            Text(gender),
             const Spacer(),
             if (selected)
               const Icon(Icons.circle, size: 10, color: Colors.green),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _label(String text) => Text(
+    text,
+    style: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: .bold),
+  );
+
+  Widget _textField(TextEditingController controller) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: AppColors.lightPrimaryColor, // focus color
+            width: 2,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.red, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.redAccent, width: 2),
         ),
       ),
     );
