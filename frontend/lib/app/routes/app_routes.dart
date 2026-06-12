@@ -19,6 +19,15 @@ abstract class Routes {
   static const EXPLORE_SCREEN = _Paths.EXPLORE_SCREEN;
   static const NEARBY_SCREEN = _Paths.NEARBY_SCREEN;
 
+  static const FORGET_PASSWORD = _Paths.FORGET_PASSWORD;
+  static const REGISTER_SCREEN = _Paths.REGISTER_SCREEN;
+  static const USERPROFILE_SCREEN = _Paths.USERPROFILE_SCREEN;
+  static const EDIT_SCREEN = _Paths.EDIT_SCREEN;
+  static const ABOUTAPP_SCREEN = _Paths.ABOUTAPP_SCREEN;
+  static const HELPSUPPORT_SCREEN = _Paths.HELPSUPPORT_SCREEN;
+  static const FEEDBACK_SCREEN = _Paths.FEEDBACK_SCREEN;
+  static const NOTIFICATION_SCREEN = _Paths.NOTIFICATION_SCREEN;
+  static const SECURITY_SCREEN = _Paths.SECURITY_SCREEN;
 }
 
 abstract class _Paths {
@@ -36,4 +45,13 @@ abstract class _Paths {
   static const FAV_SCREEN_2 = '/fav-screen-2';
   static const EXPLORE_SCREEN = '/explore-screen';
   static const NEARBY_SCREEN = '/nearby-screen';
+  static const FORGET_PASSWORD = '/forget-password';
+  static const REGISTER_SCREEN = '/register-screen';
+  static const USERPROFILE_SCREEN = '/userprofile-screen';
+  static const EDIT_SCREEN = '/edit-screen';
+  static const ABOUTAPP_SCREEN = '/aboutapp-screen';
+  static const HELPSUPPORT_SCREEN = '/helpsupport-screen';
+  static const FEEDBACK_SCREEN = '/feedback-screen';
+  static const NOTIFICATION_SCREEN = '/notification-screen';
+  static const SECURITY_SCREEN = '/security-screen';
 }

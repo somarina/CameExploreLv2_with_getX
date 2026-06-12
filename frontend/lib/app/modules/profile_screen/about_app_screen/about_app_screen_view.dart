@@ -1,0 +1,320 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
+import 'package:frontend/app/core/constants/app_image.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+part 'about_app_screen_binding.dart';
+part 'about_app_screen_controller.dart';
+
+class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
+  const AboutAppScreenView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
+        ),
+        title: Text(
+          "aboutcam".tr,
+          style: GoogleFonts.spaceGrotesk(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Center(
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 15,
+                        spreadRadius: 4,
+                        offset: Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      "assets/images/logo.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              buildContainer2(
+                color: Color(0xFFFFFFFF),
+
+                text: "disAboutApp".tr,
+                icon: Icons.home,
+                iconcolor: AppColors.lightPrimaryColor,
+                backgroundColor: Color(0xFFF3F4F6),
+                title: "aboutApp".tr,
+              ),
+              SizedBox(height: 20),
+              buildImportant(),
+              SizedBox(height: 20),
+              buildContainer(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFF0FDF4), Color(0xFFDCFCE7)],
+                ),
+                text: "sub_goal".tr,
+              ),
+              SizedBox(height: 20),
+              buildVersion(),
+              SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildVersion() {
+    return Container(
+      width: Get.width * 0.35,
+      decoration: BoxDecoration(
+        color: Color(0xFFE4FCEC),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          children: [
+            Icon(Icons.circle, size: 10, color: AppColors.lightPrimaryColor),
+            SizedBox(width: 5),
+            Text(
+              "Version 1.0.0",
+              style: GoogleFonts.kantumruyPro(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildImportant() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 5), // x, y
+          ),
+        ],
+        color: Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+          buildTitle(text: "មុខងារសំខាន់ៗ"),
+          smallContainer(
+            "ស្វែងរកកន្លែងទេសចរណ៍",
+            "Discover tourist attractions",
+            Icons.location_on_outlined,
+          ),
+          SizedBox(height: 20),
+          smallContainer(
+            "ស្វែងយល់ពីប្រទេសកម្ពុជា",
+            "Explore Cambodian",
+            Icons.map_outlined,
+          ),
+          SizedBox(height: 20),
+          smallContainer(
+            "ស្វែងយល់ពីម្ហូបអាហារក្នុងប្រទេសកម្ពុជា",
+            "Explore local food of Cambodia",
+            Icons.restaurant_outlined,
+          ),
+          SizedBox(height: 20),
+          smallContainer(
+            "សិក្សានិងស្វែងយល់ពីវប្បធ៌នៃប្រទេសកម្ពុជា",
+            "Explore Cambodia Culture",
+            Icons.calendar_today,
+          ),
+          SizedBox(height: 20),
+          smallContainer(
+            "រក្សាទុកកន្លែងដែលអ្នកចូលចិត្ត",
+            "Save favorite places",
+            Icons.favorite_outline,
+          ),
+          SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget smallContainer(String text1, String text2, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 1,
+              child: CircleAvatar(
+                backgroundColor: Color(0xFFF0FDF4),
+                child: Icon(icon, color: AppColors.lightPrimaryColor),
+              ),
+            ),
+            SizedBox(width: 20),
+            Expanded(
+              flex: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    text1,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(text2, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildTitle({required String text}) {
+    return Padding(
+      padding:  EdgeInsets.all(20),
+      child: Container(
+        width: 150,
+        height: 40,
+        decoration: BoxDecoration(
+          color: AppColors.lightPrimaryColor,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildContainer2({
+    required Color color,
+    required String text,
+    required IconData icon,
+    required Color iconcolor,
+    required Color backgroundColor,
+    required String title,
+  }) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 5), // x, y
+          ),
+        ],
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7),
+                    color: Color(0xFFDCFCE7),
+                  ),
+
+                  child: Icon(icon, color: iconcolor),
+                ),
+                SizedBox(width: 20),
+                Text(
+                  title,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 5),
+            Text(text, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildContainer({
+    required LinearGradient gradient,
+    required String text,
+  }) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 5), // x, y
+          ),
+        ],
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildTitle(text: "goal".tr),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(text, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
+          ),
+          SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}

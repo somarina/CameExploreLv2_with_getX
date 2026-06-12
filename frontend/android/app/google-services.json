@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "1038064506820",
+    "project_id": "camexplore-f3123",
+    "storage_bucket": "camexplore-f3123.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038064506820:android:7f00dae76edb2acfea7691",
+        "android_client_info": {
+          "package_name": "com.camexplore.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1038064506820-kfjne0oj2m53hqv9h6cpcgqkq8glndr6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.camexplore.app",
+            "certificate_hash": "f5d8c69cb0c98170a2a2923ed7ce9ab980fd4ef9"
+          }
+        },
+        {
+          "client_id": "1038064506820-l6ufdgon4rnh4n82ej6amo3rfee8lrqs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.camexplore.app",
+            "certificate_hash": "9d37180bdef489e85b1a35be920bfd811aaef2e4"
+          }
+        },
+        {
+          "client_id": "1038064506820-tfiojqrdrabj7sv9qqfvacdeb636ot1o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2TbMwIjHnK6UNuflNTwaGg2zf3X0ncIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1038064506820-tfiojqrdrabj7sv9qqfvacdeb636ot1o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1038064506820-3qp0atvhrq8v9utsj6vn5ighl70qofji.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.frontend"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../controllers/onboarding_screen_controller.dart';
 
@@ -15,7 +16,6 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
           children: [
             _buildPageView(),
             _buildSkipButton(),
-
             _buildBottomButton(),
           ],
         ),
@@ -72,19 +72,19 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
             child: Transform.rotate(
               angle: -0.14,
               child: _buildImageCard(
-                "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+                "assets/images/onboard1_3.png",
                 width: 175,
                 height: 245,
               ),
             ),
           ),
           Positioned(
-            right: 28,
+            right: 30,
             top: 70,
             child: Transform.rotate(
               angle: 0.14,
               child: _buildImageCard(
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+                "assets/images/onboard1_2.png",
                 width: 175,
                 height: 245,
               ),
@@ -95,7 +95,7 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
             child: Transform.rotate(
               angle: 0.04,
               child: _buildImageCard(
-                "https://images.unsplash.com/photo-1524492412937-b28074a5d7da",
+                "assets/images/onboard1_1.png",
                 width: 215,
                 height: 250,
               ),
@@ -113,15 +113,15 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
         children: [
           _buildChip(
             "Y2K",
-            top: 70,
-            left: 130,
+            top: 50,
+            left: 100,
             color: Colors.black,
             white: true,
           ),
           _buildChip(
             "Modern",
             top: 42,
-            right: 70,
+            right: 90,
             color: const Color(0xffffdda6),
           ),
           _buildChip("Premium", top: 145, left: 38, color: Colors.white),
@@ -146,17 +146,22 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
             color: Colors.orange,
             white: true,
           ),
-          const Positioned(
-            right: 55,
-            top: 145,
-            child: Text(
-              "☺",
-              style: TextStyle(
-                fontSize: 120,
-                color: Color(0xffF2B705),
-                fontWeight: FontWeight.bold,
-              ),
+          Positioned(
+            right: 40,
+            top: 155,
+            child: Image.asset(
+              "assets/icons/happy_emoji.png",
+              width: 145,
+              height: 145,
             ),
+            // child: Text(
+            //   "☺",
+            //   style: TextStyle(
+            //     fontSize: 120,
+            //     color: Color(0xffF2B705),
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
           ),
         ],
       ),
@@ -311,7 +316,7 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: RichText(
-        text: const TextSpan(
+        text: TextSpan(
           style: TextStyle(
             fontSize: 32,
             height: 1.2,
@@ -320,9 +325,29 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
           ),
           children: [
             TextSpan(text: "ស្វែងរកទី\nកន្លែង "),
-            TextSpan(
-              text: "ប្រវត្តិសាស្រ្ត",
-              style: TextStyle(backgroundColor: Color(0xff28C98B)),
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: ClipPath(
+                clipper: SlantedLabelClipper(),
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: 24, // extra left padding to avoid clip cutting text
+                    right: 28, // extra right padding for the slant
+                    top: 6,
+                    bottom: 6,
+                  ),
+                  color: Color(0xFF28C98B),
+                  child: Text(
+                    "ប្រវត្តិសាស្រ្ត",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ),
             ),
             TextSpan(text: "\nដ៏អស្ចារ្យ !"),
           ],
@@ -375,13 +400,16 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           decoration: BoxDecoration(
             color: const Color(0xff009B45),
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
           ),
-          child: const Text(
-            "skip",
-            style: TextStyle(
+          child: Text(
+            "រំលង",
+            style: GoogleFonts.kantumruyPro(
               color: Colors.white,
-              fontSize: 16,
+              fontSize: 17,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -417,9 +445,9 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
             ),
             child: Text(
               isLast ? "ចាប់ផ្ដើម" : "បន្ត",
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.kantumruyPro(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
               ),
             ),
@@ -452,10 +480,7 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
             offset: const Offset(0, 2),
           ),
         ],
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
+        image: DecorationImage(image: AssetImage(imageUrl), fit: BoxFit.cover),
       ),
     );
   }
@@ -517,10 +542,7 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundImage: NetworkImage(imageUrl),
-          ),
+          CircleAvatar(radius: 24, backgroundImage: NetworkImage(imageUrl)),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -556,4 +578,20 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
       ),
     );
   }
+}
+
+class SlantedLabelClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.moveTo(16, 0);                        // top-left — slant starts here
+    path.lineTo(size.width, 0);                // top-right
+    path.lineTo(size.width - 16, size.height); // bottom-right slant
+    path.lineTo(0, size.height);               // bottom-left straight
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

@@ -9,11 +9,11 @@ class SplashScreenController extends GetxController {
   void onReady() {
     super.onReady();
 
-    Future.delayed(const Duration(seconds: 4), () {
+    Future.delayed(const Duration(seconds: 2), () {
       final seenOnboarding = box.read('seenOnboarding') ?? false;
 
       if (seenOnboarding == true) {
-        Get.offAllNamed(Routes.AUTH_SCREEN);
+        Get.offAllNamed(Routes.LOGIN_SCREEN);
       } else {
         Get.offAllNamed(Routes.ONBOARDING_SCREEN);
       }

@@ -46,7 +46,7 @@ class OnboardingScreenController extends GetxController {
 
   void finishOnboarding() {
     box.write('seenOnboarding', true);
-    Get.offAllNamed(Routes.AUTH_SCREEN);
+    Get.offAllNamed(Routes.LOGIN_SCREEN);
   }
 
   @override

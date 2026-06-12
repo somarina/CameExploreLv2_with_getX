@@ -1,4 +1,4 @@
-package com.example.frontend;
+package com.camexplore.app;
 
 import io.flutter.embedding.android.FlutterActivity;
 
