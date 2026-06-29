@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_controller.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppBottomSheets {
-  static Future<dynamic> showBottomSheet({required String title, required String label, TextEditingController? controller, FocusNode? focusNode, void Function()? onDone}) {
+  static Future<dynamic> showBottomSheet({
+    required String title,
+    required String label,
+    TextEditingController? controller,
+    FocusNode? focusNode,
+    void Function()? onDone,
+  }) {
     return Get.bottomSheet(
       Container(
-        height: Get.height *0.57,
+        height: Get.height * 0.57,
         padding: EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -20,15 +29,53 @@ class AppBottomSheets {
                 children: [
                   GestureDetector(
                     onTap: () => Get.back(),
-                    child: Text("Cancel", style: TextStyle(fontWeight: FontWeight.w500)),
+                    child: Text(
+                      "Cancel".tr,
+                      style: GoogleFonts.googleSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                   Spacer(),
-                  Text(title, style: TextStyle(fontWeight: FontWeight.w500)),
-                  Spacer(),
-                  GestureDetector(
-                    onTap: onDone,
-                    child: Text("Done", style: TextStyle(color: Colors.green, fontWeight: FontWeight.w500)),
+                  Text(
+                    title,
+                    style: GoogleFonts.googleSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                  Spacer(),
+                  Obx(() {
+                    bool canCreate =
+                        Get.isRegistered<FavoriteScreenController>()
+                        ? Get.find<FavoriteScreenController>()
+                              .canCreateList
+                              .value
+                        : false;
+
+                    bool canRename =
+                        Get.isRegistered<FavScreen2ViewController>()
+                        ? Get.find<FavScreen2ViewController>().canRename.value
+                        : false;
+
+                    bool canSubmit = canCreate || canRename;
+
+                    return TextButton(
+                      onPressed: canSubmit ? onDone : null,
+                      child: Text(
+                        "Done".tr,
+                        style: GoogleFonts.googleSans(
+                          fontWeight: canSubmit
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: canSubmit
+                              ? const Color(0xff009A3F)
+                              : Colors.black54,
+                        ),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -42,10 +89,13 @@ class AppBottomSheets {
                 controller: controller,
                 focusNode: focusNode,
                 decoration: InputDecoration(
-                  labelText: label,
+                  labelText: label.tr,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Color(0xff009A3F), width: 1),
+                  ),
+                  labelStyle: GoogleFonts.googleSans(
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
