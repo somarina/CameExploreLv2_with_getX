@@ -13,9 +13,9 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Get.theme.scaffoldBackgroundColor,
+      backgroundColor:Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Get.theme.scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
@@ -23,7 +23,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
         title: Text(
           "terms_conditions".tr,
           style: GoogleFonts.spaceGrotesk(
-            color: Get.theme.colorScheme.secondary,
+            color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -194,7 +194,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                 decoration: BoxDecoration(
                   color: Get.isDarkMode ? null : Colors.white,
                   border: Get.isDarkMode
-                      ? Border.all(color: Get.theme.colorScheme.primary)
+                      ? Border.all(color: Theme.of(context).colorScheme.primary)
                       : null,
                   borderRadius: BorderRadius.circular(20),
                 ),

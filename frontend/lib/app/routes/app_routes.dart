@@ -9,7 +9,7 @@ abstract class Routes {
   static const AR_SCREEN = _Paths.AR_SCREEN;
   static const AUTH_SCREEN = _Paths.AUTH_SCREEN;
   static const BUTTON_NAVBAR = _Paths.BUTTON_NAVBAR;
-  static const DETAIL_SCREEN = _Paths.DETAIL_SCREEN;
+  // static const DETAIL_SCREEN = _Paths.DETAIL_SCREEN;
   static const SEARCH_SCREEN = _Paths.SEARCH_SCREEN;
   static const FAVORITE_SCREEN = _Paths.FAVORITE_SCREEN;
   static const ONBOARDING_SCREEN = _Paths.ONBOARDING_SCREEN;
@@ -32,6 +32,21 @@ abstract class Routes {
   static const THEME_SCREEN = _Paths.THEME_SCREEN;
   static const BOOKING_SCREEN = _Paths.BOOKING_SCREEN;
   static const OTP_SCREEN = _Paths.OTP_SCREEN;
+  static const HOME_SEEALL = _Paths.HOME_SEEALL;
+  static const DETAIL_PLACES = _Paths.DETAIL_SCREEN;
+  static const PACKAGE_DETAIL = _Paths.PACKAGE_DETAIL;
+  static const PACKAGE_CHECKOUT = _Paths.PACKAGE_CHECKOUT;
+  static const ITINERARY = _Paths.ITINERARY;
+  static const HOTEL_DETAIL = _Paths.HOTEL_DETAIL;
+  static const HOTEL_PHOTO = _Paths.HOTEL_PHOTO;
+  static const REVIEW_HOTEL = _Paths.REVIEW_HOTEL;
+  static const WRITE_REVIEW = _Paths.WRITE_REVIEW;
+  static const PACKAGE_REVIEW = _Paths.PACKAGE_REVIEW;
+  static const CHOOSE_ROOM = _Paths.CHOOSE_ROOM;
+  static const GUEST_INFO = _Paths.GUEST_INFO;
+  static const CONFIRM_BOOKING = _Paths.CONFIRM_BOOKING;
+  static const PACKAGE_CF_BOOKING = _Paths.PACKAGE_CF_BOOKING;
+
 }
 
 abstract class _Paths {
@@ -40,7 +55,7 @@ abstract class _Paths {
   static const AR_SCREEN = '/ar-screen';
   static const AUTH_SCREEN = '/auth-screen';
   static const BUTTON_NAVBAR = '/button-navbar';
-  static const DETAIL_SCREEN = '/detail-screen';
+  // static const DETAIL_SCREEN = '/detail-screen';
   static const SEARCH_SCREEN = '/search-screen';
   static const FAVORITE_SCREEN = '/favorite-screen';
   static const ONBOARDING_SCREEN = '/onboarding-screen';
@@ -62,4 +77,19 @@ abstract class _Paths {
   static const THEME_SCREEN = '/theme-screen';
   static const BOOKING_SCREEN = '/booking-screen';
   static const OTP_SCREEN = '/otp-screen';
+  static const HOME_SEEALL = '/home-seeall';
+  static const DETAIL_SCREEN = '/detail-places';
+  static const PACKAGE_DETAIL = '/package-detail';
+  static const PACKAGE_CHECKOUT = '/package-checkout';
+  static const ITINERARY = '/itinerary';
+  static const HOTEL_DETAIL = '/hotel-detail';
+  static const HOTEL_PHOTO = '/hotel-photo';
+  static const REVIEW_HOTEL = '/review-hotel';
+  static const WRITE_REVIEW = '/write-review';
+  static const PACKAGE_REVIEW = '/package-review';
+  static const CHOOSE_ROOM = '/choose-room';
+  static const GUEST_INFO = '/guest-info';
+  static const CONFIRM_BOOKING = '/confirm-booking';
+  static const PACKAGE_CF_BOOKING = '/package-cf-booking';
+
 }

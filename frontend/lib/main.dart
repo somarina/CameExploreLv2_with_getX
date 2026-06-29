@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/auth_services.dart';
 import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/localization/app_translatation.dart';
+import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/firebase_options.dart';
 import 'package:get/get.dart';
@@ -21,6 +22,8 @@ void main() async {
 
   // Heavy init AFTER first frame is visible
   _initServicesInBackground();
+
+  Get.put(ThemeModeViewController());
 }
 
 Future<void> _initServicesInBackground() async {
@@ -133,7 +136,9 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       // routes
-      initialRoute: Routes.SPLASH_SCREEN,
+      // initialRoute: Routes.SPLASH_SCREEN,
+      initialRoute: Routes.HOME_SCREEN,
+      // initialRoute: Routes.USERPROFILE_SCREEN,
       getPages: AppPages.routes,
     );
   }

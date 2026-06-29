@@ -1,7 +1,7 @@
 part of 'theme_mode_view.dart';
 
 class ThemeModeViewController extends GetxController {
-  var isDark = Get.isDarkMode.obs;
+ 
   var box = GetStorage();
 
   void changeTheme(bool dark) async {
@@ -10,6 +10,15 @@ class ThemeModeViewController extends GetxController {
     await box.write("isdark", dark);
 
     Get.changeThemeMode(dark ? .dark : .light);
+  }
+
+  bool getDark(){
+    var isDark = box.read("isdark");
+
+    print("isDark : $isDark");
+
+    return isDark;
+
   }
 
   var selectMode = 0.obs;
@@ -24,7 +33,7 @@ class ThemeModeViewController extends GetxController {
       bool isDarkSaved = box.read("isdark");
       selectMode.value = isDarkSaved ? 1 : 0;
     } else {
-      // 2. Fallback to system status if no preference is saved yet
+
       selectMode.value = Get.isDarkMode ? 1 : 0;
     }
 
