@@ -1,4 +1,6 @@
+import 'package:frontend/app/modules/auth/forget_password/views/confirm_screen.dart';
 import 'package:frontend/app/modules/auth/forget_password/views/otp_screen.dart';
+import 'package:frontend/app/modules/auth/forget_password/views/reset_password_screen.dart';
 import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_binding.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_view.dart';
 import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
@@ -175,11 +177,21 @@ class AppPages {
       name: _Paths.THEME_SCREEN,
       page: () => ThemeModeView(),
       binding: ThemeModeViewBinding(),
-),
+   ),
     GetPage(
       name: _Paths.BOOKING_SCREEN,
       page: () => const BookingScreenView(),
       binding: BookingScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.CONFIRM_PASSWORD,
+      page: () => const ConfirmScreen(),
+      binding: ForgetPasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.RESET_PASSWORD,
+      page: () => const ResetPasswordScreen(),
+      binding: ForgetPasswordBinding(),
     ),
   ];
 }

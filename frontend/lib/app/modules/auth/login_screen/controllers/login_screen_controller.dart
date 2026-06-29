@@ -37,6 +37,9 @@ class LoginScreenController extends GetxController
   static const int shakeDurationMs = 180;
   static const double shakeDistance = 10;
 
+  final isEnglish = Get.locale?.languageCode == "enUS";
+
+
   @override
   void onInit() {
     super.onInit();
@@ -180,7 +183,7 @@ class LoginScreenController extends GetxController
 
       if (response["result"] == true) {
         _saveUser(response["data"]);
-        Get.offAllNamed(Routes.USERPROFILE_SCREEN);
+        Get.offAllNamed(Routes.BUTTON_NAVBAR);
 //         Get.offAllNamed(Routes.BUTTON_NAVBAR);
       } else {
         Get.snackbar(
@@ -227,7 +230,7 @@ class LoginScreenController extends GetxController
         box.write('userRole', data['role'] ?? 'user');
         box.write('isLogin', true);
         box.write('userMode', 'user');
-        Get.offAllNamed(Routes.HOME_SCREEN);
+        Get.offAllNamed(Routes.BUTTON_NAVBAR);
       } else {
         Get.snackbar(
           'Google Login Failed',
@@ -338,7 +341,7 @@ class LoginScreenController extends GetxController
 
   Future<void> continueAsGuest() async {
     box.write('userMode', 'guest');
-    Get.offAllNamed('/button-navigation');
+    Get.offAllNamed(Routes.BUTTON_NAVBAR);
   }
 
   // ── Navigation ────────────────────────────────────────────────────────────

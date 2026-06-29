@@ -32,6 +32,8 @@ abstract class Routes {
   static const THEME_SCREEN = _Paths.THEME_SCREEN;
   static const BOOKING_SCREEN = _Paths.BOOKING_SCREEN;
   static const OTP_SCREEN = _Paths.OTP_SCREEN;
+  static const CONFIRM_PASSWORD = _Paths.CONFIRM_PASSWORD;
+  static const RESET_PASSWORD = _Paths.RESET_PASSWORD;
 }
 
 abstract class _Paths {
@@ -62,4 +64,6 @@ abstract class _Paths {
   static const THEME_SCREEN = '/theme-screen';
   static const BOOKING_SCREEN = '/booking-screen';
   static const OTP_SCREEN = '/otp-screen';
+  static const CONFIRM_PASSWORD = '/ confirm-password';
+  static const RESET_PASSWORD = '/reset-password';
 }

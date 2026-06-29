@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/api/services/auth_services.dart';
@@ -14,6 +15,8 @@ class RegisterScreenController extends GetxController
   final authServices = AuthServices();
 
   final formKey = GlobalKey<FormState>();
+
+  final isEnglish = Get.locale?.languageCode == "enUS";
 
   // ── Text Controllers ──────────────────────────────────────────────────────
   final firstNameController = TextEditingController();
@@ -179,10 +182,12 @@ class RegisterScreenController extends GetxController
     final isValid = formKey.currentState!.validate();
 
     // Shake invalid fields
-    if (firstNameController.text.trim().isEmpty)
+    if (firstNameController.text.trim().isEmpty) {
       firstNameShakeCtrl.forward(from: 0);
-    if (lastNameController.text.trim().isEmpty)
+    }
+    if (lastNameController.text.trim().isEmpty) {
       lastNameShakeCtrl.forward(from: 0);
+    }
     if (emailController.text.trim().isEmpty ||
         !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text.trim())) {
       emailShakeCtrl.forward(from: 0);
@@ -359,8 +364,8 @@ class RegisterScreenController extends GetxController
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                'assets/images/changePWD/change_pwd_success.gif',
+              Lottie.asset(
+                'assets/images/Done.json',
                 width: 130,
                 height: 130,
               ),
@@ -381,7 +386,7 @@ class RegisterScreenController extends GetxController
                 child: ElevatedButton(
                   onPressed: () {
                     Get.back();
-                    Get.offAllNamed('/button-navigation');
+                    Get.offAllNamed(Routes.LOGIN_SCREEN);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF009A3F),
@@ -409,7 +414,7 @@ class RegisterScreenController extends GetxController
   // ── Guest ─────────────────────────────────────────────────────────────────
   void continueAsGuest() {
     box.write('userMode', 'guest');
-    Get.offAllNamed(Routes.HOME_SCREEN);
+    Get.offAllNamed(Routes.BUTTON_NAVBAR);
   }
 
   // ── Navigation ────────────────────────────────────────────────────────────

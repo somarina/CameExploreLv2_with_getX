@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../controllers/forget_password_controller.dart';
 
@@ -8,71 +9,146 @@ class OtpScreen extends GetView<ForgetPasswordController> {
 
   @override
   Widget build(BuildContext context) {
+    final isEnglish = Get.locale?.languageCode == "enUS";
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.otpFocusNodes[0].requestFocus();
+    });
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.only(left: 24, right: 24),
           child: Column(
             children: [
               Row(
                 children: [
-                  IconButton(
-                    onPressed: Get.back,
-                    icon: const Icon(Icons.arrow_back_ios),
+                  InkWell(
+                    onTap: controller.goBack,
+                    borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color(0xff009A3F),
+                          width: 1.2,
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 16,
+                        color: Color(0xff009A3F),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        "otp_title".tr,
+                        style: isEnglish
+                            ? GoogleFonts.spaceGrotesk(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              )
+                            : GoogleFonts.googleSans(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 42, height: 42),
+                ],
+              ),
+              const SizedBox(height: 30),
+
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Text("otp_subtitle".tr, textAlign: TextAlign.center,style: isEnglish? GoogleFonts.spaceGrotesk(): GoogleFonts.googleSans(fontSize: 16),),
+                    ],
                   ),
                 ],
               ),
 
-              SizedBox(height: 30),
-
-              Text(
-                "ផ្ទៀងផ្ទាត់កូដសម្ងាត់",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              SizedBox(height: 30),
-
-              Text(
-                "បញ្ចូល OTP ដែលផ្ញើទៅអ៊ីមែល ឬលេខទូរស័ព្ទរបស់អ្នក",
-                textAlign: TextAlign.center,
-              ),
-
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(
                   6,
-                  (index) => SizedBox(
-                    width: 45,
-                    child: TextField(
-                      controller: controller.otpControllers[index],
-                      focusNode: controller.otpFocusNodes[index],
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      maxLength: 1,
-                      decoration: const InputDecoration(
-                        counterText: "",
-                      ),
-                      onChanged: (value) {
-                        controller.handleOtpInput(index, value);
-                      },
-                    ),
+                  (index) => ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: controller.otpControllers[index],
+                    builder: (context, value, child) {
+                      final isFilled = value.text.isNotEmpty;
+                      return Container(
+                        width: 53,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: isFilled
+                                ? const Color(0xff009A3F)
+                                : Colors.grey,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: controller.otpControllers[index],
+                          focusNode: controller.otpFocusNodes[index],
+                          textAlign: TextAlign.center,
+                          textAlignVertical: TextAlignVertical.center,
+                          keyboardType: TextInputType.number,
+                          maxLength: 2,
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: const InputDecoration(
+                            counterText: "",
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          onChanged: (value) =>
+                              controller.handleOtpInput(index, value),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               Obx(
-                () => Text(
-                  controller.resendSeconds.value > 0
-                      ? "Resend code in 00:${controller.resendSeconds.value.toString().padLeft(2, '0')}"
-                      : "You can resend now",
+                () => GestureDetector(
+                  onTap: controller.onResendTap,
+                  child: Text(
+                    controller.resendSeconds.value > 0
+                        ? "${'resend_in'.tr} ${controller.resendTimerLabel}"
+                        : "resend_now".tr,
+                    style: isEnglish
+                        ? GoogleFonts.spaceGrotesk(
+                            color: controller.resendSeconds.value > 0
+                                ? Colors.grey
+                                : Color(0xff009A3F),
+                            fontSize: 13,
+                          )
+                        : GoogleFonts.googleSans(
+                            color: controller.resendSeconds.value > 0
+                                ? Colors.grey
+                                : Color(0xff009A3F),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            // decoration: controller.resendSeconds.value > 0
+                            //     ? TextDecoration.none
+                            //     : TextDecoration.underline,
+                          ),
+                  ),
                 ),
               ),
 
@@ -80,20 +156,48 @@ class OtpScreen extends GetView<ForgetPasswordController> {
 
               SizedBox(
                 width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: controller.verifyOtp,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff009A3F),
-                  ),
-                  child: Text(
-                    "បន្ត",
-                    style: TextStyle(
-                      color: Colors.white,
+                height: 50,
+                child: Obx(
+                  () => ElevatedButton(
+                    onPressed: controller.isLoading.value
+                        ? null
+                        : controller.verifyOtp,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff009A3F),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
+                    child: controller.isLoading.value
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            "continue".tr,
+                            style: isEnglish
+                                ? GoogleFonts.spaceGrotesk(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  )
+                                : GoogleFonts.kantumruyPro(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                          ),
                   ),
                 ),
               ),
+              
+              SizedBox(height: 10),
+
             ],
           ),
         ),
