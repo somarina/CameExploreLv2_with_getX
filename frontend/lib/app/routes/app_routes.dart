@@ -9,7 +9,7 @@ abstract class Routes {
   static const AR_SCREEN = _Paths.AR_SCREEN;
   static const AUTH_SCREEN = _Paths.AUTH_SCREEN;
   static const BUTTON_NAVBAR = _Paths.BUTTON_NAVBAR;
-  static const DETAIL_SCREEN = _Paths.DETAIL_SCREEN;
+  // static const DETAIL_SCREEN = _Paths.DETAIL_SCREEN;
   static const SEARCH_SCREEN = _Paths.SEARCH_SCREEN;
   static const FAVORITE_SCREEN = _Paths.FAVORITE_SCREEN;
   static const ONBOARDING_SCREEN = _Paths.ONBOARDING_SCREEN;
@@ -32,6 +32,8 @@ abstract class Routes {
   static const THEME_SCREEN = _Paths.THEME_SCREEN;
   static const BOOKING_SCREEN = _Paths.BOOKING_SCREEN;
   static const OTP_SCREEN = _Paths.OTP_SCREEN;
+  static const CONFIRM_PASSWORD = _Paths.CONFIRM_PASSWORD;
+  static const RESET_PASSWORD = _Paths.RESET_PASSWORD;
 }
 
 abstract class _Paths {
@@ -40,7 +42,7 @@ abstract class _Paths {
   static const AR_SCREEN = '/ar-screen';
   static const AUTH_SCREEN = '/auth-screen';
   static const BUTTON_NAVBAR = '/button-navbar';
-  static const DETAIL_SCREEN = '/detail-screen';
+  // static const DETAIL_SCREEN = '/detail-screen';
   static const SEARCH_SCREEN = '/search-screen';
   static const FAVORITE_SCREEN = '/favorite-screen';
   static const ONBOARDING_SCREEN = '/onboarding-screen';
@@ -62,4 +64,6 @@ abstract class _Paths {
   static const THEME_SCREEN = '/theme-screen';
   static const BOOKING_SCREEN = '/booking-screen';
   static const OTP_SCREEN = '/otp-screen';
+  static const CONFIRM_PASSWORD = '/ confirm-password';
+  static const RESET_PASSWORD = '/reset-password';
 }

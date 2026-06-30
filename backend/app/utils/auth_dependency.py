@@ -26,4 +26,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
+    # Carry the active_role from the JWT onto the user dict
+    # so endpoints can check "which hat" this session is using.
+    user["active_role"] = payload.get("active_role")
+
     return user

@@ -10,3 +10,4 @@ httpx
 twilio
 cloudinary
 rich
+resend 

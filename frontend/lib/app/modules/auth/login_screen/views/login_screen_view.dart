@@ -16,13 +16,14 @@ class LoginScreenView extends GetView<LoginScreenController> {
     final topPad = keyboardOpen ? 8.0 : 0.0;
 
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      // backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: AnimatedPadding(
-            duration: const Duration(milliseconds: 200),
+            duration: Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             padding: EdgeInsets.only(top: topPad),
             child: Padding(
@@ -72,7 +73,6 @@ class LoginScreenView extends GetView<LoginScreenController> {
       height: keyboardOpen
           ? MediaQuery.of(context).size.height * 0.18
           : MediaQuery.of(context).size.height * 0.32,
-      // child: Image.asset("assets/icons/login_icon.png", fit: BoxFit.contain),
       child: Lottie.asset("assets/icons/Login_image.json", fit: BoxFit.contain),
     );
   }
@@ -80,17 +80,20 @@ class LoginScreenView extends GetView<LoginScreenController> {
   Widget _buildTitle() {
     return Text(
       "Login".tr,
-      // style: GoogleFonts.spaceGrotesk(
-      //   fontSize: 30,
-      //   fontWeight: FontWeight.bold,
-      //   color: Colors.black,
-      // ),
-      style: GoogleFonts.kantumruyPro(
-        fontSize: 26,
-        fontWeight: FontWeight.bold,
+      style: controller.isEnglish
+          ? GoogleFonts.spaceGrotesk( 
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              // color: Colors.black,
+              color: Get.theme.colorScheme.onSurface,
+            )
+          : GoogleFonts.googleSans(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
 
-        color: Colors.black,
-      ),
+              // color: Colors.black,
+              color: Get.theme.colorScheme.onSurface,
+            ),
     );
   }
 
@@ -133,7 +136,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
         Text("Password".tr, style: _generalStyle()),
         SizedBox(height: 10),
         _buildPasswordField(),
-        // SizedBox(height: 8),
+        SizedBox(height: 10),
         _buildForgotPassword(),
         SizedBox(height: 20),
         _buildMainButtonsRow(),
@@ -185,7 +188,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
         SizedBox(width: 20),
         Text(
           "Or".tr,
-          style: GoogleFonts.kantumruyPro(
+          style: GoogleFonts.googleSans(
             fontSize: 20,
             fontWeight: .w500,
             color: Colors.grey,
@@ -216,10 +219,10 @@ class LoginScreenView extends GetView<LoginScreenController> {
         validator: (value) {
           final v = (value ?? '').trim();
 
-          if (v.isEmpty) return "សូមបញ្ចូលអ៊ីម៉ែល";
+          if (v.isEmpty) return "Please enter an email".tr;
 
           if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
-            return "អ៊ីម៉ែលមិនត្រឹមត្រូវ";
+            return "Invalid Email".tr;
           }
 
           return null;
@@ -245,10 +248,10 @@ class LoginScreenView extends GetView<LoginScreenController> {
         validator: (value) {
           final v = (value ?? '').trim();
 
-          if (v.isEmpty) return "សូមបញ្ចូលលេខទូរស័ព្ទ";
+          if (v.isEmpty) return "Please enter the phone number".tr;
 
           if (!RegExp(r'^\d{8,10}$').hasMatch(v)) {
-            return "លេខទូរស័ព្ទមិនត្រឹមត្រូវ";
+            return "Invalid telephone number".tr;
           }
 
           return null;
@@ -275,17 +278,18 @@ class LoginScreenView extends GetView<LoginScreenController> {
         validator: (value) {
           final v = (value ?? '').trim();
 
-          if (v.isEmpty) return "សូមបញ្ចូលពាក្យសម្ងាត់";
+          if (v.isEmpty) return "Please enter a password".tr;
 
-          if (v.length < 8) return "ពាក្យសម្ងាត់យ៉ាងតិច 8 តួ";
+          if (v.length < 8) return "Password at least 8 characters".tr;
 
-          if (!RegExp(r'[a-zA-Z]').hasMatch(v)) return "មានអក្សរយ៉ាងតិចមួយ";
+          if (!RegExp(r'[a-zA-Z]').hasMatch(v))
+            return "Contains at least one character".tr;
 
-          if (!RegExp(r'[0-9]').hasMatch(v)) return "មានលេខយ៉ាងតិចមួយ";
+          if (!RegExp(r'[0-9]').hasMatch(v))
+            return "Have at least one number".tr;
 
           // if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(v))
           //   return "មានសញ្ញាពិសេសយ៉ាងតិចមួយ";
-
           return null;
         },
         decoration:
@@ -314,13 +318,9 @@ class LoginScreenView extends GetView<LoginScreenController> {
         Obx(
           () => GestureDetector(
             onTap: controller.toggleRememberMe,
-            
             child: Row(
-              
               children: [
-                
                 AnimatedContainer(
-                
                   duration: Duration(milliseconds: 200),
                   width: 20,
                   height: 20,
@@ -340,12 +340,18 @@ class LoginScreenView extends GetView<LoginScreenController> {
                 ),
                 SizedBox(width: 10),
                 Text(
-                  "ចងចាំខ្ញុំ",
-                  style: GoogleFonts.kantumruyPro(
-                    color: AppColors.lightPrimaryColor,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  "Remember me".tr,
+                  style: controller.isEnglish
+                      ? GoogleFonts.spaceGrotesk(
+                          color: AppColors.lightPrimaryColor,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                        )
+                      : GoogleFonts.googleSans(
+                          color: AppColors.lightPrimaryColor,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                        ),
                 ),
               ],
             ),
@@ -356,12 +362,18 @@ class LoginScreenView extends GetView<LoginScreenController> {
         GestureDetector(
           onTap: controller.goToForgotPassword,
           child: Text(
-            "ភ្លេចពាក្យសម្ងាត់?",
-            style: GoogleFonts.kantumruyPro(
-              color: Color(0xffE7000B),
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            "forgotten password?".tr,
+            style: controller.isEnglish
+                ? GoogleFonts.spaceGrotesk(
+                    color: Color(0xffE7000B),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  )
+                : GoogleFonts.googleSans(
+                    color: Color(0xffE7000B),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
           ),
         ),
       ],
@@ -402,7 +414,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
                     color: Colors.white,
                   ),
                 )
-              : Text(key: ValueKey('text'), "ចូលគណនី", style: _buttonStyle()),
+              : Text(key: ValueKey('text'), "Log in".tr, style: _buttonStyle()),
         ),
       ),
     );
@@ -417,7 +429,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
         elevation: 0,
       ),
-      child: Text("បន្តជាភ្ញៀវ", style: _buttonStyle()),
+      child: Text("Continue as a guest".tr, style: _buttonStyle()),
     );
   }
 
@@ -426,18 +438,26 @@ class LoginScreenView extends GetView<LoginScreenController> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "មិនមានគណនីមែនទេ?",
-          style: GoogleFonts.kantumruyPro(
-            fontSize: 18,
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-          ),
+          "Don't have an account?".tr,
+          style: controller.isEnglish
+              ? GoogleFonts.spaceGrotesk(
+                  fontSize: 18,
+                  // color: Colors.black,
+                  color: Get.theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.normal,
+                )
+              : GoogleFonts.googleSans(
+                  fontSize: 18,
+                  // color: Colors.black,
+                  color: Get.theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.normal,
+                ),
         ),
         SizedBox(width: 10),
         GestureDetector(
           onTap: controller.goToRegister,
           child: Text(
-            "ចុះឈ្មោះ",
+            "Register".tr,
             style: _generalStyle().copyWith(color: AppColors.lightPrimaryColor),
           ),
         ),
@@ -459,27 +479,56 @@ class LoginScreenView extends GetView<LoginScreenController> {
             color: selected ? Colors.white : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Center(child: Text(text, style: _generalStyle())),
+          child: Center(
+            child: Text(
+              text,
+              style: controller.isEnglish
+                  ? GoogleFonts.spaceGrotesk(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      // color: Get.theme.colorScheme.onSurface,
+                    )
+                  : GoogleFonts.googleSans(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      // color: Get.theme.colorScheme.onSurface,
+                    ),
+            ),
+          ),
         ),
       ),
     );
   }
 
   InputDecoration _decoration({required bool hasError}) {
+    final isDark = Get.isDarkMode;
+
     return InputDecoration(
       filled: true,
-      fillColor: Colors.white,
+      fillColor: isDark ? Colors.grey[850] : Colors.white, // ← dark mode color
       contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
-      errorStyle: GoogleFonts.kantumruyPro(
-        color: Colors.red,
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-      ),
+      errorStyle: controller.isEnglish
+          ? GoogleFonts.spaceGrotesk(
+              color: Colors.red,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            )
+          : GoogleFonts.googleSans(
+              color: Colors.red,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
       errorMaxLines: 2,
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
         borderSide: BorderSide(
-          color: hasError ? Colors.red : Color(0xFFE6E6E6),
+          color: hasError
+              ? Colors.red
+              : isDark
+              ? Colors.grey[600]!
+              : Color(0xFFE6E6E6), // ← border too
           width: 2,
         ),
       ),
@@ -492,28 +541,42 @@ class LoginScreenView extends GetView<LoginScreenController> {
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
-        borderSide: const BorderSide(color: Colors.red, width: 1),
+        borderSide: BorderSide(color: Colors.red, width: 1),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
-        borderSide: const BorderSide(color: Colors.red, width: 1.2),
+        borderSide: BorderSide(color: Colors.red, width: 1.2),
       ),
     );
   }
 
   TextStyle _generalStyle() {
-    return GoogleFonts.kantumruyPro(
-      fontSize: 17,
-      fontWeight: FontWeight.w500,
-      color: Colors.black,
-    );
+    return controller.isEnglish
+        ? GoogleFonts.spaceGrotesk(
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+            // color: Colors.black,
+            color: Get.theme.colorScheme.onSurface,
+          )
+        : GoogleFonts.googleSans(
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+            // color: Colors.black,
+            color: Get.theme.colorScheme.onSurface,
+          );
   }
 
   TextStyle _buttonStyle() {
-    return GoogleFonts.kantumruyPro(
-      fontSize: 17,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    );
+    return controller.isEnglish
+        ? GoogleFonts.spaceGrotesk(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          )
+        : GoogleFonts.googleSans(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          );
   }
 }

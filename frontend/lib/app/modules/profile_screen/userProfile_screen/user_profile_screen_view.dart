@@ -19,7 +19,6 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
 
   @override
   Widget build(BuildContext context) {
-     
     return Scaffold(
       backgroundColor: AppColors.lightPrimaryColor,
       body: SingleChildScrollView(
@@ -37,20 +36,19 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
- Widget _container(BuildContext context, {required Widget child}) {
-  return Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      borderRadius: const BorderRadius.vertical(
-        top: Radius.circular(30),
+  Widget _container(BuildContext context, {required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
-    ),
-    child: child,
-  );
-}
+      child: child,
+    );
+  }
 
-  Widget _menuItem({
+  Widget _menuItem(
+    BuildContext context, {
     required String prefix,
     required String title,
     required String suffixIcon,
@@ -60,7 +58,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       height: 50,
       decoration: BoxDecoration(
-        border: Border.all(color: Get.theme.colorScheme.secondary),
+        border: Border.all(color: Theme.of(context).colorScheme.secondary),
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
@@ -71,7 +69,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             width: 24,
             height: 24,
             colorFilter: ColorFilter.mode(
-              Get.theme.colorScheme.primary,
+             Theme.of(context).colorScheme.primary,
               BlendMode.srcIn,
             ),
           ),
@@ -81,7 +79,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             child: Text(
               title,
               style: GoogleFonts.spaceGrotesk(
-                color: Get.theme.colorScheme.secondary,
+                color: Theme.of(context).colorScheme.secondary,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -200,38 +198,45 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
           Get.context!,
           child: Column(
             children: [
-              _language(),
+              _language(Get.context!),
               _menuItem(
+                Get.context!,
                 prefix: AppImage.themeIcon,
                 title: "theme".tr,
                 suffixIcon: AppImage.btnIcon,
               ),
               _menuItem(
+                Get.context!,
                 prefix: AppImage.notificationIcon,
                 title: "notification".tr,
                 suffixIcon: AppImage.btnIcon,
               ),
               _menuItem(
+                Get.context!,
                 prefix: AppImage.securityIcon,
                 title: "security".tr,
                 suffixIcon: AppImage.btnIcon,
               ),
               _menuItem(
+                Get.context!,
                 prefix: AppImage.feedbackIcon,
                 title: "feedback".tr,
                 suffixIcon: AppImage.btnIcon,
               ),
               _menuItem(
+                Get.context!,
                 prefix: AppImage.conditionIcon,
                 title: "condition".tr,
                 suffixIcon: AppImage.btnIcon,
               ),
               _menuItem(
+                Get.context!,
                 prefix: AppImage.abouAppIcon,
                 title: "app".tr,
                 suffixIcon: AppImage.btnIcon,
               ),
               _menuItem(
+                Get.context!,
                 prefix: AppImage.developerIcon,
                 title: "developer".tr,
                 suffixIcon: AppImage.btnIcon,
@@ -243,13 +248,13 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
-  Widget _language() {
+  Widget _language(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.symmetric(horizontal: 16),
       height: 50,
       decoration: BoxDecoration(
-        border: Border.all(color: Get.theme.colorScheme.secondary),
+        border: Border.all(color: Theme.of(context).colorScheme.secondary),
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
@@ -260,7 +265,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             width: 24,
             height: 24,
             colorFilter: ColorFilter.mode(
-              Get.theme.colorScheme.primary,
+              Theme.of(context).colorScheme.primary,
               BlendMode.srcIn,
             ),
           ),
@@ -270,6 +275,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             child: Text(
               "language".tr,
               style: GoogleFonts.spaceGrotesk(
+                color: Theme.of(context).colorScheme.secondary,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -293,30 +299,30 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                     Text(
                       "Language",
                       style: GoogleFonts.spaceGrotesk(
-                        color: Get.theme.colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 16,
                         fontWeight: .bold,
                       ),
                     ),
                     SizedBox(height: 5),
                     _languageItem(
+                      Get.context!,
                       text: "Khmer",
                       image: AppImage.khmerImage,
                       onTap: () {
                         controller.updateLocale("khmer");
 
-
-
-                         Get.back();
+                        Get.back();
                       },
                     ),
                     SizedBox(height: 5),
                     _languageItem(
+                      Get.context!,
                       text: "English",
                       image: AppImage.englishImage,
                       onTap: () {
                         controller.updateLocale("enUS");
-                         Get.back();
+                        Get.back();
                       },
                     ),
                   ],
@@ -333,7 +339,9 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
-  Widget _languageItem({
+  Widget _languageItem(
+    BuildContext context, {
+
     required String text,
     required String image,
     required VoidCallback onTap,
@@ -344,7 +352,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.green, width: 2),
+          border: Border.all(color:Theme.of(context).colorScheme.primary, width: 2),
           // border: Border.all(
           //   color: isActive ? Get.theme.colorScheme.primary : Colors.grey,
           //   width: isActive ? 2 : 1,
@@ -355,7 +363,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             Text(
               text,
               style: GoogleFonts.spaceGrotesk(
-                color: Get.theme.colorScheme.secondary,
+                color: Theme.of(context).colorScheme.secondary,
                 fontSize: 16,
               ),
             ),
@@ -496,7 +504,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
         ),
         SizedBox(height: 20),
         _container(
-         context,
+          context,
           child: Column(
             children: [
               GestureDetector(
@@ -504,21 +512,23 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                   Get.toNamed(Routes.CHANGEPWD_SCREEN);
                 },
                 child: _menuItem(
+                  Get.context!,
                   prefix: AppImage.themeIcon,
                   title: "cpwd".tr,
                   suffixIcon: AppImage.btnIcon,
                 ),
               ),
-              _language(),
+              _language(context),
 
               GestureDetector(
                 onTap: () async {
-                await  Get.toNamed(Routes.THEME_SCREEN);
-                    
+                  await Get.toNamed(Routes.THEME_SCREEN);
+
                   // controller.changeTheme(ThemeMode.dark);
                   // Get.changeThemeMode(.dark);
                 },
                 child: _menuItem(
+                  Get.context!,
                   prefix: AppImage.themeIcon,
                   title: "theme".tr,
                   suffixIcon: AppImage.btnIcon,
@@ -529,6 +539,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                   Get.toNamed(Routes.NOTIFICATION_SCREEN);
                 },
                 child: _menuItem(
+                  Get.context!,
                   prefix: AppImage.notificationIcon,
                   title: "notification".tr,
                   suffixIcon: AppImage.btnIcon,
@@ -539,6 +550,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                   Get.toNamed(Routes.SECURITY_SCREEN);
                 },
                 child: _menuItem(
+                  Get.context!,
                   prefix: AppImage.securityIcon,
                   title: "security".tr,
                   suffixIcon: AppImage.btnIcon,
@@ -549,6 +561,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                   Get.toNamed(Routes.FEEDBACK_SCREEN);
                 },
                 child: _menuItem(
+                  Get.context!,
                   prefix: AppImage.feedbackIcon,
                   title: "feedback".tr,
                   suffixIcon: AppImage.btnIcon,
@@ -559,6 +572,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                   Get.toNamed(Routes.HELPSUPPORT_SCREEN);
                 },
                 child: _menuItem(
+                  Get.context!,
                   prefix: AppImage.conditionIcon,
                   title: "condition".tr,
                   suffixIcon: AppImage.btnIcon,
@@ -569,12 +583,14 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                   Get.toNamed(Routes.ABOUTAPP_SCREEN);
                 },
                 child: _menuItem(
+                  Get.context!,
                   prefix: AppImage.abouAppIcon,
                   title: "app".tr,
                   suffixIcon: AppImage.btnIcon,
                 ),
               ),
               _menuItem(
+                Get.context!,
                 prefix: AppImage.developerIcon,
                 title: "developer".tr,
                 suffixIcon: AppImage.btnIcon,
@@ -591,7 +607,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         minimumSize: Size(double.infinity, 45),
-        backgroundColor:Theme.of(context).colorScheme.tertiary,
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
         // foregroundColor: Theme.of(context).colorScheme.secondary,
       ),
       onPressed: () {

@@ -20,7 +20,8 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
         leading: IconButton(
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
           onPressed: () {
-            Get.back(result: controller.isDark.value);
+            // Get.back(result: controller.isDark.value);
+            Get.back();
           },
         ),
         title: Text(
@@ -51,7 +52,6 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
                     GestureDetector(
                       onTap: () {
                         controller.changeTheme(false);
-
                       },
                       child: Column(
                         children: [
@@ -59,14 +59,15 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
                           const SizedBox(height: 8),
                           const Text("Light"),
                           const SizedBox(height: 8),
-                           controller.selectMode.value == 0? SvgPicture.asset(
-                              AppImage.doneIcon,
-                              colorFilter: ColorFilter.mode(
-                                Get.theme.colorScheme.primary,
-                                BlendMode.srcIn,
-                              ),
-                            ) : SizedBox(),
-                          
+                          controller.selectMode.value == 0
+                              ? SvgPicture.asset(
+                                  AppImage.doneIcon,
+                                  colorFilter: ColorFilter.mode(
+                                    Get.theme.colorScheme.primary,
+                                    BlendMode.srcIn,
+                                  ),
+                                )
+                              : SizedBox(),
                         ],
                       ),
                     ),
@@ -81,14 +82,15 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
                           Text("Dark"),
                           SizedBox(height: 8),
 
-                        controller.selectMode.value == 1? SvgPicture.asset(
-                              AppImage.doneIcon,
-                              colorFilter: ColorFilter.mode(
-                                Get.theme.colorScheme.primary,
-                                BlendMode.srcIn,
-                              ),
-                            ) : SizedBox(),
-                          
+                          controller.selectMode.value == 1
+                              ? SvgPicture.asset(
+                                  AppImage.doneIcon,
+                                  colorFilter: ColorFilter.mode(
+                                    Get.theme.colorScheme.primary,
+                                    BlendMode.srcIn,
+                                  ),
+                                )
+                              : SizedBox(),
                         ],
                       ),
                     ),

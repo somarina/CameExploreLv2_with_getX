@@ -1,6 +1,18 @@
+import 'package:frontend/app/modules/auth/forget_password/views/confirm_screen.dart';
 import 'package:frontend/app/modules/auth/forget_password/views/otp_screen.dart';
+import 'package:frontend/app/modules/auth/forget_password/views/reset_password_screen.dart';
 import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_binding.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_view.dart';
+import 'package:frontend/app/modules/home_see_all_screen/home_see_all_screen_view.dart';
+import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_photo/hotel_detail_photo_view.dart';
+import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_screen_view.dart';
+import 'package:frontend/app/modules/hotel_detail_screen/reviews_hotel_screen/reviews_hotel_screen_view.dart';
+import 'package:frontend/app/modules/hotel_write_review/hotel_write_review_view.dart';
+import 'package:frontend/app/modules/itinerary_screen/itinerary_screen_view.dart';
+import 'package:frontend/app/modules/package_checkout_screen/package_cf_booking/package_cf_booking_view.dart';
+import 'package:frontend/app/modules/package_checkout_screen/package_checkout_screen_view.dart';
+import 'package:frontend/app/modules/package_detail_screen/package_detail_screen_view.dart';
+import 'package:frontend/app/modules/package_write_review/package_write_review_view.dart';
 import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_binding.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_view.dart';
@@ -26,8 +38,6 @@ import '../modules/booking_screen/bindings/booking_screen_binding.dart';
 import '../modules/booking_screen/views/booking_screen_view.dart';
 import '../modules/button_navbar/bindings/button_navbar_binding.dart';
 import '../modules/button_navbar/views/button_navbar_view.dart';
-import '../modules/detail_screen/bindings/detail_screen_binding.dart';
-import '../modules/detail_screen/views/detail_screen_view.dart';
 import '../modules/discover_screen/explore_screen/explore_screen_view.dart';
 import '../modules/discover_screen/nearby_screen/nearby_screen_binding.dart';
 import '../modules/discover_screen/nearby_screen/nearby_screen_view.dart';
@@ -70,11 +80,11 @@ class AppPages {
       page: () => const ButtonNavbarView(),
       binding: ButtonNavbarBinding(),
     ),
-    GetPage(
-      name: _Paths.DETAIL_SCREEN,
-      page: () => const DetailScreenView(),
-      binding: DetailScreenBinding(),
-    ),
+    // GetPage(
+    //   name: _Paths.DETAIL_SCREEN,
+    //   page: () => const DetailScreenView(),
+    //   binding: DetailScreenBinding(),
+    // ),
     GetPage(
       name: _Paths.SEARCH_SCREEN,
       page: () => const SearchScreenView(),
@@ -115,7 +125,7 @@ class AppPages {
       name: _Paths.NEARBY_SCREEN,
       page: () => NearbyScreenView(),
       binding: NearbyScreenBinding(),
-   ),
+    ),
     GetPage(
       name: _Paths.FORGET_PASSWORD,
       page: () => const ForgetPasswordView(),
@@ -175,11 +185,21 @@ class AppPages {
       name: _Paths.THEME_SCREEN,
       page: () => ThemeModeView(),
       binding: ThemeModeViewBinding(),
-),
+   ),
     GetPage(
       name: _Paths.BOOKING_SCREEN,
       page: () => const BookingScreenView(),
       binding: BookingScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.CONFIRM_PASSWORD,
+      page: () => const ConfirmScreen(),
+      binding: ForgetPasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.RESET_PASSWORD,
+      page: () => const ResetPasswordScreen(),
+      binding: ForgetPasswordBinding(),
     ),
   ];
 }

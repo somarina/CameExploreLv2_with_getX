@@ -15,13 +15,15 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
     final keyboardOpen = keyboard > 0;
     // ignore: unused_local_variable
     final topPad = keyboardOpen ? 8.0 : 0.0;
+
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      // backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 22),
             child: Obx(
               () => Form(
                 key: controller.formKey,
@@ -29,26 +31,30 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                     ? AutovalidateMode.onUserInteraction
                     : AutovalidateMode.disabled,
                 child: SingleChildScrollView(
-                  child: Column(
+                  child: Column( 
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
                         child: Lottie.asset(
                           'assets/icons/register_screen_animation.json',
                           height: keyboardOpen
-          ? MediaQuery.of(context).size.height * 0.18
-          : MediaQuery.of(context).size.height * 0.32,
+                              ? MediaQuery.of(context).size.height * 0.18
+                              : MediaQuery.of(context).size.height * 0.32,
                           fit: BoxFit.contain,
                         ),
                       ),
-                      SizedBox(height: 8),
                       Center(
                         child: Text(
-                          'ចុះឈ្មោះ',
-                          style: GoogleFonts.kantumruyPro(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          "Register".tr,
+                          style: controller.isEnglish
+                              ? GoogleFonts.spaceGrotesk(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w700,
+                                )
+                              : GoogleFonts.googleSans(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w700,
+                                ),
                         ),
                       ),
                       SizedBox(height: 16),
@@ -58,65 +64,70 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                         animation: controller.firstNameShake,
                         child: _buildInput(
                           ctrl: controller.firstNameController,
-                          hintText: 'នាមត្រកូល',
+                          hintText: 'last name'.tr,
                           validator: controller.validateFirstName,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 16),
 
                       // ── Last Name ──────────────────────────────────────
                       _ShakeField(
                         animation: controller.lastNameShake,
                         child: _buildInput(
                           ctrl: controller.lastNameController,
-                          hintText: 'នាមខ្លួន',
+                          hintText: "First Name".tr,
                           validator: controller.validateLastName,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 16),
 
                       // ── Gender ─────────────────────────────────────────
                       Text(
-                        'ភេទ',
-                        style: GoogleFonts.kantumruyPro(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        "Gender".tr,
+                        style: controller.isEnglish
+                            ? GoogleFonts.spaceGrotesk(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              )
+                            : GoogleFonts.googleSans(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
                       ),
                       SizedBox(height: 10),
                       _buildGender(),
-                      SizedBox(height: 10),
+                      SizedBox(height: 16),
 
                       // ── Email ──────────────────────────────────────────
                       _ShakeField(
                         animation: controller.emailShake,
                         child: _buildInput(
                           ctrl: controller.emailController,
-                          hintText: 'អ៊ីម៉ែល',
+                          hintText: "E-mail".tr,
                           keyboardType: TextInputType.emailAddress,
                           validator: controller.validateEmail,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 16),
 
                       // ── Phone ──────────────────────────────────────────
                       _ShakeField(
                         animation: controller.phoneShake,
                         child: _buildInput(
                           ctrl: controller.phoneController,
-                          hintText: 'លេខទូរស័ព្ទ',
+                          hintText: "Phone Number".tr,
                           keyboardType: TextInputType.phone,
                           validator: controller.validatePhone,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 16),
                       // ── Password ───────────────────────────────────────
                       _ShakeField(
                         animation: controller.passwordShake,
                         child: Obx(
                           () => _buildPasswordField(
                             ctrl: controller.passwordController,
-                            hintText: 'ពាក្យសម្ងាត់',
+                            hintText: "Password".tr,
                             hide: controller.hidePassword.value,
                             toggle: controller.togglePassword,
                             validator: controller.validatePassword,
@@ -130,7 +141,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                           controller.submitted.value,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 16),
 
                       // ── Confirm Password ───────────────────────────────
                       _ShakeField(
@@ -138,14 +149,14 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                         child: Obx(
                           () => _buildPasswordField(
                             ctrl: controller.confirmPasswordController,
-                            hintText: 'បញ្ជាក់ពាក្យសម្ងាត់',
+                            hintText: "Confirm Password".tr,
                             hide: controller.hideConfirmPassword.value,
                             toggle: controller.toggleConfirmPassword,
                             validator: controller.validateConfirmPassword,
                           ),
                         ),
                       ),
-                      SizedBox(height: 14),
+                      // SizedBox(height: 10),
 
                       // ── Checkbox ───────────────────────────────────────
                       Obx(
@@ -168,24 +179,34 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                                 runSpacing: 2,
                                 children: [
                                   Text(
-                                    'ខ្ញុំបានអាន',
-                                    style: GoogleFonts.kantumruyPro(
-                                      fontSize: 13,
-                                    ),
+                                    "I have read".tr,
+                                    style: controller.isEnglish
+                                        ? GoogleFonts.spaceGrotesk(
+                                            fontSize: 13,
+                                            // fontWeight: FontWeight.w700,
+                                            // color: Colors.black,
+                                          )
+                                        : GoogleFonts.googleSans(fontSize: 13),
                                   ),
                                   Text(
-                                    'យល់ព្រម​ & ចូលរួម',
-                                    style: GoogleFonts.kantumruyPro(
-                                      fontSize: 13,
-                                      color: AppColors.lightPrimaryColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                    "Agree & Attend".tr,
+                                    style: controller.isEnglish
+                                        ? GoogleFonts.spaceGrotesk(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.lightPrimaryColor,
+                                          )
+                                        : GoogleFonts.googleSans(
+                                            fontSize: 13,
+                                            color: AppColors.lightPrimaryColor,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                   ),
                                   Text(
-                                    'ហើយខ្ញុំទទួលយក',
-                                    style: GoogleFonts.kantumruyPro(
-                                      fontSize: 13,
-                                    ),
+                                    "And I accept it".tr,
+                                    style: controller.isEnglish
+                                        ? GoogleFonts.spaceGrotesk(fontSize: 13)
+                                        : GoogleFonts.googleSans(fontSize: 13),
                                   ),
                                 ],
                               ),
@@ -214,19 +235,27 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'មានគណនីរួចហើយ?',
-                            style: GoogleFonts.kantumruyPro(fontSize: 16),
+                            "Have an account already?".tr,
+                            style: controller.isEnglish
+                                ? GoogleFonts.spaceGrotesk(fontSize: 16)
+                                : GoogleFonts.googleSans(fontSize: 16),
                           ),
                           SizedBox(width: 10),
                           GestureDetector(
                             onTap: controller.goToLogin,
                             child: Text(
-                              'ចូលគណនី',
-                              style: GoogleFonts.kantumruyPro(
-                                fontSize: 16,
-                                color: AppColors.lightPrimaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              "Login".tr,
+                              style: controller.isEnglish
+                                  ? GoogleFonts.spaceGrotesk(
+                                      fontSize: 16,
+                                      color: AppColors.lightPrimaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    )
+                                  : GoogleFonts.googleSans(
+                                      fontSize: 16,
+                                      color: AppColors.lightPrimaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                             ),
                           ),
                         ],
@@ -279,8 +308,8 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
         ),
         SizedBox(width: 20),
         Text(
-          "ឬ",
-          style: GoogleFonts.kantumruyPro(
+          "Or".tr,
+          style: GoogleFonts.googleSans(
             fontSize: 20,
             fontWeight: .w500,
             color: Colors.grey,
@@ -312,9 +341,9 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!has8) _hintRow('យ៉ាងតិច 8 តួអក្សរ', has8),
-          if (!hasLetter) _hintRow('មានអក្សរយ៉ាងតិច 1', hasLetter),
-          if (!hasNumber) _hintRow('មានលេខយ៉ាងតិច 1', hasNumber),
+          if (!has8) _hintRow("At least 8 characters".tr, has8),
+          if (!hasLetter) _hintRow("At least one letter".tr, hasLetter),
+          if (!hasNumber) _hintRow("At least one number".tr, hasNumber),
         ],
       ),
     );
@@ -333,11 +362,17 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
           SizedBox(width: 6),
           Text(
             text,
-            style: GoogleFonts.kantumruyPro(
-              fontSize: 12,
-              color: passed ? Colors.green : Colors.red,
-              fontWeight: FontWeight.w500,
-            ),
+            style: controller.isEnglish
+                ? GoogleFonts.spaceGrotesk(
+                    fontSize: 12,
+                    color: passed ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.w500,
+                  )
+                : GoogleFonts.googleSans(
+                    fontSize: 12,
+                    color: passed ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.w500,
+                  ),
           ),
         ],
       ),
@@ -349,9 +384,9 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
     return Obx(
       () => Row(
         children: [
-          _buildGenderItem('ប្រុស'),
+          _buildGenderItem('male'.tr),
           SizedBox(width: 10),
-          _buildGenderItem('ស្រី'),
+          _buildGenderItem('female'.tr),
         ],
       ),
     );
@@ -363,10 +398,10 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
       child: InkWell(
         onTap: () => controller.selectGender(value),
         child: Container(
-          height: 45,
+          height: 50,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: isSelected ? Colors.black : Colors.grey),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: isSelected ? AppColors.lightPrimaryColor : Colors.grey,width: 2),
           ),
           child: Row(
             children: [
@@ -374,13 +409,24 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                 padding: const EdgeInsets.only(left: 20),
                 child: Text(
                   value,
-                  style: GoogleFonts.kantumruyPro(
-                    fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                  ),
+                  style: controller.isEnglish
+                      ? GoogleFonts.spaceGrotesk(
+                          fontSize: 16,
+                          fontWeight: isSelected
+                              ? .bold
+                              : FontWeight.w400,
+                    color: isSelected ? Colors.black : Colors.grey.shade400,
+                        )
+                      : GoogleFonts.googleSans(
+                          fontSize: 16,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                    color: isSelected ? Colors.black : Colors.grey.shade400,
+                        ),
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               Icon(
                 isSelected
                     ? Icons.radio_button_checked
@@ -426,12 +472,18 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                     ),
                   )
                 : Text(
-                    'ចុះឈ្មោះ',
-                    style: GoogleFonts.kantumruyPro(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
+                    'Register'.tr,
+                    style: controller.isEnglish
+                        ? GoogleFonts.spaceGrotesk(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          )
+                        : GoogleFonts.kantumruyPro(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
                   ),
           ),
         ),
@@ -453,20 +505,26 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
           child: ElevatedButton(
             onPressed: controller.continueAsGuest,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6D6D6D),
-              minimumSize: const Size(double.infinity, 52),
+              backgroundColor: Color(0xFF6D6D6D),
+              minimumSize: Size(double.infinity, 52),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(26),
               ),
               elevation: 0,
             ),
             child: Text(
-              'បន្តជាភ្ញៀវ',
-              style: GoogleFonts.kantumruyPro(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+              'Continue as a guest'.tr,
+              style: controller.isEnglish
+                  ? GoogleFonts.spaceGrotesk(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    )
+                  : GoogleFonts.kantumruyPro(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
             ),
           ),
         ),
@@ -513,40 +571,47 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
   }
 
   InputDecoration _inputDecoration({
-    required String hintText,
-    Widget? suffixIcon,
-  }) {
-    return InputDecoration(
-      hintText: hintText,
-      hintStyle: GoogleFonts.kantumruyPro(color: Colors.grey),
-      suffixIcon: suffixIcon,
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-      errorStyle: GoogleFonts.kantumruyPro(
-        color: Colors.red,
-        fontSize: 13,
-        fontWeight: FontWeight.w500,
+  required String hintText,
+  Widget? suffixIcon,
+}) {
+  final isDark = Get.isDarkMode;
+
+  return InputDecoration(
+    hintText: hintText,
+    hintStyle: controller.isEnglish
+        ? GoogleFonts.spaceGrotesk(color: Colors.grey)
+        : GoogleFonts.googleSans(color: Colors.grey),
+    suffixIcon: suffixIcon,
+    filled: true,
+    fillColor: isDark ? Colors.grey[850] : Colors.white,  // ← fix
+    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+    errorStyle: controller.isEnglish
+        ? GoogleFonts.spaceGrotesk(
+            color: Colors.red, fontSize: 13, fontWeight: FontWeight.w500)
+        : GoogleFonts.googleSans(
+            color: Colors.red, fontSize: 13, fontWeight: FontWeight.w500),
+    errorMaxLines: 2,
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(
+        color: isDark ? Colors.grey[600]! : Color(0xFFE6E6E6),  // ← fix
+        width: 2,
       ),
-      errorMaxLines: 2,
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: const BorderSide(color: Color(0xFFE6E6E6), width: 2),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide(color: AppColors.lightPrimaryColor, width: 1.2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: const BorderSide(color: Colors.red, width: 1),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: const BorderSide(color: Colors.red, width: 1.2),
-      ),
-    );
-  }
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(color: AppColors.lightPrimaryColor, width: 1.2),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(color: Colors.red, width: 1),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(color: Colors.red, width: 1.2),
+    ),
+  );
+}
 }
 
 // ── Shake Field Widget ─────────────────────────────────────────────────────

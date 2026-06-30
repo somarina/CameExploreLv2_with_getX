@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import '../controllers/forget_password_controller.dart';
+import 'confirm_screen.dart';
+import 'otp_screen.dart';
+import 'reset_password_screen.dart';
 
 class ForgetPasswordView extends GetView<ForgetPasswordController> {
   const ForgetPasswordView({super.key});
@@ -10,137 +14,248 @@ class ForgetPasswordView extends GetView<ForgetPasswordController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
+      backgroundColor: Get.theme.scaffoldBackgroundColor,
       body: SafeArea(
+        child: Obx(() {
+          switch (controller.currentStep.value) {
+            case 1:
+              return _EmailStep(controller: controller);
+            case 2:
+              return const OtpScreen();
+            case 3:
+              return const ConfirmScreen();
+            case 4:
+              return const ResetPasswordScreen();
+            default:
+              return _EmailStep(controller: controller);
+          }
+        }),
+      ),
+    );
+  }
+}
+
+class _EmailStep extends StatelessWidget {
+  final ForgetPasswordController controller;
+
+  const _EmailStep({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final isEnglish = Get.locale?.languageCode == "enUS";
+    final keyboard = MediaQuery.of(context).viewInsets.bottom;
+    final keyboardOpen = keyboard > 0;
+    final topPad = keyboardOpen ? 8.0 : 0.0;
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: AnimatedPadding(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.only(top: topPad),
         child: Form(
           key: controller.step1FormKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(24, 12, 24, keyboard + 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back Button + Title
-                Stack(
-                  alignment: Alignment.center,
+                // Header
+                Row(
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                        onTap: controller.goBack,
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xff009A3F)),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new,
+                    InkWell(
+                      onTap: controller.goBack,
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          border: Border.all(
                             color: Color(0xff009A3F),
-                            size: 18,
+                            width: 1.2,
                           ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 16,
+                          color: Color(0xff009A3F),
                         ),
                       ),
                     ),
-                    Text(
-                      "ភ្លេចពាក្យសម្ងាត់",
-                      style: GoogleFonts.googleSans(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "find_account".tr,
+                          style: isEnglish
+                              ? GoogleFonts.spaceGrotesk(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Get.theme.colorScheme.onSurface,
+                                )
+                              : GoogleFonts.kantumruyPro(
+                                  fontSize: 19,
+                                  fontWeight: .bold,
+                                  color: Get.theme.colorScheme.onSurface,
+                                ),
+                        ),
                       ),
                     ),
+                    SizedBox(width: 42), // same width as back button
                   ],
                 ),
 
-                SizedBox(height: 40),
-
-                Text(
-                  "ស្វែងរកគណនីរបស់លោកអ្នក",
-                  style: GoogleFonts.googleSans(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Center(child: _buildTopImage(context, keyboardOpen)),
 
                 SizedBox(height: 20),
 
-                // Input
-                TextFormField(
-                  controller: controller.emailOrPhoneController,
-                  decoration: InputDecoration(
-                    hintText: "សូមបញ្ចូលអ៊ីមែលរបស់លោកអ្នក",
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 18,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: BorderSide(color: Colors.black54, width: 1.5),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: const BorderSide(
-                        color: Colors.black54,
-                        width: 1.5,
+                AnimatedBuilder(
+                  animation: controller.shakeController,
+                  builder: (context, _) {
+                    final t = controller.shakeController.value;
+
+                    final offset =
+                        (10 * (1 - t)) * ((t * 10).floor().isEven ? 1 : -1);
+
+                    return Transform.translate(
+                      offset: Offset(offset, 0),
+                      child: TextFormField(
+                        controller: controller.emailOrPhoneController,
+
+                        autovalidateMode: controller.showValidation.value
+                            ? AutovalidateMode.always
+                            : AutovalidateMode.disabled,
+
+                        style: isEnglish
+                            ? GoogleFonts.spaceGrotesk(fontSize: 15)
+                            : GoogleFonts.googleSans(fontSize: 15),
+
+                        decoration: InputDecoration(
+                          hintText: "enter_email".tr,
+
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 16,
+                          ),
+
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(
+                              color: Colors.black54,
+                              width: 1.2,
+                            ),
+                          ),
+
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: Colors.grey,
+                              width: 1.2,
+                            ),
+                          ),
+
+                          errorStyle: isEnglish
+                              ? GoogleFonts.spaceGrotesk(
+                                  color: Color(0xFFD32F2F),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.4,
+                                )
+                              : GoogleFonts.googleSans(
+                                  color: Color(0xFFD32F2F),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.4,
+                                ),
+
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: Color(0xff009A3F),
+                              width: 1.8,
+                            ),
+                          ),
+
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: Colors.red,
+                              width: 1.8,
+                            ),
+                          ),
+
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: Colors.red,
+                              width: 1.8,
+                            ),
+                          ),
+                        ),
+
+                        validator: (value) {
+                          final v = (value ?? '').trim();
+
+                          if (v.isEmpty) {
+                            return "email_required".tr;
+                          }
+
+                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
+                            return "invalid_email".tr;
+                          }
+
+                          return null;
+                        },
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(18),
-                      borderSide: const BorderSide(
-                        color: Color(0xff009A3F),
-                        width: 3,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    final v = (value ?? '').trim();
-
-                    if (v.isEmpty) return "សូមបញ្ចូលអ៊ីម៉ែលរបស់លោកអ្នក";
-
-                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
-                      return "អ៊ីម៉ែលមិនត្រឹមត្រូវ";
-                    }
-
-                    return null;
+                    );
                   },
                 ),
 
                 SizedBox(height: 24),
 
-                // Button
-                Obx(
-                  () => SizedBox(
+                Center(
+                  child: SizedBox(
                     width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: controller.isLoading.value
-                          ? null
-                          : controller.requestOtp,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff009A3F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
+                    height: 50,
+                    child: Obx(
+                      () => ElevatedButton(
+                        onPressed: controller.isLoading.value
+                            ? null
+                            : controller.requestOtp,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xff009A3F),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
-                        elevation: 0,
+                        child: controller.isLoading.value
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                "continue".tr,
+                                style: isEnglish
+                                    ? GoogleFonts.spaceGrotesk(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      )
+                                    : GoogleFonts.googleSans(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                              ),
                       ),
-                      child: controller.isLoading.value
-                          ? SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              "បន្ត",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
                     ),
                   ),
                 ),
@@ -151,4 +266,19 @@ class ForgetPasswordView extends GetView<ForgetPasswordController> {
       ),
     );
   }
+}
+
+Widget _buildTopImage(BuildContext context, bool keyboardOpen) {
+  return AnimatedContainer(
+    duration: Duration(milliseconds: 200),
+    curve: Curves.easeInOut,
+    height: keyboardOpen
+        ? MediaQuery.of(context).size.height * 0.18
+        : MediaQuery.of(context).size.height * 0.32,
+    child: Lottie.asset(
+      // 'assets/images/forget_password.json',
+      'assets/images/animation_forget_password.json',
+      fit: BoxFit.contain,
+    ),
+  );
 }
