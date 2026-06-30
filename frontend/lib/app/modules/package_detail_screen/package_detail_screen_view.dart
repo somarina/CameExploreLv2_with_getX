@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+
 part 'package_detail_screen_binding.dart';
 part 'package_detail_screen_controller.dart';
 
