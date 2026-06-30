@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/app/core/api/services/profile_services.dart';
 import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/core/constants/app_image.dart';
+import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -24,8 +26,8 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
         ),
         title: Text(
-          "Feedback",
-          style: GoogleFonts.kantumruyPro(
+          "feedback".tr,
+          style: GoogleFonts.spaceGrotesk(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
@@ -36,7 +38,11 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
-            children: [_mainCard(context), SizedBox(height: 20), _contact(context)],
+            children: [
+              _mainCard(context),
+              SizedBox(height: 20),
+              _contact(context),
+            ],
           ),
         ),
       ),
@@ -47,10 +53,10 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? null : Theme.of(context).scaffoldBackgroundColor,
-        border: Get.isDarkMode
+        border: controller.themeCtrl.getDark()
             ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -60,15 +66,19 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
             child: Column(
               children: [
                 Text(
-                  "Do you like our Application?",
+                  "do_you_like_app".tr,
                   style: GoogleFonts.spaceGrotesk(
+                    color: Theme.of(context).colorScheme.secondary,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
-                  "Your feedback helps us improve the app.",
+                  "do_you_like_app_desc".tr,
                   style: GoogleFonts.spaceGrotesk(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.secondary.withValues(alpha: 0.8),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -99,8 +109,9 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
           SizedBox(height: 10),
           Center(
             child: Text(
-              "Rate",
+              "review_type".tr,
               style: GoogleFonts.spaceGrotesk(
+                color: Theme.of(context).colorScheme.secondary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -111,27 +122,27 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
             () => Wrap(
               spacing: 10,
               children: [
-                _chip(text: "Function"),
-                _chip(text: "Design"),
-                _chip(text: "Speed"),
-                _chip(text: "Usage"),
-                _chip(text: "Other"),
+                _chip(text: "type1".tr),
+                _chip(text: "type2".tr),
+                _chip(text: "type3".tr),
+                _chip(text: "type4".tr),
+                _chip(text: "type5".tr),
               ],
             ),
           ),
           SizedBox(height: 20),
-          _label("Name"),
-          _textField(controller.fullNameController),
+          _label("name".tr, context),
+          _textField(controller.nameCtrl, context),
 
           const SizedBox(height: 20),
 
-          _label("Email"),
-          _textField(controller.emailController),
+          _label("email".tr, context),
+          _textField(controller.emailCtrl, context),
 
           const SizedBox(height: 20),
 
-          _label("Feedback"),
-          _feedbackField(),
+          _label("feedback".tr, context),
+          _feedbackField(context),
 
           const SizedBox(height: 25),
 
@@ -147,7 +158,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
                 ),
               ),
               child: Text(
-                "Comments",
+                "submit_review".tr,
                 style: GoogleFonts.spaceGrotesk(
                   color: Colors.white,
                   fontSize: 16,
@@ -182,13 +193,21 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
     );
   }
 
-  Widget _label(String text) => Text(
+  Widget _label(String text, BuildContext context) => Text(
     text,
-    style: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: .bold),
+    style: GoogleFonts.spaceGrotesk(
+      fontSize: 16,
+      fontWeight: .bold,
+      color: Theme.of(context).colorScheme.secondary,
+    ),
   );
 
-  Widget _textField(TextEditingController controller) {
+  Widget _textField(TextEditingController controller, BuildContext context) {
     return TextFormField(
+      style: TextStyle(
+        fontWeight: .w500,
+        color: Theme.of(context).colorScheme.secondary,
+      ),
       controller: controller,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
@@ -214,9 +233,13 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
     );
   }
 
-  Widget _feedbackField() {
+  Widget _feedbackField(BuildContext context) {
     return TextFormField(
-      controller: controller.feedbackController,
+      style: TextStyle(
+        fontWeight: .w500,
+        color: Theme.of(context).colorScheme.secondary,
+      ),
+      controller: controller.commentCtrl,
       maxLines: 5,
       maxLength: 250,
       decoration: InputDecoration(
@@ -248,25 +271,28 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
       width: Get.width * 100,
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? null : Theme.of(context).scaffoldBackgroundColor,
-        border: Get.isDarkMode
+        border: controller.themeCtrl.getDark()
             ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: .start,
         children: [
-          _label("Contact us"),
+          _label("contact_us".tr, context),
           Text.rich(
             TextSpan(
               children: [
                 TextSpan(
-                  text: "Email : ",
-                  style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                  text: "email".tr,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
                 TextSpan(
-                  text: "support@example.com",
+                  text: " : support@example.com",
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 16,
                     color: AppColors.lightPrimaryColor,
@@ -279,11 +305,14 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
             TextSpan(
               children: [
                 TextSpan(
-                  text: "Phone : ",
-                  style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                  text: "phone".tr,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
                 TextSpan(
-                  text: "+855 12 345 678",
+                  text: " : +855 12 345 678",
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 16,
                     color: AppColors.lightPrimaryColor,

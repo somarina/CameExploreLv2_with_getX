@@ -13,7 +13,7 @@ class ThemeModeViewController extends GetxController {
   }
 
   bool getDark(){
-    var isDark = box.read("isdark");
+    var isDark = box.read("isdark") ?? false;
 
     print("isDark : $isDark");
 

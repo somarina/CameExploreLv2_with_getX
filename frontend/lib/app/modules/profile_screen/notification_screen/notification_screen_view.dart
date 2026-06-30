@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/constants/Globle/section_card.dart';
 import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/core/constants/app_image.dart';
+import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -24,7 +25,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
         ),
         title: Text(
-          "Notification",
+          "notification".tr,
           style: GoogleFonts.spaceGrotesk(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
@@ -36,12 +37,15 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
         child: Column(
           children: [
             SectionCard(
-              title: "ការជូនដំណឹងប្រព័ន្ធ",
+              title: "system_notification".tr,
               child: Obx(
                 () => SwitchListTile(
                   title: Text(
-                    "ប្រព័ន្ធ",
-                    style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                    "system".tr,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
                   ),
                   inactiveThumbColor: Colors.white,
                   activeThumbColor: Colors.white,
@@ -58,7 +62,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
             ),
 
             SectionCard(
-              title: 'អន្តរកម្ម',
+              title: "interaction".tr,
               child: Column(
                 children: [
                   Obx(
@@ -71,7 +75,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                           ),
                           SizedBox(width: 5),
                           Text(
-                            "សារ",
+                            "message".tr,
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 16,
                               color: Theme.of(context).colorScheme.secondary,
@@ -94,7 +98,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                   Obx(
                     () => SwitchListTile(
                       title: Text(
-                        'ចូលចិត្ត',
+                        "like".tr,
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 16,
                           color: Get.theme.colorScheme.secondary,
@@ -116,12 +120,15 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
               ),
             ),
             SectionCard(
-              title: "ការជូនដំណឹងរុញ",
+              title: "push_notification".tr,
               child: Obx(
                 () => SwitchListTile(
                   title: Text(
-                    "ការធ្វើបច្ចុប្បន្នភាពកម្មវិធី\nមុខងារថ្មី និងការធ្វើបច្ចុប្បន្នភាព",
-                    style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                    "app_update_notification".tr,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 16,
+                      color: Get.theme.colorScheme.secondary,
+                    ),
                   ),
                   inactiveThumbColor: Colors.white,
                   activeThumbColor: Colors.white,

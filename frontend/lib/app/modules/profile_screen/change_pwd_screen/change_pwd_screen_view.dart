@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/app/core/constants/Globle/textfield.dart';
+import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/core/constants/app_image.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_controller.dart';
 import 'package:get/get.dart';
@@ -21,7 +23,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
           },
         ),
         title: Text(
-          "ផ្លាស់ប្តូរពាក្យសម្ងាត់",
+          "changePWD".tr,
           style: GoogleFonts.spaceGrotesk(
             fontSize: 24,
             fontWeight: .bold,
@@ -46,43 +48,61 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                 ),
                 SizedBox(height: 30),
 
-                buildTitle("ពាក្យសម្ងាត់បច្ចុប្បន្ន", context),
+                buildTitle("currentPWD".tr, context),
                 Obx(
-                  () => buildTextField(
-                    context,
-                    controller: controller.currentPWD,
-                    hint: "ពាក្យសម្ងាត់បច្ចុប្បន្ន",
-                    obscure: controller.hideCurrent.value,
-                    toggle: controller.toggleCurrent,
+                  () => CustomTextField(
+                    hintText: "enterCurrentPWD".tr,
+                    controller: controller.currentpassCtrl,
+                    suffix: GestureDetector(
+                      onTap: controller.isCurrentHidden.toggle,
+                      child: Icon(
+                        controller.isCurrentHidden.value
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                    ),
+                    isPwd: true,
+                    isHide: controller.isCurrentHidden.value,
                   ),
                 ),
 
                 const SizedBox(height: 25),
 
-                buildTitle("ពាក្យសម្ងាត់ថ្មី", context),
+                buildTitle("newPWD".tr, context),
                 Obx(
-                  () => buildTextField(
-                    context,
-                    controller: controller.newPWD,
-                    hint: "ពាក្យសម្ងាត់ថ្មី",
-                    obscure: controller.hideNew.value,
-                    toggle: controller.toggleNew,
+                  () => CustomTextField(
+                    hintText: "enterNewPWD".tr,
+                    controller: controller.newpassCtrl,
+                    suffix: GestureDetector(
+                      onTap: controller.isNewHidden.toggle,
+                      child: Icon(
+                        controller.isNewHidden.value
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                    ),
+                    isPwd: true,
+                    isHide: controller.isNewHidden.value,
                   ),
                 ),
 
                 const SizedBox(height: 25),
 
-                buildTitle("បញ្ជាក់ពាក្យសម្ងាត់ថ្មី", context),
+                buildTitle("cfNewPWD".tr, context),
                 Obx(
-                  () => buildTextField(
-                    context,
-                    controller: controller.confirmPWD,
-                    hint: "បញ្ជាក់ពាក្យសម្ងាត់ថ្មី",
-                    obscure: controller.hideConfirm.value,
-                    toggle: controller.toggleConfirm,
-                    validator: (v) => v != controller.newPWD.text
-                        ? "ពាក្យសម្ងាត់មិនដូចគ្នា"
-                        : null,
+                  () => CustomTextField(
+                    hintText: "cfNewPWD".tr,
+                    controller: controller.cfpassCtrl,
+                    suffix: GestureDetector(
+                      onTap: controller.isConfirmHidden.toggle,
+                      child: Icon(
+                        controller.isConfirmHidden.value
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                    ),
+                    isPwd: true,
+                    isHide: controller.isConfirmHidden.value,
                   ),
                 ),
 
@@ -91,18 +111,18 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                 Row(
                   children: [
                     Expanded(
-                      child: buildButton(
-                        "បោះបង់",
-                        Theme.of(context).colorScheme.tertiary,
-                        Get.back,
+                      child: _btn(
+                        text: "cancel".tr,
+                        color: Colors.red,
+                        onTap: () => Get.back(),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 20),
                     Expanded(
-                      child: buildButton(
-                        "រក្សាទុក",
-                        Theme.of(context).colorScheme.primary,
-                        controller.savePassword,
+                      child: _btn(
+                        onTap: controller.changePassword,
+                        text: "save".tr,
+                        color: AppColors.lightPrimaryColor,
                       ),
                     ),
                   ],
@@ -122,8 +142,9 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       child: Text(
         text,
         style: GoogleFonts.spaceGrotesk(
+          color: Theme.of(context).colorScheme.secondary,
           fontSize: 17,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
@@ -141,8 +162,29 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       controller: controller,
       obscureText: obscure,
       validator: validator,
+      style: GoogleFonts.spaceGrotesk(
+        color: Theme.of(context).colorScheme.secondary,
+      ),
       decoration: InputDecoration(
-        focusColor: Theme.of(context).colorScheme.tertiary,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: AppColors.lightPrimaryColor, // focus color
+            width: 2,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.red, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.redAccent, width: 2),
+        ),
         hintText: hint,
         suffixIcon: IconButton(
           icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
@@ -153,20 +195,43 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
     );
   }
 
-  Widget buildButton(String text, Color color, VoidCallback onTap) {
+  // Widget buildButton(String text, Color color, VoidCallback onTap) {
+  //   return ElevatedButton(
+  //     onPressed: onTap,
+  //     style: ElevatedButton.styleFrom(
+  //       backgroundColor: color,
+  //       padding: const EdgeInsets.symmetric(vertical: 16),
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+  //     ),
+  //     child: Text(
+  //       text,
+  //       style: GoogleFonts.kantumruyPro(
+  //         color: Colors.white,
+  //         fontWeight: .bold,
+  //         fontSize: 16,
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget _btn({
+    required String text,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return ElevatedButton(
       onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.kantumruyPro(
-          color: Colors.white,
-          fontWeight: .bold,
-          fontSize: 16,
+      style: ElevatedButton.styleFrom(backgroundColor: color),
+      child: SizedBox(
+        height: 45,
+        child: Center(
+          child: Text(
+            text,
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 16,
+              color: Colors.white,
+              fontWeight: .bold,
+            ),
+          ),
         ),
       ),
     );
