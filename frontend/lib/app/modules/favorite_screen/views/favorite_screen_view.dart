@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/modules/favorite_screen/custom_bottomSheet/show_bottom_sheet.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:get/get.dart';
-
-import '../controllers/favorite_screen_controller.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FavoriteScreenView extends GetView<FavoriteScreenController> {
   const FavoriteScreenView({super.key});
@@ -15,21 +15,24 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
       appBar: AppBar(
         backgroundColor: Color(0xfff5f5f5),
         title: Text(
-          "Favorite",
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          "Favorites".tr,
+          style: GoogleFonts.googleSans(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: false,
         actions: [
           Bounceable(
             onTap: () {
               AppBottomSheets.showBottomSheet(
-                title: "Create a list",
+                title: "Create a list".tr,
                 controller: controller.createListCtrl,
                 focusNode: controller.createListFocusNode,
-                label: "List name",
-                onDone: () {
+                label: "List name".tr,
+                onDone: () async {
                   // Handle create new list logic here
-                  Get.back();
+                  await controller.createFavoriteList();
                 },
               );
             },
@@ -46,15 +49,20 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [SizedBox(height: 30), _buildCard()],
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [SizedBox(height: 30), _buildCard()],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -63,12 +71,21 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       separatorBuilder: (context, index) => SizedBox(height: 20),
-      itemCount: 5, // Replace with actual data count
+      itemCount:
+          controller.favoriteLists.length, // Replace with actual data count
       itemBuilder: (context, index) {
+        final item = controller.favoriteLists[index];
         return GestureDetector(
-          onTap: () {
+          onTap: () async {
             // Handle card tap
-            Get.toNamed(Routes.FAV_SCREEN_2);
+            final result = await Get.toNamed(
+              Routes.FAV_SCREEN_2,
+              arguments: {'listName': item['name'], 'listId': item['id']},
+            );
+
+            if (result == true) {
+              controller.getFavoriteLists();
+            }
           },
           child: Container(
             width: double.infinity,
@@ -92,7 +109,7 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
                     ),
                   ),
                   // child: Image.asset("")
-                  child: Center(child: Text("No Image")),
+                  child: Center(child: Icon(Icons.image_outlined, size: 28)),
                 ),
                 SizedBox(height: 10),
                 Padding(
@@ -103,17 +120,17 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Phnom Penh",
-                            style: TextStyle(
+                            item['name'],
+                            style: GoogleFonts.googleSans(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
-                            "0 activity",
-                            style: TextStyle(
+                            "0 activities",
+                            style: GoogleFonts.googleSans(
                               fontSize: 14,
-                              color: Colors.grey[600],
+                              color: Colors.black54
                             ),
                           ),
                         ],

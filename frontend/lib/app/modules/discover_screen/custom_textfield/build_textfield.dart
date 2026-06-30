@@ -1,21 +1,62 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/app_fonts/app_fonst.dart';
+
 class BuildTextfield extends StatelessWidget {
-  const BuildTextfield({super.key});
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final TextEditingController? controller;
+  final Function(String)? onChanged;
+
+  const BuildTextfield({
+    super.key,
+    this.readOnly = false,
+    this.onTap,
+    this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'ស្វែងរកទីកន្លែង...',
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
+    return Container(
+      height: 55,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        readOnly: readOnly,
+        onTap: onTap,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          hintText: "ស្វែងរកកន្លែងទេសចរណ៍...",
+          hintStyle: AppFonts.fontBtnSearch.copyWith(
+            color: Theme.of(context).textTheme.titleSmall!.color,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Theme.of(context).textTheme.titleSmall!.color,
+            size: 30,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide.none,
+          ),
         ),
-        prefixIcon: Icon(Icons.search, color: Colors.grey),
       ),
     );
   }

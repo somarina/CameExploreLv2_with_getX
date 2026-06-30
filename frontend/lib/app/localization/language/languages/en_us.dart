@@ -107,6 +107,24 @@ Map<String, String> enUS = {
   "related_docs": "Related Documents",
   "privacy_policy": "Privacy Policy\nLearn how we collect and use your data",
 
+
+  "Favorites": "Favorites",
+  "Cancel": "Cancel",
+  "Create a list": "Create a list",
+  "Done": "Done",
+  "List name": "List name",
+  "Rename list": "Rename list",
+  "Delete list": "Delete list",
+  "Delete": "Delete",
+  "Enter new list name": "Enter new list name",
+  "Find things to do": "Find things to do",
+  "This list is empty": "This list is empty",
+  "delete_list_confirm":
+  "Are you sure you want to delete your @listName list? All the activities you've saved will be lost.",
+
+  "Most search": "Most search",
+  "Popular places": "Popular places",
+
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////     Login Screen
   "Login": "Login",

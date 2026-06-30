@@ -15,9 +15,9 @@ class PrivateSecurityScreenView
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Get.theme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Get.theme.scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
           onPressed: () {
@@ -29,7 +29,7 @@ class PrivateSecurityScreenView
           style: GoogleFonts.spaceGrotesk(
             fontSize: 24,
             fontWeight: .bold,
-            color: Get.theme.colorScheme.secondary,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
       ),
@@ -37,25 +37,31 @@ class PrivateSecurityScreenView
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
-            children: [_containerText(), _container(), _devices(), _security()],
+            children: [
+              _containerText(),
+              _container(context),
+              _devices(context),
+              _security(context),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _devices() {
+  Widget _devices(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
       // height: 50,
       decoration: BoxDecoration(
         border: Get.isDarkMode
-            ? Border.all(color: Get.theme.colorScheme.primary, width: 2)
+            ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
             : null,
-        color: Get.isDarkMode
-            ? Get.theme.scaffoldBackgroundColor
-            : Get.theme.scaffoldBackgroundColor,
+        color: 
+        Get.isDarkMode
+            ? Theme.of(context).scaffoldBackgroundColor
+            : Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -72,6 +78,7 @@ class PrivateSecurityScreenView
           _label(label: "Devices"),
           SizedBox(height: 20),
           _device_use(
+            Get.context!,
             containerColor: Get.isDarkMode
                 ? Get.theme.colorScheme.primary
                 : Get.theme.colorScheme.primary.withValues(alpha: 0.1),
@@ -84,6 +91,7 @@ class PrivateSecurityScreenView
             bgColor: AppColors.lightPrimaryColor,
           ),
           _device_use(
+            Get.context!,
             containerColor: Get.isDarkMode ? Color(0xff2a2a2a) : Colors.white,
             perfix: AppImage.phoneIcon,
             title: "Samsung Galaxy S23",
@@ -104,7 +112,7 @@ class PrivateSecurityScreenView
     );
   }
 
-  Widget _security() {
+  Widget _security(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
@@ -112,7 +120,7 @@ class PrivateSecurityScreenView
       decoration: BoxDecoration(
         color: Get.isDarkMode ? null : Colors.white,
         border: Get.isDarkMode
-            ? Border.all(color: Get.theme.colorScheme.primary)
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
         boxShadow: [
           BoxShadow(
@@ -134,7 +142,8 @@ class PrivateSecurityScreenView
     );
   }
 
-  Widget _device_use({
+  Widget _device_use(
+    BuildContext context, {
     required String perfix,
     required String title,
     required String subtext1,
@@ -180,9 +189,9 @@ class PrivateSecurityScreenView
                   subtext1,
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 16,
-                    color: Get.theme.colorScheme.secondary.withValues(
-                      alpha: 0.6,
-                    ),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.secondary.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -212,12 +221,14 @@ class PrivateSecurityScreenView
       child: Column(
         children: [
           textbox(
+            Get.context!,
             perfix: AppImage.warningIcon,
             title: "Change password regularly",
             subtext1: "We recommend changing your password every 3 months",
           ),
           SizedBox(height: 10),
           textbox(
+            Get.context!,
             perfix: AppImage.doneIcon,
             title: "Do not share your passwords",
             subtext1: "Do not give your password to anyone",
@@ -227,7 +238,8 @@ class PrivateSecurityScreenView
     );
   }
 
-  Row textbox({
+  Row textbox(
+    BuildContext context, {
     required String perfix,
     required String title,
     required String subtext1,
@@ -252,7 +264,9 @@ class PrivateSecurityScreenView
                 subtext1,
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 16,
-                  color: Get.theme.colorScheme.secondary.withValues(alpha: 0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -262,15 +276,17 @@ class PrivateSecurityScreenView
     );
   }
 
-  Widget _container() {
+  Widget _container(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
       // height: 50,
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? null : Get.theme.scaffoldBackgroundColor,
+        color: Get.isDarkMode
+            ? null
+            : Theme.of(context).scaffoldBackgroundColor,
         border: Get.isDarkMode
-            ? Border.all(color: Get.theme.colorScheme.primary)
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
         boxShadow: [
           BoxShadow(
@@ -290,17 +306,19 @@ class PrivateSecurityScreenView
             style: GoogleFonts.spaceGrotesk(
               fontSize: 18,
               fontWeight: .bold,
-              color: Get.theme.colorScheme.secondary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
           SizedBox(height: 10),
           _smallbox(
+            Get.context!,
             prefixIcon: AppImage.verifyIcon,
             title: "Two-step verification",
             subtype: "Add an extra layer of security",
           ),
           SizedBox(height: 20),
           _smallbox(
+            Get.context!,
             prefixIcon: AppImage.keyIcon,
             title: "fingerprint entry",
             subtype: "Use fingerprint to sign in",
@@ -310,7 +328,8 @@ class PrivateSecurityScreenView
     );
   }
 
-  Widget _smallbox({
+  Widget _smallbox(
+    BuildContext context, {
     required String prefixIcon,
     required String title,
     required String subtype,
@@ -330,7 +349,7 @@ class PrivateSecurityScreenView
                   fontSize: 18,
 
                   // color: Colors.black,
-                  color: Get.theme.colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
               Text(
@@ -338,7 +357,9 @@ class PrivateSecurityScreenView
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 16,
 
-                  color: Get.theme.colorScheme.secondary.withValues(alpha: 0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.5),
                 ),
               ),
             ],

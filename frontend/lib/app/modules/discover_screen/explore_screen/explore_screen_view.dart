@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:frontend/app/core/api/services/category_service.dart';
 import 'package:get/get.dart';
 
 import '../custom_textfield/build_textfield.dart';
@@ -37,48 +38,51 @@ class ExploreView extends GetView<ExploreViewController> {
         ),
         title: SizedBox(height: 50, child: BuildTextfield()),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: SizedBox(
-              height: 100,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xff009A3F),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: SizedBox(
+                height: 100,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final item = controller.categories[index];
+                    return Column(
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xff009A3F),
+                          ),
+                          child: Center(child: Text("icon")),
                         ),
-                        child: Center(child: Text("icon")),
-                      ),
-                      SizedBox(height: 10),
-                      Text("Name"),
-                    ],
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return SizedBox(width: 20);
-                },
-                itemCount: 5,
+                        SizedBox(height: 10),
+                        Text(item['name'] ?? '')
+                      ],
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return SizedBox(width: 20);
+                  },
+                  itemCount: controller.categories.length,
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 10),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text("100 results:"),
-          ),
-          SizedBox(height: 20),
-          Expanded(
-            child: ListView.separated(
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text("100 results:"),
+            ),
+            SizedBox(height: 20),
+            ListView.separated(
               scrollDirection: Axis.vertical,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
@@ -161,8 +165,8 @@ class ExploreView extends GetView<ExploreViewController> {
               },
               itemCount: 5,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

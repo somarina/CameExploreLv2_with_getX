@@ -11,9 +11,9 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Get.theme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Get.theme.scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
           onPressed: () {
@@ -22,7 +22,11 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
         ),
         title: Text(
           "ផ្លាស់ប្តូរពាក្យសម្ងាត់",
-          style: GoogleFonts.spaceGrotesk(fontSize: 24, fontWeight: .bold),
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 24,
+            fontWeight: .bold,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
         ),
       ),
       body: Padding(
@@ -42,9 +46,10 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                 ),
                 SizedBox(height: 30),
 
-                buildTitle("ពាក្យសម្ងាត់បច្ចុប្បន្ន"),
+                buildTitle("ពាក្យសម្ងាត់បច្ចុប្បន្ន", context),
                 Obx(
                   () => buildTextField(
+                    context,
                     controller: controller.currentPWD,
                     hint: "ពាក្យសម្ងាត់បច្ចុប្បន្ន",
                     obscure: controller.hideCurrent.value,
@@ -54,9 +59,10 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
 
                 const SizedBox(height: 25),
 
-                buildTitle("ពាក្យសម្ងាត់ថ្មី"),
+                buildTitle("ពាក្យសម្ងាត់ថ្មី", context),
                 Obx(
                   () => buildTextField(
+                    context,
                     controller: controller.newPWD,
                     hint: "ពាក្យសម្ងាត់ថ្មី",
                     obscure: controller.hideNew.value,
@@ -66,9 +72,10 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
 
                 const SizedBox(height: 25),
 
-                buildTitle("បញ្ជាក់ពាក្យសម្ងាត់ថ្មី"),
+                buildTitle("បញ្ជាក់ពាក្យសម្ងាត់ថ្មី", context),
                 Obx(
                   () => buildTextField(
+                    context,
                     controller: controller.confirmPWD,
                     hint: "បញ្ជាក់ពាក្យសម្ងាត់ថ្មី",
                     obscure: controller.hideConfirm.value,
@@ -86,7 +93,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                     Expanded(
                       child: buildButton(
                         "បោះបង់",
-                        Get.theme.colorScheme.tertiary,
+                        Theme.of(context).colorScheme.tertiary,
                         Get.back,
                       ),
                     ),
@@ -94,7 +101,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                     Expanded(
                       child: buildButton(
                         "រក្សាទុក",
-                        Get.theme.colorScheme.primary,
+                        Theme.of(context).colorScheme.primary,
                         controller.savePassword,
                       ),
                     ),
@@ -109,12 +116,12 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
     );
   }
 
-  Widget buildTitle(String text) {
+  Widget buildTitle(String text, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: GoogleFonts.kantumruyPro(
+        style: GoogleFonts.spaceGrotesk(
           fontSize: 17,
           fontWeight: FontWeight.w600,
         ),
@@ -122,7 +129,8 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
     );
   }
 
-  Widget buildTextField({
+  Widget buildTextField(
+    BuildContext context, {
     required TextEditingController controller,
     required String hint,
     required bool obscure,
@@ -134,6 +142,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       obscureText: obscure,
       validator: validator,
       decoration: InputDecoration(
+        focusColor: Theme.of(context).colorScheme.tertiary,
         hintText: hint,
         suffixIcon: IconButton(
           icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
