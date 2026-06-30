@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/core/constants/app_image.dart';
+import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -25,7 +26,7 @@ class PrivateSecurityScreenView
           },
         ),
         title: Text(
-          "Privacy & Security",
+          "security_".tr,
           style: GoogleFonts.spaceGrotesk(
             fontSize: 24,
             fontWeight: .bold,
@@ -35,10 +36,10 @@ class PrivateSecurityScreenView
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              _containerText(),
+              _containerText(context),
               _container(context),
               _devices(context),
               _security(context),
@@ -55,13 +56,10 @@ class PrivateSecurityScreenView
       padding: EdgeInsets.all(16),
       // height: 50,
       decoration: BoxDecoration(
-        border: Get.isDarkMode
-            ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
+        border: controller.themeCtrl.getDark()
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
-        color: 
-        Get.isDarkMode
-            ? Theme.of(context).scaffoldBackgroundColor
-            : Theme.of(context).scaffoldBackgroundColor,
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -75,28 +73,25 @@ class PrivateSecurityScreenView
       child: Column(
         crossAxisAlignment: .start,
         children: [
-          _label(label: "Devices"),
+          _label(label: "devices".tr, context),
           SizedBox(height: 20),
           _device_use(
             Get.context!,
-            containerColor: Get.isDarkMode
-                ? Get.theme.colorScheme.primary
-                : Get.theme.colorScheme.primary.withValues(alpha: 0.1),
             perfix: AppImage.phoneIcon,
-            title: "iPhone 14 Pro",
-            subtext1: "Phnom Penh, Cambodia\nLastday: Now",
-
-            textBtn: "Now",
+            title: "iphone".tr,
+            subtext1: "iphone_desc".tr,
+            containerColor: Color(0xffF0FDF4),
+            textBtn: "now".tr,
             color: Colors.white,
             bgColor: AppColors.lightPrimaryColor,
           ),
           _device_use(
             Get.context!,
-            containerColor: Get.isDarkMode ? Color(0xff2a2a2a) : Colors.white,
+            containerColor: Color(0xffF9FAFB),
             perfix: AppImage.phoneIcon,
-            title: "Samsung Galaxy S23",
-            subtext1: "Siem Reap, Cambodia\nLastday: yesterday",
-            textBtn: "Leave",
+            title: "samsung".tr,
+            subtext1: "samsung_desc".tr,
+            textBtn: "leave".tr,
             color: Colors.red,
             bgColor: Color(0xffF9FAFB),
           ),
@@ -105,10 +100,14 @@ class PrivateSecurityScreenView
     );
   }
 
-  Text _label({required String label}) {
+  Text _label(BuildContext context, {required String label}) {
     return Text(
       label,
-      style: GoogleFonts.spaceGrotesk(fontSize: 18, fontWeight: .bold),
+      style: GoogleFonts.spaceGrotesk(
+        fontSize: 18,
+        fontWeight: .bold,
+        color: Theme.of(context).colorScheme.secondary,
+      ),
     );
   }
 
@@ -118,10 +117,10 @@ class PrivateSecurityScreenView
       padding: EdgeInsets.all(16),
       // height: 50,
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? null : Colors.white,
-        border: Get.isDarkMode
+        border: controller.themeCtrl.getDark()
             ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -135,7 +134,7 @@ class PrivateSecurityScreenView
       child: Column(
         crossAxisAlignment: .start,
         children: [
-          _label(label: "Safety Recommendations"),
+          _label(label: "safety".tr, context),
           _safety(),
         ],
       ),
@@ -157,7 +156,10 @@ class PrivateSecurityScreenView
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: containerColor,
+        border: controller.themeCtrl.getDark()
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
+            : null,
+        color: controller.themeCtrl.getDark() ? null : containerColor,
         borderRadius: BorderRadius.circular(12),
         // boxShadow: [
         //   BoxShadow(
@@ -181,6 +183,7 @@ class PrivateSecurityScreenView
                 Text(
                   title,
                   style: GoogleFonts.spaceGrotesk(
+                    color: Theme.of(context).colorScheme.secondary,
                     fontSize: 18,
                     fontWeight: .bold,
                   ),
@@ -223,15 +226,15 @@ class PrivateSecurityScreenView
           textbox(
             Get.context!,
             perfix: AppImage.warningIcon,
-            title: "Change password regularly",
-            subtext1: "We recommend changing your password every 3 months",
+            title: "safety_1".tr,
+            subtext1: "safety_1_desc".tr,
           ),
           SizedBox(height: 10),
           textbox(
             Get.context!,
             perfix: AppImage.doneIcon,
-            title: "Do not share your passwords",
-            subtext1: "Do not give your password to anyone",
+            title: "safety_2".tr,
+            subtext1: "safety_2_desc".tr,
           ),
         ],
       ),
@@ -256,6 +259,7 @@ class PrivateSecurityScreenView
               Text(
                 title,
                 style: GoogleFonts.spaceGrotesk(
+                  color: Theme.of(context).colorScheme.secondary,
                   fontSize: 18,
                   fontWeight: .bold,
                 ),
@@ -266,7 +270,7 @@ class PrivateSecurityScreenView
                   fontSize: 16,
                   color: Theme.of(
                     context,
-                  ).colorScheme.secondary.withValues(alpha: 0.5),
+                  ).colorScheme.secondary.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -282,12 +286,10 @@ class PrivateSecurityScreenView
       padding: EdgeInsets.all(16),
       // height: 50,
       decoration: BoxDecoration(
-        color: Get.isDarkMode
-            ? null
-            : Theme.of(context).scaffoldBackgroundColor,
-        border: Get.isDarkMode
+        border: controller.themeCtrl.getDark()
             ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -302,7 +304,7 @@ class PrivateSecurityScreenView
         crossAxisAlignment: .start,
         children: [
           Text(
-            "Login & safely",
+            "log&sec".tr,
             style: GoogleFonts.spaceGrotesk(
               fontSize: 18,
               fontWeight: .bold,
@@ -313,15 +315,15 @@ class PrivateSecurityScreenView
           _smallbox(
             Get.context!,
             prefixIcon: AppImage.verifyIcon,
-            title: "Two-step verification",
-            subtype: "Add an extra layer of security",
+            title: "tow_step_verif".tr,
+            subtype: "tow_step_verif_desc".tr,
           ),
           SizedBox(height: 20),
           _smallbox(
             Get.context!,
             prefixIcon: AppImage.keyIcon,
-            title: "fingerprint entry",
-            subtype: "Use fingerprint to sign in",
+            title: "finger".tr,
+            subtype: "finger_desc".tr,
           ),
         ],
       ),
@@ -347,8 +349,6 @@ class PrivateSecurityScreenView
                 title,
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 18,
-
-                  // color: Colors.black,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
@@ -369,15 +369,20 @@ class PrivateSecurityScreenView
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: AppColors.lightPrimaryColor.withValues(alpha: 0.3),
+            color: AppColors.lightPrimaryColor,
           ),
-          child: Text("Open"),
+          child: Text(
+            "open".tr,
+            style: GoogleFonts.spaceGrotesk(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _containerText() {
+  Widget _containerText(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
@@ -391,26 +396,27 @@ class PrivateSecurityScreenView
         children: [
           SvgPicture.asset(AppImage.checkIcon, width: 24, height: 24),
           SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: .start,
-            children: [
-              Text(
-                "Your account is secure",
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 18,
-                  fontWeight: .bold,
-                  color: Colors.white,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: .start,
+              children: [
+                Text(
+                  "acc_secure".tr,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 18,
+                    fontWeight: .bold,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
-              ),
-              Text(
-                "All security setting are enabled",
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 16,
-
-                  color: Colors.white,
+                Text(
+                  "acc_secure1".tr,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/constants/app_image.dart';
+import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,7 +14,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
@@ -37,9 +38,9 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                 width: double.infinity,
 
                 decoration: BoxDecoration(
-                  color: Get.isDarkMode ? null : Colors.white,
-                  border: Get.isDarkMode
-                      ? Border.all(color: Get.theme.colorScheme.primary)
+                  color: controller.themeCtrl.getDark() ? null : Colors.white,
+                  border: controller.themeCtrl.getDark()
+                      ? Border.all(color: Theme.of(context).colorScheme.primary)
                       : null,
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -56,6 +57,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                           Text(
                             "terms_of_use".tr,
                             style: GoogleFonts.spaceGrotesk(
+                              color: Theme.of(context).colorScheme.secondary,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -70,7 +72,12 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                             Icon(Icons.calendar_today),
                             Text(
                               "last_updated".tr,
-                              style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 16,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.secondary.withValues(alpha: 0.9),
+                              ),
                             ),
                           ],
                         ),
@@ -79,6 +86,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       Text(
                         "tc_acceptance_title".tr,
                         style: GoogleFonts.kantumruyPro(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -86,12 +94,18 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_acceptance_desc".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "tc_acceptance_title".tr,
                         style: GoogleFonts.spaceGrotesk(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -99,12 +113,18 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_acceptance_desc".tr,
-                        style: GoogleFonts.spaceGrotesk(fontSize: 16),
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "tc_use_title".tr,
                         style: GoogleFonts.kantumruyPro(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -112,17 +132,28 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_use_desc".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.9),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "tc_use_rule".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "tc_privacy_title".tr,
                         style: GoogleFonts.kantumruyPro(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -130,12 +161,18 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_privacy_desc".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "tc_ip_title".tr,
                         style: GoogleFonts.kantumruyPro(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -143,12 +180,18 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_ip_desc".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "tc_liability_title".tr,
                         style: GoogleFonts.kantumruyPro(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -156,12 +199,18 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_liability_desc".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "tc_changes_title".tr,
                         style: GoogleFonts.kantumruyPro(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -169,12 +218,18 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_changes_desc".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
                         "tc_contact_title".tr,
                         style: GoogleFonts.kantumruyPro(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -182,7 +237,12 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_contact_desc".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                     ],
                   ),
@@ -192,8 +252,8 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Get.isDarkMode ? null : Colors.white,
-                  border: Get.isDarkMode
+                  color: controller.themeCtrl.getDark() ? null : Colors.white,
+                  border: controller.themeCtrl.getDark()
                       ? Border.all(color: Theme.of(context).colorScheme.primary)
                       : null,
                   borderRadius: BorderRadius.circular(20),
@@ -206,6 +266,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       Text(
                         "related_docs".tr,
                         style: GoogleFonts.kantumruyPro(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -213,7 +274,13 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "privacy_policy".tr,
-                        style: GoogleFonts.kantumruyPro(fontSize: 16),
+
+                        style: GoogleFonts.kantumruyPro(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.8),
+                        ),
                       ),
                     ],
                   ),

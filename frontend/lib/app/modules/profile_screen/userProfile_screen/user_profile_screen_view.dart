@@ -1,6 +1,8 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/app/core/api/Model/user_model.dart';
+import 'package:frontend/app/core/api/services/auth_services.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/core/constants/app_image.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
@@ -24,11 +26,15 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
         child: SafeArea(
+          bottom: false, // not show backgroud
           child: Column(
             children: [
               _header(context),
               SizedBox(height: 20),
-              controller.isLogin.value ? _login(context) : _guestUser(),
+              // controller.isLogin.value ? _login(context) : _guestUser(),
+              Obx(
+                () => controller.isLogin.value ? _login(context) : _guestUser(),
+              ),
             ],
           ),
         ),
@@ -69,7 +75,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             width: 24,
             height: 24,
             colorFilter: ColorFilter.mode(
-             Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.primary,
               BlendMode.srcIn,
             ),
           ),
@@ -102,7 +108,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
           GestureDetector(
             onTap: () {
               controller.isLogin.value
-                  ? Get.toNamed(Routes.EDIT_SCREEN)
+                  ? Get.toNamed(Routes.EDIT_SCREEN, arguments: controller.user)
                   : Get.toNamed(Routes.SECURITY_SCREEN); ////
             },
             child: SvgPicture.asset(AppImage.editIcon),
@@ -292,12 +298,13 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
           SizedBox(width: 10),
 
           GestureDetector(
+            onTap: () {},
             onTapDown: (detail) {
               showCustomPopupMenu(
                 child: Column(
                   children: [
                     Text(
-                      "Language",
+                      "language".tr,
                       style: GoogleFonts.spaceGrotesk(
                         color: Theme.of(context).colorScheme.secondary,
                         fontSize: 16,
@@ -307,18 +314,17 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                     SizedBox(height: 5),
                     _languageItem(
                       Get.context!,
-                      text: "Khmer",
+                      text: "khmer".tr,
                       image: AppImage.khmerImage,
                       onTap: () {
-                        controller.updateLocale("khmer");
-
+                        controller.updateLocale("kmKH");
                         Get.back();
                       },
                     ),
                     SizedBox(height: 5),
                     _languageItem(
                       Get.context!,
-                      text: "English",
+                      text: "english".tr,
                       image: AppImage.englishImage,
                       onTap: () {
                         controller.updateLocale("enUS");
@@ -341,10 +347,10 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
 
   Widget _languageItem(
     BuildContext context, {
-
     required String text,
     required String image,
     required VoidCallback onTap,
+    bool isActive = true,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -352,11 +358,14 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color:Theme.of(context).colorScheme.primary, width: 2),
           // border: Border.all(
-          //   color: isActive ? Get.theme.colorScheme.primary : Colors.grey,
-          //   width: isActive ? 2 : 1,
+          //   color: Theme.of(context).colorScheme.primary,
+          //   width: 2,
           // ),
+          border: Border.all(
+            color: isActive ? Get.theme.colorScheme.primary : Colors.grey,
+            width: isActive ? 2 : 1,
+          ),
         ),
         child: Row(
           children: [
@@ -472,134 +481,152 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
   }
 
   Widget _login(BuildContext context) {
-    return Column(
-      crossAxisAlignment: .center,
-      children: [
-        DottedBorder(
-          options: CircularDottedBorderOptions(
-            dashPattern: [80, 15], // size long or short
-            strokeWidth: 3, // size big or small
-            padding: EdgeInsets.all(5),
-            color: Color(0xffE7000B),
-          ),
-          child: CircleAvatar(
-            radius: 45,
-            backgroundImage: AssetImage('assets/images/profile.png'),
-          ),
-        ),
-        Text(
-          controller.userName.value,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 22,
-            fontWeight: .bold,
-            color: Colors.white,
-          ),
-        ),
-        Text(
-          controller.email.value,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 16,
-            color: Colors.white.withValues(alpha: 0.8),
-          ),
-        ),
-        SizedBox(height: 20),
-        _container(
-          context,
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.CHANGEPWD_SCREEN);
-                },
-                child: _menuItem(
-                  Get.context!,
-                  prefix: AppImage.themeIcon,
-                  title: "cpwd".tr,
-                  suffixIcon: AppImage.btnIcon,
+    return Obx(
+      () => controller.isLoading.value
+          ?
+            CircularProgressIndicator()
+            // Shimmer.fromColors(
+            //   baseColor: Colors.grey.shade200,
+            //   highlightColor: Colors.grey.shade300,
+            //   child: Container(height: 50, color: Colors.grey),
+            // )
+          : Column(
+              crossAxisAlignment: .center,
+              children: [
+                DottedBorder(
+                  options: CircularDottedBorderOptions(
+                    dashPattern: [80, 15], // size long or short
+                    strokeWidth: 3, // size big or small
+                    padding: EdgeInsets.all(5),
+                    color: Color(0xffE7000B),
+                  ),
+                  child: CircleAvatar(
+                    radius: 45,
+                    // backgroundImage: AssetImage('assets/images/profile.png'),
+                    backgroundImage: controller.isLoading.value
+                        ? null
+                        : controller.getAvatar(),
+                  ),
                 ),
-              ),
-              _language(context),
+                Text(
+                  controller.user.name,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 22,
+                    fontWeight: .bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  controller.user.email,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 16,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ),
+                SizedBox(height: 20),
+                _container(
+                  context,
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.CHANGEPWD_SCREEN);
+                        },
+                        child: _menuItem(
+                          Get.context!,
+                          prefix: AppImage.themeIcon,
+                          title: "cpwd".tr,
+                          suffixIcon: AppImage.btnIcon,
+                        ),
+                      ),
+                      _language(context),
 
-              GestureDetector(
-                onTap: () async {
-                  await Get.toNamed(Routes.THEME_SCREEN);
+                      GestureDetector(
+                        onTap: () async {
+                          await Get.toNamed(Routes.THEME_SCREEN);
 
-                  // controller.changeTheme(ThemeMode.dark);
-                  // Get.changeThemeMode(.dark);
-                },
-                child: _menuItem(
-                  Get.context!,
-                  prefix: AppImage.themeIcon,
-                  title: "theme".tr,
-                  suffixIcon: AppImage.btnIcon,
+                          // controller.changeTheme(ThemeMode.dark);
+                          // Get.changeThemeMode(.dark);
+                        },
+                        child: _menuItem(
+                          Get.context!,
+                          prefix: AppImage.themeIcon,
+                          title: "theme".tr,
+                          suffixIcon: AppImage.btnIcon,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.NOTIFICATION_SCREEN);
+                        },
+                        child: _menuItem(
+                          Get.context!,
+                          prefix: AppImage.notificationIcon,
+                          title: "notification".tr,
+                          suffixIcon: AppImage.btnIcon,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.SECURITY_SCREEN);
+                        },
+                        child: _menuItem(
+                          Get.context!,
+                          prefix: AppImage.securityIcon,
+                          title: "security".tr,
+                          suffixIcon: AppImage.btnIcon,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.FEEDBACK_SCREEN);
+                        },
+                        child: _menuItem(
+                          Get.context!,
+                          prefix: AppImage.feedbackIcon,
+                          title: "feedback".tr,
+                          suffixIcon: AppImage.btnIcon,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.HELPSUPPORT_SCREEN);
+                        },
+                        child: _menuItem(
+                          Get.context!,
+                          prefix: AppImage.conditionIcon,
+                          title: "condition".tr,
+                          suffixIcon: AppImage.btnIcon,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.ABOUTAPP_SCREEN);
+                        },
+                        child: _menuItem(
+                          Get.context!,
+                          prefix: AppImage.abouAppIcon,
+                          title: "app".tr,
+                          suffixIcon: AppImage.btnIcon,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.ABOUTORGANIZATION_SCREEN);
+                        },
+                        child: _menuItem(
+                          Get.context!,
+                          prefix: AppImage.developerIcon,
+                          title: "developer".tr,
+                          suffixIcon: AppImage.btnIcon,
+                        ),
+                      ),
+                      btn(context),
+                    ],
+                  ),
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.NOTIFICATION_SCREEN);
-                },
-                child: _menuItem(
-                  Get.context!,
-                  prefix: AppImage.notificationIcon,
-                  title: "notification".tr,
-                  suffixIcon: AppImage.btnIcon,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.SECURITY_SCREEN);
-                },
-                child: _menuItem(
-                  Get.context!,
-                  prefix: AppImage.securityIcon,
-                  title: "security".tr,
-                  suffixIcon: AppImage.btnIcon,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.FEEDBACK_SCREEN);
-                },
-                child: _menuItem(
-                  Get.context!,
-                  prefix: AppImage.feedbackIcon,
-                  title: "feedback".tr,
-                  suffixIcon: AppImage.btnIcon,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.HELPSUPPORT_SCREEN);
-                },
-                child: _menuItem(
-                  Get.context!,
-                  prefix: AppImage.conditionIcon,
-                  title: "condition".tr,
-                  suffixIcon: AppImage.btnIcon,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.ABOUTAPP_SCREEN);
-                },
-                child: _menuItem(
-                  Get.context!,
-                  prefix: AppImage.abouAppIcon,
-                  title: "app".tr,
-                  suffixIcon: AppImage.btnIcon,
-                ),
-              ),
-              _menuItem(
-                Get.context!,
-                prefix: AppImage.developerIcon,
-                title: "developer".tr,
-                suffixIcon: AppImage.btnIcon,
-              ),
-              btn(context),
-            ],
-          ),
-        ),
-      ],
+              ],
+            ),
     );
   }
 
