@@ -26,6 +26,10 @@ from app.utils.jwt import create_access_token
 from app.utils.password import hash_password, verify_password
 
 import smtplib
+
+import resend
+
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import httpx
 from twilio.rest import Client
@@ -38,6 +42,8 @@ router = APIRouter(
 users_collection = db["users"]
 otp_collection = db["otp_codes"]
 otp_attempts_collection = db["otp_attempts"]
+
+resend.api_key = os.getenv("RESEND_API_KEY")
 
 def ok(message: str, data: dict = None):
     return {
@@ -138,30 +144,375 @@ async def send_otp_telegram(telegram_id: str, otp: str):
         })
     return res.status_code == 200
 
+# //////////////////////////////////////////////
+# def send_otp_email(to_email: str, otp: str):
+
+#     html = f"""
+#     <html>
+
+#     <body style="background:#f5f5f5;font-family:Arial;padding:40px;">
+
+#         <div style="
+#             max-width:520px;
+#             margin:auto;
+#             background:white;
+#             border-radius:16px;
+#             overflow:hidden;
+#             box-shadow:0 8px 30px rgba(0,0,0,.08);
+#         ">
+
+#             <div style="
+#                 background:#009A3F;
+#                 color:white;
+#                 text-align:center;
+#                 padding:40px;
+#             ">
+
+#                 <h1>CamExplore</h1>
+
+#                 <p>Explore Cambodia with confidence</p>
+
+#             </div>
+
+#             <div style="padding:35px;">
+
+#                 <h2>Password Reset</h2>
+
+#                 <p>
+#                 We received a request to reset your password.
+#                 </p>
+
+#                 <div style="
+#                     background:#EEF8F2;
+#                     padding:25px;
+#                     border-radius:12px;
+#                     text-align:center;
+#                     margin:30px 0;
+#                 ">
+
+#                     <div
+#                     style="
+#                     color:#009A3F;
+#                     font-size:42px;
+#                     font-weight:bold;
+#                     letter-spacing:12px;
+#                     ">
+#                         {otp}
+#                     </div>
+
+#                 </div>
+
+#                 <p>
+
+#                 This code expires in
+#                 <b>3 minutes</b>.
+
+#                 </p>
+
+#                 <p>
+
+#                 Never share this code with anyone.
+
+#                 </p>
+
+#             </div>
+
+#         </div>
+
+#     </body>
+
+#     </html>
+#     """
+
+#     try:
+
+#         resend.Emails.send({
+
+#             "from": "CamExplore <onboarding@resend.dev>",
+
+#             "to": [to_email],
+
+#             "subject": "CamExplore | Password Reset Code",
+
+#             "html": html
+
+#         })
+
+#         return True
+
+#     except Exception as e:
+
+#         print(e)
+
+#         return False
 
 def send_otp_email(to_email: str, otp: str):
     sender = os.getenv("GMAIL_SENDER")
     app_password = os.getenv("GMAIL_APP_PASSWORD")
+
     if not sender or not app_password:
         return False
 
-    body = f"""Your CamExplore OTP code is: {otp}
+    text = f"""
+        Hello,
 
-This code expires in 3 minutes. Do not share it with anyone."""
+        Your CamExplore verification code is:
 
-    msg = MIMEText(body)
-    msg["Subject"] = "CamExplore - Password Reset OTP"
-    msg["From"] = sender
+        {otp}
+
+        This code expires in 3 minutes.
+
+        If you didn't request this, you can safely ignore this email.
+
+        CamExplore Team
+        """
+
+    html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+
+        body{{
+            margin:0;
+            padding:40px;
+            background:#f4f6f9;
+            font-family:Arial,Helvetica,sans-serif;
+        }}
+
+        .wrapper{{
+            max-width:520px;
+            margin:auto;
+            background:#ffffff;
+            border-radius:18px;
+            overflow:hidden;
+            box-shadow:0 8px 25px rgba(0,0,0,.08);
+        }}
+
+        .header{{
+            background:#009A3F;
+            color:white;
+            padding:35px;
+            text-align:center;
+        }}
+
+        .logo{{
+            width:70px;
+            height:70px;
+            border-radius:50%;
+            background:white;
+            color:#009A3F;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            font-size:34px;
+            font-weight:bold;
+            margin-bottom:15px;
+        }}
+
+        .content{{
+            padding:35px;
+        }}
+
+        .title{{
+            font-size:28px;
+            color:#222;
+            margin-bottom:10px;
+        }}
+
+        .desc{{
+            color:#666;
+            line-height:1.7;
+        }}
+
+        .otp-box{{
+            margin:35px 0;
+            background:#eefaf2;
+            border:2px solid #d7f1df;
+            border-radius:14px;
+            text-align:center;
+            padding:30px;
+        }}
+
+        .otp-label{{
+            color:#009A3F;
+            font-size:13px;
+            font-weight:bold;
+            letter-spacing:2px;
+        }}
+
+        .otp{{
+            font-size:42px;
+            font-weight:bold;
+            color:#009A3F;
+            letter-spacing:12px;
+            margin-top:12px;
+        }}
+
+        .warning{{
+            background:#FFF8E8;
+            border-left:5px solid #F4B400;
+            padding:18px;
+            border-radius:8px;
+            color:#555;
+            margin-top:25px;
+        }}
+
+        .footer{{
+            text-align:center;
+            color:#888;
+            font-size:13px;
+            padding:25px;
+            border-top:1px solid #eee;
+        }}
+
+        </style>
+        </head>
+
+        <body>
+
+        <div class="wrapper">
+
+        <div class="header">
+
+        <div class="logo">
+        🌿
+        </div>
+
+        <h1 style="margin:0;">
+        CamExplore
+        </h1>
+
+        <p style="margin-top:8px;">
+        Explore Cambodia with confidence
+        </p>
+
+        </div>
+
+        <div class="content">
+
+        <div class="title">
+        Password Reset
+        </div>
+
+        <div class="desc">
+
+        Hello,
+
+        <br><br>
+
+        We received a request to reset your CamExplore password.
+
+        <br><br>
+
+        Use the verification code below to continue.
+
+        </div>
+
+        <div class="otp-box">
+
+        <div class="otp-label">
+        YOUR VERIFICATION CODE
+        </div>
+
+        <div class="otp">
+        {otp}
+        </div>
+
+        </div>
+
+        <p>
+
+        ⏰ This code expires in <b>3 minutes</b>.
+
+        </p>
+
+        <div class="warning">
+
+        <b>Didn't request this?</b><br><br>
+
+        You can safely ignore this email.
+
+        Your password will remain unchanged.
+
+        </div>
+
+        <p style="margin-top:30px;color:#666;">
+
+        🔒 Never share this code with anyone.
+
+        CamExplore will never ask for your OTP.
+
+        </p>
+
+        </div>
+
+        <div class="footer">
+
+        © 2026 CamExplore
+
+        <br><br>
+
+        Need help?
+
+        <a href="mailto:camexplore.app.kh@gmail.com"
+        style="color:#009A3F;text-decoration:none;">
+
+        Contact Support
+
+        </a>
+
+        </div>
+
+        </div>
+
+        </body>
+        </html>
+    """
+
+    msg = MIMEMultipart("alternative")
+
+    msg["Subject"] = "CamExplore | Password Reset Code"
+    # msg["From"] = sender
+    msg["From"] = f"CamExplore <{sender}>"
     msg["To"] = to_email
+
+    msg.attach(MIMEText(text, "plain"))
+    msg.attach(MIMEText(html, "html"))
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             smtp.login(sender, app_password)
             smtp.sendmail(sender, to_email, msg.as_string())
+
         return True
+
     except Exception as e:
-        print(f"Email send failed: {e}")
+        print("Email send failed:", e)
         return False
+
+# def send_otp_email(to_email: str, otp: str):
+#     sender = os.getenv("GMAIL_SENDER")
+#     app_password = os.getenv("GMAIL_APP_PASSWORD")
+#     if not sender or not app_password:
+#         return False
+#     body = f"""Your CamExplore OTP code is: {otp}
+# This code expires in 3 minutes. Do not share it with anyone."""
+#     msg = MIMEText(body)
+#     msg["Subject"] = "CamExplore - Password Reset OTP"
+#     msg["From"] = sender
+#     msg["To"] = to_email
+#     try:
+#         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+#             smtp.login(sender, app_password)
+#             smtp.sendmail(sender, to_email, msg.as_string())
+#         return True
+#     except Exception as e:
+#         print(f"Email send failed: {e}")
+#         return False
 
 
 # ====================== MAIN ROUTES ======================

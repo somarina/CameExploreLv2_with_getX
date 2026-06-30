@@ -2,7 +2,6 @@ import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/auth_services.dart';
-import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/localization/app_translatation.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
@@ -10,6 +9,8 @@ import 'package:frontend/firebase_options.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import 'app/core/constants/app_colors/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +43,7 @@ Future<void> _initServicesInBackground() async {
   // Deep link setup — safe here since runApp already ran
   _setupDeepLinks();
 }
-
+ 
 void _setupDeepLinks() {
   final appLinks = AppLinks();
 
@@ -56,7 +57,7 @@ void _setupDeepLinks() {
     if (initialUri != null &&
         initialUri.scheme == 'camexplore' &&
         initialUri.host == 'telegram-login') {
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed( Duration(seconds: 1));
       _handleTelegramCallback(initialUri.queryParameters);
     }
   });
@@ -128,11 +129,12 @@ class MainApp extends StatelessWidget {
       theme: AppColors.lightMode(),
       darkTheme: AppColors.darkMode(),
       themeMode: isdark ? ThemeMode.dark : ThemeMode.light,
+      
 
       // language
       translations: AppTranslatation(),
-      locale: const Locale("kmKH"),
-      fallbackLocale: const Locale("enUS"),
+      locale: Locale("kmKH"),
+      fallbackLocale: Locale("enUS"),
       debugShowCheckedModeBanner: false,
 
       // routes

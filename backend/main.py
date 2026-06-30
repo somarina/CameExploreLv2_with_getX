@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi import HTTPException
-from app.routes import places, auth, reviews, profile
+from app.routes import places, auth, reviews, profile, auth_dashboard
 from app.routes import favorites
 from app.routes import search
 from app.routes import discover
@@ -64,6 +64,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 # ── Routers ───────────────────────────────────────────────────────────────────
 
 app.include_router(auth.router)
+
+# Dashboard Authentication
+app.include_router(auth_dashboard.router)
+
 app.include_router(reviews.router)
 app.include_router(places.router)
 app.include_router(profile.router)
