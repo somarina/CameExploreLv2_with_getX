@@ -23,4 +23,10 @@ class PlacesServices {
     var response = await baseApi.get(endpoint: "/api/places/$id");
     return response;
   }
+
+  Future<Map<String, dynamic>> fetchDiscoverHome() async {
+  return await baseApi.get(
+    endpoint: "/api/discover/home",
+  );
+}
 }

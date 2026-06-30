@@ -22,6 +22,7 @@ class AppImage {
   static const String khmerIcon = "assets/svg/cambodia.svg";
   static const String englishIcon = "assets/svg/english.svg";
   static const String lightIcon = "assets/svg/Light.svg";
+  // static const String arrowBack = "assets/icons/arrow_back_icon.png";
 
   static const String warningImage = "assets/svg/warning.png";
   static const String khmerImage = "assets/images/cambodia.png";
