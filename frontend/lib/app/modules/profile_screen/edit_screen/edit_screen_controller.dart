@@ -1,61 +1,117 @@
 part of 'edit_screen_view.dart';
 
 class EditScreenViewController extends GetxController {
-  final firstNameCtrl = TextEditingController();
-  final lastNameCtrl = TextEditingController();
-  final emailCtrl = TextEditingController();
-  final forgetPWDCtrl = TextEditingController();
+  final userProfileController = Get.find<UserProfileScreenViewController>();
 
-  // gender condition
-  final selectedGender = ''.obs;
+  final firstnameCtrl = TextEditingController();
+  final lastnameCtrl = TextEditingController();
+  final newEmailCtrl = TextEditingController();
+  final newPhoneCtrl = TextEditingController();
 
-  // -------- VALIDATION --------
-  bool validateForm() {
-    if (firstNameCtrl.text.isEmpty) {
-      Get.snackbar("Error", "First name is required");
-      return false;
-    }
+  var selectedGender = ''.obs;
+  var isLoading = false.obs;
 
-    if (lastNameCtrl.text.isEmpty) {
-      Get.snackbar("Error", "Last name is required");
-      return false;
-    }
+  final ImagePicker _picker = ImagePicker();
+  Rx<File?> pickedImage = Rx<File?>(null);
 
-    if (!GetUtils.isEmail(emailCtrl.text)) {
-      Get.snackbar("Error", "Invalid email");
-      return false;
-    }
+  late UserModel arg;
 
-    if (forgetPWDCtrl.text.length < 6) {
-      Get.snackbar("Error", "Password must be at least 6 characters");
-      return false;
-    }
-
-    if (selectedGender.isEmpty) {
-      Get.snackbar("Error", "Please select gender");
-      return false;
-    }
-
-    return true;
+  @override
+  void onInit() {
+    super.onInit();
+    arg = Get.arguments as UserModel;
+    _loadUser();
   }
 
-  void saveProfile() {
-    if (!validateForm()) return;
+  void _loadUser() {
+    var fullName = arg.name.split(" ");
 
-    // API / Firebase / Local save
-    Get.snackbar("Success", "Profile updated successfully");
+    firstnameCtrl.text = fullName.isNotEmpty ? fullName[0] : "";
+    lastnameCtrl.text = fullName.length > 1 ? fullName[1] : "";
+
+    newEmailCtrl.text = arg.email;
+    newPhoneCtrl.text = arg.phone;
+    selectedGender.value = arg.gender;
+
+    if (arg.avatar.isNotEmpty) {
+      pickedImage.value = File(arg.avatar);
+    }
   }
 
-  void selectGender(String gender) {
-    selectedGender.value = gender;
+  var profileImage = "".obs;
+
+  Future<void> pickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(
+      source: source,
+      imageQuality: 80,
+    );
+
+    if (image != null) {
+      pickedImage.value = File(image.path);
+
+      profileImage.value = "m";
+
+      // var response=  await ProfileServices().uploadAvatarService(
+      //     avatarPath: image.path,
+      //   );
+
+      //   profileImage.value = response["data"]["profile_image"];
+
+      //   debugPrint(profileImage.value );
+    }
+  }
+
+  Future<void> editProfile() async {
+    if (firstnameCtrl.text.isEmpty ||
+        lastnameCtrl.text.isEmpty ||
+        newEmailCtrl.text.isEmpty ||
+        newPhoneCtrl.text.isEmpty ||
+        selectedGender.value.isEmpty) {
+      Get.snackbar("Warning", "Please fill all fields");
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      var profileResponse = await ProfileServices().uploadAvatarService(
+        avatarPath: pickedImage.value!.path,
+      );
+
+      profileImage.value = profileResponse["data"]["profile_image"];
+
+      debugPrint(profileImage.value);
+
+      final response = await ProfileServices().updateProfileService(
+        name: "${firstnameCtrl.text} ${lastnameCtrl.text}".trim(),
+        email: newEmailCtrl.text,
+        phone: newPhoneCtrl.text,
+        gender: selectedGender.value,
+        avatar: profileImage.value.isEmpty
+            ? userProfileController.user.avatar
+            : profileImage.value,
+      );
+
+      if (response["result"] == true) {
+        await userProfileController.getProfile();
+        Get.back();
+        Get.snackbar("Success", "Profile updated");
+      } else {
+        Get.snackbar("Failed", "Update failed");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override
   void onClose() {
-    firstNameCtrl.dispose();
-    lastNameCtrl.dispose();
-    emailCtrl.dispose();
-    forgetPWDCtrl.dispose();
+    firstnameCtrl.dispose();
+    lastnameCtrl.dispose();
+    newEmailCtrl.dispose();
+    newPhoneCtrl.dispose();
     super.onClose();
   }
 }

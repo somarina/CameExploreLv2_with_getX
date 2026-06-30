@@ -4,9 +4,13 @@ import 'package:frontend/app/modules/auth/forget_password/views/reset_password_s
 import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_binding.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_view.dart';
 import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/about_organization_screen/about_organization_screen_binding.dart';
+import 'package:frontend/app/modules/profile_screen/about_organization_screen/about_organization_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_binding.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/comment_screen/comment_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/detail_developer/detail_developer_binding.dart';
+import 'package:frontend/app/modules/profile_screen/detail_developer/detail_developer_view.dart';
 import 'package:frontend/app/modules/profile_screen/edit_screen/edit_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/help_support_screen/help_support_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/notification_screen/notification_screen_view.dart';
@@ -160,6 +164,16 @@ class AppPages {
       name: _Paths.NOTIFICATION_SCREEN,
       page: () => NotificationScreenView(),
       binding: NotificationScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUTORGANIZATION_SCREEN,
+      page: () => AboutOrganizationScreenView(),
+      binding: AboutOrganizationBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAILDEVELOPER_SCREEN,
+      page: () => DetailDeveloperView(),
+      binding: DetailDeveloperBinding(),
     ),
     GetPage(
       name: _Paths.SECURITY_SCREEN,

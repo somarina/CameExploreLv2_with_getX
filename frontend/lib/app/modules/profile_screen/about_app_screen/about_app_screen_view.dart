@@ -14,8 +14,6 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
 
   @override
   Widget build(BuildContext context) {
-
-   
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -25,7 +23,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
           icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
         ),
         title: Text(
-          "aboutcam".tr,
+          "about_cam".tr,
           style: GoogleFonts.spaceGrotesk(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
@@ -63,11 +61,11 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
               SizedBox(height: 20),
               buildContainer2(
                 context,
-                text: "disAboutApp".tr,
+                text: "about_cam_desc".tr,
                 icon: Icons.home,
                 iconcolor: AppColors.lightPrimaryColor,
                 backgroundColor: Color(0xFFF3F4F6),
-                title: "aboutApp".tr,
+                title: "about".tr,
               ),
               SizedBox(height: 20),
               buildImportant(context),
@@ -77,7 +75,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
                 gradient: const LinearGradient(
                   colors: [Color(0xFFF0FDF4), Color(0xFFDCFCE7)],
                 ),
-                text: "sub_goal".tr,
+                text: "goal_desc".tr,
               ),
               SizedBox(height: 20),
               buildVersion(context),
@@ -93,9 +91,19 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
     return Container(
       width: Get.width * 0.35,
       decoration: BoxDecoration(
-        // color: Color(0xFFE4FCEC),
-        border: Border.all(color: Theme.of(context).colorScheme.primary),
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
+        border: controller.themeCtrl.getDark()
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
+            : null,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 5), // x, y
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -128,8 +136,8 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
             offset: Offset(0, 5), // x, y
           ),
         ],
-        // color: Color(0xFFFFFFFF),
-        border: Get.isDarkMode
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
+        border: controller.themeCtrl.getDark()
             ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
         borderRadius: BorderRadius.circular(20),
@@ -138,7 +146,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-          buildTitle(text: "មុខងារសំខាន់ៗ"),
+          buildTitle(text: "Important".tr),
           smallContainer(
             context,
             "ស្វែងរកកន្លែងទេសចរណ៍",
@@ -208,6 +216,9 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
                   Text(
                     text1,
                     style: GoogleFonts.spaceGrotesk(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary.withValues(alpha: 0.8),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -216,7 +227,9 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
                     text2,
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 16,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -270,7 +283,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
         border: controller.themeCtrl.getDark()
             ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
-
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -281,7 +294,6 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
         ],
         // color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -304,6 +316,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
                 Text(
                   title,
                   style: GoogleFonts.spaceGrotesk(
+                    color: Theme.of(context).colorScheme.secondary,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -311,7 +324,15 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
               ],
             ),
             SizedBox(height: 5),
-            Text(text, style: GoogleFonts.spaceGrotesk(fontSize: 16)),
+            Text(
+              text,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 16,
+                color: Theme.of(
+                  context,
+                ).colorScheme.secondary.withValues(alpha: 0.8),
+              ),
+            ),
           ],
         ),
       ),
@@ -326,6 +347,10 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
+        color: controller.themeCtrl.getDark() ? null : Colors.white,
+        border: controller.themeCtrl.getDark()
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -334,23 +359,21 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
             offset: Offset(0, 5), // x, y
           ),
         ],
-        // gradient: gradient,
-        border: controller.themeCtrl.getDark()
-            ? Border.all(color: Colors.white, width: 2)
-            : Border.all(color: Colors.white, width: 2),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildTitle(text: "goal".tr),
+          buildTitle(text: "cam_goal".tr),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               text,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 16,
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(
+                  context,
+                ).colorScheme.secondary.withValues(alpha: 0.8),
               ),
             ),
           ),

@@ -25,7 +25,7 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
           },
         ),
         title: Text(
-          "Theme Mode",
+          "theme_mode".tr,
           style: GoogleFonts.spaceGrotesk(
             fontSize: 24,
             fontWeight: .bold,
@@ -36,9 +36,15 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(12),
-            child: Text("Theme", style: TextStyle(fontSize: 18)),
+            child: Text(
+              "theme_mode".tr,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 18,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
           ),
           Card(
             margin: const EdgeInsets.all(12),
@@ -56,9 +62,9 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
                       child: Column(
                         children: [
                           Image.asset(AppImage.lightImage, height: 100),
-                          const SizedBox(height: 8),
-                          const Text("Light"),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
+                          Text("light".tr),
+                          SizedBox(height: 8),
                           controller.selectMode.value == 0
                               ? SvgPicture.asset(
                                   AppImage.doneIcon,
@@ -79,7 +85,7 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
                         children: [
                           Image.asset(AppImage.darkImage, height: 100),
                           SizedBox(height: 8),
-                          Text("Dark"),
+                          Text("dark".tr),
                           SizedBox(height: 8),
 
                           controller.selectMode.value == 1

@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/auth_services.dart';
 import 'package:frontend/app/localization/app_translatation.dart';
+import 'package:frontend/app/modules/auth/login_screen/controllers/login_screen_controller.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/firebase_options.dart';
@@ -25,6 +26,7 @@ void main() async {
   _initServicesInBackground();
 
   Get.put(ThemeModeViewController());
+   Get.put(LoginScreenController());
 }
 
 Future<void> _initServicesInBackground() async {

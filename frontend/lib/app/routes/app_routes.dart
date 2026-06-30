@@ -18,23 +18,6 @@ abstract class Routes {
   static const FAV_SCREEN_2 = _Paths.FAV_SCREEN_2;
   static const EXPLORE_SCREEN = _Paths.EXPLORE_SCREEN;
   static const NEARBY_SCREEN = _Paths.NEARBY_SCREEN;
-
-  static const FORGET_PASSWORD = _Paths.FORGET_PASSWORD;
-  static const REGISTER_SCREEN = _Paths.REGISTER_SCREEN;
-  static const USERPROFILE_SCREEN = _Paths.USERPROFILE_SCREEN;
-  static const EDIT_SCREEN = _Paths.EDIT_SCREEN;
-  static const ABOUTAPP_SCREEN = _Paths.ABOUTAPP_SCREEN;
-  static const HELPSUPPORT_SCREEN = _Paths.HELPSUPPORT_SCREEN;
-  static const FEEDBACK_SCREEN = _Paths.FEEDBACK_SCREEN;
-  static const NOTIFICATION_SCREEN = _Paths.NOTIFICATION_SCREEN;
-  static const SECURITY_SCREEN = _Paths.SECURITY_SCREEN;
-  static const CHANGEPWD_SCREEN = _Paths.CHANGEPWD_SCREEN;
-  static const THEME_SCREEN = _Paths.THEME_SCREEN;
-  static const BOOKING_SCREEN = _Paths.BOOKING_SCREEN;
-  static const OTP_SCREEN = _Paths.OTP_SCREEN;
-  static const CONFIRM_PASSWORD = _Paths.CONFIRM_PASSWORD;
-  static const RESET_PASSWORD = _Paths.RESET_PASSWORD;
-
   static const HOME_SEEALL = _Paths.HOME_SEEALL;
   static const DETAIL_PLACES = _Paths.DETAIL_SCREEN;
   static const PACKAGE_DETAIL = _Paths.PACKAGE_DETAIL;
@@ -49,6 +32,22 @@ abstract class Routes {
   static const GUEST_INFO = _Paths.GUEST_INFO;
   static const CONFIRM_BOOKING = _Paths.CONFIRM_BOOKING;
   static const PACKAGE_CF_BOOKING = _Paths.PACKAGE_CF_BOOKING;
+
+  static const FORGET_PASSWORD = _Paths.FORGET_PASSWORD;
+  static const REGISTER_SCREEN = _Paths.REGISTER_SCREEN;
+  static const USERPROFILE_SCREEN = _Paths.USERPROFILE_SCREEN;
+  static const EDIT_SCREEN = _Paths.EDIT_SCREEN;
+  static const ABOUTAPP_SCREEN = _Paths.ABOUTAPP_SCREEN;
+  static const HELPSUPPORT_SCREEN = _Paths.HELPSUPPORT_SCREEN;
+  static const FEEDBACK_SCREEN = _Paths.FEEDBACK_SCREEN;
+  static const NOTIFICATION_SCREEN = _Paths.NOTIFICATION_SCREEN;
+  static const SECURITY_SCREEN = _Paths.SECURITY_SCREEN;
+  static const CHANGEPWD_SCREEN = _Paths.CHANGEPWD_SCREEN;
+  static const THEME_SCREEN = _Paths.THEME_SCREEN;
+  static const BOOKING_SCREEN = _Paths.BOOKING_SCREEN;
+  static const OTP_SCREEN = _Paths.OTP_SCREEN;
+  static const ABOUTORGANIZATION_SCREEN = _Paths.ABOUTORGANIZATION_SCREEN;
+  static const DETAILDEVELOPER_SCREEN = _Paths.DETAILDEVELOPER_SCREEN;
 }
 
 abstract class _Paths {
@@ -81,7 +80,6 @@ abstract class _Paths {
   static const OTP_SCREEN = '/otp-screen';
   static const CONFIRM_PASSWORD = '/ confirm-password';
   static const RESET_PASSWORD = '/reset-password';
-
   static const HOME_SEEALL = '/home-seeall';
   static const DETAIL_SCREEN = '/detail-places';
   static const PACKAGE_DETAIL = '/package-detail';
@@ -96,4 +94,6 @@ abstract class _Paths {
   static const GUEST_INFO = '/guest-info';
   static const CONFIRM_BOOKING = '/confirm-booking';
   static const PACKAGE_CF_BOOKING = '/package-cf-booking';
+  static const ABOUTORGANIZATION_SCREEN = '/aboutorgranization-screen';
+  static const DETAILDEVELOPER_SCREEN = '/detaildeveloper-screen';
 }

@@ -113,4 +113,10 @@ class AuthServices {
     var response = await baseApi.delete(endpoint: "/api/auth/logout");
     return response;
   }
+
+  //Profile
+  Future<Map<String, dynamic>> fetchProfile() async {
+    var response = await baseApi.get(endpoint: "/api/profile/me");
+    return response;
+  }
 }

@@ -22,11 +22,24 @@ class AppImage {
   static const String khmerIcon = "assets/svg/cambodia.svg";
   static const String englishIcon = "assets/svg/english.svg";
   static const String lightIcon = "assets/svg/Light.svg";
-  // static const String arrowBack = "assets/icons/arrow_back_icon.png";
+  static const String teamIcon = "assets/svg/team.svg";
+  static const String peopleIcon = "assets/svg/people.svg";
+  static const String favIcon = "assets/svg/fav.svg";
+  static const String profileIcon = "assets/svg/profile.svg";
+  static const String githubIcon = "assets/svg/github.svg";
+  static const String emailIcon = "assets/svg/inbox-svgrepo-com copy.svg";
+  static const String telegramIcon = "assets/svg/telegram.svg";
+  static const String locationIcon = "assets/svg/location.svg";
+  static const String dotIcon = "assets/svg/dot.svg";
+  static const String projectIcon = "assets/svg/project.svg";
+  static const String educationIcon = "assets/svg/Education.svg";
+  static const String skillIcon = "assets/svg/skill.svg";
 
   static const String warningImage = "assets/svg/warning.png";
   static const String khmerImage = "assets/images/cambodia.png";
   static const String englishImage = "assets/images/english.png";
   static const String lightImage = "assets/svg/light.png";
   static const String darkImage = "assets/images/dark.png";
+  static const String teamImage = "assets/images/team.png";
+  static const String emailImage = "assets/images/email.png";
 }
