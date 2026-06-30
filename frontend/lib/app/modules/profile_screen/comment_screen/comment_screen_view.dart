@@ -14,9 +14,9 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Get.theme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Get.theme.scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
         elevation: 0,
         leading: IconButton(
@@ -26,7 +26,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
         title: Text(
           "Feedback",
           style: GoogleFonts.kantumruyPro(
-            color: Get.theme.colorScheme.secondary,
+            color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -36,20 +36,20 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
-            children: [_mainCard(), SizedBox(height: 20), _contact()],
+            children: [_mainCard(context), SizedBox(height: 20), _contact(context)],
           ),
         ),
       ),
     );
   }
 
-  Widget _mainCard() {
+  Widget _mainCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? null : Get.theme.scaffoldBackgroundColor,
+        color: Get.isDarkMode ? null : Theme.of(context).scaffoldBackgroundColor,
         border: Get.isDarkMode
-            ? Border.all(color: Get.theme.colorScheme.primary)
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
         borderRadius: BorderRadius.circular(20),
       ),
@@ -243,14 +243,14 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
     );
   }
 
-  Widget _contact() {
+  Widget _contact(BuildContext context) {
     return Container(
       width: Get.width * 100,
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? null : Get.theme.scaffoldBackgroundColor,
+        color: Get.isDarkMode ? null : Theme.of(context).scaffoldBackgroundColor,
         border: Get.isDarkMode
-            ? Border.all(color: Get.theme.colorScheme.primary)
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
             : null,
         borderRadius: BorderRadius.circular(20),
       ),

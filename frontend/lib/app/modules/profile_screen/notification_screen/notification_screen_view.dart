@@ -15,9 +15,9 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Get.theme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Get.theme.scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           onPressed: Get.back,
@@ -26,7 +26,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
         title: Text(
           "Notification",
           style: GoogleFonts.spaceGrotesk(
-            color: Get.theme.colorScheme.secondary,
+            color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -67,14 +67,14 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                         children: [
                           SvgPicture.asset(
                             AppImage.messageIcon,
-                            color: Get.theme.colorScheme.primary,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           SizedBox(width: 5),
                           Text(
                             "សារ",
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 16,
-                              color: Get.theme.colorScheme.secondary,
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
                         ],
