@@ -138,8 +138,8 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       // routes
-      // initialRoute: Routes.SPLASH_SCREEN,
-      initialRoute: Routes.HOME_SCREEN,
+      initialRoute: Routes.SPLASH_SCREEN,
+      // initialRoute: Routes.HOME_SCREEN,
       // initialRoute: Routes.USERPROFILE_SCREEN,
       getPages: AppPages.routes,
     );

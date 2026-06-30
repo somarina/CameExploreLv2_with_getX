@@ -3,16 +3,6 @@ import 'package:frontend/app/modules/auth/forget_password/views/otp_screen.dart'
 import 'package:frontend/app/modules/auth/forget_password/views/reset_password_screen.dart';
 import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_binding.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_view.dart';
-import 'package:frontend/app/modules/home_see_all_screen/home_see_all_screen_view.dart';
-import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_photo/hotel_detail_photo_view.dart';
-import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_screen_view.dart';
-import 'package:frontend/app/modules/hotel_detail_screen/reviews_hotel_screen/reviews_hotel_screen_view.dart';
-import 'package:frontend/app/modules/hotel_write_review/hotel_write_review_view.dart';
-import 'package:frontend/app/modules/itinerary_screen/itinerary_screen_view.dart';
-import 'package:frontend/app/modules/package_checkout_screen/package_cf_booking/package_cf_booking_view.dart';
-import 'package:frontend/app/modules/package_checkout_screen/package_checkout_screen_view.dart';
-import 'package:frontend/app/modules/package_detail_screen/package_detail_screen_view.dart';
-import 'package:frontend/app/modules/package_write_review/package_write_review_view.dart';
 import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_binding.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_view.dart';
