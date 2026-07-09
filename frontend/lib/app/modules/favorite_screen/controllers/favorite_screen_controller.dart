@@ -9,6 +9,7 @@ class FavoriteScreenController extends GetxController {
   RxList favoriteLists = [].obs;
   RxBool canCreateList = false.obs;
 
+
   final TextEditingController createListCtrl = TextEditingController();
 
   final FocusNode createListFocusNode = FocusNode();
@@ -97,6 +98,11 @@ class FavoriteScreenController extends GetxController {
     if (text.isEmpty) return text;
 
     return text[0].toUpperCase() + text.substring(1);
+  }
+
+  final favorites = List.generate(20, (_) => false).obs;  
+  void toggleFavorite(int index) {
+    favorites[index] = !favorites[index];
   }
 
   @override

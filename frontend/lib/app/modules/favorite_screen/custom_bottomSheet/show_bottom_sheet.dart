@@ -70,7 +70,7 @@ class AppBottomSheets {
                               ? FontWeight.bold
                               : FontWeight.normal,
                           color: canSubmit
-                              ? const Color(0xff009A3F)
+                              ? Color(0xff009A3F)
                               : Colors.black54,
                         ),
                       ),

@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   firebase_auth
   firebase_core
+  geolocator_windows
   irondash_engine_context
   permission_handler_windows
   share_plus

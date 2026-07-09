@@ -127,7 +127,7 @@ Map<String, String> kmKH = {
   "related_docs": "ឯកសារពាក់ព័ន្ធ",
   "privacy_policy":
       "គោលការណ៍ភាពឯកជន\nអានពីរបៀបដែលយើងប្រើប្រាស់ទិន្នន័យរបស់អ្នក",
-  "privacy_policy": "គោលការណ៍ភាពឯកជន",
+  // "privacy_policy": "គោលការណ៍ភាពឯកជន",
   "privacy_policy_desc": "អានពីរបៀបដែលយើងប្រើប្រាស់ទិន្នន័យរបស់អ្នក",
 
   //  ===== About CamExplore =====
@@ -177,5 +177,28 @@ Map<String, String> kmKH = {
   "Password": "ពាក្យសម្ងាត់",
   "Or": "ឬ",
 
+  // Favorites Screen
+  "Favorites": "ចំណូលចិត្ត",
+  "activity": "សកម្មភាព",
+  "activities": "សកម្មភាព",
+  "Rename list": "ប្តូរឈ្មោះបញ្ជី",
+  "Delete list": "លុបបញ្ជី",
+  "This list is empty": "បញ្ជីនេះទទេរ",
+  "Find things to do": "ស្វែងរកអ្វីត្រូវធ្វើ",
+  "Cancel": "បោះបង់",
+  "Done": "រួចរាល់",
+  "Delete": "លុប",
+  "Create a list": "បង្កើតបញ្ជី",
+  "Select a list": "ជ្រើសរើសបញ្ជី",
+  "List name": "ឈ្មោះបញ្ជី",
+  "Enter new list name": "បញ្ចូលឈ្មោះបញ្ជីថ្មី",
+  "delete_list_confirm":
+      "តើអ្នកបានយល់ព្រមទេថា​អ្នកចង់លុបបញ្ជី @listName នេះ? សកម្មភាពទាំងអស់ដែលអ្នកបានរក្សាទុកនឹងត្រូវបាត់បង់",
+
+  // Search Screen
+  "Most search": "ការស្វែងរកច្រើនបំផុត",
+  "Popular places": "កន្លែងពេញនិយម",
+  "people searched this": "នាក់បានស្វែងរកទីកន្លែងនេះ",
+  "searches": "ស្វែងរក",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 };

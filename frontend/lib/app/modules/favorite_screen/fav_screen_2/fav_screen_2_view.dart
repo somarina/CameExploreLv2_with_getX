@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:frontend/app/core/constants/app_image.dart';
 import 'package:frontend/app/modules/favorite_screen/custom_bottomSheet/show_bottom_sheet.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
@@ -32,22 +31,32 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                         color: Colors.white, // background color
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                            offset: Offset(0, 3), // x, y
+                            color: Colors.grey[300]!,
+                            blurRadius: 4,
+                            offset: Offset(0, 4),
                           ),
                         ],
                       ),
-                      child: IconButton(
-                        icon: SvgPicture.asset(
-                          AppImage.arrowBackIcon,
-                          width: 30,
-                          height: 30,
-                        ),
-                        onPressed: () {
-                          Get.back(result: true);
+                      child: Bounceable(
+                        onTap: () {
+                          Get.back();
                         },
+                        child: Container(
+                          width: 46,
+                          height: 46,
+                          decoration: BoxDecoration(
+                            // color: Theme.of(context).scaffoldBackgroundColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              "assets/svg/normalBack.svg",
+                              width: 26,
+                              height: 26,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     Spacer(),
@@ -69,8 +78,8 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       },
                       child: Container(
                         padding: EdgeInsets.all(10),
-                        width: 44,
-                        height: 44,
+                        width: 46,
+                        height: 46,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
@@ -207,8 +216,8 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       },
                       child: Container(
                         padding: EdgeInsets.all(10),
-                        width: 44,
-                        height: 44,
+                        width: 46,
+                        height: 46,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
@@ -230,178 +239,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: controller.favoriteItems.isEmpty
-                      ? SizedBox(
-                          height: Get.height * 0.8,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "This list is empty".tr,
-                                style: GoogleFonts.googleSans(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-
-                              SizedBox(height: 20),
-
-                              ElevatedButton(
-                                onPressed: () {
-                                  Get.offAllNamed(Routes.SEARCH_SCREEN);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xff009A3F),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                child: Text(
-                                  "Find things to do".tr,
-                                  style: GoogleFonts.googleSans(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: 2,
-                          separatorBuilder: (_, __) => SizedBox(height: 10),
-                          itemBuilder: (context, index) {
-                            return Bounceable(
-                              onTap: () {},
-                              child: Card(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(15),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            Container(
-                                              clipBehavior: Clip.hardEdge,
-                                              width: 112,
-                                              height: 112,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            Positioned(
-                                              right: 8,
-                                              top: 8,
-                                              child: Icon(
-                                                Icons.favorite,
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(width: 20),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text("Angkor Wat"),
-                                              SizedBox(height: 10),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.location_on_sharp,
-                                                    size: 20,
-                                                    color: Colors.grey,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Expanded(
-                                                    child: Text("Siem Reap"),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 5),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    size: 20,
-                                                    color: Colors.amber,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Text("8.9"),
-                                                  SizedBox(width: 15),
-                                                  Container(
-                                                    width: 5,
-                                                    height: 5,
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: Colors.grey,
-                                                        ),
-                                                  ),
-                                                  SizedBox(width: 15),
-                                                  Container(
-                                                    padding: EdgeInsets.all(5),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                        0xffCEDFCE,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      "Temple",
-                                                      style: const TextStyle(
-                                                        color: Color(
-                                                          0xff009A3F,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 5),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.calendar_today,
-                                                    size: 20,
-                                                    color: Colors.grey,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Text("បានរក្សាទុកថ្មីៗ"),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                ),
+                _buildEmptyList(),
               ],
             ),
           ),
@@ -410,11 +248,169 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
     );
   }
 
+  Widget _buildEmptyList() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: controller.favoriteItems.isEmpty
+          ? SizedBox(
+              height: Get.height * 0.8,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "This list is empty".tr,
+                    style: GoogleFonts.googleSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.offAllNamed(Routes.BUTTON_NAVBAR);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff009A3F),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                    ),
+                    child: Text(
+                      "Find things to do".tr,
+                      style: GoogleFonts.googleSans(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : _buildFavList(),
+    );
+  }
+
+  Widget _buildFavList() {
+    return ListView.separated(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: 2,
+      separatorBuilder: (_, __) => SizedBox(height: 10),
+      itemBuilder: (context, index) {
+        return Bounceable(
+          onTap: () {},
+          child: Card(
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        Container(
+                          clipBehavior: Clip.hardEdge,
+                          width: 112,
+                          height: 112,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Icon(Icons.favorite, color: Colors.red),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Angkor Wat"),
+                          SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_sharp,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(width: 5),
+                              Expanded(child: Text("Siem Reap")),
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(Icons.star, size: 20, color: Colors.amber),
+                              SizedBox(width: 5),
+                              Text("8.9"),
+                              SizedBox(width: 15),
+                              Container(
+                                width: 5,
+                                height: 5,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              SizedBox(width: 15),
+                              Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffCEDFCE),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  "Temple",
+                                  style: const TextStyle(
+                                    color: Color(0xff009A3F),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(width: 5),
+                              Text("បានរក្សាទុកថ្មីៗ"),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget showDialog() {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         // Handle delete list logic here
-        // controller.deleteFavoriteList();
+        await controller.deleteFavoriteList();
         Get.dialog(
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -476,9 +472,9 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                         SizedBox(width: 10),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               // Handle delete logic here
-                              controller.deleteFavoriteList();
+                              await controller.deleteFavoriteList();
                               Get.back();
                               Get.back();
                               Get.back();

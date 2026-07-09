@@ -1,9 +1,13 @@
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:get/get.dart';
 
 class HomeScreenController extends GetxController {
   //TODO: Implement HomeScreenController
 
   var currentIndex = 0.obs;
+  final favoriteController = Get.find<FavoriteScreenController>();
+  
+  
 
   List<String> imgList = [
     'assets/images/homescreen/slider1.png',
@@ -21,8 +25,4 @@ class HomeScreenController extends GetxController {
     favorites[index] = !favorites[index];
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 }

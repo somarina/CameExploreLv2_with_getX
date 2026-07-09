@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
+import 'package:frontend/app/modules/discover_screen/search_screen/discover_place_model.dart';
 import 'package:get/get.dart';
 
 import '../../../core/api/services/places_services.dart';
 
 class SearchScreenController extends GetxController {
+  final PlacesServices service = PlacesServices();
 
-  final PlacesServices _placesServices = PlacesServices();
-  RxBool isLoading = false.obs;
+  RxBool isLoading = true.obs;
 
-  RxList mostSearchPlaces = [].obs;
-  RxList popularPlaces = [].obs;
+  RxList<DiscoverPlaceModel> mostSearch = <DiscoverPlaceModel>[].obs;
+  RxList<DiscoverPlaceModel> popularPlaces = <DiscoverPlaceModel>[].obs;
 
   @override
   void onInit() {
@@ -18,21 +18,26 @@ class SearchScreenController extends GetxController {
   }
 
   Future<void> getDiscoverHome() async {
-  try {
-    isLoading.value = true;
+    try {
+      isLoading(true);
 
-    final response =
-        await _placesServices.fetchDiscoverHome();
+      final response = await service.fetchDiscoverHome();
 
-    mostSearchPlaces.value =
-        response['data']['most_search'] ?? [];
+      final data = response["data"];
 
-    popularPlaces.value =
-        response['data']['popular_places'] ?? [];
-  } catch (e) {
-    debugPrint(e.toString());
-  } finally {
-    isLoading.value = false;
+      mostSearch.assignAll(
+        (data["most_search"] as List)
+            .map((e) => DiscoverPlaceModel.fromJson(e))
+            .toList(),
+      );
+
+      popularPlaces.assignAll(
+        (data["popular_places"] as List)
+            .map((e) => DiscoverPlaceModel.fromJson(e))
+            .toList(),
+      );
+    } finally {
+      isLoading(false);
+    }
   }
-}
 }
