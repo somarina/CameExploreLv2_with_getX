@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/auth_services.dart';
 import 'package:frontend/app/localization/app_translatation.dart';
 import 'package:frontend/app/modules/auth/login_screen/controllers/login_screen_controller.dart';
+import 'package:frontend/app/modules/booking_screen/controllers/booking_screen_controller.dart';
+import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
+import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/firebase_options.dart';
@@ -27,10 +31,10 @@ void main() async {
 
   Get.put(ThemeModeViewController());
   Get.put(LoginScreenController());
-  // Get.put(HomeScreenController());
-  // Get.put(SearchScreenController());
-  // Get.put(BookingScreenController());
-  // Get.put(FavoriteScreenController());
+  Get.put(HomeScreenController());
+  Get.put(FavoriteScreenController());
+  Get.put(SearchScreenController());
+  Get.put(BookingScreenController());
 }
 
 Future<void> _initServicesInBackground() async {
@@ -144,6 +148,7 @@ class MainApp extends StatelessWidget {
 
       // routes
       initialRoute: Routes.SPLASH_SCREEN,
+      // initialRoute: Routes.LOGIN_SCREEN,
       // initialRoute: Routes.HOME_SCREEN,
       // initialRoute: Routes.USERPROFILE_SCREEN,
       getPages: AppPages.routes,
