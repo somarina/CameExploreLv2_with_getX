@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/auth_services.dart';
 import 'package:frontend/app/localization/app_translatation.dart';
 import 'package:frontend/app/modules/auth/login_screen/controllers/login_screen_controller.dart';
+import 'package:frontend/app/modules/booking_screen/controllers/booking_screen_controller.dart';
+import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
+import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/firebase_options.dart';
@@ -26,7 +30,17 @@ void main() async {
   _initServicesInBackground();
 
   Get.put(ThemeModeViewController());
-   Get.put(LoginScreenController());
+  Get.put(LoginScreenController());
+  // Get.put(HomeScreenController());
+  // Get.put(SearchScreenController());
+  // Get.put(BookingScreenController());
+  // Get.put(FavoriteScreenController());
+  // Get.put(UserProfileScreenViewController());
+  // Get.put(ExploreViewController());
+  Get.put(HomeScreenController());
+  Get.put(FavoriteScreenController());
+  Get.put(SearchScreenController());
+  Get.put(BookingScreenController());
 }
 
 Future<void> _initServicesInBackground() async {
@@ -45,7 +59,7 @@ Future<void> _initServicesInBackground() async {
   // Deep link setup — safe here since runApp already ran
   _setupDeepLinks();
 }
- 
+
 void _setupDeepLinks() {
   final appLinks = AppLinks();
 
@@ -59,7 +73,7 @@ void _setupDeepLinks() {
     if (initialUri != null &&
         initialUri.scheme == 'camexplore' &&
         initialUri.host == 'telegram-login') {
-      await Future.delayed( Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 1));
       _handleTelegramCallback(initialUri.queryParameters);
     }
   });
@@ -117,7 +131,6 @@ void _handleTelegramCallback(Map<String, String> params) async {
     );
   }
 }
-
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -125,24 +138,23 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var box = GetStorage();
     var isdark = box.read("isdark") ?? false;
+    var language = box.read("language") ?? "enUS";
 
     return GetMaterialApp(
       // theme
       theme: AppColors.lightMode(),
       darkTheme: AppColors.darkMode(),
       themeMode: isdark ? ThemeMode.dark : ThemeMode.light,
-      
 
       // language
       translations: AppTranslatation(),
       locale: Locale("kmKH"),
       fallbackLocale: Locale("enUS"),
       debugShowCheckedModeBanner: false,
+      locale: language == "kmKH" ? Locale("kmKH") : Locale("enUS"),
 
       // routes
       initialRoute: Routes.SPLASH_SCREEN,
-      // initialRoute: Routes.FAVORITE_SCREEN,
-      // initialRoute: Routes.USERPROFILE_SCREEN,
       getPages: AppPages.routes,
     );
   }

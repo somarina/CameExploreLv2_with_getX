@@ -8,12 +8,12 @@ class WriteReviewScreenViewController extends GetxController {
   final reviewLength = 0.obs;
 
   final categories = <String, int>{
-    "Cleanliness": 0,
-    "Comfort": 0,
-    "Location": 0,
-    "Facilities": 0,
-    "Staff": 0,
-    "Value for money": 0,
+    "cleaniness": 0,
+    "comfort": 0,
+    "location": 0,
+    "facilities": 0,
+    "staff": 0,
+    "value_money": 0,
   }.obs;
 
   void selectScore(int score) {
@@ -29,13 +29,13 @@ class WriteReviewScreenViewController extends GetxController {
     switch (rating) {
       case 1:
       case 2:
-        return "Poor";
+        return "poor".tr;
       case 3:
-        return "Fair";
+        return "fair".tr;
       case 4:
-        return "Good";
+        return "good".tr;
       case 5:
-        return "Excellent";
+        return "excellent".tr;
       default:
         return "";
     }
@@ -55,6 +55,36 @@ class WriteReviewScreenViewController extends GetxController {
       default:
         return Colors.grey;
     }
+  }
+
+  /// Max 5 photos
+  final RxList<File> selectedImages = <File>[].obs;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickImages() async {
+    final List<XFile> images = await _picker.pickMultiImage(imageQuality: 80);
+
+    if (images.isEmpty) return;
+
+    final remaining = 5 - selectedImages.length;
+
+    if (remaining <= 0) {
+      Get.snackbar("Limit reached", "You can upload up to 5 photos.");
+      return;
+    }
+
+    selectedImages.addAll(images.take(remaining).map((e) => File(e.path)));
+
+    if (images.length > remaining) {
+      Get.snackbar(
+        "Maximum 5 photos",
+        "You can upload up to 5 photos.",
+      );
+    }
+  }
+
+  void removeImage(int index) {
+    selectedImages.removeAt(index);
   }
 
   @override

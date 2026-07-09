@@ -70,6 +70,10 @@ def serialize_place(place: dict, lang: Optional[str] = None) -> dict:
         "status": place.get("status", "approved"),
         "created_at": place.get("created_at"),
         "updated_at": place.get("updated_at"),
+        "rating": place.get("rating", 0),
+        "phoneNum": place.get("phoneNum"),
+        "rating_star": place.get("rating_star", 0),
+        "phoneNum": place.get("phoneNum")
     }
 
     if lang in ("en", "km"):

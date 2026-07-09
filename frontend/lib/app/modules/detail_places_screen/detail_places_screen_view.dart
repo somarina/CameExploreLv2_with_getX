@@ -9,6 +9,7 @@ import 'package:frontend/app/widgets/cardPlace/card_place.dart';
 import 'package:frontend/app/widgets/reviewPlace/review_place_card.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -69,9 +70,10 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             SizedBox(height: 30),
 
             //contact
-            _buildContact(context),
-            SizedBox(height: 30),
-
+            if (controller.phone != null) ...[
+              _buildContact(context),
+              SizedBox(height: 30),
+            ],
             //location
             _buildLocation(context),
             SizedBox(height: 40),
@@ -97,9 +99,9 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
         Row(
           children: [
             Text(
-              "Nearby Places",
+              "near_places".tr,
               style: GoogleFonts.googleSans(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: .w600,
                 color: Theme.of(context).colorScheme.secondary,
               ),
@@ -142,9 +144,9 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
       crossAxisAlignment: .start,
       children: [
         Text(
-          "Location",
-          style: TextStyle(
-            fontSize: 18,
+          "location".tr,
+          style: GoogleFonts.googleSans(
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -206,9 +208,12 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                             ],
                           ),
                           child: Text(
-                            "Angkor wat",
-                            style: TextStyle(
+                            controller.place['name'] ?? "Unknown Place",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.googleSans(
                               fontWeight: FontWeight.w500,
+                              fontSize: 14,
                               color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
@@ -231,7 +236,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                   child: Row(
                     children: [
                       Text(
-                        "Krong Siem Reap, Cambodia",
+                        "${controller.place['province']}, Cambodia",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.googleSans(color: Colors.grey[700]),
@@ -239,7 +244,8 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                       Spacer(),
                       Icon(Icons.navigation, size: 16, color: Colors.grey[700]),
                       Text(
-                        "123.60km",
+                        "${controller.homeCtrl.calculateDistance(controller.place["latitude"], controller.place["longitude"]).toStringAsFixed(2)} km",
+
                         style: GoogleFonts.googleSans(color: Colors.grey[700]),
                       ),
                     ],
@@ -261,22 +267,14 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(30),
-                      onTap: () async {
-                        final uri = Uri.parse(
-                          "https://www.google.com/maps/search/?api=1&query",
-                        );
-
-                        if (await canLaunchUrl(uri)) {
-                          await launchUrl(uri);
-                        }
-                      },
+                      onTap: () => controller.openGoogleMaps(),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.navigation, color: Colors.white),
                           SizedBox(width: 8),
                           Text(
-                            "Get Directions",
+                            "get_direction".tr,
                             style: GoogleFonts.googleSans(
                               color: Colors.white,
                               fontSize: 16,
@@ -301,9 +299,9 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
       crossAxisAlignment: .start,
       children: [
         Text(
-          "Contact",
-          style: TextStyle(
-            fontSize: 18,
+          "contact".tr,
+          style: GoogleFonts.googleSans(
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -333,7 +331,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                 ),
                 SizedBox(width: 12),
                 Text(
-                  "+855 11 234 567",
+                  "(+855) ${controller.place['phoneNum']}",
                   style: GoogleFonts.googleSans(
                     fontSize: 14,
                     fontWeight: .w500,
@@ -359,9 +357,9 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
       crossAxisAlignment: .start,
       children: [
         Text(
-          "Gallery",
-          style: TextStyle(
-            fontSize: 18,
+          "gallary".tr,
+          style: GoogleFonts.googleSans(
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -398,9 +396,9 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
       crossAxisAlignment: .start,
       children: [
         Text(
-          "Opening Hours",
-          style: TextStyle(
-            fontSize: 18,
+          "opening_hours".tr,
+          style: GoogleFonts.googleSans(
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -437,8 +435,8 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                     Row(
                       children: [
                         Text(
-                          "Open",
-                          style: TextStyle(
+                          "open_".tr,
+                          style: GoogleFonts.googleSans(
                             color: Colors.green,
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -446,7 +444,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                         ),
                         Text(
                           " • 5am - 5pm",
-                          style: TextStyle(
+                          style: GoogleFonts.googleSans(
                             color: Theme.of(
                               context,
                             ).textTheme.titleSmall!.color,
@@ -492,8 +490,8 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                         children: [
                           Expanded(
                             child: Text(
-                              item["day"]!,
-                              style: TextStyle(
+                              item["day"]!.tr,
+                              style: GoogleFonts.googleSans(
                                 fontSize: isToday ? 14 : 12,
                                 fontWeight: isToday
                                     ? FontWeight.w700
@@ -509,7 +507,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
 
                           Text(
                             item["time"]!,
-                            style: TextStyle(
+                            style: GoogleFonts.googleSans(
                               fontSize: isToday ? 14 : 12,
                               fontWeight: isToday
                                   ? FontWeight.w700
@@ -539,17 +537,17 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
       crossAxisAlignment: .start,
       children: [
         Text(
-          "About",
-          style: TextStyle(
-            fontSize: 18,
+          "about_".tr,
+          style: GoogleFonts.googleSans(
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
         ),
         SizedBox(height: 10),
         Text(
-          "Angkor Wat is a temple complex in Cambodia and the largest religious monument in the world by land area, measuring 162.6 hectares.",
-          style: TextStyle(
+          controller.place['description'],
+          style: GoogleFonts.googleSans(
             color: Theme.of(context).textTheme.titleSmall!.color,
             height: 1.8,
             fontSize: 14,
@@ -567,8 +565,8 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
           children: [
             Expanded(
               child: Text(
-                "ប្រាសាទអង្គរវត្ត",
-                style: TextStyle(
+                controller.place['name'] ?? "Unknown Place",
+                style: GoogleFonts.googleSans(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.secondary,
@@ -578,8 +576,8 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             Icon(Icons.star, color: Colors.amber.shade700, size: 24),
             SizedBox(width: 4),
             Text(
-              "4.9",
-              style: TextStyle(
+              controller.place['rating'].toString(),
+              style: GoogleFonts.googleSans(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).textTheme.titleSmall!.color,
@@ -587,7 +585,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             ),
             Text(
               " (500+)",
-              style: TextStyle(
+              style: GoogleFonts.googleSans(
                 fontSize: 16,
                 color: Theme.of(context).textTheme.titleSmall!.color,
               ),
@@ -603,8 +601,8 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             Icon(Icons.location_on_outlined, color: Colors.green, size: 26),
             SizedBox(width: 6),
             Text(
-              "Siem Reap, Cambodia",
-              style: TextStyle(
+              "${controller.place['province']}, Cambodia",
+              style: GoogleFonts.googleSans(
                 color: Theme.of(context).textTheme.titleSmall!.color,
                 fontSize: 14,
               ),
@@ -620,8 +618,9 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             ),
             SizedBox(width: 4),
             Text(
-              "6.5 km away",
-              style: TextStyle(
+              "${controller.homeCtrl.calculateDistance(controller.place["latitude"], controller.place["longitude"]).toStringAsFixed(2)} km",
+
+              style: GoogleFonts.googleSans(
                 color: Theme.of(context).textTheme.titleSmall!.color,
                 fontSize: 14,
               ),
@@ -647,7 +646,14 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             ),
             Row(
               children: [
-                _circleButton("assets/svg/normalShare.svg", context),
+                Bounceable(
+                  onTap: () {
+                    SharePlus.instance.share(
+                      ShareParams(text: "Check out this amazing place!"),
+                    );
+                  },
+                  child: _circleButton("assets/svg/normalShare.svg", context),
+                ),
                 SizedBox(width: 16),
                 _circleButton("assets/svg/normalFav.svg", context),
               ],
@@ -735,8 +741,9 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
       crossAxisAlignment: .start,
       children: [
         Text(
-          "Reviews",
+          "review".tr,
           style: AppFonts.fontsSubTitlew500.copyWith(
+            fontSize: 20,
             color: Theme.of(context).colorScheme.secondary,
           ),
         ),
@@ -757,7 +764,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             children: [
               _buildRating(context),
               CustomButton(
-                title: "Write a review",
+                title: "write_review".tr,
                 onTap: () {
                   Get.toNamed(Routes.PACKAGE_REVIEW);
                 },
@@ -776,7 +783,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
               padding: const EdgeInsets.only(bottom: 20),
               child: ReviewCard(
                 userName: "Anonymous User",
-                date: "Stayed in Apr 2026",
+                date: "${"stayed_in".tr} Apr 2026",
                 rating: "7/10",
                 review:
                     "Overall, I love the atmosphere but just some rooms have problems with doors and toilets and also not recommend ...",

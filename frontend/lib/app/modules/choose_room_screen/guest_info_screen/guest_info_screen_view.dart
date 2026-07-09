@@ -20,7 +20,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
         elevation: 0,
         leading: BackButton(color: Theme.of(context).colorScheme.secondary),
         title: Text(
-          "Guest details",
+          "guest_details".tr,
           style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
@@ -29,37 +29,27 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _bookingCard(context),
-
-            SizedBox(height: 24),
-
+            const SizedBox(height: 24),
             Text(
-              "Guest info",
+              "guest_info".tr,
               style: GoogleFonts.googleSans(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-
-            SizedBox(height: 16),
-
-            _textField(controller.firstNameCtrl, "First name*", context),
-
-            SizedBox(height: 14),
-
-            _textField(controller.lastNameCtrl, "Last name*", context),
-
-            SizedBox(height: 14),
-
-            _textField(controller.emailCtrl, "Email*", context),
-
-            SizedBox(height: 14),
-
+            const SizedBox(height: 16),
+            _textField(controller.firstNameCtrl, "first_name_hint".tr, context),
+            const SizedBox(height: 14),
+            _textField(controller.lastNameCtrl, "last_name_hint".tr, context),
+            const SizedBox(height: 14),
+            _textField(controller.emailCtrl, "email_hint".tr, context),
+            const SizedBox(height: 14),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
@@ -68,7 +58,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
               child: Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       "+855",
                       style: GoogleFonts.googleSans(
@@ -88,35 +78,31 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                         fontSize: 18,
                       ),
                       decoration: InputDecoration(
-                        hintText: "Mobile*",
+                        hintText: "mobile_hint".tr,
                         hintStyle: GoogleFonts.googleSans(
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(18),
+                        contentPadding: const EdgeInsets.all(18),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-
-            SizedBox(height: 28),
-
+            const SizedBox(height: 28),
             Text(
-              "Payment Method",
+              "payment_method".tr,
               style: GoogleFonts.googleSans(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-
-            SizedBox(height: 16),
-
+            const SizedBox(height: 16),
             Obx(
               () => Container(
-                padding: EdgeInsets.all(6),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.green),
                   borderRadius: BorderRadius.circular(18),
@@ -131,43 +117,34 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                         controller.selectedPayment.value = value ?? "KHQR";
                       },
                     ),
-
-                    Icon(Icons.qr_code_2, color: Colors.green, size: 30),
-
-                    SizedBox(width: 8),
-
+                    const Icon(Icons.qr_code_2, color: Colors.green, size: 30),
+                    const SizedBox(width: 8),
                     Text(
-                      "KHQR",
+                      "khqr".tr,
                       style: GoogleFonts.googleSans(
                         color: Colors.green,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
                       ),
                     ),
-
-                    SizedBox(width: 12),
-
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        "Pay via KHQR",
+                        "pay_via_khqr".tr,
                         style: GoogleFonts.googleSans(
                           fontSize: 14,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                     ),
-
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        "Popular",
+                        "popular".tr,
                         style: GoogleFonts.googleSans(
                           color: Colors.white,
                           fontSize: 12,
@@ -178,11 +155,9 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 ),
               ),
             ),
-
-            SizedBox(height: 16),
-
+            const SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
@@ -190,28 +165,23 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.qr_code, color: Colors.green),
-                  SizedBox(width: 10),
+                  const Icon(Icons.qr_code, color: Colors.green),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      "Scan with ABA, ACLEDA, Wing, or any KHQR-supported app to complete payment instantly.",
+                      "khqr_instruction".tr,
                       style: GoogleFonts.googleSans(color: Colors.green),
                     ),
                   ),
                 ],
               ),
             ),
-
-            SizedBox(height: 24),
-
+            const SizedBox(height: 24),
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                // color: Colors.grey.shade50,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                border: Border.all(color: Theme.of(context).colorScheme.primary),
               ),
               child: Column(
                 children: [
@@ -236,14 +206,12 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                       ),
                     ],
                   ),
-
-                  SizedBox(height: 12),
-
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                          "Taxes & fees",
+                          "taxes_and_fees".tr,
                           style: GoogleFonts.googleSans(
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.secondary,
@@ -251,7 +219,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                         ),
                       ),
                       Text(
-                        "Included",
+                        "included".tr,
                         style: GoogleFonts.googleSans(
                           fontSize: 14,
                           color: Theme.of(context).colorScheme.secondary,
@@ -259,14 +227,12 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                       ),
                     ],
                   ),
-
-                  Divider(height: 30),
-
+                  const Divider(height: 30),
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                          "Total",
+                          "total".tr,
                           style: GoogleFonts.googleSans(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -287,39 +253,30 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 ],
               ),
             ),
-
-            SizedBox(height: 30),
-
+            const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
               height: 58,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green.shade700,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
                 onPressed: () {
                   final now = DateTime.now();
-                  final formattedDate = DateFormat(
-                    'dd MMM yyyy, hh:mm a',
-                  ).format(now);
-
-                  controller.transactionDate.value = formattedDate;
+                  controller.transactionDate.value = DateFormat('dd MMM yyyy, hh:mm a').format(now);
                   if (!controller.validateGuestInfo()) return;
+                  
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                     isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24),
-                      ),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                     ),
                     builder: (context) {
                       return Padding(
-                        padding: EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(24),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -331,47 +288,28 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-
-                            SizedBox(height: 20),
-
+                            const SizedBox(height: 20),
                             Text(
-                              "Scan KHQR to Pay",
-                              style: GoogleFonts.googleSans(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              "scan_to_pay".tr,
+                              style: GoogleFonts.googleSans(fontSize: 22, fontWeight: FontWeight.bold),
                             ),
-
-                            SizedBox(height: 20),
-
-                            Container(
-                              padding: EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Image.asset(
-                                "assets/svg/qrr.png",
-                                height: 260,
-                                width: 320,
-                                fit: BoxFit.cover,
-                              ),
+                            const SizedBox(height: 20),
+                            Image.asset(
+                              "assets/svg/qrr.png",
+                              height: 260,
+                              width: 320,
+                              fit: BoxFit.cover,
                             ),
-
-                            SizedBox(height: 16),
-
+                            const SizedBox(height: 16),
                             Text(
-                              "Open your banking app and scan this QR code.",
+                              "scan_instruction".tr,
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.googleSans(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
+                              style: GoogleFonts.googleSans(fontSize: 14, color: Colors.grey),
                             ),
-
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             CustomButton(
-                              title: "Done",
-                              margin: EdgeInsets.all(0),
+                              title: "done".tr,
+                              margin: EdgeInsets.zero,
                               onTap: () {
                                 Get.toNamed(
                                   Routes.CONFIRM_BOOKING,
@@ -387,17 +325,12 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                                     "guests": "6 adults",
                                     "rooms": "1 Room",
                                     "totalPrice": "\$149",
-                                    "transactionDate":
-                                        controller.transactionDate.value =
-                                            DateFormat(
-                                              'MMM dd, yyyy hh:mm a',
-                                            ).format(now),
+                                    "transactionDate": DateFormat('MMM dd, yyyy hh:mm a').format(now),
                                   },
                                 );
                               },
                             ),
-
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       );
@@ -405,17 +338,12 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                   );
                 },
                 child: Text(
-                  "Pay via KHQR",
-                  style: GoogleFonts.googleSans(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  "pay_via_khqr".tr,
+                  style: GoogleFonts.googleSans(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
-
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
           ],
         ),
       ),
@@ -430,7 +358,6 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
       ),
       child: Column(
         children: [
-          // Check in/out section
           Padding(
             padding: const EdgeInsets.all(20),
             child: Row(
@@ -439,14 +366,8 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Check-in",
-                        style: GoogleFonts.googleSans(
-                          fontSize: 15,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SizedBox(height: 4),
+                      Text("check_in".tr, style: GoogleFonts.googleSans(fontSize: 15, color: Colors.grey)),
+                      const SizedBox(height: 4),
                       Text(
                         controller.checkInText,
                         style: GoogleFonts.googleSans(
@@ -455,47 +376,30 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        "After 14:00",
-                        style: GoogleFonts.googleSans(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
+                      const SizedBox(height: 4),
+                      Text("after_14_00".tr, style: GoogleFonts.googleSans(fontSize: 14, color: Colors.grey)),
                     ],
                   ),
                 ),
-
                 SizedBox(
                   width: 90,
                   child: Column(
                     children: [
                       Text(
-                        "${controller.nights} night(s)",
-                        style: GoogleFonts.googleSans(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                        "nights".trParams({'count': controller.nights.toString()}),
+                        style: GoogleFonts.googleSans(fontSize: 14, color: Colors.grey),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Divider(thickness: 1, color: Colors.grey.shade300),
                     ],
                   ),
                 ),
-
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        "Check-out",
-                        style: GoogleFonts.googleSans(
-                          fontSize: 15,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SizedBox(height: 4),
+                      Text("check_out".tr, style: GoogleFonts.googleSans(fontSize: 15, color: Colors.grey)),
+                      const SizedBox(height: 4),
                       Text(
                         controller.checkOutText,
                         textAlign: TextAlign.end,
@@ -505,23 +409,15 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Before 12:00",
-                        style: GoogleFonts.googleSans(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
+                      const SizedBox(height: 4),
+                      Text("before_12_00".tr, style: GoogleFonts.googleSans(fontSize: 14, color: Colors.grey)),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-
-          Divider(height: 1),
-
+          const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -540,109 +436,62 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(left: 14),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          left: BorderSide(color: Colors.grey.shade300),
-                        ),
-                      ),
+                      padding: const EdgeInsets.only(left: 14),
+                      decoration: BoxDecoration(border: Border(left: BorderSide(color: Colors.grey.shade300))),
                       child: Text(
-                        "1 Room(s)",
-                        style: GoogleFonts.googleSans(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                        "room_count".trParams({'count': '1'}),
+                        style: GoogleFonts.googleSans(fontSize: 14, color: Colors.grey),
                       ),
                     ),
                   ],
                 ),
-
-                SizedBox(height: 18),
-
-                _roomInfoRow(
-                  Icons.person_outline,
-                  "Price for 6 Adults",
-                  context,
-                ),
-
-                _roomInfoRow(Icons.bed_outlined, "6 bunk beds", context),
-
-                _roomInfoRow(Icons.block, "Non-smoking", context),
-
-                _roomInfoRow(
-                  Icons.free_breakfast_outlined,
-                  "Breakfast available for purchase",
-                  context,
-                ),
-
+                const SizedBox(height: 18),
+                _roomInfoRow(Icons.person_outline, "price_for_adults".trParams({'count': '6'}), context),
+                _roomInfoRow(Icons.bed_outlined, "bunk beds".trParams({'count': '6'}), context),
+                _roomInfoRow(Icons.block, "non_smoking".tr, context),
+                _roomInfoRow(Icons.free_breakfast_outlined, "breakfast_available".tr, context),
                 Row(
                   children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      color: Colors.green,
-                      size: 22,
-                    ),
-                    SizedBox(width: 10),
+                    const Icon(Icons.check_circle_outline, color: Colors.green, size: 22),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        "Free Cancellation, before 23:59, Jun 19",
-                        style: GoogleFonts.googleSans(
-                          color: Colors.green,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        "free_cancellation".tr,
+                        style: GoogleFonts.googleSans(color: Colors.green, fontSize: 14, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
                 ),
-
-                SizedBox(height: 18),
-
+                const SizedBox(height: 18),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: Color(0xffE8F8F7),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  decoration: BoxDecoration(color: const Color(0xffE8F8F7), borderRadius: BorderRadius.circular(16)),
                   child: Row(
                     children: [
-                      Icon(Icons.discount_outlined, color: Color(0xff00897B)),
-                      SizedBox(width: 10),
+                      const Icon(Icons.discount_outlined, color: Color(0xff00897B)),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          "Special Discount: Save US\$3.55 on this room",
-                          style: GoogleFonts.googleSans(
-                            color: Color(0xff00897B),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          "special_discount".tr,
+                          style: GoogleFonts.googleSans(color: const Color(0xff00897B), fontSize: 15, fontWeight: FontWeight.w500),
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                SizedBox(height: 14),
-
+                const SizedBox(height: 14),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: Color(0xffFFF5EA),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  decoration: BoxDecoration(color: const Color(0xffFFF5EA), borderRadius: BorderRadius.circular(16)),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("🔥", style: TextStyle(fontSize: 20)),
-                      SizedBox(width: 10),
+                      const Text("🔥", style: TextStyle(fontSize: 20)),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          "In high demand! Complete your booking to lock in your ideal room.",
-                          style: GoogleFonts.googleSans(
-                            color: Color(0xffE65100),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          "high_demand".tr,
+                          style: GoogleFonts.googleSans(color: const Color(0xffE65100), fontSize: 15, fontWeight: FontWeight.w500),
                         ),
                       ),
                     ],
@@ -662,14 +511,11 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
       child: Row(
         children: [
           Icon(icon, size: 22, color: Colors.grey.shade500),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               title,
-              style: GoogleFonts.googleSans(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+              style: GoogleFonts.googleSans(fontSize: 14, color: Theme.of(context).colorScheme.secondary),
             ),
           ),
         ],
@@ -677,29 +523,19 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
     );
   }
 
-  Widget _textField(
-    TextEditingController controller,
-    String hint,
-    BuildContext context,
-  ) {
+  Widget _textField(TextEditingController controller, String hint, BuildContext context) {
     return SizedBox(
       height: 60,
       child: TextField(
         controller: controller,
-        style: GoogleFonts.googleSans(
-          color: Theme.of(context).colorScheme.secondary,
-          fontSize: 18,
-        ),
+        style: GoogleFonts.googleSans(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.googleSans(
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-
-          contentPadding: EdgeInsets.all(18),
+          hintStyle: GoogleFonts.googleSans(color: Theme.of(context).colorScheme.secondary),
+          contentPadding: const EdgeInsets.all(18),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.white),
+            borderSide: const BorderSide(color: Colors.white),
           ),
         ),
       ),

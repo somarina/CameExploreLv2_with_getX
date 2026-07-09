@@ -10,6 +10,7 @@ import 'package:frontend/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../core/constants/app_colors/app_colors.dart';
 
@@ -35,6 +36,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
               Obx(
                 () => controller.isLogin.value ? _login(context) : _guestUser(),
               ),
+              SizedBox(height: 50),
             ],
           ),
         ),
@@ -483,14 +485,30 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
   Widget _login(BuildContext context) {
     return Obx(
       () => controller.isLoading.value
-          ?
-            CircularProgressIndicator()
+          ? CircularProgressIndicator()
+          // Shimmer.fromColors(
+          //   baseColor: Colors.grey.shade200,
+          //   highlightColor: Colors.grey.shade300,
+          //   child: Container(height: 50, color: Colors.grey),
+          // )
+          : Column(
+=======
+          ? CircularProgressIndicator(color: Colors.white)
+          :
             // Shimmer.fromColors(
             //   baseColor: Colors.grey.shade200,
             //   highlightColor: Colors.grey.shade300,
             //   child: Container(height: 50, color: Colors.grey),
             // )
-          : Column(
+            // ListView.builder(
+            //   shrinkWrap: true,
+            //     physics: const NeverScrollableScrollPhysics(),
+            //     padding: const EdgeInsets.all(16),
+            //     itemCount: 10
+            //     itemBuilder: (context, index) {
+            //       return buildShimmer(context);
+            //     },):
+            Column(
               crossAxisAlignment: .center,
               children: [
                 DottedBorder(
@@ -630,33 +648,56 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
-  Widget btn(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: Size(double.infinity, 45),
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
-        // foregroundColor: Theme.of(context).colorScheme.secondary,
-      ),
-      onPressed: () {
-        controller.logout();
-        // Navigate to login screen after logout
-        Get.toNamed(Routes.LOGIN_SCREEN);
-      },
-      child: Row(
-        mainAxisAlignment: .center,
-        children: [
-          SvgPicture.asset(AppImage.leaveIcon),
-          SizedBox(width: 10),
-          Text(
-            "logout".tr,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 16,
-              fontWeight: .bold,
-              color: Colors.white,
-            ),
+  Widget buildShimmer(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.withValues(alpha: 0.8),
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          height: 45,
+          decoration: BoxDecoration(
+            color: Colors.grey.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(25),
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget btn(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: 20),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: Size(double.infinity, 45),
+            backgroundColor: Theme.of(context).colorScheme.tertiary,
+            // foregroundColor: Theme.of(context).colorScheme.secondary,
+          ),
+          onPressed: () {
+            controller.logout();
+            // Navigate to login screen after logout
+            Get.toNamed(Routes.LOGIN_SCREEN);
+          },
+          child: Row(
+            mainAxisAlignment: .center,
+            children: [
+              SvgPicture.asset(AppImage.leaveIcon),
+              SizedBox(width: 10),
+              Text(
+                "logout".tr,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 16,
+                  fontWeight: .bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 80),
+      ],
     );
   }
 }

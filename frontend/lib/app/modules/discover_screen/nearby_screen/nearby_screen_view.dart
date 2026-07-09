@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/discover_screen/nearby_screen/nearby_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../custom_textfield/build_textfield.dart';
 
@@ -11,31 +14,19 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff5f5f5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Color(0xfff5f5f5),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: Bounceable(
           onTap: () => Get.back(),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            margin: EdgeInsets.only(left: 20),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey[300]!,
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Center(child: Icon(Icons.arrow_back_ios)),
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: SvgPicture.asset("assets/svg/arrow_back.svg"),
           ),
         ),
         title: BuildTextfield(),
       ),
-      
+
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -44,114 +35,96 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20),
+                Obx(
+                  () => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: SizedBox(
+                      height: 100,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.categories.length,
+                        separatorBuilder: (_, __) => SizedBox(width: 20),
+                        itemBuilder: (context, index) {
+                          final item = controller.categories[index];
+
+                          return Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xff009A3F),
+                                  ),
+                                  child: Center(
+                                    child: Text(item["icon"] ?? ""),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                item["name"] ?? "",
+                                style: GoogleFonts.googleSans(),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+
                 Row(
                   children: [
                     Icon(Icons.location_on_outlined, color: Colors.blue),
                     SizedBox(width: 10),
                     Text(
                       "Nearby",
-                      style: TextStyle(
+                      style: GoogleFonts.googleSans(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 5),
                 Row(
                   children: [
                     SizedBox(width: 35),
                     Text(
                       "Activities near your current location",
-                      style: TextStyle(color: Colors.grey[700]),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(width: 50),
-                    Text(
-                      "165 km away",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    SizedBox(width: 10),
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey[500],
+                      style: GoogleFonts.googleSans(
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.titleSmall!.color,
                       ),
                     ),
-                    SizedBox(width: 10),
-                    Text(
-                      "79 activities",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
                   ],
                 ),
-                SizedBox(height: 20),
-                Divider(color: Colors.grey[300]),
-                SizedBox(height: 20),
-                _buildNearbyPlaces(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+                SizedBox(height: 5),
+                Obx(() {
+                  if (controller.nearbyPlaces.isEmpty) {
+                    return SizedBox.shrink();
+                  }
 
-  Widget _buildNearbyPlaces() {
-    return ListView.separated(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: 10,
-      separatorBuilder: (context, index) =>
-          Divider(color: Colors.grey[300], height: 30),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Get.toNamed(Routes.EXPLORE_SCREEN);
-          },
-          child: Row(
-            children: [
-              Icon(Icons.location_on_outlined, color: Colors.grey[700]),
-              SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+                  final nearestPlace = controller.nearbyPlaces.first;
+
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      SizedBox(width: 50),
+
                       Text(
-                        "Phnom Penh",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        "${nearestPlace.distance.toStringAsFixed(1)} km away",
+                        style: GoogleFonts.googleSans(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.titleSmall!.color,
                         ),
                       ),
-                      SizedBox(width: 5),
-                      Icon(Icons.star, color: Colors.amber, size: 16),
-                      SizedBox(width: 2),
-                      Text("4.5", style: TextStyle(color: Colors.grey[600])),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    "Cambodia's capital city",
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    children: [
-                      Text(
-                        "150 km away",
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
+
                       SizedBox(width: 10),
+
                       Container(
                         width: 6,
                         height: 6,
@@ -160,22 +133,212 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                           color: Colors.grey[500],
                         ),
                       ),
+
                       SizedBox(width: 10),
+
                       Text(
-                        "50 activities",
-                        style: TextStyle(color: Colors.grey[600]),
+                        "${controller.nearbyPlaces.length} places",
+                        style: GoogleFonts.googleSans(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.titleSmall!.color,
+                        ),
                       ),
                     ],
-                  ),
-                ],
-              ),
-              Spacer(),
-              Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 18),
-            ],
+                  );
+                }),
+                SizedBox(height: 10),
+                Divider(color: Theme.of(context).dividerColor),
+                SizedBox(height: 10),
+                _buildNearbyPlaces(context),
+              ],
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
+  Widget _buildNearbyPlaces(BuildContext context) {
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return Center(child: CircularProgressIndicator());
+      }
+
+      if (controller.nearbyPlaces.isEmpty) {
+        return Center(
+          child: Text(
+            "No nearby places found",
+            style: GoogleFonts.googleSans(
+              fontSize: 12,
+              color: Theme.of(context).textTheme.titleSmall!.color,
+            ),
+          ),
+        );
+      }
+
+      return ListView.separated(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: controller.nearbyPlaces.length,
+        separatorBuilder: (_, __) =>
+            Divider(height: 30, color: Colors.grey[300]),
+        itemBuilder: (context, index) {
+          final place = controller.nearbyPlaces[index];
+
+          return Bounceable(
+            onTap: () {
+              Get.toNamed(Routes.DETAIL_PLACES, arguments: place);
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: 110,
+                      height: 110,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.grey.shade300,
+                        image: DecorationImage(
+                          image: NetworkImage(place.imageUrl),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.favorite),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(width: 20),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        place.name,
+                        style: AppFonts.fontsSubTitlew500.copyWith(
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.secondary,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 18,
+                            color: Theme.of(
+                              context,
+                            ).primaryColor,
+                          ),
+                          SizedBox(width: 5),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Text(
+                                  place.province,
+                                  style: GoogleFonts.googleSans(
+                                    fontSize: 14,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.titleSmall?.color,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  "${place.distance.toStringAsFixed(1)} km",
+                                  style: GoogleFonts.googleSans(
+                                    fontSize: 14,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.titleSmall?.color,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Row(
+                        children: [
+                          SizedBox(width: 5),
+                          Icon(Icons.star, size: 18, color: Colors.amber),
+                          SizedBox(width: 5),
+                          Text(
+                            "4.5",
+                            style: GoogleFonts.googleSans(
+                              fontSize: 14,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.color,
+                            ),
+                          ),
+
+                          SizedBox(width: 10),
+
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+
+                          SizedBox(width: 10),
+
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xffCEDFCE),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              place.category,
+                              style: GoogleFonts.googleSans(
+                                fontSize: 12,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    });
+  }
 }

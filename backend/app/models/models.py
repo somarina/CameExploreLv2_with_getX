@@ -24,7 +24,6 @@ class PlaceCreate(BaseModel):
 
     latitude: Optional[float] = None
     longitude: Optional[float] = None
-
     opening_hours: Optional[str] = None
     entry_fee: Optional[str] = None
     tags: Optional[List[str]] = []
@@ -32,7 +31,13 @@ class PlaceCreate(BaseModel):
     # Ignored/overridden server-side for company submissions (always forced
     # to "pending"). Only admins creating a place directly can set this.
     status: PlaceStatus = "approved"
-
+    rating: Optional[float] = 0
+    status: str = "approved"
+    phoneNum: str
+    rating_star: Optional[float] = None
+    rating_star: Optional[float] = 0
+    status: str = "approved"
+    phoneNum: str
 
 class PlaceUpdate(BaseModel):
     name_en: Optional[str] = None
@@ -86,3 +91,7 @@ class PlaceUpdate(BaseModel):
 #     latitude: Optional[float] = None
 #     longitude: Optional[float] = None
 #     status: Optional[str] = None
+    rating: Optional[float] = None
+    status: Optional[str] = None
+    status: Optional[str] = None
+    phoneNum: Optional[str] = None
