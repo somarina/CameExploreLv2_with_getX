@@ -485,14 +485,6 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
   Widget _login(BuildContext context) {
     return Obx(
       () => controller.isLoading.value
-          ? CircularProgressIndicator()
-          // Shimmer.fromColors(
-          //   baseColor: Colors.grey.shade200,
-          //   highlightColor: Colors.grey.shade300,
-          //   child: Container(height: 50, color: Colors.grey),
-          // )
-          : Column(
-=======
           ? CircularProgressIndicator(color: Colors.white)
           :
             // Shimmer.fromColors(

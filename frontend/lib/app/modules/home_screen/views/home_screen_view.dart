@@ -97,16 +97,6 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                       ),
                                     ),
                                     SizedBox(height: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "សួស្តី, Naihuoy", 
-                               
-                              style: AppFonts.fontHeader,
-                              overflow: TextOverflow.ellipsis,
-                            ),
                                     Row(
                                       children: [
                                         const Icon(
@@ -220,7 +210,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
         decoration: BoxDecoration(
           // color: Color(0xff1A1A1A),
           color: Theme.of(context).colorScheme.primaryContainer,
-          borderRadius: .circular(16),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -324,141 +314,115 @@ class HomeScreenView extends GetView<HomeScreenController> {
   }
 
   Widget _buildTrendingPlaces(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                "Tren_places".tr,
-                style: AppFonts.fontsSubTitlew500.copyWith(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+  return Padding(
+    padding: EdgeInsets.symmetric(horizontal: 20),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              "Tren_places".tr,
+              style: AppFonts.fontsSubTitlew500.copyWith(
+                color: Theme.of(context).colorScheme.secondary,
               ),
-              Spacer(),
-              Bounceable(
-                onTap: () {
-                  Get.find<ButtonNavbarController>().changePage(1);
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      "see_all".tr,
-                      style: AppFonts.fontsSubTitlew500.copyWith(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(width: 6),
-                    Icon(
-                      Icons.arrow_forward_ios_sharp,
+            ),
+            Spacer(),
+            Bounceable(
+              onTap: () {
+                Get.find<ButtonNavbarController>().changePage(1);
+              },
+              child: Row(
+                children: [
+                  Text(
+                    "see_all".tr,
+                    style: AppFonts.fontsSubTitlew500.copyWith(
                       color: Theme.of(context).primaryColor,
-                      size: 18,
+                      fontSize: 16,
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: 6),
+                  Icon(
+                    Icons.arrow_forward_ios_sharp,
+                    color: Theme.of(context).primaryColor,
+                    size: 18,
+                  ),
+                ],
               ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Obx(() {
-            if (controller.isLoadingPf.value && controller.places.isEmpty) {
-              return SizedBox(
-                height: 270,
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-
-            if (controller.isLoadingPlaces.value &&
-                controller.trendingPlaces.isEmpty) {
-              return SizedBox(
-                height: 270,
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-
+            ),
+          ],
+        ),
+        SizedBox(height: 20),
+        Obx(() {
+          if (controller.isLoadingPf.value && controller.places.isEmpty) {
             return SizedBox(
               height: 270,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.trendingPlaces.length,
-                itemBuilder: (context, index) {
-                  final place = controller.trendingPlaces[index];
-                  return Obx(
-                    () => Padding(
-                      padding: EdgeInsets.only(right: 16),
-                      child: Bounceable(
-                        onTap: () {
-                          Get.toNamed(
-                            Routes.DETAIL_PLACES,
-                            arguments: controller.trendingPlaces[index],
-                          );
-                        },
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-                        child: CardPlace(
-                          width: Get.width * 0.8,
-                          image:
-                              (place['image_url'] != null &&
-                                  place['image_url'].toString().startsWith(
-                                    'http',
-                                  ))
-                              ? place['image_url']
-                              : "",
-                          category: place['category'] ?? "General",
-                          title: place['name'] ?? "Unknown Place",
-                          location: "${place['province'] ?? 'Cambodia'}",
-                          rating: (place['rating'] != null)
-                              ? double.tryParse(place['rating'].toString()) ??
-                                    5.0
-                              : 5.0,
-                          distance:
-                              "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
+          if (controller.isLoadingPlaces.value &&
+              controller.trendingPlaces.isEmpty) {
+            return SizedBox(
+              height: 270,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-                          isFavorite: controller.favorites[index],
-                          onFavorite: () => controller.toggleFavorite(index),
-                        ),
+          return SizedBox(
+            height: 270,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.trendingPlaces.length,
+              itemBuilder: (context, index) {
+                final place = controller.trendingPlaces[index];
+
+                return Obx(
+                  () => Padding(
+                    padding: EdgeInsets.only(right: 16),
+                    child: Bounceable(
+                      onTap: () {
+                        Get.toNamed(
+                          Routes.DETAIL_PLACES,
+                          arguments: controller.trendingPlaces[index],
+                        );
+                      },
+                      child: CardPlace(
+                        width: Get.width * 0.8,
+                        image:
+                            (place['image_url'] != null &&
+                                    place['image_url']
+                                        .toString()
+                                        .startsWith('http'))
+                                ? place['image_url']
+                                : "",
+                        category: place['category'] ?? "General",
+                        title: place['name'] ?? "Unknown Place",
+                        location: "${place['province'] ?? 'Cambodia'}",
+                        rating: (place['rating'] != null)
+                            ? double.tryParse(place['rating'].toString()) ??
+                                5.0
+                            : 5.0,
+                        distance:
+                            "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
+                        isFavorite: controller.favorites[index],
+                        onFavorite: () => controller.toggleFavorite(index),
                       ),
                     ),
-                  );
-                },
-              ),
-            );
-          }),
-        ],
-    return Bounceable(
-      onTap: () {
-        Get.toNamed(Routes.DETAIL_PLACES);
-      },
-      child: Obx(
-        () => Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: CardPlace(
-            width: Get.width * 0.8,
-            image: "assets/images/homescreen/slider1.png",
-            category: "Temple",
-            title: "Angkor Wat",
-            location: "Siem Reap, Cambodia",
-            rating: 4.9,
-            distance: "200.10 km",
-
-            // Replace with your real place ID
-            isFavorite: controller.favoriteController.favorites[1] ?? false,
-
-            onFavorite: () {
-              controller.toggleFavorite(1);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
+                  ),
+                );
+              },
+            ),
+          );
+        }),
+      ],
+    ),
+  );
+}
   Widget _buildNearby(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-        crossAxisAlignment: .start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "near_places".tr,

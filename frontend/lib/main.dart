@@ -148,7 +148,7 @@ class MainApp extends StatelessWidget {
 
       // language
       translations: AppTranslatation(),
-      locale: Locale("kmKH"),
+      // locale: Locale("kmKH"),
       fallbackLocale: Locale("enUS"),
       debugShowCheckedModeBanner: false,
       locale: language == "kmKH" ? Locale("kmKH") : Locale("enUS"),
