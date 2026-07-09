@@ -166,13 +166,14 @@ Map<String, String> enUS = {
   "Gallery": "Gallery",
   "Camera": "Camera",
 
-  //
+  // 
   "name": "Name",
   "contact_us": "Contact Us",
   "leave": "Leave",
   "now": "Now",
   "open": "Open",
   "phone": "Phone",
+
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////     Login Screen

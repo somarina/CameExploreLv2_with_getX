@@ -31,9 +31,9 @@ class AppImage {
   static const String telegramIcon = "assets/svg/telegram.svg";
   static const String locationIcon = "assets/svg/location.svg";
   static const String dotIcon = "assets/svg/dot.svg";
-  static const String projectIcon = "assets/svg/project.svg";
   static const String educationIcon = "assets/svg/Education.svg";
   static const String skillIcon = "assets/svg/skill.svg";
+  static const String projectIcon = "assets/images/project.svg";
 
   static const String warningImage = "assets/svg/warning.png";
   static const String khmerImage = "assets/images/cambodia.png";

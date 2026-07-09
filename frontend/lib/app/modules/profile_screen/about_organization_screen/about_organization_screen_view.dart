@@ -69,6 +69,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                 ),
               ),
               Row(children: [SvgPicture.asset(AppImage.teamIcon)]),
+              SizedBox(height: 20),
               buildContainer(
                 context,
                 child: Padding(

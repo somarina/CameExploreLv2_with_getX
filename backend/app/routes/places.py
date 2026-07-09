@@ -16,6 +16,8 @@ def serialize_place(place):
         "latitude": place.get("latitude"),
         "longitude": place.get("longitude"),
         "status": place.get("status", "approved"),
+        "rating_star": place.get("rating_star", 0),
+        "phoneNum": place.get("phoneNum")
     }
 
 @router.post("/")
