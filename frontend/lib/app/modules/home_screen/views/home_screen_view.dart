@@ -99,7 +99,8 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "សួស្តី, Naihuoy",
+                              "សួស្តី, Naihuoy", 
+                               
                               style: AppFonts.fontHeader,
                               overflow: TextOverflow.ellipsis,
                             ),

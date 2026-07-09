@@ -205,5 +205,7 @@ class AppPages {
       page: () => const ResetPasswordScreen(),
       binding: ForgetPasswordBinding(),
     ),
+
+    
   ];
 }
