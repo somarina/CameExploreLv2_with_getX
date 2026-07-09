@@ -135,7 +135,13 @@ class EditScreenView extends GetView<EditScreenViewController> {
                 children: [
                   ListTile(
                     leading: Icon(Icons.camera_alt),
-                    title: Text("Camera".tr),
+                    title: Text(
+                      "Camera".tr,
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
                     onTap: () async {
                       // controller.pickImage(ImageSource.camera);
                       await controller.pickImage(ImageSource.camera);
@@ -144,7 +150,13 @@ class EditScreenView extends GetView<EditScreenViewController> {
                   ),
                   ListTile(
                     leading: Icon(Icons.image),
-                    title: Text("Gallery".tr),
+                    title: Text(
+                      "Gallery".tr,
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
                     onTap: () {
                       controller.pickImage(ImageSource.gallery);
                       Get.back();
@@ -161,8 +173,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
           backgroundColor: Colors.grey.shade300,
           backgroundImage: controller.profileImage.value.isEmpty
               ? NetworkImage(controller.userProfileController.user.avatar)
-              :
-             FileImage(controller.pickedImage.value!),
+              : FileImage(controller.pickedImage.value!),
 
           child: controller.pickedImage.value == null
               ? const Icon(Icons.camera_alt, size: 30, color: Colors.grey)

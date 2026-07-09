@@ -23,6 +23,21 @@ class EditScreenViewController extends GetxController {
     _loadUser();
   }
 
+  // void _loadUser() {
+  //   var fullName = arg.name.split(" ");
+
+  //   firstnameCtrl.text = fullName.isNotEmpty ? fullName[0] : "";
+  //   lastnameCtrl.text = fullName.length > 1 ? fullName[1] : "";
+
+  //   newEmailCtrl.text = arg.email;
+  //   newPhoneCtrl.text = arg.phone;
+  //   selectedGender.value = arg.gender;
+
+  //   if (arg.avatar.isNotEmpty) {
+  //     pickedImage.value = File(arg.avatar);
+  //   }
+  // }
+
   void _loadUser() {
     var fullName = arg.name.split(" ");
 
@@ -32,10 +47,6 @@ class EditScreenViewController extends GetxController {
     newEmailCtrl.text = arg.email;
     newPhoneCtrl.text = arg.phone;
     selectedGender.value = arg.gender;
-
-    if (arg.avatar.isNotEmpty) {
-      pickedImage.value = File(arg.avatar);
-    }
   }
 
   var profileImage = "".obs;
@@ -74,37 +85,83 @@ class EditScreenViewController extends GetxController {
     try {
       isLoading.value = true;
 
-      var profileResponse = await ProfileServices().uploadAvatarService(
-        avatarPath: pickedImage.value!.path,
-      );
+      String avatarUrl = userProfileController.user.avatar;
 
-      profileImage.value = profileResponse["data"]["profile_image"];
+      // ✅ upload only if new image picked
+      if (pickedImage.value != null) {
+        final profileResponse = await ProfileServices().uploadAvatarService(
+          avatarPath: pickedImage.value!.path,
+        );
 
-      debugPrint(profileImage.value);
+        avatarUrl = profileResponse["data"]["profile_image"];
+      }
 
       final response = await ProfileServices().updateProfileService(
         name: "${firstnameCtrl.text} ${lastnameCtrl.text}".trim(),
         email: newEmailCtrl.text,
         phone: newPhoneCtrl.text,
         gender: selectedGender.value,
-        avatar: profileImage.value.isEmpty
-            ? userProfileController.user.avatar
-            : profileImage.value,
+        avatar: avatarUrl,
       );
 
       if (response["result"] == true) {
         await userProfileController.getProfile();
         Get.back();
-        Get.snackbar("Success", "Profile updated");
+        Get.snackbar("Success", response["message"]);
       } else {
-        Get.snackbar("Failed", "Update failed");
+        Get.snackbar("Failed", response["message"]);
       }
     } catch (e) {
-      Get.snackbar("Error", "Something went wrong");
+      debugPrint("Edit profile error: $e");
+      Get.snackbar("Error", e.toString());
     } finally {
       isLoading.value = false;
     }
   }
+  // Future<void> editProfile() async {
+  //   if (firstnameCtrl.text.isEmpty ||
+  //       lastnameCtrl.text.isEmpty ||
+  //       newEmailCtrl.text.isEmpty ||
+  //       newPhoneCtrl.text.isEmpty ||
+  //       selectedGender.value.isEmpty) {
+  //     Get.snackbar("Warning", "Please fill all fields");
+  //     return;
+  //   }
+
+  //   try {
+  //     isLoading.value = true;
+
+  //     var profileResponse = await ProfileServices().uploadAvatarService(
+  //       avatarPath: pickedImage.value!.path,
+  //     );
+
+  //     profileImage.value = profileResponse["data"]["profile_image"];
+
+  //     debugPrint(profileImage.value);
+
+  //     final response = await ProfileServices().updateProfileService(
+  //       name: "${firstnameCtrl.text} ${lastnameCtrl.text}".trim(),
+  //       email: newEmailCtrl.text,
+  //       phone: newPhoneCtrl.text,
+  //       gender: selectedGender.value,
+  //       avatar: profileImage.value.isEmpty
+  //           ? userProfileController.user.avatar
+  //           : profileImage.value,
+  //     );
+
+  //     if (response["result"] == true) {
+  //       await userProfileController.getProfile();
+  //       Get.back();
+  //       Get.snackbar(response["message"], "Profile updated");
+  //     } else {
+  //       Get.snackbar(response["message"], "Update failed");
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar("Error", "Something went wrong");
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   @override
   void onClose() {

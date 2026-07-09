@@ -9,7 +9,9 @@ class PlaceCreate(BaseModel):
     image_url: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    rating: Optional[float] = 0
     status: str = "approved"
+    phoneNum: str
 
 class PlaceUpdate(BaseModel):
     name: Optional[str] = None
@@ -19,4 +21,6 @@ class PlaceUpdate(BaseModel):
     image_url: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    rating: Optional[float] = None
     status: Optional[str] = None
+    phoneNum: Optional[str] = None

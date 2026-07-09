@@ -149,7 +149,7 @@ class ChooseRoomScreenViewController extends GetxController {
   Rx<DateTimeRange?> selectedRange = Rx<DateTimeRange?>(null);
 
   int get nights {
-    if (selectedRange.value == null) return 1;
+    if (selectedRange.value == null) return 0;
     return selectedRange.value!.end
         .difference(selectedRange.value!.start)
         .inDays;

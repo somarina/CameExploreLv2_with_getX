@@ -57,7 +57,7 @@ Map<String, String> enUS = {
   "oneNum": "Have at least one Number",
 
   //  ===== Language =====
-  "language": "language",
+  "language": "Language",
   "khmer": "Khmer",
   "english": "English",
 
@@ -183,4 +183,297 @@ Map<String, String> enUS = {
   "Or": "Or",
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // Home
+  "trending": "Trending",
+  "temple": "Temple",
+  "Tren_places": "Trending Places",
+  "see_all": "See All",
+  "near_places": "Nearby Places",
+  "top_place": "Top Places",
+  "hotel": "Hotel",
+  "travel_packeges": "Travel Packages",
+  "find_tourist": "Find Tourist Attractions",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // detail places
+  "about_": "About",
+  "opening_hours": "Opening Hours",
+  "open_": "Open",
+  'monday': 'Monday',
+  'tuesday': 'Tuesday',
+  'wednesday': 'Wednesday',
+  'thursday': 'Thursday',
+  'friday': 'Friday',
+  'saturday': 'Saturday',
+  'sunday': 'Sunday',
+  'gallary': 'Gallery',
+  'contact': 'Contact',
+  'location': 'Location',
+  'get_direction': 'Get Direction',
+  'review': 'Reviews',
+  'write_review': 'Write a review',
+  'away': 'Away',
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // detail hotel
+  'view_map': 'View on map',
+  'good': 'Very Good',
+  'the staff were extremely friendly, welcoming, and helpful.':
+      '“The staff were extremely friendly, welcoming, and helpful.”',
+
+  'popular_amenities': 'Popular Amenities',
+  'nearby_poplular': 'Nearby & Popular Places',
+  'cleaniness': 'Cleanliness',
+  'service': 'Service',
+  'amenities': 'Amenities',
+
+  'policies': 'Policies',
+  'checkin_out': 'Check-in/Check-out',
+  'checkin_': 'Check-in : After 14:00',
+  'checkout_': 'Check-out : Before 12:00',
+  'front_desk': 'Front Desk hour : 24/7',
+  'main_guest':
+      'The main guest must be at least 18 years old and present a valid ID card or passport upon check-in.',
+
+  "child_policies": "Child policies",
+  "child_policies_stay": "Children can stay in some rooms of this hotel.",
+  "child_policies_fees":
+      "Additional fees may be charged for children using existing beds. Add the number of children to get more accurate price.",
+  "breakfast_title": "Breakfast",
+  "breakfast_availability":
+      "Breakfast is available at the hotel. Please contact the hotel for details.",
+  "breakfast_fees":
+      "Additional breakfast fees are not included in the total and need to be paid.",
+  "pet": "Pet",
+  "pet_allowance": "Pets are not allowed.",
+  "pet_service_animals": "Service animals are not allowed",
+
+  "start_at": "Start at",
+  'choose_room': "Choose my room",
+
+  'free_parking': 'Free Parking',
+  'free_wifi': 'Free Wi-Fi',
+  'massage': 'Massage',
+  'restaurant': 'Restaurant',
+  'front_desk_': 'Front Desk [24-hour]',
+  'bar': 'Bar',
+  'water_sports': 'Water Sports',
+  'water_park': 'Water Park',
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // write hotel review
+  "review_public_notice": "Your review will be published publicly",
+  "reviewing_title": "YOU'RE REVIEWING",
+  "overall_score": "Overall score",
+  "terrible": "Terrible",
+  "amazing": "Amazing",
+  "rate_category": "Rate by category",
+  "share_experience_hint": "Share your experience",
+  "add_photos": "Add photos",
+  "optional": "  (optional)",
+  "add_photo": "Add photo",
+  "submit_reviews": "Submit Review",
+  "stayed_in": "Stayed in",
+
+  "comfort": "Comfort",
+  "facilities": "Facilities",
+  "staff": "Staff",
+  "value_money": "Value for money",
+  "poor": "Poor",
+  "fair": "Fair",
+  "excellent": "Excellent",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // write package review
+  "overall_rating": "Overall rating",
+  "tap_star_hint": "Tap a star to rate",
+  "you_rated_status": "You rated %s",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // choose room
+  "choose_room_": "Choose your room",
+
+  "free_cancellation": "Free cancellation",
+  "incl_taxes_fees": "Incl. taxes & fees",
+  "select_date": "Select Date",
+  "night_count": "%s night(s)",
+  "rooms_guests": "Rooms & guests",
+  "room_size_m2_ft2": "25 m² / 269 ft²",
+  "king_bed_count": "1 king bed",
+  "mountain_view": "Mountain view",
+  "private_bathroom": "Private bathroom",
+  "air_conditioning": "Air conditioning",
+
+  "coffee_tea_maker": "Coffee/tea maker",
+  "balcony": "Balcony",
+  "non_smoking": "Non-smoking",
+  "free_cancellation_date_hint": "Free cancellation before 23:59, Jun19",
+  "price_for_2_adults": "Price for 2 adults",
+  "kid_stay_free": "Your kid can stay for FREE!",
+  "prepay_online": "Prepay online",
+  "book_now": "Book Now",
+  "select_date_err_title": "Select Date",
+  "select_date_err_body":
+      "Please select your check-in and check-out dates first.",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // guest details
+  "guest_details": "Guest details",
+  "check_in": "Check-in",
+  "check_out": "Check-out",
+  "after_14_00": "After 14:00",
+  "before_12_00": "Before 12:00",
+  "nights": "@count night(s)",
+  "room_count": "@count Room(s)",
+  "price_for_adults": "Price for @count Adults",
+  "bunk_beds": "@count bunk beds",
+
+  "breakfast_available": "Breakfast available for purchase",
+
+  "special_discount": "Special Discount: Save USD\$3.55 on this room",
+  "high_demand":
+      "In high demand! Complete your booking to lock in your ideal room.",
+  "guest_info": "Guest info",
+  "first_name_hint": "First name*",
+  "last_name_hint": "Last name*",
+  "email_hint": "Email*",
+  "mobile_hint": "Mobile*",
+  "payment_method": "Payment Method",
+  "khqr": "KHQR",
+  "pay_via_khqr": "Pay via KHQR",
+  "popular": "Popular",
+  "khqr_instruction":
+      "Scan with ABA, ACLEDA, Wing, or any KHQR-supported app to complete payment instantly.",
+  "taxes_and_fees": "Taxes & fees",
+  "included": "Included",
+  "total": "Total",
+  "scan_to_pay": "Scan KHQR to Pay",
+  "scan_instruction": "Open your banking app and scan this QR code.",
+  "done": "Done",
+  "err_first_name": "Please enter first name",
+  "err_last_name": "Please enter last name",
+  "err_email": "Please enter email",
+  "err_valid_email": "Please enter a valid email",
+  "err_phone": "Please enter mobile number",
+  "err_valid_phone": "Please enter a valid mobile number",
+  "error": "Error",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // cf booking
+  "booking_confirmed": "Booking Confirmed!",
+  "booking_success_msg": "Your reservation has been\nsuccessfully confirmed",
+  "booking_details": "Booking Details",
+  "booking_ref": "Booking Ref.",
+
+  "room_type": "Room Type",
+
+  "guests": "Guests",
+  "guest_name": "Guest Name",
+  "guest_number": "Guest Number",
+  "guest_email": "Guest Email",
+  "payment": "Payment",
+  "transaction_date": "Transaction Date",
+  "total_price": "Total Price",
+  "back_to_home": "Back to Home",
+  "email_sent_msg": "A confirmation email has been sent to your email address",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Package Detail Screen
+  "from": "From",
+  "per_adult": " per adult",
+  "select_date_package": "Select date",
+  "check_availability": "Check availability",
+  "available_options_count": "Choose from 4 available options",
+  "package_sunrise_tour": "Angkor Wat: Small-Group Sunrise Tour",
+  "duration_hours": "Duration: 8 hours",
+  "guide_language": "Guide: English",
+  "book_now_pay_later": "Book now, pay later",
+  "free_cancellation_package": "Cancel for free",
+  "starting_time": "Starting time",
+  "continue_btn": "Continue",
+  "itinerary": "Itinerary",
+  "see_itinerary": "See Itinerary",
+  "important_information": "Important information",
+  "what_to_bring": "What to bring",
+  "bullet_shoes": "Comfortable shoes",
+  "bullet_camera": "Camera",
+  "bullet_clothes": "Comfortable clothes",
+  "know_before_you_go": "Know before you go",
+  "bullet_ticket_info":
+      "The entrance fee for Angkor Wat is not included in the tour and costs \$37 per person for a one-day pass. You can purchase the ticket online one day before or on the day.",
+  "bullet_arrival_info":
+      "Please arrive at the meeting point at least 15 minutes before the scheduled departure time to ensure a smooth check-in process.",
+  "bullet_wheelchair_info":
+      "This activity is not wheelchair accessible and may involve moderate walking on uneven surfaces.",
+  "bullet_child_info":
+      "Children must be accompanied by an adult at all times during the tour.",
+  "bullet_clothing_info":
+      "Wear comfortable clothing and bring sunscreen, sunglasses, and a reusable water bottle, especially during hot weather.",
+  "bullet_itinerary_adjust":
+      "The itinerary may be adjusted due to weather conditions, local events, or operational requirements.",
+  "about_this_activity": "About this activity",
+  "sub_cancel_info": "Cancel up to 24 hours in advance for a full refund",
+  "title_reserve_pay_later": "Reserve now & pay later",
+  "sub_reserve_info":
+      "Keep your travel plans flexible — book your spot and pay nothing today.",
+  "title_duration_range": "Duration 8 - 9 hours",
+  "sub_duration_info": "Check availability to see starting times",
+  "title_live_guide": "Live tour guide",
+  "sub_live_guide_info":
+      "Leads your experience and shares insights and stories about the sights",
+  "title_languages_offered": "Languages offered",
+  "sub_languages_info": "English, Khmer",
+  "title_pickup_included": "Pickup included",
+  "sub_pickup_info": "Check availability for details",
+  "title_private_group": "Private group available",
+  "angkor_wat_title": "ប្រាសាទអង្គរវត្ត",
+  "siem_reap_cambodia": "Siem Reap, Cambodia",
+  "km_away_text": "6.5 km away",
+  "reviews_title": "Reviews",
+  "anonymous_user": "Anonymous User",
+  "stayed_in_date": "Stayed in Apr 2026",
+
+  "select_date_err_title_": "Date Required",
+  "select_date_err_body_": "Please select a date first",
+  "select_date_package_": "Select date",
+  "starting_time_": "Starting time",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  //  ===== Itinerary Screen =====
+  "main_stop": "Main stop",
+  "other_stop": "Other stop",
+  "map_placeholder": "MAP",
+  "pickup_options": "2 pickup location options:",
+  "siem_reap_krong": "Krong Siem Reap, Krong Siem Reap",
+  "bus_coach": "Bus/coach",
+  "duration_45m": "(45 minutes)",
+  "angkor_wat_details": "Photo stop, Visit, Guided tour, Sightseeing, Sunrise",
+  "duration_3h": "(3 hours)",
+  "ta_prohm_temple": "Ta Prohm Temple",
+  "ta_prohm_details": "Photo stop, Visit, Guided tour, Sightseeing (1 hour)",
+  "dropoff_options": "2 Drop-off location options:",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  //  ===== Booking Screen =====
+  "my_bookings": "My Bookings",
+  "all": "All",
+  "upcoming": "Upcoming",
+  "completed": "Completed",
+  "no_bookings_found": "No bookings found.",
+  "view_details": "View Details",
+  "write_a_review": "Write a Review",
+  "booking_again": "Booking again",
+  "night_singular": "1 night",
+  "nights_plural": "@count nights",
+
+  //  ===== Booking Details Controller =====
+  "guest_phone": "Guest Phone",
+  "total_paid": "Total Paid",
+  "download_receipt": "Download Receipt",
+  "perm_denied": "Storage permission denied",
+  "receipt_not_found": "Receipt not found",
+  "capture_failed": "Capture failed",
+  "receipt_saved": "Receipt saved to Gallery",
+  "save_failed": "Failed to save image",
 };

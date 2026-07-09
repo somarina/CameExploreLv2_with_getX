@@ -86,7 +86,8 @@ class UserProfileScreenViewController extends GetxController {
   // ------------------ Translate -----------------------
   // var isActive = "kmKH".obs;
   // bool isActive = true;
-  void updateLocale(String value) {
+  void updateLocale(String value) async {
+    await box.write("language", value);
     if (value == "kmKH") {
       Get.updateLocale(Locale("kmKH"));
       // fonts

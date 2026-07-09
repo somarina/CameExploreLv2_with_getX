@@ -6,6 +6,8 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 const String kBaseUrl = 'http://127.0.0.1:8000';
 // const String kBaseUrl = 'http://10.0.2.2:8000';
 
+// String kBaseUrl = "http://192.168.1.15:8000";
+
 const String kTelegramBotId = '8720092780';
 
 class ApiConfig {

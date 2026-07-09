@@ -18,8 +18,8 @@ class ReviewsHotelScreenView extends GetView<ReviewsHotelScreenViewController> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
-          "54 Reviews",
-          style: TextStyle(
+          "54 ${'review'.tr}", 
+          style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
             fontSize: 20,
@@ -51,7 +51,7 @@ class ReviewsHotelScreenView extends GetView<ReviewsHotelScreenViewController> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "Very good",
+                          "good".tr,
                           style: GoogleFonts.googleSans(
                             color: Color(0xFF078C2E),
                             fontSize: 18,
@@ -93,13 +93,13 @@ class ReviewsHotelScreenView extends GetView<ReviewsHotelScreenViewController> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _ratingBar("Cleanliness", 7.6, context),
+                        _ratingBar("cleaniness".tr, 7.6, context),
                         SizedBox(height: 10),
-                        _ratingBar("Location", 10, context),
+                        _ratingBar("location".tr, 10, context),
                         SizedBox(height: 10),
-                        _ratingBar("Service", 8.2, context),
+                        _ratingBar("service".tr, 8.2, context),
                         SizedBox(height: 10),
-                        _ratingBar("Amenities", 7.8, context),
+                        _ratingBar("amenities".tr, 7.8, context),
                       ],
                     ),
                   ),
@@ -107,7 +107,7 @@ class ReviewsHotelScreenView extends GetView<ReviewsHotelScreenViewController> {
               ),
               SizedBox(height: 20),
               CustomButton(
-                title: "Write a review",
+                title: "write_review".tr,
                 margin: EdgeInsets.all(0),
                 onTap: () {
                   Get.toNamed(Routes.WRITE_REVIEW);
@@ -124,7 +124,7 @@ class ReviewsHotelScreenView extends GetView<ReviewsHotelScreenViewController> {
 
   Widget _buildReviewItem(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           decoration: BoxDecoration(
@@ -150,7 +150,7 @@ class ReviewsHotelScreenView extends GetView<ReviewsHotelScreenViewController> {
               padding: const EdgeInsets.only(bottom: 20),
               child: ReviewCard(
                 userName: "Anonymous User",
-                date: "Stayed in Apr 2026",
+                date:"${"stayed_in".tr} Apr 2026",
                 rating: "7/10",
                 review:
                     "Overall, I love the atmosphere but just some rooms have problems with doors and toilets and also not recommend ...",

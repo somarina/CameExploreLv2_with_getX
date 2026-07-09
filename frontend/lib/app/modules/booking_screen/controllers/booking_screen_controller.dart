@@ -63,8 +63,6 @@ class BookingScreenController extends GetxController {
       guests: 2,
       status: BookingStatus.upcoming,
       imageUrl: 'https://picsum.photos/400/200?random=1',
-
-      // 👇 ADD
       guestName: 'John Doe',
       guestEmail: 'john@gmail.com',
       guestPhone: '012345678',
@@ -81,8 +79,6 @@ class BookingScreenController extends GetxController {
       guests: 2,
       status: BookingStatus.completed,
       imageUrl: 'https://picsum.photos/400/200?random=1',
-
-      // 👇 ADD
       guestName: 'John Doe',
       guestEmail: 'john@gmail.com',
       guestPhone: '012345678',
@@ -109,18 +105,14 @@ class BookingScreenController extends GetxController {
       if (await Permission.photos.request().isGranted) {
         return true;
       }
-
       if (await Permission.storage.request().isGranted) {
         return true;
       }
-
       return false;
     }
-
     if (Platform.isIOS) {
       return await Permission.photos.request().isGranted;
     }
-
     return false;
   }
 
@@ -128,7 +120,7 @@ class BookingScreenController extends GetxController {
     final granted = await requestPermission();
 
     if (!granted) {
-      Get.snackbar("Permission", "Storage permission denied");
+      Get.snackbar("error".tr, "perm_denied".tr);
       return;
     }
 
@@ -137,7 +129,7 @@ class BookingScreenController extends GetxController {
             as WidgetShotPlusRenderRepaintBoundary?;
 
     if (boundary == null) {
-      Get.snackbar("Error", "Receipt not found");
+      Get.snackbar("error".tr, "receipt_not_found".tr);
       return;
     }
 
@@ -147,7 +139,7 @@ class BookingScreenController extends GetxController {
     );
 
     if (bytes == null) {
-      Get.snackbar("Error", "Capture failed");
+      Get.snackbar("error".tr, "capture_failed".tr);
       return;
     }
 
@@ -159,13 +151,13 @@ class BookingScreenController extends GetxController {
 
     if (result['isSuccess'] == true || result['success'] == true) {
       Get.snackbar(
-        "Success",
-        "Receipt saved to Gallery",
+        "done".tr,
+        "receipt_saved".tr,
         backgroundColor: AppColors.lightPrimaryColor,
         colorText: Colors.white,
       );
     } else {
-      Get.snackbar("Error", "Failed to save image");
+      Get.snackbar("error".tr, "save_failed".tr);
     }
   }
 
@@ -191,7 +183,7 @@ class BookingScreenController extends GetxController {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Booking Details',
+                      'booking_details'.tr,
                       style: GoogleFonts.googleSans(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -208,22 +200,26 @@ class BookingScreenController extends GetxController {
                   ],
                 ),
                 SizedBox(height: 16),
-                _buildDetailRow(context, 'Booking Ref', booking.id),
-                _buildDetailRow(context, 'Hotel', booking.hotelName),
-                _buildDetailRow(context, 'Location', booking.location),
-                _buildDetailRow(context, 'Room Type', booking.roomType),
-                _buildDetailRow(context, 'Check-in', booking.startDate),
-                _buildDetailRow(context, 'Check-out', booking.endDate),
-                _buildDetailRow(context, 'Guests', '${booking.guests} adults'),
-                _buildDetailRow(context, 'Guest Name', booking.guestName),
+                _buildDetailRow(context, 'booking_ref'.tr, booking.id),
+                _buildDetailRow(context, 'hotel'.tr, booking.hotelName),
+                _buildDetailRow(context, 'location'.tr, booking.location),
+                _buildDetailRow(context, 'room_type'.tr, booking.roomType),
+                _buildDetailRow(context, 'check_in'.tr, booking.startDate),
+                _buildDetailRow(context, 'check_out'.tr, booking.endDate),
+                _buildDetailRow(
+                  context, 
+                  'guests'.tr, 
+                  'guests_count'.trParams({'count': booking.guests.toString()}),
+                ),
+                _buildDetailRow(context, 'guest_name'.tr, booking.guestName),
                 _buildDetailRow(
                   context,
-                  'Guest Phone',
+                  'guest_phone'.tr,
                   '+855 ${booking.guestPhone}',
                 ),
-                _buildDetailRow(context, 'Guest Email', booking.guestEmail),
-                _buildDetailRow(context, 'Payment', 'ABA Pay'),
-                _buildDetailRow(context, 'Transaction Date', '2222'),
+                _buildDetailRow(context, 'guest_email'.tr, booking.guestEmail),
+                _buildDetailRow(context, 'payment'.tr, 'ABA Pay'),
+                _buildDetailRow(context, 'transaction_date'.tr, '2026-07-02'),
 
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -234,7 +230,7 @@ class BookingScreenController extends GetxController {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Total Paid',
+                      'total_paid'.tr,
                       style: GoogleFonts.googleSans(
                         fontSize: 16,
                         color: Colors.grey,
@@ -273,7 +269,7 @@ class BookingScreenController extends GetxController {
                           Icon(Icons.download, color: Colors.white),
                           SizedBox(width: 8),
                           Text(
-                            'Download Receipt',
+                            'download_receipt'.tr,
                             style: GoogleFonts.googleSans(
                               color: Colors.white,
                               fontSize: 16,
@@ -291,7 +287,6 @@ class BookingScreenController extends GetxController {
           ),
         ),
       ),
-
       isScrollControlled: true,
       ignoreSafeArea: false,
     );

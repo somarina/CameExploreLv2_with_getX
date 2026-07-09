@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-
 part 'package_detail_screen_binding.dart';
 part 'package_detail_screen_controller.dart';
 
@@ -46,7 +45,7 @@ class PackageDetailScreenView
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: .start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Title + Rating
             _buildContentTitle(context),
@@ -80,7 +79,6 @@ class PackageDetailScreenView
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(24),
-        // border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -88,7 +86,7 @@ class PackageDetailScreenView
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "From",
+              "from".tr,
               style: GoogleFonts.googleSans(
                 fontSize: 14,
                 color: Theme.of(context).textTheme.titleSmall!.color,
@@ -112,7 +110,7 @@ class PackageDetailScreenView
                     ),
                   ),
                   TextSpan(
-                    text: " per adult",
+                    text: "per_adult".tr,
                     style: GoogleFonts.googleSans(
                       fontSize: 14,
                       color: Theme.of(context).textTheme.titleSmall!.color,
@@ -136,7 +134,6 @@ class PackageDetailScreenView
                       height: 50,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
-                        // border: Border.all(color: Colors.grey.shade300),
                         border: Border.all(
                           color: Theme.of(context).colorScheme.primary,
                         ),
@@ -154,7 +151,7 @@ class PackageDetailScreenView
                           const SizedBox(width: 10),
                           Text(
                             controller.selectedDate.value == null
-                                ? "Select date"
+                                ? "select_date_package".tr
                                 : DateFormat(
                                     'dd MMM yyyy',
                                   ).format(controller.selectedDate.value!),
@@ -177,7 +174,6 @@ class PackageDetailScreenView
                   height: 50,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    // border: Border.all(color: Colors.grey.shade300),
                     border: Border.all(
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -233,7 +229,7 @@ class PackageDetailScreenView
 
           SizedBox(height: 20),
           CustomButton(
-            title: "Check availability",
+            title: "check_availability".tr,
             margin: EdgeInsets.zero,
             onTap: controller.checkAvailability,
           ),
@@ -248,7 +244,7 @@ class PackageDetailScreenView
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Choose from 4 available options",
+                  "available_options_count".tr,
                   style: GoogleFonts.googleSans(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -285,7 +281,7 @@ class PackageDetailScreenView
               Icon(Icons.check, size: 18, color: Colors.grey.shade700),
               SizedBox(width: 4),
               Text(
-                "Free cancellation",
+                "free_cancellation_package".tr,
                 style: GoogleFonts.googleSans(
                   color: Colors.grey.shade700,
                   fontSize: 13,
@@ -299,7 +295,7 @@ class PackageDetailScreenView
               SizedBox(width: 4),
 
               Text(
-                "Reserve now & pay later",
+                "book_now_pay_later".tr,
                 style: GoogleFonts.googleSans(
                   color: Colors.grey.shade700,
                   fontSize: 13,
@@ -314,7 +310,7 @@ class PackageDetailScreenView
 
   Widget _availabilityCard(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(24),
@@ -324,7 +320,7 @@ class PackageDetailScreenView
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Angkor Wat: Small-Group Sunrise Tour",
+            "package_sunrise_tour".tr,
             style: GoogleFonts.googleSans(
               color: Theme.of(context).colorScheme.secondary,
               fontSize: 16,
@@ -334,15 +330,19 @@ class PackageDetailScreenView
 
           const SizedBox(height: 20),
 
-          _infoRow(Icons.schedule_outlined, "Duration: 8 hours", context),
-          _infoRow(Icons.language, "Guide: English", context),
-          _infoRow(Icons.credit_card, "Book now, pay later", context),
-          _infoRow(Icons.event_available, "Cancel for free", context),
+          _infoRow(Icons.schedule_outlined, "duration_hours".tr, context),
+          _infoRow(Icons.language, "guide_language".tr, context),
+          _infoRow(Icons.credit_card, "book_now_pay_later".tr, context),
+          _infoRow(
+            Icons.event_available,
+            "free_cancellation_package".tr,
+            context,
+          ),
 
           Divider(color: Theme.of(context).colorScheme.secondary, height: 20),
           SizedBox(height: 10),
           Text(
-            "Starting time",
+            "starting_time".tr,
             style: GoogleFonts.googleSans(
               color: Theme.of(context).colorScheme.secondary,
               fontSize: 14,
@@ -382,12 +382,12 @@ class PackageDetailScreenView
           const SizedBox(height: 20),
 
           CustomButton(
-            title: "Continue",
+            title: "continue_btn".tr,
             onTap: () {
               Get.toNamed(
                 Routes.PACKAGE_CHECKOUT,
                 arguments: {
-                  "title": "Angkor Wat: Small-Group Sunrise Tour",
+                  "title": "package_sunrise_tour".tr,
                   "image": "assets/images/homescreen/slider1.png",
                   "language": "English",
                   "startTime": "04:30 AM",
@@ -437,12 +437,11 @@ class PackageDetailScreenView
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(20),
-              // border: Border.all(color: Colors.grey.shade200),
             ),
             child: Row(
               children: [
                 Text(
-                  "Itinerary",
+                  "itinerary".tr,
                   style: GoogleFonts.googleSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -451,7 +450,7 @@ class PackageDetailScreenView
                 ),
                 Spacer(),
                 Text(
-                  "See Itinerary",
+                  "see_itinerary".tr,
                   style: GoogleFonts.googleSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -477,12 +476,10 @@ class PackageDetailScreenView
       children: [
         Obx(
           () => Container(
-            // margin:  EdgeInsets.symmetric(horizontal: 20),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(20),
-              // border: Border.all(color: Colors.grey.shade200),
             ),
             child: Column(
               children: [
@@ -494,7 +491,7 @@ class PackageDetailScreenView
                     children: [
                       Expanded(
                         child: Text(
-                          "Important information",
+                          "important_information".tr,
                           style: GoogleFonts.googleSans(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -529,7 +526,7 @@ class PackageDetailScreenView
 
                       /// WHAT TO BRING
                       Text(
-                        "What to bring",
+                        "what_to_bring".tr,
                         style: GoogleFonts.googleSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -539,15 +536,15 @@ class PackageDetailScreenView
 
                       SizedBox(height: 10),
 
-                      _bullet("Comfortable shoes", context),
-                      _bullet("Camera", context),
-                      _bullet("Comfortable clothes", context),
+                      _bullet("bullet_shoes".tr, context),
+                      _bullet("bullet_camera".tr, context),
+                      _bullet("bullet_clothes".tr, context),
 
                       SizedBox(height: 16),
 
                       /// KNOW BEFORE YOU GO
                       Text(
-                        "Know before you go",
+                        "know_before_you_go".tr,
                         style: GoogleFonts.googleSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -559,45 +556,17 @@ class PackageDetailScreenView
 
                       Column(
                         children: [
-                          _infoBullet(
-                            "The entrance fee for Angkor Wat is not included in the tour and costs \$37 per person for a one-day pass. You can purchase the ticket online one day before or on the day.",
-                            context,
-                          ),
-
+                          _infoBullet("bullet_ticket_info".tr, context),
                           SizedBox(height: 12),
-
-                          _infoBullet(
-                            "Please arrive at the meeting point at least 15 minutes before the scheduled departure time to ensure a smooth check-in process.",
-                            context,
-                          ),
-
+                          _infoBullet("bullet_arrival_info".tr, context),
                           SizedBox(height: 12),
-
-                          _infoBullet(
-                            "This activity is not wheelchair accessible and may involve moderate walking on uneven surfaces.",
-                            context,
-                          ),
-
+                          _infoBullet("bullet_wheelchair_info".tr, context),
                           SizedBox(height: 12),
-
-                          _infoBullet(
-                            "Children must be accompanied by an adult at all times during the tour.",
-                            context,
-                          ),
-
+                          _infoBullet("bullet_child_info".tr, context),
                           SizedBox(height: 12),
-
-                          _infoBullet(
-                            "Wear comfortable clothing and bring sunscreen, sunglasses, and a reusable water bottle, especially during hot weather.",
-                            context,
-                          ),
-
+                          _infoBullet("bullet_clothing_info".tr, context),
                           SizedBox(height: 12),
-
-                          _infoBullet(
-                            "The itinerary may be adjusted due to weather conditions, local events, or operational requirements.",
-                            context,
-                          ),
+                          _infoBullet("bullet_itinerary_adjust".tr, context),
                         ],
                       ),
                     ],
@@ -674,7 +643,7 @@ class PackageDetailScreenView
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "About this activity",
+          "about_this_activity".tr,
           style: GoogleFonts.googleSans(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -686,49 +655,49 @@ class PackageDetailScreenView
 
         _infoItem(
           Icons.calendar_month_outlined,
-          "Free cancellation",
-          "Cancel up to 24 hours in advance for a full refund",
+          "free_cancellation_package".tr,
+          "sub_cancel_info".tr,
           context,
         ),
 
         _infoItem(
           Icons.location_on_outlined,
-          "Reserve now & pay later",
-          "Keep your travel plans flexible — book your spot and pay nothing today.",
+          "title_reserve_pay_later".tr,
+          "sub_reserve_info".tr,
           context,
         ),
 
         _infoItem(
           Icons.access_time_outlined,
-          "Duration 8 - 9 hours",
-          "Check availability to see starting times",
+          "title_duration_range".tr,
+          "sub_duration_info".tr,
           context,
         ),
 
         _infoItem(
           Icons.groups_outlined,
-          "Live tour guide",
-          "Leads your experience and shares insights and stories about the sights",
+          "title_live_guide".tr,
+          "sub_live_guide_info".tr,
           context,
         ),
 
         _infoItem(
           Icons.language_outlined,
-          "Languages offered",
-          "English, Khmer",
+          "title_languages_offered".tr,
+          "sub_languages_info".tr,
           context,
         ),
 
         _infoItem(
           Icons.directions_bus_outlined,
-          "Pickup included",
-          "Check availability for details",
+          "title_pickup_included".tr,
+          "sub_pickup_info".tr,
           context,
         ),
 
         _infoItem(
           Icons.group_add_outlined,
-          "Private group available",
+          "title_private_group".tr,
           "",
           context,
         ),
@@ -785,13 +754,13 @@ class PackageDetailScreenView
 
   Widget _buildContentTitle(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Expanded(
               child: Text(
-                "ប្រាសាទអង្គរវត្ត",
+                "angkor_wat_title".tr,
                 style: GoogleFonts.googleSans(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -827,7 +796,7 @@ class PackageDetailScreenView
             Icon(Icons.location_on_outlined, color: Colors.green, size: 26),
             SizedBox(width: 6),
             Text(
-              "Siem Reap, Cambodia",
+              "siem_reap_cambodia".tr,
               style: GoogleFonts.googleSans(
                 color: Theme.of(context).textTheme.titleSmall!.color,
                 fontSize: 14,
@@ -844,7 +813,7 @@ class PackageDetailScreenView
             ),
             SizedBox(width: 4),
             Text(
-              "6.5 km away",
+              "km_away_text".tr,
               style: GoogleFonts.googleSans(
                 color: Theme.of(context).textTheme.titleSmall!.color,
                 fontSize: 14,
@@ -956,13 +925,13 @@ class PackageDetailScreenView
 
   Widget _buildReview(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Reviews",
+          "reviews_title".tr,
           style: GoogleFonts.googleSans(
             fontSize: 18,
-            fontWeight: .w600,
+            fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
         ),
@@ -983,7 +952,7 @@ class PackageDetailScreenView
             children: [
               _buildRating(context),
               CustomButton(
-                title: "Write a review",
+                title: "write_review".tr,
                 onTap: () {
                   Get.toNamed(Routes.PACKAGE_REVIEW);
                 },
@@ -1003,7 +972,7 @@ class PackageDetailScreenView
               padding: const EdgeInsets.only(bottom: 20),
               child: ReviewCard(
                 userName: "Anonymous User",
-                date: "Stayed in Apr 2026",
+                date: "${"stayed_in".tr} Apr 2026",
                 rating: "7/10",
                 review:
                     "Overall, I love the atmosphere but just some rooms have problems with doors and toilets and also not recommend ...",
@@ -1055,7 +1024,7 @@ class PackageDetailScreenView
                     ),
                   ),
                   Text(
-                    "reviews",
+                    "reviews_title".tr,
                     style: GoogleFonts.googleSans(
                       color: Theme.of(context).textTheme.titleSmall!.color,
                     ),

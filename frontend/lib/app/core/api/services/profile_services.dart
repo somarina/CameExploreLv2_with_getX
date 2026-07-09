@@ -31,17 +31,35 @@ class ProfileServices {
     return response;
   }
   // avatar
+  // Future<Map<String, dynamic>> uploadAvatarService({
+  //   required String avatarPath,
+  // }) async {
+  //   final dynamic formData = FormData.fromMap({
+  //     "file": await MultipartFile.fromFile(
+  //       avatarPath,
+  //       filename: avatarPath.split('/').last,
+  //     ),
+  //   });
+
+  //   final response = await baseApi.post(
+  //     endpoint: "/api/profile/avatar/upload",
+  //     data: formData,
+  //   );
+
+  //   return response;
+  // }
+
   Future<Map<String, dynamic>> uploadAvatarService({
     required String avatarPath,
   }) async {
-    final dynamic formData = FormData.fromMap({
+    final formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(
         avatarPath,
         filename: avatarPath.split('/').last,
       ),
     });
 
-    final response = await baseApi.post(
+    final response = await baseApi.postFormData(
       endpoint: "/api/profile/avatar/upload",
       data: formData,
     );
@@ -66,8 +84,7 @@ class ProfileServices {
     return response;
   }
 
-
-//feedback
+  //feedback
   Future<Map<String, dynamic>> feedbackService({
     required int rating,
     required String review_type,
@@ -76,9 +93,9 @@ class ProfileServices {
     required String comment,
   }) async {
     final response = await baseApi.post(
-      endpoint: "/api/reviews/create", 
+      endpoint: "/api/reviews/create",
       data: {
-        "rating": rating, 
+        "rating": rating,
         "review_type": review_type,
         "name": name,
         "email": email,

@@ -13,18 +13,18 @@ class ExploreViewController extends GetxController {
   }
 
   Future<void> getCategories() async {
-  try {
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
 
-    final response =
-        await categoryService.getCategories();
+      final response = await categoryService.getCategories();
 
-    if (response["result"] == true) {
-      categories.value = response["data"] ?? [];
+      if (response["result"] == true) {
+        categories.value = response["data"] ?? [];
+      }
+    } catch (e) {
+      debugPrint("Get Categories Error: $e");
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    debugPrint("Get Categories Error: $e");
-  } finally {
-    isLoading.value = false;
   }
-}}
+}

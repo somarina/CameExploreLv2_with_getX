@@ -1,8 +1,22 @@
 import 'package:frontend/app/modules/auth/forget_password/views/confirm_screen.dart';
 import 'package:frontend/app/modules/auth/forget_password/views/otp_screen.dart';
 import 'package:frontend/app/modules/auth/forget_password/views/reset_password_screen.dart';
+import 'package:frontend/app/modules/choose_room_screen/choose_room_screen_view.dart';
+import 'package:frontend/app/modules/choose_room_screen/confirmed_booking/confirmed_booking_view.dart';
+import 'package:frontend/app/modules/choose_room_screen/guest_info_screen/guest_info_screen_view.dart';
+import 'package:frontend/app/modules/detail_places_screen/detail_places_screen_view.dart';
 import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_binding.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_view.dart';
+import 'package:frontend/app/modules/home_see_all_screen/home_see_all_screen_view.dart';
+import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_photo/hotel_detail_photo_view.dart';
+import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_screen_view.dart';
+import 'package:frontend/app/modules/hotel_detail_screen/reviews_hotel_screen/reviews_hotel_screen_view.dart';
+import 'package:frontend/app/modules/hotel_write_review/hotel_write_review_view.dart';
+import 'package:frontend/app/modules/itinerary_screen/itinerary_screen_view.dart';
+import 'package:frontend/app/modules/package_checkout_screen/package_cf_booking/package_cf_booking_view.dart';
+import 'package:frontend/app/modules/package_checkout_screen/package_checkout_screen_view.dart';
+import 'package:frontend/app/modules/package_detail_screen/package_detail_screen_view.dart';
+import 'package:frontend/app/modules/package_write_review/package_write_review_view.dart';
 import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/about_organization_screen/about_organization_screen_binding.dart';
 import 'package:frontend/app/modules/profile_screen/about_organization_screen/about_organization_screen_view.dart';
@@ -189,7 +203,7 @@ class AppPages {
       name: _Paths.THEME_SCREEN,
       page: () => ThemeModeView(),
       binding: ThemeModeViewBinding(),
-   ),
+    ),
     GetPage(
       name: _Paths.BOOKING_SCREEN,
       page: () => const BookingScreenView(),
@@ -204,6 +218,82 @@ class AppPages {
       name: _Paths.RESET_PASSWORD,
       page: () => const ResetPasswordScreen(),
       binding: ForgetPasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.HOME_SEEALL,
+      page: () => const HomeSeeAllScreenView(),
+      binding: HomeSeeAllScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.REVIEW_HOTEL,
+      page: () => const ReviewsHotelScreenView(),
+      binding: ReviewsHotelScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_SCREEN,
+      page: () => const DetailPlacesScreenView(),
+      binding: DetailPlacesScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.PACKAGE_DETAIL,
+      page: () => const PackageDetailScreenView(),
+      binding: PackageDetailScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.PACKAGE_CHECKOUT,
+      page: () => const PackageCheckoutScreenView(),
+      binding: PackageCheckoutScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.ITINERARY,
+      page: () => const ItineraryScreenView(),
+      binding: ItineraryScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.HOTEL_DETAIL,
+      page: () => const HotelDetailScreenView(),
+      binding: HotelDetailScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.HOTEL_PHOTO,
+      page: () => const HotelDetailPhotoView(),
+      binding: HotelDetailPhotoViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.REVIEW_HOTEL,
+      page: () => const ReviewsHotelScreenView(),
+      binding: ReviewsHotelScreenViewBinding(),
+    ),
+
+    GetPage(
+      name: _Paths.PACKAGE_REVIEW,
+      page: () => const PackageWriteReviewView(),
+      binding: PackageWriteReviewViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHOOSE_ROOM,
+      page: () => const ChooseRoomScreenView(),
+      binding: ChooseRoomScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.GUEST_INFO,
+      page: () => const GuestInfoScreenView(),
+      binding: GuestInfoScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.CONFIRM_BOOKING,
+      page: () => const ConfirmedBookingView(),
+      binding: ConfirmedBookingViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.PACKAGE_CF_BOOKING,
+      page: () => const PackageCfBookingView(),
+      binding: PackageCfBookingViewBinding(),
+    ),
+      GetPage(
+      name: _Paths.WRITE_REVIEW,
+      page: () => const WriteReviewScreenView(),
+      binding: WriteReviewScreenViewBinding(),
     ),
   ];
 }

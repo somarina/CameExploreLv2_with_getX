@@ -47,7 +47,7 @@ class AppFonts {
   static TextStyle fontsSubTitlew500 = GoogleFonts.googleSans(
     fontSize: 20,
     color: Colors.black,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
   );
 
   static TextStyle fontDescription = GoogleFonts.googleSans(

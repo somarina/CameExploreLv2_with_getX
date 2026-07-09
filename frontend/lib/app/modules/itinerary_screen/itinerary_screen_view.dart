@@ -15,24 +15,15 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       bottomNavigationBar: Container(
         padding: EdgeInsets.fromLTRB(24, 16, 24, 30),
-        decoration: BoxDecoration(
-          // color: Theme.of(context).scaffoldBackgroundColor
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withOpacity(0.2),
-          //     blurRadius: 10,
-          //     offset:  Offset(0, 5),
-          //   ),
-          // ],
-        ),
+        decoration: BoxDecoration(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "from",
+                  "from".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 14,
@@ -49,7 +40,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                     ),
                     SizedBox(width: 6),
                     Text(
-                      "per adult",
+                      "per_adult".tr,
                       style: GoogleFonts.googleSans(
                         color: Theme.of(context).textTheme.titleSmall!.color,
                         fontSize: 14,
@@ -63,10 +54,9 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
             SizedBox(height: 20),
 
             CustomButton(
-              title: "Check Availability",
+              title: "check_availability".tr,
               margin: EdgeInsets.all(0),
               onTap: () {
-                // Get.toNamed(Routes.PACKAGE_CHECKOUT);
                 Get.back();
               },
             ),
@@ -76,7 +66,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
-          "Itinerary",
+          "itinerary".tr,
           style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
@@ -112,7 +102,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                 ),
                 child: Center(
                   child: Text(
-                    "MAP",
+                    "map_placeholder".tr,
                     style: GoogleFonts.googleSans(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -133,7 +123,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                   ),
                   SizedBox(width: 6),
                   Text(
-                    "Main stop",
+                    "main_stop".tr,
                     style: GoogleFonts.googleSans(
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.secondary,
@@ -149,7 +139,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                       ),
                       SizedBox(width: 6),
                       Text(
-                        "Other stop",
+                        "other_stop".tr,
                         style: GoogleFonts.googleSans(
                           fontSize: 16,
                           color: Theme.of(context).colorScheme.secondary,
@@ -165,8 +155,8 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
               /// TIMELINE
               _timelineItem(
                 icon: Icons.location_on,
-                title: "2 pickup location options:",
-                subtitle: "Krong Siem Reap, Krong Siem Reap",
+                title: "pickup_options".tr,
+                subtitle: "siem_reap_krong".tr,
                 isFirst: true,
                 context: context,
               ),
@@ -175,25 +165,23 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
 
               _timelineItem(
                 icon: Icons.location_on,
-                title: "Angkor Wat",
-                subtitle:
-                    "Photo stop, Visit, Guided tour, Sightseeing, Sunrise",
-                duration: "(3 hours)",
+                title: "angkor_wat_title".tr,
+                subtitle: "angkor_wat_details".tr,
+                duration: "duration_3h".tr,
                 context: context,
               ),
 
               _timelineItem(
                 icon: Icons.location_on,
-                title: "Ta Prohm Temple",
-                subtitle:
-                    "Photo stop, Visit, Guided tour, Sightseeing (1 hour)",
+                title: "ta_prohm_temple".tr,
+                subtitle: "ta_prohm_details".tr,
                 context: context,
               ),
 
               _timelineItem(
                 icon: Icons.circle,
-                title: "2 Drop-off location options:",
-                subtitle: "Krong Siem Reap, Krong Siem Reap",
+                title: "dropoff_options".tr,
+                subtitle: "siem_reap_krong".tr,
                 isLast: true,
                 context: context,
               ),
@@ -319,7 +307,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Bus/coach",
+                  "bus_coach".tr,
                   style: GoogleFonts.googleSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -328,7 +316,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "(45 minutes)",
+                  "duration_45m".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 14,
