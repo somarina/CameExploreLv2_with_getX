@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/button_navbar/controllers/button_navbar_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/cardPlace/card_place.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,7 @@ import '../controllers/home_screen_controller.dart';
 
 class HomeScreenView extends GetView<HomeScreenController> {
   const HomeScreenView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,7 +97,16 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                       ),
                                     ),
                                     SizedBox(height: 10),
-
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "សួស្តី, Naihuoy", 
+                               
+                              style: AppFonts.fontHeader,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                                     Row(
                                       children: [
                                         const Icon(
@@ -415,6 +426,30 @@ class HomeScreenView extends GetView<HomeScreenController> {
             );
           }),
         ],
+    return Bounceable(
+      onTap: () {
+        Get.toNamed(Routes.DETAIL_PLACES);
+      },
+      child: Obx(
+        () => Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: CardPlace(
+            width: Get.width * 0.8,
+            image: "assets/images/homescreen/slider1.png",
+            category: "Temple",
+            title: "Angkor Wat",
+            location: "Siem Reap, Cambodia",
+            rating: 4.9,
+            distance: "200.10 km",
+
+            // Replace with your real place ID
+            isFavorite: controller.favoriteController.favorites[1] ?? false,
+
+            onFavorite: () {
+              controller.toggleFavorite(1);
+            },
+          ),
+        ),
       ),
     );
   }

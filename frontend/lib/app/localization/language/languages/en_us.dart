@@ -166,13 +166,14 @@ Map<String, String> enUS = {
   "Gallery": "Gallery",
   "Camera": "Camera",
 
-  //
+  // 
   "name": "Name",
   "contact_us": "Contact Us",
   "leave": "Leave",
   "now": "Now",
   "open": "Open",
   "phone": "Phone",
+
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////     Login Screen
@@ -182,6 +183,29 @@ Map<String, String> enUS = {
   "Password": "Password",
   "Or": "Or",
 
+  //Favorites Screen
+  "Favorites": "Favorites",
+  "activity": "activity",
+  "activities": "activities",
+  "Rename list": "Rename list",
+  "Delete list": "Delete list",
+  "This list is empty": "This list is empty",
+  "Find things to do": "Find things to do",
+  "Cancel": "Cancel",
+  "Done": "Done",
+  "Delete": "Delete",
+  "Create a list": "Create a list",
+  "Select a list": "Select a list",
+  "List name": "List name",
+  "Enter new list name": "Enter new list name",
+  "delete_list_confirm":
+  "Are you sure you want to delete your @listName list? All the activities you've saved will be lost.",
+
+  // Search Screen
+  "Most search": "Most search",
+  "Popular places": "Popular places",
+  "people searched this": "people searched this",
+  "searches": "searches",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Home

@@ -225,6 +225,11 @@ class AppPages {
       binding: HomeSeeAllScreenViewBinding(),
     ),
     GetPage(
+      name: _Paths.WRITE_REVIEW,
+      page: () => const WriteReviewScreenView(),
+      binding: WriteReviewScreenViewBinding(),
+    ),
+    GetPage(
       name: _Paths.REVIEW_HOTEL,
       page: () => const ReviewsHotelScreenView(),
       binding: ReviewsHotelScreenViewBinding(),
@@ -233,6 +238,15 @@ class AppPages {
       name: _Paths.DETAIL_SCREEN,
       page: () => const DetailPlacesScreenView(),
       binding: DetailPlacesScreenViewBinding(),
+),
+    GetPage(      name: _Paths.CHOOSE_ROOM,
+      page: () => const ChooseRoomScreenView(),
+      binding: ChooseRoomScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.PACKAGE_DETAIL,
+      page: () => const PackageDetailScreenView(),
+      binding: PackageDetailScreenViewBinding(),
     ),
     GetPage(
       name: _Paths.PACKAGE_DETAIL,
@@ -290,10 +304,16 @@ class AppPages {
       page: () => const PackageCfBookingView(),
       binding: PackageCfBookingViewBinding(),
     ),
-      GetPage(
+
+    GetPage(
       name: _Paths.WRITE_REVIEW,
       page: () => const WriteReviewScreenView(),
       binding: WriteReviewScreenViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_SCREEN,
+      page: () => const DetailPlacesScreenView(),
+      binding: DetailPlacesScreenViewBinding(),
     ),
   ];
 }

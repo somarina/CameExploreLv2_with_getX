@@ -1,6 +1,7 @@
 import 'package:frontend/app/modules/booking_screen/controllers/booking_screen_controller.dart';
 import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_controller.dart';
 import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_controller.dart';
 import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:get/get.dart';
 
@@ -27,6 +28,9 @@ class ButtonNavbarBinding extends Bindings {
     );
     Get.lazyPut<HomeScreenController>(
       () => HomeScreenController(),
+    );
+    Get.lazyPut<FavoriteScreenController>(
+      () => FavoriteScreenController(),
     );
   }
 }

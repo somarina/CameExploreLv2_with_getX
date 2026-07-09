@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/api/services/category_service.dart';
+import 'package:frontend/app/core/api/services/places_services.dart';
 import 'package:get/get.dart';
 
 import '../custom_textfield/build_textfield.dart';
@@ -19,21 +21,9 @@ class ExploreView extends GetView<ExploreViewController> {
         backgroundColor: Color(0xfff5f5f5),
         leading: Bounceable(
           onTap: () => Get.back(),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            margin: EdgeInsets.only(left: 20),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey[300]!,
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Center(child: Icon(Icons.arrow_back_ios)),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: SvgPicture.asset("assets/svg/arrow_back.svg"),
           ),
         ),
         title: SizedBox(height: 50, child: BuildTextfield()),
@@ -42,34 +32,40 @@ class ExploreView extends GetView<ExploreViewController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: SizedBox(
-                height: 100,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    final item = controller.categories[index];
-                    return Column(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xff009A3F),
+            Obx(
+              () => Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: SizedBox(
+                  height: 100,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.categories.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 20),
+                    itemBuilder: (context, index) {
+                      final item = controller.categories[index];
+
+                      return Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              controller.getPlaces(category: item["name"]);
+                            },
+                            child: Container(
+                              width: 60,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color(0xff009A3F),
+                              ),
+                              child: Center(child: Text(item["icon"] ?? "")),
+                            ),
                           ),
-                          child: Center(child: Text("icon")),
-                        ),
-                        SizedBox(height: 10),
-                        Text(item['name'] ?? '')
-                      ],
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return SizedBox(width: 20);
-                  },
-                  itemCount: controller.categories.length,
+                          const SizedBox(height: 10),
+                          Text(item["name"] ?? ""),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -84,6 +80,7 @@ class ExploreView extends GetView<ExploreViewController> {
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (context, index) {
+                final place = controller.places[index];
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -100,9 +97,32 @@ class ExploreView extends GetView<ExploreViewController> {
                             ),
                           ),
                           Positioned(
-                            top: 10,
-                            right: 10,
-                            child: Icon(Icons.favorite),
+                            top: 8,
+                            right: 8,
+                            child: Obx(
+                              () => GestureDetector(
+                                onTap: () => controller.toggleFavorite(index),
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    controller.favorites[index]
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: controller.favorites[index]
+                                        ? Colors.red
+                                        : Theme.of(
+                                            context,
+                                          ).textTheme.titleSmall!.color,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -110,25 +130,24 @@ class ExploreView extends GetView<ExploreViewController> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Angkor Wat"),
+                          Text(place["name"] ?? "Unnamed Place"),
                           SizedBox(height: 10),
                           Row(
                             children: [
                               Icon(Icons.location_on_sharp),
                               SizedBox(width: 5),
-                              Text("Siem Reap, Cambodia"),
+                              Text(place["province"] ?? "")
                             ],
                           ),
                           SizedBox(height: 10),
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () {
-                                  
-                                },
-                                child: Icon(Icons.star, color: Colors.amber)),
+                                onTap: () {},
+                                child: Icon(Icons.star, color: Colors.amber),
+                              ),
                               SizedBox(width: 5),
-                              Text("5.0"),
+                              Text(place["category"] ?? ""),
                               SizedBox(width: 10),
                               Container(
                                 width: 6,
@@ -163,8 +182,9 @@ class ExploreView extends GetView<ExploreViewController> {
               separatorBuilder: (context, index) {
                 return Divider(height: 40);
               },
-              itemCount: 5,
+              itemCount: controller.places.length,
             ),
+          
           ],
         ),
       ),

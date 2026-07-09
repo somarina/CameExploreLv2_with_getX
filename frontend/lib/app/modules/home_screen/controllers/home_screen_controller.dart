@@ -4,6 +4,7 @@ import 'package:frontend/app/core/api/services/auth_services.dart';
 import 'package:frontend/app/core/api/services/category_service.dart';
 import 'package:frontend/app/core/api/services/places_services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:get/get.dart';
 
 class HomeScreenController extends GetxController {
@@ -22,7 +23,9 @@ class HomeScreenController extends GetxController {
   RxList trendingPlaces = [].obs;
   RxList topPlaces = [].obs;
   RxList nearbyPlaces = [].obs;
-
+  final favoriteController = Get.find<FavoriteScreenController>();
+  
+  
   List<String> imgList = [
     'assets/images/homescreen/slider1.png',
     'assets/images/homescreen/slider2.png',
@@ -37,7 +40,6 @@ class HomeScreenController extends GetxController {
   void toggleFavorite(int index) {
     favorites[index] = !favorites[index];
   }
-
   Future<void> getProfile() async {
     try {
       isLoadingPf.value = true;

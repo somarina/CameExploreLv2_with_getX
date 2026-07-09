@@ -29,33 +29,32 @@ class FavoriteService {
 
   // Delete favorite list
   Future<dynamic> deleteFavoriteList(String listId) async {
-  return await baseApi.delete(
-    endpoint: '/api/favorites/lists/$listId',
-  );
-}
+    return await baseApi.delete(endpoint: '/api/favorites/lists/$listId');
+  }
 
   // Add item to a favorite list
-  Future<dynamic> addFavoriteItem(int listId) async {
+  Future<dynamic> addFavoriteItem({
+    required String listId,
+    required String placeId,
+  }) async {
     return await baseApi.post(
       endpoint: '/api/favorites/lists/$listId/items',
-      data: {},
+      data: {"place_id": placeId},
     );
   }
 
   // Get items in a favorite list
-  Future<dynamic> getFavoriteItems(int listId) async {
+  Future<dynamic> getFavoriteItems(String listId) async {
     return await baseApi.get(endpoint: '/api/favorites/lists/$listId/items');
   }
 
   // Delete an item from a favorite list
   Future<dynamic> deleteFavoriteItem({
-    required int listId,
-    required int placeId,
+    required String listId,
+    required String placeId,
   }) async {
     return await baseApi.delete(
       endpoint: '/api/favorites/lists/$listId/items/$placeId',
     );
   }
-
-  
 }

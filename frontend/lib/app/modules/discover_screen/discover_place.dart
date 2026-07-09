@@ -1,13 +1,13 @@
-import 'dart:convert';
+
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-class PlaceModel {
+class DiscoverPlace {
   final int id;
   final String name;
   final String location;
   final double rating;
   final String image;
-  PlaceModel({
+  DiscoverPlace({
     required this.id,
     required this.name,
     required this.location,
@@ -16,8 +16,8 @@ class PlaceModel {
   });
 
 
-  factory PlaceModel.fromMap(Map<String, dynamic> json) {
-    return PlaceModel(
+  factory DiscoverPlace.fromMap(Map<String, dynamic> json) {
+    return DiscoverPlace(
       id: json['id'] as int,
       name: json['name'] as String,
       location: json['location'] as String,
