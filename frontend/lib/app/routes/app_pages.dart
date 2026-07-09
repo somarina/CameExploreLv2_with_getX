@@ -235,7 +235,11 @@ class AppPages {
       binding: ReviewsHotelScreenViewBinding(),
     ),
     GetPage(
-      name: _Paths.CHOOSE_ROOM,
+      name: _Paths.DETAIL_SCREEN,
+      page: () => const DetailPlacesScreenView(),
+      binding: DetailPlacesScreenViewBinding(),
+),
+    GetPage(      name: _Paths.CHOOSE_ROOM,
       page: () => const ChooseRoomScreenView(),
       binding: ChooseRoomScreenViewBinding(),
     ),
@@ -300,6 +304,7 @@ class AppPages {
       page: () => const PackageCfBookingView(),
       binding: PackageCfBookingViewBinding(),
     ),
+
     GetPage(
       name: _Paths.WRITE_REVIEW,
       page: () => const WriteReviewScreenView(),

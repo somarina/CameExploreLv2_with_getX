@@ -58,7 +58,7 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                   SizedBox(height: 16),
 
                   Text(
-                    "Booking Confirmed!",
+                    "booking_confirmed".tr,
                     style: GoogleFonts.googleSans(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
@@ -70,7 +70,7 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                   SizedBox(height: 16),
 
                   Text(
-                    "Your reservation has been\nsuccessfully confirmed",
+                    "booking_success_msg".tr,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.googleSans(
                       fontSize: 16,
@@ -96,7 +96,7 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Booking Details",
+                          "booking_details".tr,
                           style: GoogleFonts.googleSans(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -105,41 +105,51 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                         ),
 
                         SizedBox(height: 24),
-                        _detailRow("Booking Ref.", "", context),
-                        _detailRow("Hotel", controller.hotel, context),
-                        _detailRow("Room Type", controller.roomType, context),
-                        _detailRow("Check-in", controller.checkIn, context),
-                        _detailRow("Check-out", controller.checkOut, context),
-                        _detailRow("Guests", controller.guests, context),
-                        _detailRow("Guest Name", controller.guestName, context),
+                        _detailRow("booking_ref".tr, "", context),
+                        _detailRow("hotel".tr, controller.hotel, context),
                         _detailRow(
-                          "Guest Number",
+                          "room_type".tr,
+                          controller.roomType,
+                          context,
+                        ),
+                        _detailRow("check_in".tr, controller.checkIn, context),
+                        _detailRow(
+                          "check_out".tr,
+                          controller.checkOut,
+                          context,
+                        ),
+                        _detailRow("guests".tr, controller.guests, context),
+                        _detailRow(
+                          "guest_name".tr,
+                          controller.guestName,
+                          context,
+                        ),
+                        _detailRow(
+                          "guest_number".tr,
                           "+855 ${controller.guestPhone}",
                           context,
                         ),
                         _detailRow(
-                          "Guest Email",
+                          "guest_email".tr,
                           controller.guestEmail,
                           context,
                         ),
-                        _detailRow("Payment", "ABA Pay", context),
+                        _detailRow("payment".tr, "ABA Pay", context),
                         _detailRow(
-                          "Transaction Date",
+                          "transaction_date".tr,
                           controller.transactionDate,
                           context,
                         ),
 
                         SizedBox(height: 10),
-
                         Divider(),
-
                         SizedBox(height: 10),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Total Price",
+                              "total_price".tr,
                               style: GoogleFonts.googleSans(
                                 fontSize: 18,
                                 color: Theme.of(
@@ -152,7 +162,7 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                               style: GoogleFonts.googleSans(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700,
-                                color: const Color(0xFF008C2A),
+                                color: Color(0xFF008C2A),
                               ),
                             ),
                           ],
@@ -163,10 +173,11 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
 
                   SizedBox(height: 30),
 
-                  /// Back Home Button
                   Bounceable(
                     onTap: () {
-                      Get.offAllNamed(Routes.HOME_SCREEN);
+                      // Get.offAllNamed(Routes.HOME_SCREEN);
+                      // Get.find<ButtonNavbarController>().changePage(0);
+                      Get.offAllNamed(Routes.BUTTON_NAVBAR);
                     },
                     child: Container(
                       width: Get.width,
@@ -177,7 +188,7 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                       ),
                       child: Center(
                         child: Row(
-                          mainAxisAlignment: .center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.home_filled,
@@ -186,7 +197,7 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                             ),
                             SizedBox(width: 6),
                             Text(
-                              "Back to Home",
+                              "back_to_home".tr,
                               style: GoogleFonts.googleSans(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -201,7 +212,7 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                   SizedBox(height: 20),
 
                   Text(
-                    "A confirmation email has been sent to your email address",
+                    "email_sent_msg".tr,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.googleSans(
                       fontSize: 16,
@@ -220,7 +231,7 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
 
   Widget _detailRow(String title, String value, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -228,13 +239,11 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
             title,
             style: GoogleFonts.googleSans(
               fontSize: 14,
-
               color: Theme.of(
                 context,
               ).textTheme.titleSmall!.color?.withValues(alpha: 0.7),
             ),
           ),
-
           Flexible(
             child: Text(
               value,

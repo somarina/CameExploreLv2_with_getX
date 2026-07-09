@@ -8,6 +8,13 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to your Photos library.</string>
 	
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location to show nearby tourist attractions.</string>
+
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app uses your location to show nearby tourist attractions.</string>
+
+
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

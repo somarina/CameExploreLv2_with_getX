@@ -21,7 +21,6 @@ class PackageDetailScreenViewController extends GetxController {
       initialDate: selectedDate.value ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
-    
     );
 
     if (picked != null) {
@@ -42,21 +41,19 @@ class PackageDetailScreenViewController extends GetxController {
   void checkAvailability() {
     if (selectedDate.value == null) {
       Get.snackbar(
-        "Date Required",
-        "Please select a date first",
-        snackPosition: SnackPosition.BOTTOM,
+        "select_date_err_title_".tr, 
+        "select_date_err_body_".tr,   
+        snackPosition: SnackPosition.TOP,
       );
       return;
     }
-
-    
 
     showAvailability.value = true;
   }
 
   String get formattedDate {
     if (selectedDate.value == null) {
-      return "Select date";
+      return "select_date_package_".tr;
     }
 
     return DateFormat(
@@ -66,12 +63,9 @@ class PackageDetailScreenViewController extends GetxController {
 
   String get formattedTime {
     if (selectedTime.value == null) {
-      return "Select time";
+      return "starting_time_".tr;
     }
 
     return selectedTime.value!.format(Get.context!);
   }
-
-
-
 }

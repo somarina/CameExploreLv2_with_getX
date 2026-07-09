@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -139,64 +138,47 @@ class HomeSeeAllScreenView extends GetView<HomeSeeAllScreenViewController> {
   }
 
   Widget _buildCategory() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 110,
-            child: ListView.builder(
-              physics: const ClampingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                // var category = CategoryModel.fromMap(categoryData[index]);
-                return Padding(
-                  padding: EdgeInsets.only(right: 20),
-                  child: Bounceable(
-                    onTap: () {},
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: CachedNetworkImage(
-                            imageUrl: "",
-                            width: 30,
-                            height: 30,
-                            fit: BoxFit.contain,
-                            placeholder: (context, url) => const SizedBox(
-                              width: 25,
-                              height: 25,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
+    return Obx(
+      () => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 110,
+              child: ListView.builder(
+                physics: const ClampingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  final item = controller.homeCtrl.categories[index];
+                  return Padding(
+                    padding: EdgeInsets.only(right: 20),
+                    child: Bounceable(
+                      onTap: () {},
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xff009A3F),
                             ),
-                            errorWidget: (context, url, error) => Icon(
-                              Icons.image_not_supported,
-                              color: Colors.white,
-                              size: 24,
-                            ),
+                            child: Center(child: Text("icon")),
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          "Icon",
-                          style: AppFonts.fontCategory.copyWith(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ],
+                          SizedBox(height: 10),
+                          Text(item['name'] ?? ''),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-              itemCount: 6,
+                  );
+                },
+                itemCount: controller.homeCtrl.categories.length,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

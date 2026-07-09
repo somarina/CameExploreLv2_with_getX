@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'hotel_write_review_binding.dart';
 part 'hotel_write_review_controller.dart';
@@ -18,7 +21,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
-          "Write a review",
+          "write_review".tr,
           style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
@@ -52,7 +55,8 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
             _submitButton(),
             SizedBox(height: 16),
             Text(
-              "Your review will be published publicly",
+              "review_public_notice"
+                  .tr, // Recommended key: "Your review will be published publicly"
               style: GoogleFonts.googleSans(color: Colors.grey, fontSize: 14),
             ),
             SizedBox(height: 30),
@@ -80,7 +84,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "YOU'RE REVIEWING",
+                  "reviewing_title".tr, 
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 12,
@@ -97,7 +101,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  "Stayed in Apr 2026",
+                  "${"stayed_in".tr} Apr 2026",
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 14,
@@ -120,7 +124,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
           Row(
             children: [
               Text(
-                "Overall score",
+                "overall_score".tr, 
                 style: GoogleFonts.googleSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -185,14 +189,14 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Terrible",
+                "terrible".tr, // Recommended key: "Terrible"
                 style: GoogleFonts.googleSans(
                   color: Theme.of(context).textTheme.titleSmall!.color,
                   fontSize: 14,
                 ),
               ),
               Text(
-                "Amazing",
+                "amazing".tr, // Recommended key: "Amazing"
                 style: GoogleFonts.googleSans(
                   color: Theme.of(context).textTheme.titleSmall!.color,
                   fontSize: 14,
@@ -212,7 +216,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Rate by category",
+            "rate_category".tr, 
             style: GoogleFonts.googleSans(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -235,7 +239,9 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item.key,
+                              item
+                                  .key
+                                  .tr, 
                               style: GoogleFonts.googleSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -245,7 +251,9 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
                               ),
                             ),
                             Text(
-                              controller.getRatingLabel(rating),
+                              controller
+                                  .getRatingLabel(rating)
+                                  .tr,
                               style: GoogleFonts.googleSans(
                                 color: controller.getRatingColor(rating),
                                 fontSize: 13,
@@ -292,7 +300,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
           Row(
             children: [
               Text(
-                "Your review",
+                "review".tr,
                 style: GoogleFonts.googleSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -309,9 +317,10 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
           TextField(
             controller: controller.reviewController,
             maxLines: 5,
-            maxLength: 6,
+            maxLength: 250,
             decoration: InputDecoration(
-              hintText: "Share your experience",
+              hintText: "share_experience_hint"
+                  .tr, 
               hintStyle: GoogleFonts.googleSans(
                 color: Theme.of(context).textTheme.titleSmall!.color,
               ),
@@ -351,7 +360,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
             alignment: Alignment.centerRight,
             child: Obx(
               () => Text(
-                "${controller.reviewLength.value}/6",
+                "${controller.reviewLength.value}/250",
                 style: GoogleFonts.googleSans(color: Colors.grey, fontSize: 14),
               ),
             ),
@@ -371,7 +380,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "Add photos",
+                  text: "add_photos".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
                     fontSize: 18,
@@ -379,7 +388,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
                   ),
                 ),
                 TextSpan(
-                  text: "  (optional)",
+                  text: "  (optional)".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 16,
@@ -389,42 +398,102 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
             ),
           ),
           SizedBox(height: 20),
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.primary,
-                style: BorderStyle.solid,
-                width: 1.5,
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+
+          Obx(() {
+            return Wrap(
+              spacing: 12,
+              runSpacing: 16,
               children: [
-                Icon(
-                  Icons.camera_alt_outlined,
-                  color: Theme.of(context).textTheme.titleSmall!.color,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Add photo",
-                  style: GoogleFonts.googleSans(
-                    color: Theme.of(context).textTheme.titleSmall!.color,
-                    fontSize: 12,
+                ...List.generate(controller.selectedImages.length, (index) {
+                  return Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.file(
+                          controller.selectedImages[index],
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: GestureDetector(
+                          onTap: () => controller.removeImage(index),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.black54,
+                              shape: BoxShape.circle,
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+
+                if (controller.selectedImages.length < 5)
+                  Bounceable(
+                    onTap: controller.pickImages,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.camera_alt_outlined,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.titleSmall!.color,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "add_photo".tr,
+                            style: GoogleFonts.googleSans(
+                              color: Theme.of(
+                                context,
+                              ).textTheme.titleSmall!.color,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "${controller.selectedImages.length}/5",
+                            style: GoogleFonts.googleSans(fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
               ],
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
   }
 
   Widget _submitButton() {
-    return CustomButton(title: "Submit Review", margin: EdgeInsets.all(0));
+    return CustomButton(
+      title: "submit_review".tr,
+      margin: EdgeInsets.all(0),
+    ); 
   }
 
   Widget _card({required Widget child, required BuildContext context}) {

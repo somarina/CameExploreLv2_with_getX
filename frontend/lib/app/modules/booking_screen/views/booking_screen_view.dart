@@ -6,7 +6,6 @@ import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class BookingScreenView extends GetView<BookingScreenController> {
   const BookingScreenView({super.key});
 
@@ -17,14 +16,14 @@ class BookingScreenView extends GetView<BookingScreenController> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
-          'My Bookings',
+          'my_bookings'.tr,
           style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
-            fontSize: 20,
+            fontSize: 25,
           ),
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: Column(
         children: [
@@ -35,7 +34,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
               () => Row(
                 children: [
                   _buildFilterChip(
-                    label: 'All',
+                    label: 'all'.tr,
                     count: controller.countAll,
                     isSelected:
                         controller.selectedStatus.value == BookingStatus.all,
@@ -44,7 +43,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                   ),
                   SizedBox(width: 8),
                   _buildFilterChip(
-                    label: 'Upcoming',
+                    label: 'upcoming'.tr,
                     count: controller.countUpcoming,
                     isSelected:
                         controller.selectedStatus.value ==
@@ -55,7 +54,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                   ),
                   SizedBox(width: 8),
                   _buildFilterChip(
-                    label: 'Completed',
+                    label: 'completed'.tr,
                     count: controller.countCompleted,
                     isSelected:
                         controller.selectedStatus.value ==
@@ -75,7 +74,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
               if (items.isEmpty) {
                 return Center(
                   child: Text(
-                    'No bookings found.',
+                    'no_bookings_found'.tr,
                     style: GoogleFonts.googleSans(
                       color: Colors.grey,
                       fontSize: 16,
@@ -92,6 +91,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
               );
             }),
           ),
+          SizedBox(height: 50),
         ],
       ),
     );
@@ -154,7 +154,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
     bool isUpcoming = booking.status == BookingStatus.upcoming;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 16), // Increased slightly for spacing
+      margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(24),
@@ -169,7 +169,6 @@ class BookingScreenView extends GetView<BookingScreenController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Graphic Image Layer Stack
           Stack(
             children: [
               ClipRRect(
@@ -199,7 +198,6 @@ class BookingScreenView extends GetView<BookingScreenController> {
                   ),
                 ),
               ),
-              // Header Geo Text Labeling
               Positioned(
                 left: 16,
                 bottom: 16,
@@ -235,7 +233,6 @@ class BookingScreenView extends GetView<BookingScreenController> {
                   ],
                 ),
               ),
-              // Operational Status Notification Banner
               Positioned(
                 top: 16,
                 right: 16,
@@ -290,7 +287,11 @@ class BookingScreenView extends GetView<BookingScreenController> {
                           ),
                         ),
                         Text(
-                          '${booking.nights} night${booking.nights > 1 ? 's' : ''}',
+                          booking.nights == 1
+                              ? 'night_singular'.tr
+                              : 'nights_plural'.trParams({
+                                  'count': booking.nights.toString(),
+                                }),
                           style: GoogleFonts.googleSans(
                             color: Color(0xFF9CA3AF),
                             fontSize: 12,
@@ -347,7 +348,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
 
                 if (isUpcoming) ...[
                   CustomButton(
-                    title: 'View Details',
+                    title: 'view_details'.tr,
                     margin: EdgeInsets.all(0),
                     onTap: () => controller.showBookingDetailsBottomSheet(
                       context,
@@ -384,7 +385,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                                 ),
                                 SizedBox(width: 8),
                                 Text(
-                                  'Write a Review',
+                                  'write_a_review'.tr,
                                   style: GoogleFonts.googleSans(
                                     color: Theme.of(
                                       context,
@@ -414,7 +415,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                             ),
                             child: Center(
                               child: Text(
-                                "Booking again",
+                                "booking_again".tr,
                                 style: GoogleFonts.googleSans(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -453,7 +454,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
           ),
           SizedBox(width: 4),
           Text(
-            isUpcoming ? 'Upcoming' : 'Completed',
+            isUpcoming ? 'upcoming'.tr : 'completed'.tr,
             style: GoogleFonts.googleSans(
               color: isUpcoming ? Color(0xFF2563EB) : Color(0xFF059669),
               fontSize: 12,

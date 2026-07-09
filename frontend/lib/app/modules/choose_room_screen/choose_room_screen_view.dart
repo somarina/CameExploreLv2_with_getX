@@ -22,7 +22,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Choose your room",
+          "choose_room_".tr,
           style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
@@ -91,7 +91,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
                   SizedBox(height: 24),
 
                   Text(
-                    "Free cancellation",
+                    "free_cancellation".tr,
                     style: GoogleFonts.googleSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -132,7 +132,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
                           ),
                         ),
                         Text(
-                          "Incl. taxes & fees",
+                          "incl_taxes_fees".tr,
                           style: GoogleFonts.googleSans(
                             fontSize: 14,
                             color: Theme.of(
@@ -185,7 +185,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Check-in & Check-out",
+                      "checkin_out".tr,
                       style: GoogleFonts.googleSans(
                         fontSize: 14,
                         color: Theme.of(context).textTheme.titleSmall!.color,
@@ -198,7 +198,9 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
                         children: [
                           Expanded(
                             child: Text(
-                              controller.dateText,
+                              controller.dateText == "Select Date" 
+                                  ? "select_date".tr 
+                                  : controller.dateText,
                               style: GoogleFonts.googleSans(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -208,7 +210,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
                           ),
 
                           Text(
-                            "${controller.nights} night(s)",
+                            "night_count".trArgs(["${controller.nights}"]),
                             style: GoogleFonts.googleSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -237,7 +239,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Rooms & guests",
+                      "rooms_guests".tr,
                       style: GoogleFonts.googleSans(
                         fontSize: 14,
                         color: Theme.of(context).textTheme.titleSmall!.color,
@@ -358,7 +360,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
       children: [
         Expanded(
           child: Text(
-            "25 m² / 269 ft²",
+            "room_size_m2_ft2".tr,
             style: GoogleFonts.googleSans(
               fontSize: 14,
               color: Theme.of(context).colorScheme.secondary,
@@ -371,7 +373,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
         Expanded(
           child: Center(
             child: Text(
-              "1 king bed",
+              "king_bed_count".tr,
               style: GoogleFonts.googleSans(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.secondary,
@@ -385,7 +387,7 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
         Expanded(
           child: Center(
             child: Text(
-              "Mountain view",
+              "mountain_view".tr,
               style: GoogleFonts.googleSans(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.secondary,
@@ -404,18 +406,18 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
         Expanded(
           child: Column(
             children: [
-              _AmenityTile(Icons.bathtub_outlined, "Private bathroom"),
-              _AmenityTile(Icons.ac_unit, "Air conditioning"),
-              _AmenityTile(Icons.wifi, "Free Wi-Fi"),
+              _AmenityTile(Icons.bathtub_outlined, "private_bathroom".tr),
+              _AmenityTile(Icons.ac_unit, "air_conditioning".tr),
+              _AmenityTile(Icons.wifi, "free_wifi".tr),
             ],
           ),
         ),
         Expanded(
           child: Column(
             children: [
-              _AmenityTile(Icons.coffee_outlined, "Coffee/tea maker"),
-              _AmenityTile(Icons.balcony_outlined, "Balcony"),
-              _AmenityTile(Icons.smoke_free_outlined, "Non-smoking"),
+              _AmenityTile(Icons.coffee_outlined, "coffee_tea_maker".tr),
+              _AmenityTile(Icons.balcony_outlined, "balcony".tr),
+              _AmenityTile(Icons.smoke_free_outlined, "non_smoking".tr),
             ],
           ),
         ),
@@ -428,25 +430,25 @@ class ChooseRoomScreenView extends GetView<ChooseRoomScreenViewController> {
       children: [
         _AmenityTile(
           Icons.check_circle_outline,
-          "Free cancellation before 23:59, Jun19",
+          "free_cancellation_date_hint".tr,
           greenText: true,
         ),
-        _AmenityTile(Icons.person_outline, "Price for 2 adults"),
-        _AmenityTile(Icons.child_care_outlined, "Your kid can stay for FREE!"),
-        _AmenityTile(Icons.credit_card_outlined, "Prepay online"),
+        _AmenityTile(Icons.person_outline, "price_for_2_adults".tr),
+        _AmenityTile(Icons.child_care_outlined, "kid_stay_free".tr),
+        _AmenityTile(Icons.credit_card_outlined, "prepay_online".tr),
       ],
     );
   }
 
   Widget _buildBottomBar(BuildContext context) {
     return CustomButton(
-      title: "Book Now",
+      title: "book_now".tr,
       margin: EdgeInsets.all(0),
       onTap: () {
         if (controller.checkInDate == null || controller.checkOutDate == null) {
           Get.snackbar(
-            "Select Date",
-            "Please select your check-in and check-out dates first.",
+            "select_date_err_title".tr,
+            "select_date_err_body".tr,
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red,
             colorText: Colors.white,

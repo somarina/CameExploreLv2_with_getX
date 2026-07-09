@@ -31,6 +31,12 @@ void main() async {
 
   Get.put(ThemeModeViewController());
   Get.put(LoginScreenController());
+  // Get.put(HomeScreenController());
+  // Get.put(SearchScreenController());
+  // Get.put(BookingScreenController());
+  // Get.put(FavoriteScreenController());
+  // Get.put(UserProfileScreenViewController());
+  // Get.put(ExploreViewController());
   Get.put(HomeScreenController());
   Get.put(FavoriteScreenController());
   Get.put(SearchScreenController());
@@ -125,7 +131,6 @@ void _handleTelegramCallback(Map<String, String> params) async {
     );
   }
 }
-
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -133,6 +138,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var box = GetStorage();
     var isdark = box.read("isdark") ?? false;
+    var language = box.read("language") ?? "enUS";
 
     return GetMaterialApp(
       // theme
@@ -142,9 +148,10 @@ class MainApp extends StatelessWidget {
 
       // language
       translations: AppTranslatation(),
-      locale: Locale("kmKH"),
+      // locale: Locale("kmKH"),
       fallbackLocale: Locale("enUS"),
       debugShowCheckedModeBanner: false,
+      locale: language == "kmKH" ? Locale("kmKH") : Locale("enUS"),
 
       // routes
       initialRoute: Routes.SPLASH_SCREEN,

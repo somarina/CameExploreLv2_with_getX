@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/app/modules/detail_places_screen/detail_places_screen_view.dart';
+import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/reviewPlace/review_place_card.dart';
 import 'package:get/get.dart';
@@ -40,7 +42,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
       child: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: .start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Title + Rating
             _buildContentTitle(context),
@@ -80,9 +82,9 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
           child: Row(
             children: [
               Text(
-                "Reviews",
+                "review".tr,
                 style: GoogleFonts.googleSans(
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
@@ -115,7 +117,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                     text: " / 10",
                     style: GoogleFonts.googleSans(
                       color: Theme.of(context).colorScheme.secondary,
-                      fontSize: 18,
+                      fontSize: 20,
                     ),
                   ),
                 ],
@@ -123,21 +125,22 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             ),
             SizedBox(width: 50),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Very Good",
+                  "good".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.primary,
-                    fontWeight: .w500,
+                    fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "54 Reviews",
+                  "54 ${'review'.tr}",
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: .w500,
+                    fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
                 ),
@@ -156,7 +159,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Cleanliness",
+                        "cleaniness".tr,
                         style: GoogleFonts.googleSans(
                           color: Theme.of(context).colorScheme.secondary,
                         ),
@@ -174,7 +177,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Location",
+                        "location".tr,
                         style: GoogleFonts.googleSans(
                           color: Theme.of(context).colorScheme.secondary,
                         ),
@@ -201,7 +204,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Service",
+                        "service".tr,
                         style: GoogleFonts.googleSans(
                           color: Theme.of(context).colorScheme.secondary,
                         ),
@@ -219,7 +222,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Amenities",
+                        "amenities".tr,
                         style: GoogleFonts.googleSans(
                           color: Theme.of(context).colorScheme.secondary,
                         ),
@@ -247,12 +250,12 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
 
   Widget _buildPolicy(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Policies",
+          "policies".tr,
           style: GoogleFonts.googleSans(
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -260,7 +263,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
         SizedBox(height: 20),
 
         Row(
-          crossAxisAlignment: .start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(
               Icons.access_time_outlined,
@@ -268,19 +271,19 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             ),
             SizedBox(width: 10),
             Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Check in / Check out",
+                  "checkin_out".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: .w500,
+                    fontWeight: FontWeight.w500,
                     fontSize: 15,
                   ),
                 ),
                 SizedBox(height: 6),
                 Text(
-                  "- Check in: After 14:00",
+                  "checkin_".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 14,
@@ -288,7 +291,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  "- Check out: Before 12:00",
+                  "checkout_".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 14,
@@ -296,7 +299,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  "- Front desk hours: 24/7",
+                  "front_desk".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 14,
@@ -306,7 +309,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 SizedBox(
                   width: Get.width * 0.8,
                   child: Text(
-                    "- The main guest checking in must be at least 18 years old.",
+                    "main_guest".tr,
                     style: GoogleFonts.googleSans(
                       color: Theme.of(context).textTheme.titleSmall!.color,
                       fontSize: 14,
@@ -321,7 +324,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
         SizedBox(height: 20),
 
         Row(
-          crossAxisAlignment: .start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SvgPicture.asset(
               "assets/svg/child.svg",
@@ -331,19 +334,19 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             ),
             SizedBox(width: 10),
             Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Child policies",
+                  "child_policies".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: .w500,
+                    fontWeight: FontWeight.w500,
                     fontSize: 15,
                   ),
                 ),
                 SizedBox(height: 6),
                 Text(
-                  "- Children can stay in some rooms of this hotel.",
+                  "child_policies_stay".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                     fontSize: 14,
@@ -353,7 +356,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 SizedBox(
                   width: Get.width * 0.8,
                   child: Text(
-                    "- Additional fees may be charged for children using existing beds. Add the number of children to get more accurate price.",
+                    "child_policies_fees".tr,
                     style: GoogleFonts.googleSans(
                       color: Theme.of(context).textTheme.titleSmall!.color,
                       fontSize: 14,
@@ -368,7 +371,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
         SizedBox(height: 20),
 
         Row(
-          crossAxisAlignment: .start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SvgPicture.asset(
               "assets/svg/Restaurant.svg",
@@ -378,13 +381,13 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             ),
             SizedBox(width: 10),
             Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Breakfast",
+                  "breakfast_title".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: .w500,
+                    fontWeight: FontWeight.w500,
                     fontSize: 15,
                   ),
                 ),
@@ -392,7 +395,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 SizedBox(
                   width: Get.width * 0.8,
                   child: Text(
-                    "- Breakfast is available at the hotel. Please contact the hotel for details.",
+                    "breakfast_availability".tr,
                     style: GoogleFonts.googleSans(
                       color: Theme.of(context).textTheme.titleSmall!.color,
                       fontSize: 14,
@@ -403,7 +406,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 SizedBox(
                   width: Get.width * 0.8,
                   child: Text(
-                    "- Additional breakfast fees are not included in the total and need be paid.",
+                    "breakfast_fees".tr,
                     style: GoogleFonts.googleSans(
                       color: Theme.of(context).textTheme.titleSmall!.color,
                       fontSize: 14,
@@ -418,7 +421,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
         SizedBox(height: 20),
 
         Row(
-          crossAxisAlignment: .start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SvgPicture.asset(
               "assets/svg/pet.svg",
@@ -428,13 +431,13 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             ),
             SizedBox(width: 10),
             Column(
-              crossAxisAlignment: .start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Pet",
+                  "pet".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: .w500,
+                    fontWeight: FontWeight.w500,
                     fontSize: 15,
                   ),
                 ),
@@ -442,7 +445,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 SizedBox(
                   width: Get.width * 0.8,
                   child: Text(
-                    "- Pets are not allowed.",
+                    "pet_allowance".tr,
                     style: GoogleFonts.googleSans(
                       color: Theme.of(context).textTheme.titleSmall!.color,
                       fontSize: 14,
@@ -453,7 +456,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 SizedBox(
                   width: Get.width * 0.8,
                   child: Text(
-                    "- Service animals are not allowed",
+                    "pet_service_animals".tr,
                     style: GoogleFonts.googleSans(
                       color: Theme.of(context).textTheme.titleSmall!.color,
                       fontSize: 14,
@@ -470,7 +473,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
 
   Widget _buildReviewItem(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           decoration: BoxDecoration(
@@ -488,7 +491,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
         SizedBox(height: 20),
         ReviewCard(
           userName: "Anonymous User",
-          date: "Stayed in Apr 2026",
+          date: "${"stayed_in".tr} Apr 2026",
           rating: "7/10",
           review:
               "Overall, I love the atmosphere but just some rooms have problems with doors and toilets and also not recommend ...",
@@ -505,12 +508,12 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
 
   Widget _buildContact(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Contact",
+          "contact".tr,
           style: GoogleFonts.googleSans(
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -561,20 +564,24 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Bounceable(
-          onTap: controller.showNearbyBottomSheet,
+          onTap: () => controller.showNearbyBottomSheet(context),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Nearby & Popular places",
+                "nearby_poplular".tr,
                 style: GoogleFonts.googleSans(
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
               SizedBox(width: 6),
-              Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
             ],
           ),
         ),
@@ -634,14 +641,170 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
     );
   }
 
+  // Widget _buildLocation(BuildContext context) {
+  //   return Column(
+  //     crossAxisAlignment: .start,
+  //     children: [
+  //       Text(
+  //         "location".tr,
+  //         style: GoogleFonts.googleSans(
+  //           fontSize: 20,
+  //           fontWeight: FontWeight.w600,
+  //           color: Theme.of(context).colorScheme.secondary,
+  //         ),
+  //       ),
+  //       SizedBox(height: 10),
+  //       Container(
+  //         width: double.infinity,
+  //         margin: const EdgeInsets.symmetric(horizontal: 5),
+  //         decoration: BoxDecoration(
+  //           color: Theme.of(context).colorScheme.primaryContainer,
+  //           borderRadius: BorderRadius.circular(16),
+  //           boxShadow: [
+  //             BoxShadow(
+  //               color: Colors.black.withOpacity(0.08),
+  //               blurRadius: 15,
+  //               offset: const Offset(0, 8),
+  //             ),
+  //           ],
+  //         ),
+  //         child: Padding(
+  //           padding: EdgeInsets.all(16),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               /// MAP CARD
+  //               Container(
+  //                 width: double.infinity,
+  //                 height: 160,
+  //                 decoration: BoxDecoration(
+  //                   color: Color(0xffE8EEF3),
+  //                   borderRadius: BorderRadius.circular(12),
+  //                 ),
+  //                 child: Stack(
+  //                   alignment: Alignment.center,
+  //                   children: [
+  //                     Image.asset(
+  //                       'assets/images/location_icon.gif',
+  //                       width: 70,
+  //                       height: 70,
+  //                     ),
+
+  //                     Positioned(
+  //                       bottom: 18,
+  //                       child: Container(
+  //                         padding: const EdgeInsets.symmetric(
+  //                           horizontal: 14,
+  //                           vertical: 6,
+  //                         ),
+  //                         decoration: BoxDecoration(
+  //                           color: Theme.of(
+  //                             context,
+  //                           ).colorScheme.primaryContainer,
+  //                           borderRadius: BorderRadius.circular(100),
+  //                           boxShadow: [
+  //                             BoxShadow(
+  //                               color: Colors.black.withOpacity(0.1),
+  //                               blurRadius: 6,
+  //                             ),
+  //                           ],
+  //                         ),
+  //                         child: Text(
+  //                           controller.detailCtrl.place['name'] ??
+  //                               "Unknown Place",
+  //                           maxLines: 1,
+  //                           overflow: TextOverflow.ellipsis,
+  //                           style: GoogleFonts.googleSans(
+  //                             fontWeight: FontWeight.w500,
+  //                             fontSize: 14,
+  //                             color: Theme.of(context).colorScheme.secondary,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+
+  //               SizedBox(height: 15),
+
+  //               /// ADDRESS
+  //               Container(
+  //                 width: double.infinity,
+  //                 padding: EdgeInsets.all(12),
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.grey.shade100,
+  //                   borderRadius: BorderRadius.circular(12),
+  //                 ),
+  //                 child: Row(
+  //                   children: [
+  //                     Text(
+  //                       "${controller.detailCtrl.place['province']}, Cambodia",
+  //                       maxLines: 1,
+  //                       overflow: TextOverflow.ellipsis,
+  //                       style: GoogleFonts.googleSans(color: Colors.grey[700]),
+  //                     ),
+  //                     Spacer(),
+  //                     Icon(Icons.navigation, size: 16, color: Colors.grey[700]),
+  //                     Text(
+  //                       "${controller.homeCtrl.calculateDistance(controller.detailCtrl.place["latitude"], controller.detailCtrl.place["longitude"]).toStringAsFixed(2)} km",
+
+  //                       style: GoogleFonts.googleSans(color: Colors.grey[700]),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+
+  //               SizedBox(height: 18),
+
+  //               /// BUTTON
+  //               Container(
+  //                 width: double.infinity,
+  //                 height: 50,
+  //                 decoration: BoxDecoration(
+  //                   borderRadius: BorderRadius.circular(30),
+
+  //                   color: Theme.of(context).colorScheme.primary,
+  //                 ),
+  //                 child: Material(
+  //                   color: Colors.transparent,
+  //                   child: InkWell(
+  //                     borderRadius: BorderRadius.circular(30),
+  //                     onTap: () => controller.detailCtrl.openGoogleMaps(),
+  //                     child: Row(
+  //                       mainAxisAlignment: MainAxisAlignment.center,
+  //                       children: [
+  //                         Icon(Icons.navigation, color: Colors.white),
+  //                         SizedBox(width: 8),
+  //                         Text(
+  //                           "get_direction".tr,
+  //                           style: GoogleFonts.googleSans(
+  //                             color: Colors.white,
+  //                             fontSize: 16,
+  //                             fontWeight: FontWeight.w600,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
   Widget _buildLocation(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Location",
+          "location".tr,
           style: GoogleFonts.googleSans(
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -689,7 +852,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
   }
 
   Widget _buildAmenities(BuildContext context) {
-    Widget amenityItem(String icon, String title) {
+    Widget amenityItem(String icon, String titleKey) {
       return Padding(
         padding: EdgeInsets.only(bottom: 12),
         child: Row(
@@ -698,7 +861,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             SizedBox(width: 10),
             Expanded(
               child: Text(
-                title,
+                titleKey.tr, // .tr applied directly to the localization keys
                 style: GoogleFonts.googleSans(
                   fontSize: 14,
                   color: Theme.of(context).colorScheme.secondary,
@@ -714,9 +877,9 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Popular amenities",
+          "popular_amenities".tr,
           style: GoogleFonts.googleSans(
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -729,26 +892,25 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             Expanded(
               child: Column(
                 children: [
-                  amenityItem("assets/svg/parking.svg", "Free parking"),
-                  amenityItem("assets/svg/wifi.svg", "Free Wi-Fi"),
-                  amenityItem("assets/svg/massage.svg", "Massage"),
-                  amenityItem(
-                    "assets/svg/front_desk.svg",
-                    "Front desk\n[24-hour]",
-                  ),
+                  amenityItem("assets/svg/parking.svg", "free_parking"),
+                  amenityItem("assets/svg/wifi.svg", "free_wifi"),
+                  amenityItem("assets/svg/massage.svg", "massage"),
+                  amenityItem("assets/svg/front_desk.svg", "front_desk_"),
                 ],
               ),
             ),
 
-            SizedBox(width: 40),
+            SizedBox(
+              width: 20,
+            ), // Reduced width slightly to prevent text overflow layout constraints
 
             Expanded(
               child: Column(
                 children: [
-                  amenityItem("assets/svg/Restaurant.svg", "Restaurant"),
-                  amenityItem("assets/svg/bar.svg", "Bar"),
-                  amenityItem("assets/svg/water_sport.svg", "Water sports"),
-                  amenityItem("assets/svg/water_park.svg", "Water park"),
+                  amenityItem("assets/svg/Restaurant.svg", "restaurant"),
+                  amenityItem("assets/svg/bar.svg", "bar"),
+                  amenityItem("assets/svg/water_sport.svg", "water_sports"),
+                  amenityItem("assets/svg/water_park.svg", "water_park"),
                 ],
               ),
             ),
@@ -760,13 +922,13 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
 
   Widget _buildContentTitle(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Expanded(
               child: Text(
-                "Bamboo Bunggalow",
+                "Bamboo Bungalow",
                 style: GoogleFonts.googleSans(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -795,14 +957,17 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             ),
 
             SizedBox(width: 4),
-            Text(
-              "View on map",
-              style: GoogleFonts.googleSans(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 14,
-                decoration: TextDecoration.underline,
-                fontWeight: .w600,
-                decorationColor: Theme.of(context).colorScheme.primary,
+            Bounceable(
+              onTap: () {},
+              child: Text(
+                "view_map".tr,
+                style: GoogleFonts.googleSans(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 14,
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.w600,
+                  decorationColor: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ),
           ],
@@ -815,8 +980,6 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             Row(
               children: [
                 Container(
-                  // height: 25,
-                  // width: 50,
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
@@ -831,17 +994,17 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                       "8.1/10",
                       style: GoogleFonts.googleSans(
                         color: Colors.white,
-                        fontWeight: .bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
                 SizedBox(width: 8),
                 Text(
-                  "Very Good",
+                  "good".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.primary,
-                    fontWeight: .w600,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(width: 8),
@@ -849,7 +1012,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                   "54 reviews",
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: .w500,
+                    fontWeight: FontWeight.w500,
                     decoration: TextDecoration.underline,
                   ),
                 ),
@@ -857,10 +1020,10 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             ),
             SizedBox(height: 10),
             Text(
-              "“The staff were extremely friendly, welcoming, and helpful.”",
+              "the staff were extremely friendly, welcoming, and helpful.".tr,
               style: GoogleFonts.googleSans(
                 color: Theme.of(context).textTheme.titleSmall!.color,
-                fontSize: 12,
+                fontSize: 13,
               ),
             ),
           ],
@@ -977,7 +1140,6 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        // borderRadius: BorderRadius.vertical(top: Radius.circular(0)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -993,7 +1155,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Start at",
+                "start_at".tr,
                 style: GoogleFonts.googleSans(
                   fontSize: 16,
                   color: Theme.of(context).colorScheme.secondary,
@@ -1006,7 +1168,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                     "USD ",
                     style: GoogleFonts.googleSans(
                       color: Colors.red,
-                      fontSize: 18,
+                      fontSize: 20,
                     ),
                   ),
                   Text(
@@ -1030,17 +1192,16 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                // shape: StadiumBorder(),
               ),
               onPressed: () {
                 Get.toNamed(Routes.CHOOSE_ROOM);
               },
               child: Text(
-                "Choose my room",
+                "choose_room".tr,
                 style: GoogleFonts.googleSans(
                   fontSize: 16,
                   color: Colors.white,
-                  fontWeight: .bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

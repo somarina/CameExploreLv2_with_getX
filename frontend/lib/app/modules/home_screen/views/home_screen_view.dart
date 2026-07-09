@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
+import 'package:frontend/app/modules/button_navbar/controllers/button_navbar_controller.dart';
 import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/cardPlace/card_place.dart';
@@ -60,42 +60,43 @@ class HomeScreenView extends GetView<HomeScreenController> {
                 bottomRight: Radius.circular(20),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: CircleAvatar(
-                          radius: 32,
-                          backgroundColor: Colors.grey.shade300,
-                          child: ClipOval(
-                            child:
-                                // (_profileImage != null &&
-                                //     _profileImage!.isNotEmpty &&
-                                //     File(_profileImage!).existsSync())
-                                // ? Image.file(
-                                //     File(_profileImage!),
-                                //     width: 65,
-                                //     height: 65,
-                                //     fit: BoxFit.cover,
-                                //   )
-                                // :
-                                Icon(
-                                  Icons.person,
-                                  size: 40,
-                                  color: Colors.grey.shade700,
+            child: Obx(
+              () => controller.isLoadingPf.value
+                  ? Center(child: CircularProgressIndicator())
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Bounceable(
+                                onTap: () {},
+                                child: CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: controller.isLoadingPf.value
+                                      ? null
+                                      : controller.getAvatar(),
                                 ),
-                          ),
-                        ),
-                      ),
+                              ),
 
-                      SizedBox(width: 10),
+                              SizedBox(width: 10),
 
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Obx(
+                                      () => Text(
+                                        "សួស្តី, ${controller.user.value?.name ?? 'Guest'}",
+                                        style: AppFonts.fontHeader.copyWith(
+                                          fontSize: 26,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,45 +107,56 @@ class HomeScreenView extends GetView<HomeScreenController> {
                               style: AppFonts.fontHeader,
                               overflow: TextOverflow.ellipsis,
                             ),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.location_on_outlined,
+                                          color: Color(0xffEAEAEA),
+                                          size: 24,
+                                        ),
+                                        SizedBox(width: 5),
 
-                            SizedBox(height: 10),
+                                        // Expanded(
+                                        //   child: Obx(
+                                        //     () => Text(
+                                        //       // controller.currentLocation.value,
+                                        //       controller.currentLocation,
 
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on_outlined,
+                                        //       style: AppFonts.fontLocation,
+                                        //       overflow: TextOverflow.ellipsis,
+                                        //     ),
+                                        //   ),
+                                        // ),
+                                        Expanded(
+                                          child: Text(
+                                            // controller.currentLocation.value,
+                                            controller.currentLocation,
+
+                                            style: AppFonts.fontLocation,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(width: 10),
+
+                              Bounceable(
+                                onTap: () {},
+                                child: const Icon(
+                                  Icons.notifications_outlined,
                                   color: Color(0xffEAEAEA),
-                                  size: 24,
+                                  size: 30,
                                 ),
-                                SizedBox(width: 5),
-
-                                Expanded(
-                                  child: Text(
-                                    "_currentLocation",
-                                    style: AppFonts.fontLocation,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-
-                      const SizedBox(width: 10),
-
-                      GestureDetector(
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.notifications_outlined,
-                          color: Color(0xffEAEAEA),
-                          size: 30,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
             ),
           ),
           Positioned(
@@ -167,7 +179,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
               child: TextField(
                 readOnly: true,
                 onTap: () {
-                  //get tv search screen
+                  Get.find<ButtonNavbarController>().changePage(1);
                 },
                 decoration: InputDecoration(
                   fillColor: Theme.of(context).colorScheme.primaryContainer,
@@ -268,66 +280,152 @@ class HomeScreenView extends GetView<HomeScreenController> {
   }
 
   Widget _buildCategory() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: 110,
-          child: ListView.builder(
-            physics: const ClampingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              // var category = CategoryModel.fromMap(categoryData[index]);
-              return Padding(
-                padding: EdgeInsets.only(right: 20),
-                child: Bounceable(
-                  onTap: () {},
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircleAvatar(
-                        radius: 35,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: CachedNetworkImage(
-                          imageUrl: "",
-                          width: 30,
-                          height: 30,
-                          fit: BoxFit.contain,
-                          placeholder: (context, url) => const SizedBox(
-                            width: 25,
-                            height: 25,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 110,
+            child: ListView.builder(
+              physics: const ClampingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+
+              itemBuilder: (context, index) {
+                final item = controller.categories[index];
+                return Padding(
+                  padding: EdgeInsets.only(right: 20),
+                  child: Bounceable(
+                    onTap: () {},
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xff009A3F),
                           ),
-                          errorWidget: (context, url, error) => Icon(
-                            Icons.image_not_supported,
-                            color: Colors.white,
-                            size: 24,
-                          ),
+                          child: Center(child: Text("icon")),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Icon",
-                        style: AppFonts.fontCategory.copyWith(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                    ],
+                        SizedBox(height: 10),
+                        Text(item['name'] ?? ''),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-            itemCount: 6,
+                );
+              },
+              itemCount: controller.categories.length,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildTrendingPlaces(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                "Tren_places".tr,
+                style: AppFonts.fontsSubTitlew500.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              Spacer(),
+              Bounceable(
+                onTap: () {
+                  Get.find<ButtonNavbarController>().changePage(1);
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "see_all".tr,
+                      style: AppFonts.fontsSubTitlew500.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Icon(
+                      Icons.arrow_forward_ios_sharp,
+                      color: Theme.of(context).primaryColor,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Obx(() {
+            if (controller.isLoadingPf.value && controller.places.isEmpty) {
+              return SizedBox(
+                height: 270,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (controller.isLoadingPlaces.value &&
+                controller.trendingPlaces.isEmpty) {
+              return SizedBox(
+                height: 270,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            return SizedBox(
+              height: 270,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.trendingPlaces.length,
+                itemBuilder: (context, index) {
+                  final place = controller.trendingPlaces[index];
+                  return Obx(
+                    () => Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: Bounceable(
+                        onTap: () {
+                          Get.toNamed(
+                            Routes.DETAIL_PLACES,
+                            arguments: controller.trendingPlaces[index],
+                          );
+                        },
+
+                        child: CardPlace(
+                          width: Get.width * 0.8,
+                          image:
+                              (place['image_url'] != null &&
+                                  place['image_url'].toString().startsWith(
+                                    'http',
+                                  ))
+                              ? place['image_url']
+                              : "",
+                          category: place['category'] ?? "General",
+                          title: place['name'] ?? "Unknown Place",
+                          location: "${place['province'] ?? 'Cambodia'}",
+                          rating: (place['rating'] != null)
+                              ? double.tryParse(place['rating'].toString()) ??
+                                    5.0
+                              : 5.0,
+                          distance:
+                              "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
+
+                          isFavorite: controller.favorites[index],
+                          onFavorite: () => controller.toggleFavorite(index),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }),
+        ],
     return Bounceable(
       onTap: () {
         Get.toNamed(Routes.DETAIL_PLACES);
@@ -363,157 +461,173 @@ class HomeScreenView extends GetView<HomeScreenController> {
         crossAxisAlignment: .start,
         children: [
           Text(
-            "Nearby Places",
+            "near_places".tr,
             style: AppFonts.fontsSubTitlew500.copyWith(
               color: Theme.of(context).colorScheme.secondary,
             ),
           ),
-          ListView.builder(
-            padding: EdgeInsets.only(top: 20),
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.only(bottom: 20),
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 10,
-                      offset: Offset(0, 3),
+          Obx(
+            () => ListView.builder(
+              padding: EdgeInsets.only(top: 20),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: controller.nearbyPlaces.length,
+              itemBuilder: (context, index) {
+                final place = controller.nearbyPlaces[index];
+                return Bounceable(
+                  onTap: () {
+                    Get.toNamed(
+                      Routes.DETAIL_PLACES,
+                      arguments: controller.nearbyPlaces[index],
+                    );
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 10,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        "assets/images/homescreen/slider2.png",
-                        width: 110,
-                        height: 110,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-
-                    SizedBox(width: 10),
-
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "អង្គរវត្ត",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppFonts.fontsSubTitlew500.copyWith(
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            place["image_url"],
+                            width: 110,
+                            height: 110,
+                            fit: BoxFit.cover,
                           ),
+                        ),
 
-                          SizedBox(height: 8),
+                        SizedBox(width: 10),
 
-                          Row(
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.location_on_outlined,
-                                size: 18,
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.titleSmall!.color,
+                              Text(
+                                place["name"],
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppFonts.fontsSubTitlew500.copyWith(
+                                  fontSize: 18,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  "សៀមរាប, ប្រទេសកម្ពុជា",
-                                  style: GoogleFonts.googleSans(
+
+                              SizedBox(height: 8),
+
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on_outlined,
+                                    size: 18,
                                     color: Theme.of(
                                       context,
                                     ).textTheme.titleSmall!.color,
-                                    fontSize: 14,
                                   ),
-                                ),
+                                  SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      place["province"],
+                                      style: GoogleFonts.googleSans(
+                                        color: Theme.of(
+                                          context,
+                                        ).textTheme.titleSmall!.color,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: 12),
+
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.star,
+                                    color: Color(0xFFFFB800),
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    (place["rating"] ?? 0)
+                                        .toDouble()
+                                        .toStringAsFixed(1),
+                                    style: GoogleFonts.googleSans(
+                                      fontSize: 13,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.titleSmall!.color,
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 10),
+
+                                  Icon(
+                                    Icons.access_time_outlined,
+                                    size: 18,
+                                    color: Color(0xFFADB5BD),
+                                  ),
+
+                                  // SizedBox(width: 4),
+                                  Text(
+                                    "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.titleSmall!.color,
+                                    ),
+                                  ),
+
+                                  Spacer(),
+
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(16),
+                                        bottomLeft: Radius.circular(16),
+                                        bottomRight: Radius.circular(16),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      place["category"],
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-
-                          SizedBox(height: 12),
-
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Color(0xFFFFB800),
-                                size: 20,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                "4.9",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.titleSmall!.color,
-                                ),
-                              ),
-
-                              SizedBox(width: 10),
-
-                              Icon(
-                                Icons.access_time_outlined,
-                                size: 18,
-                                color: Color(0xFFADB5BD),
-                              ),
-
-                              SizedBox(width: 4),
-
-                              Text(
-                                "0.8 km",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.titleSmall!.color,
-                                ),
-                              ),
-
-                              Spacer(),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  ),
-                                ),
-                                child: Text(
-                                  "Temple",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            },
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -528,7 +642,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
           Row(
             children: [
               Text(
-                "Top places in Siem Reap",
+                "top_place".tr,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppFonts.fontsSubTitlew500.copyWith(
@@ -539,7 +653,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
               Row(
                 children: [
                   Text(
-                    "See All",
+                    "see_all".tr,
                     style: AppFonts.fontsSubTitlew500.copyWith(
                       color: Theme.of(context).primaryColor,
                       fontSize: 16,
@@ -556,31 +670,68 @@ class HomeScreenView extends GetView<HomeScreenController> {
             ],
           ),
           SizedBox(height: 20),
-          SizedBox(
-            height: 270,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return Obx(
-                  () => Padding(
-                    padding: EdgeInsets.only(right: 16),
-                    child: CardPlace(
-                      width: Get.width * 0.8,
-                      image: "assets/images/homescreen/slider1.png",
-                      category: "Temple",
-                      title: "អង្គរវត្ត",
-                      location: "សៀមរាប, ប្រទេសកម្ពុជា",
-                      rating: 4.9,
-                      distance: "200.10 km",
-                      isFavorite: controller.favorites[index],
-                      onFavorite: () => controller.toggleFavorite(index),
+          Obx(() {
+            if (controller.isLoadingPf.value && controller.places.isEmpty) {
+              return SizedBox(
+                height: 270,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (controller.isLoadingPlaces.value &&
+                controller.topPlaces.isEmpty) {
+              return SizedBox(
+                height: 270,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            return SizedBox(
+              height: 270,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.topPlaces.length,
+                itemBuilder: (context, index) {
+                  final place = controller.topPlaces[index];
+                  return Obx(
+                    () => Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: Bounceable(
+                        onTap: () {
+                          Get.toNamed(
+                            Routes.DETAIL_PLACES,
+                            arguments: controller.topPlaces[index],
+                          );
+                        },
+
+                        child: CardPlace(
+                          width: Get.width * 0.8,
+                          image:
+                              (place['image_url'] != null &&
+                                  place['image_url'].toString().startsWith(
+                                    'http',
+                                  ))
+                              ? place['image_url']
+                              : "",
+                          category: place['category'] ?? "General",
+                          title: place['name'] ?? "Unknown Place",
+                          location: "${place['province'] ?? 'Cambodia'}",
+                          rating: (place['rating'] != null)
+                              ? double.tryParse(place['rating'].toString()) ??
+                                    5.0
+                              : 5.0,
+                          distance:
+                              "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
+                          isFavorite: controller.favorites[index],
+                          onFavorite: () => controller.toggleFavorite(index),
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
+                  );
+                },
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -594,7 +745,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
           Row(
             children: [
               Text(
-                "Hotels in Siem Reap",
+                "hotel".tr,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppFonts.fontsSubTitlew500.copyWith(
@@ -604,11 +755,16 @@ class HomeScreenView extends GetView<HomeScreenController> {
               Spacer(),
               Row(
                 children: [
-                  Text(
-                    "See All",
-                    style: AppFonts.fontsSubTitlew500.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 16,
+                  Bounceable(
+                    onTap: () {
+                      Get.find<ButtonNavbarController>().changePage(1);
+                    },
+                    child: Text(
+                      "see_all".tr,
+                      style: AppFonts.fontsSubTitlew500.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                   SizedBox(width: 6),
@@ -665,7 +821,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
           Row(
             children: [
               Text(
-                "Travel Packages",
+                "travel_packeges".tr,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppFonts.fontsSubTitlew500.copyWith(
@@ -675,11 +831,16 @@ class HomeScreenView extends GetView<HomeScreenController> {
               Spacer(),
               Row(
                 children: [
-                  Text(
-                    "See All",
-                    style: AppFonts.fontsSubTitlew500.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 16,
+                  Bounceable(
+                    onTap: () {
+                      Get.find<ButtonNavbarController>().changePage(1);
+                    },
+                    child: Text(
+                      "see_all".tr,
+                      style: AppFonts.fontsSubTitlew500.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                   SizedBox(width: 6),

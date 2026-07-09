@@ -44,7 +44,7 @@ class CardPlace extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(24),
                 ),
-                child: Image.asset(
+                child: Image.network(
                   image,
                   height: 160,
                   width: double.infinity,
@@ -53,34 +53,34 @@ class CardPlace extends StatelessWidget {
               ),
 
               // Trending
-              Positioned(
-                top: 16,
-                left: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("🔥"),
-                      SizedBox(width: 2),
-                      Text(
-                        "Trending",
-                        style: GoogleFonts.googleSans(
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   top: 16,
+              //   left: 16,
+              //   child: Container(
+              //     padding: const EdgeInsets.symmetric(
+              //       horizontal: 16,
+              //       vertical: 8,
+              //     ),
+              //     decoration: BoxDecoration(
+              //       color: Theme.of(context).colorScheme.primaryContainer,
+              //       borderRadius: BorderRadius.circular(30),
+              //     ),
+              //     child: Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       children: [
+              //         Text("🔥"),
+              //         SizedBox(width: 2),
+              //         Text(
+              //           "Trending",
+              //           style: GoogleFonts.googleSans(
+              //             fontWeight: FontWeight.w500,
+              //             color: Theme.of(context).colorScheme.secondary,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
 
               // Favorite
               Positioned(
@@ -145,8 +145,11 @@ class CardPlace extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
+                        maxLines: 1,
                         style: AppFonts.fontsSubTitlew500.copyWith(
+                          fontSize: 18,
                           color: Theme.of(context).colorScheme.secondary,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),

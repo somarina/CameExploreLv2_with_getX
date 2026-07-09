@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/modules/booking_screen/views/booking_screen_view.dart';
 import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_view.dart';
@@ -36,31 +37,65 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
   }
 
   static final List<AdaptiveNavigationDestination> _destinations = [
-    const AdaptiveNavigationDestination(icon: Icons.home, label: 'Home'),
-    const AdaptiveNavigationDestination(icon: Icons.search, label: 'Discover'),
-    const AdaptiveNavigationDestination(
-      icon: Icons.shopping_bag,
-      label: 'Booking',
-    ),
-    const AdaptiveNavigationDestination(
-      icon: Icons.favorite,
-      label: 'Favorites',
-    ),
-    const AdaptiveNavigationDestination(icon: Icons.person, label: 'Profile'),
+    AdaptiveNavigationDestination(icon: 'house', label: 'Home'),
+    AdaptiveNavigationDestination(icon: 'magnifyingglass', label: 'Discover'),
+    AdaptiveNavigationDestination(icon: 'bag', label: 'Booking'),
+    AdaptiveNavigationDestination(icon: 'heart', label: 'Favorites'),
+    AdaptiveNavigationDestination(icon: 'person', label: 'Profile'),
   ];
 
-  static final List<CurvedNavigationBarItem> _androidNavItems = [
-    const CurvedNavigationBarItem(child: Icon(Icons.home), label: 'Home'),
-    const CurvedNavigationBarItem(child: Icon(Icons.search), label: 'Discover'),
-    const CurvedNavigationBarItem(
-      child: Icon(Icons.shopping_bag),
+  // static final List<CurvedNavigationBarItem> _androidNavItems = [
+  //   const CurvedNavigationBarItem(child: Icon(Icons.home), label: 'Home'),
+  //   const CurvedNavigationBarItem(child: Icon(Icons.search), label: 'Discover'),
+  //   const CurvedNavigationBarItem(
+  //     child: Icon(Icons.shopping_bag, color: controller.currentIndex.value == 0
+  //         ? Colors.white
+  //         : Colors.grey,),
+  //     label: 'Booking',
+  //   ),
+  //   const CurvedNavigationBarItem(
+  //     child: Icon(Icons.favorite),
+  //     label: 'Favorites',
+  //   ),
+  //   const CurvedNavigationBarItem(child: Icon(Icons.person), label: 'Profile'),
+  // ];
+
+  List<CurvedNavigationBarItem> get _androidNavItems => [
+    CurvedNavigationBarItem(
+      child: Icon(
+        Icons.home,
+        color: controller.currentIndex.value == 0 ? Colors.white : Colors.black,
+      ),
+      label: 'Home',
+    ),
+    CurvedNavigationBarItem(
+      child: Icon(
+        Icons.search,
+        color: controller.currentIndex.value == 1 ? Colors.white : Colors.black,
+      ),
+      label: 'Discover',
+    ),
+    CurvedNavigationBarItem(
+      child: Icon(
+        Icons.shopping_bag,
+        color: controller.currentIndex.value == 2 ? Colors.white : Colors.black,
+      ),
       label: 'Booking',
     ),
-    const CurvedNavigationBarItem(
-      child: Icon(Icons.favorite),
+    CurvedNavigationBarItem(
+      child: Icon(
+        Icons.favorite,
+        color: controller.currentIndex.value == 3 ? Colors.white : Colors.black,
+      ),
       label: 'Favorites',
     ),
-    const CurvedNavigationBarItem(child: Icon(Icons.person), label: 'Profile'),
+    CurvedNavigationBarItem(
+      child: Icon(
+        Icons.person,
+        color: controller.currentIndex.value == 4 ? Colors.white : Colors.black,
+      ),
+      label: 'Profile',
+    ),
   ];
 
   Widget _androidBottomBar(BuildContext context) {
@@ -91,8 +126,9 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
           selectedIndex: controller.currentIndex.value,
           onTap: controller.changePage,
           useNativeBottomBar: true,
-          bottomNavigationBar:
-              Platform.isAndroid ? _androidBottomBar(context) : null,
+          bottomNavigationBar: Platform.isAndroid
+              ? _androidBottomBar(context)
+              : null,
         ),
       ),
     );
