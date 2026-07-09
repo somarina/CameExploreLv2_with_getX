@@ -8,8 +8,8 @@ class PlacesServices {
     var response = await baseApi.get(
       endpoint: "/places", 
       queryParameters: {
-        if (category != null) "category": category,
-        if (search != null) "search": search,
+        "category": ?category,
+        "search": ?search,
       },
     );
     return response;
@@ -28,18 +28,4 @@ class PlacesServices {
     return await baseApi.get(endpoint: "/places/");
   }
 
-  Future<List<dynamic>> fetchPlaces({
-  String? category,
-  String? search,
-}) async {
-  final response = await baseApi.get(
-    endpoint: "/places",
-    queryParameters: {
-      if (category != null) "category": category,
-      if (search != null) "search": search,
-    },
-  );
-
-  return response;
-}
 }
