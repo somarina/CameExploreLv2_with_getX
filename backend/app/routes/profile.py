@@ -25,14 +25,12 @@ router = APIRouter(
 
 users_collection = db["users"]
 
-
 def ok(message: str, data=None):
     return {
         "result": True,
         "message": message,
         "data": data or {},
     }
-
 
 def err(message: str, status_code: int = 400):
     from fastapi import HTTPException
@@ -44,7 +42,6 @@ def err(message: str, status_code: int = 400):
             "data": {},
         }
     )
-
 
 def serialize_user(user: dict):
     return {
@@ -61,7 +58,6 @@ def serialize_user(user: dict):
 
 
 # ====================== MAIN ROUTES ======================
-
 @router.get("/me", summary="to get my own profile")
 async def get_my_profile(
     current_user: dict = Depends(get_current_user)

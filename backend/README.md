@@ -40,4 +40,7 @@ For protected routes, click **Authorize** in Swagger and enter:
 Bearer YOUR_ACCESS_TOKEN
 ```
 
+Usage:
+    python seed_admin.py
+
 <!-- ffffffffffffffffffff -->

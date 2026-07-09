@@ -8,6 +8,10 @@ from app.routes import favorites
 from app.routes import search
 from app.routes import discover
 from app.routes import categories
+from app.routes import hotels
+from app.routes import packages
+from app.routes import bookings
+from app.routes import listing_reviews
 from app.config.cloudinary_config import *
 import cloudinary.uploader
 
@@ -35,8 +39,7 @@ async def startup_check():
     except Exception as e:
         print(f"MongoDB Atlas connection failed: {e}")
 
-# ── Global error handlers (teacher's style) ───────────────────────────────────
-
+# ── Global error handlers───────────────────────────────────
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     detail = exc.detail
@@ -62,20 +65,23 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 # ── Routers ───────────────────────────────────────────────────────────────────
-
 app.include_router(auth.router)
 
 # Dashboard Authentication
 app.include_router(auth_dashboard.router)
 
+# database routers
 app.include_router(reviews.router)
+app.include_router(categories.router)
 app.include_router(places.router)
+app.include_router(hotels.router)
+app.include_router(packages.router)
+app.include_router(bookings.router)
+app.include_router(listing_reviews.router)
 app.include_router(profile.router)
 app.include_router(favorites.router)
 app.include_router(search.router)
 app.include_router(discover.router)
-app.include_router(categories.router)
-
 
 @app.get("/")
 async def root():

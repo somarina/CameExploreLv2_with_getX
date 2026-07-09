@@ -1,12 +1,20 @@
 """
 auth_dashboard.py
 Dashboard authentication for CamExplore.
-Designed to follow the style of auth.py.
 
-NOTE:
-- Uses 'roles' (list) instead of single 'role' string.
-- One email = one identity, can hold multiple roles (user, company, admin).
-- Adding a new role to an existing email requires correct password.
+IMPORTANT DESIGN CHANGE:
+- Admin accounts now live in their own "admins" collection, completely
+  separate from the "users" collection (personal/company accounts).
+- This means an admin's email/password is fully isolated from any
+  personal or company account, even if the same person's email was
+  used for both in the past.
+- There is still NO public /register/admin route. The very first admin
+  is created once via seed_admin.py directly into the "admins" collection.
+- Any existing admin can create further admin accounts through the
+  protected POST /register/admin route (requires a valid admin token).
+
+Company/personal accounts remain in "users" with a 'roles' array,
+exactly as before — unchanged.
 """
 
 from datetime import datetime
@@ -14,9 +22,10 @@ from fastapi import APIRouter, HTTPException, Depends
 
 from app.db.daatabase import db
 from app.schemas.auth_schemas import RegisterSchema, LoginSchema
-from app.utils.jwt import create_access_token
+from app.utils.jwt import create_access_token, decode_access_token
 from app.utils.password import hash_password, verify_password
 from app.utils.auth_dependency import get_current_user
+from app.utils.admin_dependency import get_current_admin
 
 router = APIRouter(
     prefix="/api/dashboard/auth",
@@ -24,6 +33,7 @@ router = APIRouter(
 )
 
 users_collection = db["users"]
+admins_collection = db["admins"]
 
 
 def ok(message: str, data: dict = None):
@@ -37,16 +47,16 @@ def err(message: str, status_code: int = 400):
     )
 
 
-def serialize_user(user: dict, token: str = None):
+def serialize_user(doc: dict, token: str = None, role: str = None):
     data = {
-        "id": str(user["_id"]),
-        "name": user.get("name", ""),
-        "email": user.get("email", ""),
-        "phone": user.get("phone", ""),
-        "roles": user.get("roles", []),
-        "avatar": user.get("profile_image", ""),
-        "created_at": user.get("created_at"),
-        "updated_at": user.get("updated_at"),
+        "id": str(doc["_id"]),
+        "name": doc.get("name", ""),
+        "email": doc.get("email", ""),
+        "phone": doc.get("phone", ""),
+        "roles": doc.get("roles", [role] if role else []),
+        "avatar": doc.get("profile_image", ""),
+        "created_at": doc.get("created_at"),
+        "updated_at": doc.get("updated_at"),
     }
 
     if token:
@@ -54,13 +64,21 @@ def serialize_user(user: dict, token: str = None):
     return data
 
 
-def make_token(user: dict, active_role: str = None):
-    roles = user.get("roles", [])
+def make_user_token(user: dict, active_role: str):
     return create_access_token({
         "user_id": str(user["_id"]),
         "email": user.get("email", ""),
-        "roles": roles,
-        "active_role": active_role or (roles[0] if roles else "user"),
+        "roles": user.get("roles", []),
+        "active_role": active_role,
+        "type": "user",
+    })
+
+
+def make_admin_token(admin: dict):
+    return create_access_token({
+        "admin_id": str(admin["_id"]),
+        "email": admin.get("email", ""),
+        "type": "admin",
     })
 
 
@@ -75,7 +93,6 @@ async def register_personal(payload: RegisterSchema):
         err("Password and confirm password do not match")
 
     if existing:
-        # Email already exists -> verify ownership before adding a role
         if not existing.get("password") or not verify_password(payload.password, existing["password"]):
             err("This email is already registered. Enter the correct password to add the personal role.")
 
@@ -90,9 +107,8 @@ async def register_personal(payload: RegisterSchema):
             }
         )
         user = await users_collection.find_one({"_id": existing["_id"]})
-        return ok("Personal role added to your account", serialize_user(user, make_token(user, "user")))
+        return ok("Personal role added to your account", serialize_user(user, make_user_token(user, "user")))
 
-    # No existing account -> create new
     now = datetime.utcnow()
     new_user = {
         "name": payload.name,
@@ -110,7 +126,7 @@ async def register_personal(payload: RegisterSchema):
     result = await users_collection.insert_one(new_user)
     user = await users_collection.find_one({"_id": result.inserted_id})
 
-    return ok("Register successful", serialize_user(user, make_token(user, "user")))
+    return ok("Register successful", serialize_user(user, make_user_token(user, "user")))
 
 
 # ====================== REGISTER COMPANY ======================
@@ -124,7 +140,6 @@ async def register_company(payload: RegisterSchema):
         err("Password and confirm password do not match")
 
     if existing:
-        # Email already exists -> verify ownership before adding a role
         if not existing.get("password") or not verify_password(payload.password, existing["password"]):
             err("This email is already registered. Enter the correct password to add the company role.")
 
@@ -142,9 +157,8 @@ async def register_company(payload: RegisterSchema):
             }
         )
         user = await users_collection.find_one({"_id": existing["_id"]})
-        return ok("Company role added to your account", serialize_user(user, make_token(user, "company")))
+        return ok("Company role added to your account", serialize_user(user, make_user_token(user, "company")))
 
-    # No existing account -> create new
     now = datetime.utcnow()
     company = {
         "name": payload.name,
@@ -163,7 +177,45 @@ async def register_company(payload: RegisterSchema):
     result = await users_collection.insert_one(company)
     user = await users_collection.find_one({"_id": result.inserted_id})
 
-    return ok("Company registered successfully", serialize_user(user, make_token(user, "company")))
+    return ok("Company registered successfully", serialize_user(user, make_user_token(user, "company")))
+
+
+# ====================== REGISTER ADMIN (admin-only, NEVER public) ======================
+@router.post("/register/admin")
+async def register_admin(
+    payload: RegisterSchema,
+    current_admin: dict = Depends(get_current_admin),
+):
+    """
+    Only a currently logged-in admin can call this. There is no way to
+    reach this route without already holding a valid admin token, so
+    it can never be used to self-register as admin from the outside.
+    """
+    if payload.password != payload.confirm_password:
+        err("Password and confirm password do not match")
+
+    email = payload.email.lower()
+    existing = await admins_collection.find_one({"email": email})
+
+    if existing:
+        err("This email is already an admin")
+
+    now = datetime.utcnow()
+    new_admin = {
+        "name": payload.name,
+        "email": email,
+        "phone": payload.phone,
+        "password": hash_password(payload.password),
+        "profile_image": "",
+        "created_by": str(current_admin["_id"]),
+        "created_at": now,
+        "updated_at": now,
+    }
+
+    result = await admins_collection.insert_one(new_admin)
+    admin = await admins_collection.find_one({"_id": result.inserted_id})
+
+    return ok("New admin created successfully", serialize_user(admin, role="admin"))
 
 
 # ====================== LOGIN ======================
@@ -172,6 +224,19 @@ async def login(payload: LoginSchema):
 
     account = payload.email_or_phone.lower()
 
+    # 1) Check the admins collection FIRST — fully separate from users.
+    admin = await admins_collection.find_one({"email": account})
+    if admin:
+        if not verify_password(payload.password, admin["password"]):
+            err("Invalid password")
+
+        token = make_admin_token(admin)
+        data = serialize_user(admin, token, role="admin")
+        data["active_role"] = "admin"
+        data["available_roles"] = ["admin"]
+        return ok("Login successful", data)
+
+    # 2) Not an admin -> check users collection for a company role.
     user = await users_collection.find_one({
         "$or": [
             {"email": account},
@@ -189,17 +254,13 @@ async def login(payload: LoginSchema):
         err("Invalid password")
 
     roles = user.get("roles", [])
-
-    # Dashboard is only for company/admin roles
-    dashboard_roles = [r for r in roles if r in ("company", "admin")]
+    dashboard_roles = [r for r in roles if r == "company"]
 
     if not dashboard_roles:
         err("This account has no dashboard access", 403)
 
-    # If user has both company and admin, default to admin; otherwise pick the only one
-    active_role = "admin" if "admin" in dashboard_roles else dashboard_roles[0]
-
-    token = make_token(user, active_role)
+    active_role = "company"
+    token = make_user_token(user, active_role)
 
     data = serialize_user(user, token)
     data["active_role"] = active_role
@@ -209,40 +270,30 @@ async def login(payload: LoginSchema):
 
 
 # ====================== LOGOUT ======================
-
 @router.delete("/logout")
-async def logout(current_user: dict = Depends(get_current_user)):
+async def logout():
+    # Stateless JWTs: nothing to invalidate server-side.
+    # Client is responsible for discarding the token.
     return ok("Logout successful")
 
 
 # ====================== USER DASHBOARD ======================
-
 @router.get("/user")
 async def user_dashboard(current_user: dict = Depends(get_current_user)):
-
     if "user" not in current_user.get("roles", []):
         err("User only", 403)
-
     return ok("Welcome User", serialize_user(current_user))
 
 
 # ====================== COMPANY DASHBOARD ======================
-
 @router.get("/company")
 async def company_dashboard(current_user: dict = Depends(get_current_user)):
-
     if "company" not in current_user.get("roles", []):
         err("Company only", 403)
-
     return ok("Welcome Company", serialize_user(current_user))
 
 
 # ====================== ADMIN DASHBOARD ======================
-
 @router.get("/admin")
-async def admin_dashboard(current_user: dict = Depends(get_current_user)):
-
-    if "admin" not in current_user.get("roles", []):
-        err("Admin only", 403)
-
-    return ok("Welcome Admin", serialize_user(current_user))
+async def admin_dashboard(current_admin: dict = Depends(get_current_admin)):
+    return ok("Welcome Admin", serialize_user(current_admin, role="admin"))

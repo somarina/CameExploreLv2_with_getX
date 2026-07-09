@@ -101,7 +101,7 @@ void _handleTelegramCallback(Map<String, String> params) async {
 
       await Future.delayed(const Duration(milliseconds: 300));
       Get.offAllNamed('/button-navigation');
-    } else {
+    } else { 
       Get.snackbar(
         'Telegram Login Failed',
         response?["message"] ?? 'Something went wrong',
@@ -141,7 +141,7 @@ class MainApp extends StatelessWidget {
 
       // routes
       initialRoute: Routes.SPLASH_SCREEN,
-      // initialRoute: Routes.HOME_SCREEN,
+      // initialRoute: Routes.FAVORITE_SCREEN,
       // initialRoute: Routes.USERPROFILE_SCREEN,
       getPages: AppPages.routes,
     );

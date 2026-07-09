@@ -21,17 +21,17 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
   Widget _buildPage(int index) {
     switch (index) {
       case 0:
-        return const HomeScreenView();
+        return HomeScreenView();
       case 1:
-        return const SearchScreenView();
+        return SearchScreenView();
       case 2:
-        return const BookingScreenView();
+        return BookingScreenView();
       case 3:
-        return const FavoriteScreenView();
+        return FavoriteScreenView();
       case 4:
-        return const UserProfileScreenView();
+        return UserProfileScreenView();
       default:
-        return const SizedBox.shrink();
+        return SizedBox.shrink();
     }
   }
 

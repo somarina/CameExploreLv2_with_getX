@@ -37,7 +37,8 @@ class DashboardApp extends StatelessWidget {
         theme: ThemeData.light(),
         darkTheme: ThemeData.dark(),
 
-        initialRoute: Routes.LOGIN_SCREEN,
+        // initialRoute: Routes.LOGIN_SCREEN,
+        initialRoute: Routes.ADMIN_SCREEN,
         getPages: AppPages.routes,
       );
     });
