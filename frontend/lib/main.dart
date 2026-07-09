@@ -26,7 +26,11 @@ void main() async {
   _initServicesInBackground();
 
   Get.put(ThemeModeViewController());
-   Get.put(LoginScreenController());
+  Get.put(LoginScreenController());
+  // Get.put(HomeScreenController());
+  // Get.put(SearchScreenController());
+  // Get.put(BookingScreenController());
+  // Get.put(FavoriteScreenController());
 }
 
 Future<void> _initServicesInBackground() async {
@@ -45,7 +49,7 @@ Future<void> _initServicesInBackground() async {
   // Deep link setup — safe here since runApp already ran
   _setupDeepLinks();
 }
- 
+
 void _setupDeepLinks() {
   final appLinks = AppLinks();
 
@@ -59,7 +63,7 @@ void _setupDeepLinks() {
     if (initialUri != null &&
         initialUri.scheme == 'camexplore' &&
         initialUri.host == 'telegram-login') {
-      await Future.delayed( Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 1));
       _handleTelegramCallback(initialUri.queryParameters);
     }
   });
@@ -131,7 +135,6 @@ class MainApp extends StatelessWidget {
       theme: AppColors.lightMode(),
       darkTheme: AppColors.darkMode(),
       themeMode: isdark ? ThemeMode.dark : ThemeMode.light,
-      
 
       // language
       translations: AppTranslatation(),

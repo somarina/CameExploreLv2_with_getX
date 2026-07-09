@@ -11,6 +11,9 @@ class FavScreen2ViewController extends GetxController {
   RxBool canRename = false.obs;
   RxList favoriteItems = [].obs;
 
+  RxBool isLoading = false.obs;
+  RxList favoriteLists = [].obs;
+
   var renameCtrl = TextEditingController();
   FocusNode renameFocusNode = FocusNode();
 
@@ -83,12 +86,17 @@ class FavScreen2ViewController extends GetxController {
     } catch (e) {
       debugPrint("Delete Error: $e");
 
-      Get.snackbar("Error", "Failed to delete list", snackPosition: SnackPosition.BOTTOM,
+      Get.snackbar(
+        "Error",
+        "Failed to delete list",
+        snackPosition: SnackPosition.BOTTOM,
         colorText: Colors.white,
-        backgroundColor: Colors.red,);
+        backgroundColor: Colors.red,
+      );
     }
   }
 
+  
   String capitalizeFirst(String text) {
     if (text.isEmpty) return text;
 

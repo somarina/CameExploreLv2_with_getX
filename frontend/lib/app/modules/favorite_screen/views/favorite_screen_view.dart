@@ -58,7 +58,7 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [SizedBox(height: 30), _buildCard()],
+              children: [SizedBox(height: 30), _buildCard(), SizedBox(height: 30),],
             ),
           ),
         );
