@@ -176,6 +176,20 @@ Map<String, String> kmKH = {
   "Email": "អ៊ីម៉ែល",
   "Password": "ពាក្យសម្ងាត់",
   "Or": "ឬ",
+  "Please enter an email": "សូមបញ្ចូលអ៊ីម៉ែល",
+  "Invalid Email": "អ៊ីម៉ែលមិនត្រឹមត្រូវ",
+  "Please enter the phone number": "សូមបញ្ចូលលេខទូរស័ព្ទ",
+  "Invalid telephone number": "លេខទូរស័ព្ទមិនត្រឹមត្រូវ",
+  "Please enter a password": "សូមបញ្ចូលពាក្យសម្ងាត់",
+  "Password at least 8 characters": "ពាក្យសម្ងាត់យ៉ាងតិច 8 តួ",
+  "Contains at least one character": "មានអក្សរយ៉ាងតិចមួយតួអក្សរ",
+  "Have at least one number": "មានលេខយ៉ាងតិចមួយលេខ",
+  "Remember me": "ចងចាំខ្ញុំ",
+  "forgotten password?": "ភ្លេចពាក្យសម្ងាត់?",
+  "Log in": "ចូលគណនី",
+  "Continue as a guest": "បន្តជាភ្ញៀវ",
+  "Don't have an account?": "មិនមានគណនីមែនទេ?",
+  "Register": "ចុះឈ្មោះ",
 
   // Favorites Screen
   "Favorites": "ចំណូលចិត្ត",
@@ -306,6 +320,58 @@ Map<String, String> kmKH = {
   "you_rated_status": "អ្នកបានផ្តល់ពិន្ទុ %s",
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////     Register Screen
+  "last name": "នាមត្រកូល",
+  "First Name": "នាមខ្លួន",
+  "Gender": "ភេទ",
+  "E-mail": "អ៊ីម៉ែល",
+  "Confirm Password": "បញ្ជាក់ពាក្យសម្ងាត់",
+  "I have read": "ខ្ញុំបានអាន",
+  "Agree & Attend": "យល់ព្រម​ & ចូលរួម",
+  "And I accept it": "ហើយខ្ញុំទទួលយក",
+  "Have an account already?": "មានគណនីរួចហើយ?",
+  "At least 8 characters": "យ៉ាងតិច 8 តួអក្សរ",
+  "At least one letter": "មានអក្សរយ៉ាងតិច 1",
+  "At least one number": "មានលេខយ៉ាងតិច 1",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////     Forget Passwrod Screen
+  "forget_password_title": "ភ្លេចពាក្យសម្ងាត់",
+  "find_account": "ស្វែងរកគណនីរបស់លោកអ្នក",
+  "enter_email": "សូមបញ្ចូលអ៊ីមែលរបស់លោកអ្នក",
+  "continue": "បន្ត",
+  "email_required": "សូមបញ្ចូលអ៊ីម៉ែលរបស់លោកអ្នក",
+  "invalid_email": "អ៊ីម៉ែលមិនត្រឹមត្រូវ",
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////     OTP Screen
+  'otp_title': 'ផ្ទៀងផ្ទាត់កូដសម្ងាត់',
+  'otp_subtitle': 'បញ្ចូល OTP ដែលផ្ញើទៅអ៊ីមែល ឬលេខទូរស័ព្ទរបស់អ្នក',
+  // 'continue': 'បន្ទាប់',
+  'resend_in': 'ផ្ញើកូដឡើងវិញក្នុង',
+  'resend_now': 'ផ្ញើកូដឡើងវិញ',
+  'otp_incomplete': 'សូមបញ្ចូល OTP ចំនួន @count ខ្ទង់',
+  'otp_invalid': 'OTP មិនត្រឹមត្រូវ',
+  'connection_error': 'មិនអាចភ្ជាប់ម៉ាស៊ីនមេបាន',
+  'reset_success': 'ពាក្យសម្ងាត់ត្រូវបានផ្លាស់ប្ដូររួចរាល់',
+  'try_again': 'សូមព្យាយាមម្ដងទៀត',
+  /////////////////////////////////
+  "confirm_title": "បង្គីតតារុសម្មាត់ថ្មី",
+  "confirm_reset_title": "កំណត់ពាក្យសម្ងាត់ឡើងវិញ",
+  "confirm_reset_subtitle": "តារុសម្មាត់របស់អ្នកនឹងត្រូវបានកំណត់ឡើងវិញ។ តើអ្នកពិតជាចង់បន្តមែនទេ?",
+  "confirm_yes": "បញ្ជាក់",
+  "confirm_no": "មិនព្រម",
+  "reset_password_title": "តារុសម្មាត់ថ្មី",
+  "new_password_label": "តារុសម្មាត់ថ្មី",
+  "new_password_hint": "បញ្ចូលតារុសម្មាត់ថ្មី",
+  "confirm_password_label": "បញ្ជាក់តារុសម្មាត់",
+  "confirm_password_hint": "បញ្ចូលតារុសម្មាត់ម្តងទៀត",
+  "reset_password_btn": "កំណត់តារុសម្មាត់",
+  "password_required": "តារុសម្មាត់នេះត្រូវការ",
+  "password_too_short": "តារុសម្មាត់ត្រូវមានយ៉ាងហោចណាស់ 8 តួ",
+  "password_mismatch": "តារុសម្មាត់មិនត្រូវគ្នា",
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
   // choose room
   "choose_room_": "ជ្រើសរើសបន្ទប់",
 

@@ -1,10 +1,12 @@
-import 'package:dashboard/app/modules/auth/register_screen/views/organization_register_screen_view.dart';
-import 'package:dashboard/app/modules/auth/register_screen/views/personal_register_screen_view.dart';
 import 'package:get/get.dart';
 
+import '../modules/admin_screen/bindings/admin_screen_binding.dart';
+import '../modules/admin_screen/views/admin_screen_view.dart';
 import '../modules/auth/login_screen/bindings/login_screen_binding.dart';
 import '../modules/auth/login_screen/views/login_screen_view.dart';
 import '../modules/auth/register_screen/bindings/register_screen_binding.dart';
+import '../modules/auth/register_screen/views/organization_register_screen_view.dart';
+import '../modules/auth/register_screen/views/personal_register_screen_view.dart';
 import '../modules/auth/register_screen/views/register_screen_view.dart';
 
 part 'app_routes.dart';
@@ -34,6 +36,11 @@ class AppPages {
       name: _Paths.COMPANY_REGISTER_SCREEN,
       page: () => const OrganizationRegisterScreenView(),
       binding: RegisterScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADMIN_SCREEN,
+      page: () => const AdminScreenView(),
+      binding: AdminScreenBinding(),
     ),
   ];
 }

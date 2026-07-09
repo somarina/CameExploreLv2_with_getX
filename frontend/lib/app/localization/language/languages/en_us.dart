@@ -182,6 +182,20 @@ Map<String, String> enUS = {
   "Email": "Email",
   "Password": "Password",
   "Or": "Or",
+  "Please enter an email": "Please enter an email",
+  "Invalid Email": "Invalid Email",
+  "Please enter the phone number": "Please enter the phone number",
+  "Invalid telephone number": "Invalid telephone number",
+  "Please enter a password": "Please enter a password",
+  "Password at least 8 characters": "Password at least 8 characters",
+  "Contains at least one character": "Contains at least one character",
+  "Have at least one number": "Have at least one number",
+  "Remember me": "Remember me",
+  "forgotten password?": "Forget Password?",
+  "Log in": "Log in",
+  "Continue as a guest": "Guest",
+  "Don't have an account?": "Don't have an account?",
+  "Register": "Register",
 
   //Favorites Screen
   "Favorites": "Favorites",
@@ -315,6 +329,59 @@ Map<String, String> enUS = {
   "you_rated_status": "You rated %s",
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////     Register Screen
+  "last name": "last name",
+  "First Name": "First Name",
+  "Gender": "Gender",
+  "E-mail": "Email",
+  "Confirm Password": "Confirm Password",
+  "I have read": "I have read",
+  "Agree & Attend": "Agree & Attend",
+  "And I accept it": "And I accept it",
+  "Have an account already?": "Have an account already?",
+  "At least 8 characters": "At least 8 characters",
+  "At least one letter": "At least one letter",
+  "At least one number": "At least one number",
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////     Forget Passwrod Screen
+  "forget_password_title": "Forgot Password",
+  "find_account": "Find Your Account",
+  "enter_email": "Enter your email",
+  "continue": "Continue",
+  "email_required": "Please enter your email",
+  "invalid_email": "Invalid email",
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////     OTP Screen
+  'otp_title': 'Verify OTP',
+  'otp_subtitle': 'Enter the OTP sent to your email or phone number',
+  // 'continue': 'Continue',
+  'resend_in': 'Resend code in',
+  'resend_now': 'Resend code',
+  'otp_incomplete': 'Please enter all @count digits',
+  'otp_invalid': 'Invalid OTP',
+  'connection_error': 'Unable to connect to server',
+  'reset_success': 'Password changed successfully',
+  'try_again': 'Please try again',
+
+  //////////////////////////////////
+  "confirm_title": "Reset Password",
+  "confirm_reset_title": "Reset your password?",
+  "confirm_reset_subtitle": "Your account will have its password reset. Are you sure you want to continue?",
+  "confirm_yes": "Confirm",
+  "confirm_no": "Cancel",
+  "reset_password_title": "New Password",
+  "new_password_label": "New Password",
+  "new_password_hint": "Enter new password",
+  "confirm_password_label": "Confirm Password",
+  "confirm_password_hint": "Re-enter new password",
+  "reset_password_btn": "Reset Password",
+  "password_required": "Password is required",
+  "password_too_short": "Password must be at least 8 characters",
+  "password_mismatch": "Passwords do not match",
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
   // choose room
   "choose_room_": "Choose your room",
 

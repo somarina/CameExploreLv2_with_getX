@@ -115,7 +115,7 @@ void _handleTelegramCallback(Map<String, String> params) async {
 
       await Future.delayed(const Duration(milliseconds: 300));
       Get.offAllNamed('/button-navigation');
-    } else {
+    } else { 
       Get.snackbar(
         'Telegram Login Failed',
         response?["message"] ?? 'Something went wrong',
@@ -148,16 +148,13 @@ class MainApp extends StatelessWidget {
 
       // language
       translations: AppTranslatation(),
-      // locale: Locale("kmKH"),
+      locale: Locale("kmKH"),
       fallbackLocale: Locale("enUS"),
       debugShowCheckedModeBanner: false,
       locale: language == "kmKH" ? Locale("kmKH") : Locale("enUS"),
 
       // routes
       initialRoute: Routes.SPLASH_SCREEN,
-      // initialRoute: Routes.LOGIN_SCREEN,
-      // initialRoute: Routes.HOME_SCREEN,
-      // initialRoute: Routes.USERPROFILE_SCREEN,
       getPages: AppPages.routes,
     );
   }

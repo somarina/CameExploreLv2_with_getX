@@ -9,6 +9,7 @@ abstract class Routes {
   static const REGISTER_SCREEM = _Paths.REGISTER_SCREEM;
   static const PERSONAL_REGISTER_SCREEN = _Paths.PERSONAL_REGISTER_SCREEN;
   static const COMPANY_REGISTER_SCREEN = _Paths.COMPANY_REGISTER_SCREEN;
+  static const ADMIN_SCREEN = _Paths.ADMIN_SCREEN;
 }
 
 abstract class _Paths {
@@ -17,5 +18,5 @@ abstract class _Paths {
   static const REGISTER_SCREEM = '/register-screem';
   static const PERSONAL_REGISTER_SCREEN = '/personal-register-screen';
   static const COMPANY_REGISTER_SCREEN = '/company-register-screen';
-
+  static const ADMIN_SCREEN = '/admin-screen';
 }
