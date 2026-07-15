@@ -65,6 +65,12 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             _buildContentOpenHour(context),
             SizedBox(height: 30),
 
+            _buildEntryFee(context),
+            SizedBox(height: 30),
+
+            _buildTags(context),
+            SizedBox(height: 30),
+
             /// Gallery
             _buildContentGallery(context),
             SizedBox(height: 30),
@@ -90,6 +96,144 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildEntryFee(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Entry Fee",
+          style: GoogleFonts.googleSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+        const SizedBox(height: 14),
+
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              _feeRow(Icons.public, "Foreign Adult", "USD 37", context),
+              // const Divider(height: 24),
+              SizedBox(height: 10),
+              _feeRow(Icons.child_care, "Foreign Child (<12)", "Free", context),
+              // const Divider(height: 24),
+              SizedBox(height: 10),
+              _feeRow(Icons.flag, "Cambodian Citizen", "Free", context),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _feeRow(
+    IconData icon,
+    String title,
+    String price,
+    BuildContext context,
+  ) {
+    return Row(
+      children: [
+        Icon(icon, size: 22, color: Get.theme.colorScheme.primary),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            style: GoogleFonts.googleSans(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.green.withOpacity(.1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            price,
+            style: GoogleFonts.googleSans(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTags(BuildContext context) {
+    const tags = [
+      "Temple",
+      "UNESCO",
+      "Historical",
+      "Sunrise",
+      "Family Friendly",
+      "Photography",
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Tags",
+          style: GoogleFonts.googleSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+        const SizedBox(height: 14),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: tags.map((tag) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: Get.theme.colorScheme.primary,
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Get.theme.colorScheme.primary),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Icon(
+                  //   Icons.local_offer_outlined,
+                  //   size: 14,
+                  //   color: Get.theme.colorScheme.primary.withOpacity(0.6),
+                  // ),
+                  // const SizedBox(width: 6),
+                  Text(
+                    tag,
+                    style: GoogleFonts.googleSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -208,7 +352,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                             ],
                           ),
                           child: Text(
-                            controller.place['name'] ?? "Unknown Place",
+                            controller.place['name_en'] ?? "Unknown Place",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.googleSans(
@@ -546,7 +690,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
         ),
         SizedBox(height: 10),
         Text(
-          controller.place['description'],
+          controller.place['description_en'],
           style: GoogleFonts.googleSans(
             color: Theme.of(context).textTheme.titleSmall!.color,
             height: 1.8,
@@ -565,7 +709,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
           children: [
             Expanded(
               child: Text(
-                controller.place['name'] ?? "Unknown Place",
+                controller.place['name_en'] ?? "Unknown Place",
                 style: GoogleFonts.googleSans(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

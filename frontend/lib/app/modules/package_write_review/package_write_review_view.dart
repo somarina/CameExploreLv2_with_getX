@@ -195,6 +195,7 @@ class PackageWriteReviewView extends GetView<PackageWriteReviewViewController> {
               counterText: "",
             ),
           ),
+         
           SizedBox(height: 10),
           Align(
             alignment: Alignment.centerRight,

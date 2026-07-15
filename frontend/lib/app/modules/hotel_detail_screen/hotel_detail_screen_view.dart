@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:frontend/app/modules/detail_places_screen/detail_places_screen_view.dart';
-import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/reviewPlace/review_place_card.dart';
 import 'package:get/get.dart';

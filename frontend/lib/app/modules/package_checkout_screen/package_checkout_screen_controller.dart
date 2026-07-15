@@ -1,10 +1,13 @@
 part of 'package_checkout_screen_view.dart';
 
 class PackageCheckoutScreenViewController extends GetxController {
+    var themeCtrl = Get.find<ThemeModeViewController>();
   final firstNameCtrl = TextEditingController();
   final lastNameCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
   final phoneCtrl = TextEditingController();
+   final noteCtrl = TextEditingController();
+     final noteLength = 0.obs;
   double price = 0;
   int adultCount = 1;
   double total = 0;

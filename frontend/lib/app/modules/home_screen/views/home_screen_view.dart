@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/button_navbar/controllers/button_navbar_controller.dart';
-import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/cardPlace/card_place.dart';
 import 'package:get/get.dart';
@@ -396,7 +395,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                 ? place['image_url']
                                 : "",
                         category: place['category'] ?? "General",
-                        title: place['name'] ?? "Unknown Place",
+                        title: place['name_en'] ?? "Unknown Place",
                         location: "${place['province'] ?? 'Cambodia'}",
                         rating: (place['rating'] != null)
                             ? double.tryParse(place['rating'].toString()) ??
@@ -478,7 +477,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                place["name"],
+                                place['name_en'],
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: AppFonts.fontsSubTitlew500.copyWith(
@@ -678,7 +677,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
                               ? place['image_url']
                               : "",
                           category: place['category'] ?? "General",
-                          title: place['name'] ?? "Unknown Place",
+                          title: place['name_en'] ?? "Unknown Place",
                           location: "${place['province'] ?? 'Cambodia'}",
                           rating: (place['rating'] != null)
                               ? double.tryParse(place['rating'].toString()) ??

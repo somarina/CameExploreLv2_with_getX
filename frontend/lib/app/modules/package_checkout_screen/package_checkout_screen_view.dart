@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
@@ -150,7 +151,7 @@ class PackageCheckoutScreenView
 
                     Expanded(
                       child: Text(
-                        "Pay via KHQR",
+                        "pay_via_khqr".tr,
                         style: GoogleFonts.googleSans(
                           fontSize: 14,
                           color: Theme.of(context).colorScheme.secondary,
@@ -311,7 +312,83 @@ class PackageCheckoutScreenView
               ),
             ),
             SizedBox(height: 30),
+            Row(
+              children: [
+                Text(
+                  "Note ",
+                  style: GoogleFonts.googleSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+                SizedBox(width: 6),
+                Text(
+                  "(Optional)",
+                  style: GoogleFonts.googleSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).textTheme.titleSmall!.color,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: controller.noteCtrl,
+              maxLines: 5,
+              maxLength: 250,
+              decoration: InputDecoration(
+                hintText: "add_your_request".tr,
+                hintStyle: GoogleFonts.googleSans(
+                  color: Theme.of(context).textTheme.titleSmall!.color,
+                ),
+                filled: true,
+                fillColor: controller.themeCtrl.getDark()
+                    ? Color(0xFF1a1a1a)
+                    : Color(0xffF3F4F6),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
 
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: controller.themeCtrl.getDark()
+                      ? BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 1,
+                        )
+                      : BorderSide.none,
+                ),
+
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: controller.themeCtrl.getDark()
+                      ? BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 1.5,
+                        )
+                      : BorderSide.none,
+                ),
+                counterText: "",
+              ),
+            ),
+            SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Obx(
+                () => Text(
+                  "${controller.noteLength.value}/250",
+                  style: GoogleFonts.googleSans(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 30),
+           
             SizedBox(
               width: double.infinity,
               height: 58,
