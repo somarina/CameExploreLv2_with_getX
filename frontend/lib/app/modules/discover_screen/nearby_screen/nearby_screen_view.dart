@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/discover_screen/nearby_screen/nearby_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:get/get.dart';
@@ -24,7 +23,10 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
             child: SvgPicture.asset("assets/svg/arrow_back.svg"),
           ),
         ),
-        title: BuildTextfield(),
+        title: BuildTextfield(
+          controller: controller.searchController,
+          onChanged: controller.searchPlaces,
+        ),
       ),
 
       body: SafeArea(
@@ -212,14 +214,15 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                       child: GestureDetector(
                         onTap: () {},
                         child: Container(
-                          padding: const EdgeInsets.all(3),
+                          padding: EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primaryContainer,
+                            color: Colors.white,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Icons.favorite),
+                          child: Icon(
+                            Icons.favorite_border,
+                            color: Colors.black54,
+                          ),
                         ),
                       ),
                     ),
@@ -235,11 +238,10 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                     children: [
                       Text(
                         place.name,
-                        style: AppFonts.fontsSubTitlew500.copyWith(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.secondary,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        style: GoogleFonts.googleSans(
+                          fontSize: 16,
+                          color: Theme.of(context).textTheme.titleMedium?.color,
+                        ),
                       ),
 
                       SizedBox(height: 10),
@@ -249,9 +251,7 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                           Icon(
                             Icons.location_on_outlined,
                             size: 18,
-                            color: Theme.of(
-                              context,
-                            ).primaryColor,
+                            color: Theme.of(context).primaryColor,
                           ),
                           SizedBox(width: 5),
                           Expanded(

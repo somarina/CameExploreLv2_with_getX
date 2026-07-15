@@ -22,7 +22,7 @@ class DiscoverPlace {
       name: json['name'] as String,
       location: json['location'] as String,
       rating: json['rating'] as double,
-      image: json['image'] as String,
+      image: json['image_url'] as String,
     );
   }
 }

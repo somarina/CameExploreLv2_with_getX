@@ -6,10 +6,10 @@ class PlacesServices {
   // ── Get All Places ────────────────────────────────────────────────────────
   Future<dynamic> fetchPlaces({String? category, String? search}) async {
     var response = await baseApi.get(
-      endpoint: "/places", 
+      endpoint: "/places",
       queryParameters: {
-        "category": ?category,
-        "search": ?search,
+        if (category != null) "category": category,
+        if (search != null) "search": search,
       },
     );
     return response;
@@ -24,8 +24,4 @@ class PlacesServices {
   Future<Map<String, dynamic>> fetchDiscoverHome() async {
     return await baseApi.get(endpoint: "/api/discover/home");
   }
-  Future<List<dynamic>> getPlaces() async {
-    return await baseApi.get(endpoint: "/places/");
-  }
-
 }
