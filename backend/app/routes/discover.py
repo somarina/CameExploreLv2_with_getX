@@ -1,24 +1,16 @@
-from fastapi import APIRouter
+from typing import Optional
+
+from fastapi import APIRouter, Query
 from app.db.daatabase import db
+from app.routes.places import serialize_place
 
 router = APIRouter(
     prefix="/api/discover",
     tags=["Discover"]
 )
 
-def serialize_place(place):
-    return {
-        "id": str(place["_id"]),
-        "name": place.get("name"),
-        "province": place.get("province"),
-        "category": place.get("category"),
-        "rating": place.get("rating", 0),
-        "image_url": place.get("image_url"),
-        "search_count": place.get("search_count", 0),
-    }
-
 @router.get("/home")
-async def discover_home():
+async def discover_home(lang: Optional[str] = Query(None)):
 
     most_search = await db.places.find().sort(
         "search_count", -1
@@ -33,11 +25,11 @@ async def discover_home():
         "message": "Discover Home",
         "data": {
             "most_search": [
-                serialize_place(p)
+                serialize_place(p, lang)
                 for p in most_search
             ],
             "popular_places": [
-                serialize_place(p)
+                serialize_place(p, lang)
                 for p in popular_places
             ]
         }

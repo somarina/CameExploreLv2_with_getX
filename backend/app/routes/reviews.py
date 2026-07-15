@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from app.db.daatabase import db
 from app.schemas.review_schemas import ReviewCreate
-from app.utils.auth_dependency import get_current_user
+from app.utils.auth_dependency import get_current_user, require_admin
 
 router = APIRouter(
     prefix="/api/reviews",
@@ -50,7 +50,7 @@ async def create_review(
 
 
 @router.get("/all", summary="to get all app feedback")
-async def get_all_reviews():
+async def get_all_reviews(current_user: dict = Depends(require_admin)):
     reviews = []
 
     cursor = reviews_collection.find().sort("created_at", -1)
