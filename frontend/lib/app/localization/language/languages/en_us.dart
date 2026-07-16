@@ -567,4 +567,6 @@ Map<String, String> enUS = {
   "capture_failed": "Capture failed",
   "receipt_saved": "Receipt saved to Gallery",
   "save_failed": "Failed to save image",
+
+   "add_your_request":"Add your request",
 };

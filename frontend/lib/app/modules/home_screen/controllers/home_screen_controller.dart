@@ -24,8 +24,7 @@ class HomeScreenController extends GetxController {
   RxList topPlaces = [].obs;
   RxList nearbyPlaces = [].obs;
   final favoriteController = Get.find<FavoriteScreenController>();
-  
-  
+
   List<String> imgList = [
     'assets/images/homescreen/slider1.png',
     'assets/images/homescreen/slider2.png',
@@ -40,6 +39,7 @@ class HomeScreenController extends GetxController {
   void toggleFavorite(int index) {
     favorites[index] = !favorites[index];
   }
+
   Future<void> getProfile() async {
     try {
       isLoadingPf.value = true;
@@ -86,18 +86,19 @@ class HomeScreenController extends GetxController {
 
       if (response is List) {
         places.value = response;
-      } else if (response["data"] != null) {
-        places.value = response["data"];
+      } else if (response != null &&
+          response["data"] != null &&
+          response["data"]["items"] != null) {
+        places.value = response["data"]["items"];
       }
 
       filterPlaces();
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("Get Places Error: ${e.toString()}");
     } finally {
       isLoadingPlaces.value = false;
     }
   }
-
   // Rxn<Position> userPosition = Rxn<Position>();
 
   // RxString currentLocation = "Getting location...".obs;
@@ -155,14 +156,14 @@ class HomeScreenController extends GetxController {
   // }
 
   // Fixed location
-  // final double currentLat = 13.3618;
-  // final double currentLng = 103.8606;
+  final double currentLat = 13.3618;
+  final double currentLng = 103.8606;
 
-  // String currentLocation = "Siem Reap, Cambodia";
-  final double currentLat = 11.5564;
-  final double currentLng = 104.9282;
+  String currentLocation = "Siem Reap, Cambodia";
+  // final double currentLat = 11.5564;
+  // final double currentLng = 104.9282;
 
-  String currentLocation = "Phnom Penh, Cambodia";
+  // String currentLocation = "Phnom Penh, Cambodia";
 
   double calculateDistance(dynamic placeLat, dynamic placeLng) {
     try {
@@ -182,35 +183,51 @@ class HomeScreenController extends GetxController {
     if (places.isEmpty) return;
 
     final List allPlaces = List.from(places);
+    final currentProvince = currentLocation
+        .split(",")
+        .first
+        .trim(); // "Siem Reap"
 
-    /// Current province from currentLocation
-    final currentProvince = currentLocation.split(",").first.trim();
+    // ── TOP PLACES ──
+    topPlaces.value =
+        allPlaces.where((p) {
+          final province = (p["province"] ?? "").toString().trim();
+          final double rating =
+              double.tryParse((p["rating"] ?? 0).toString()) ?? 0.0;
 
-    /// TOP PLACES: same province + rating >= 4.5
-    topPlaces.value = allPlaces.where((p) {
-      final province = (p["province"] ?? "").toString().trim();
-      return province == currentProvince &&
-          (p["rating"] ?? 0).toDouble() >= 4.5;
-    }).toList()..sort((a, b) => (b["rating"] ?? 0).compareTo(a["rating"] ?? 0));
+          return province == currentProvince && rating >= 4.5;
+        }).toList()..sort((a, b) {
+          final r1 = double.tryParse((a["rating"] ?? 0).toString()) ?? 0.0;
+          final r2 = double.tryParse((b["rating"] ?? 0).toString()) ?? 0.0;
+          return r2.compareTo(r1);
+        });
 
-    /// NEARBY PLACES: within 10 km
+    // ── NEARBY PLACES ──
     nearbyPlaces.value =
         allPlaces.where((p) {
           final distance = calculateDistance(p["latitude"], p["longitude"]);
-          return distance < 10;
+          return distance < 10.0; // Filters locations within 10 km
         }).toList()..sort((a, b) {
           final d1 = calculateDistance(a["latitude"], a["longitude"]);
           final d2 = calculateDistance(b["latitude"], b["longitude"]);
           return d1.compareTo(d2);
         });
 
-    /// TRENDING: same province + rating >= 4.0
-    trendingPlaces.value = allPlaces.where((p) {
-      final province = (p["province"] ?? "").toString().trim();
-      return province == currentProvince &&
-          (p["rating"] ?? 0).toDouble() >= 4.0;
-    }).toList()..sort((a, b) => (b["rating"] ?? 0).compareTo(a["rating"] ?? 0));
+    // ── TRENDING PLACES ──
+    trendingPlaces.value =
+        allPlaces.where((p) {
+          final province = (p["province"] ?? "").toString().trim();
+          final double rating =
+              double.tryParse((p["rating"] ?? 0).toString()) ?? 0.0;
 
+          return province == currentProvince && rating >= 4.0;
+        }).toList()..sort((a, b) {
+          final r1 = double.tryParse((a["rating"] ?? 0).toString()) ?? 0.0;
+          final r2 = double.tryParse((b["rating"] ?? 0).toString()) ?? 0.0;
+          return r2.compareTo(r1);
+        });
+
+    // Limit outputs cleanly
     topPlaces.value = topPlaces.take(10).toList();
     nearbyPlaces.value = nearbyPlaces.take(10).toList();
     trendingPlaces.value = trendingPlaces.take(10).toList();

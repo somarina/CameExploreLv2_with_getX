@@ -1,6 +1,7 @@
 part of 'guest_info_screen_view.dart';
 
 class GuestInfoScreenViewController extends GetxController {
+      var themeCtrl = Get.find<ThemeModeViewController>();
   final firstNameCtrl = TextEditingController();
   final lastNameCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
@@ -9,11 +10,17 @@ class GuestInfoScreenViewController extends GetxController {
   DateTime? checkIn;
   DateTime? checkOut;
   RxString transactionDate = ''.obs;
+  final noteCtrl = TextEditingController();
+  final noteLength = 0.obs;
 
-  String get checkInText => checkIn != null ? DateFormat('EEE, MMM dd').format(checkIn!) : '';
-  String get checkOutText => checkOut != null ? DateFormat('EEE, MMM dd').format(checkOut!) : '';
+  String get checkInText =>
+      checkIn != null ? DateFormat('EEE, MMM dd').format(checkIn!) : '';
+  String get checkOutText =>
+      checkOut != null ? DateFormat('EEE, MMM dd').format(checkOut!) : '';
 
-  int get nights => checkIn != null && checkOut != null ? checkOut!.difference(checkIn!).inDays : 0;
+  int get nights => checkIn != null && checkOut != null
+      ? checkOut!.difference(checkIn!).inDays
+      : 0;
 
   bool validateGuestInfo() {
     if (firstNameCtrl.text.trim().isEmpty) {
