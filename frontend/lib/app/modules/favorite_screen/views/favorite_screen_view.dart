@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/modules/favorite_screen/custom_bottomSheet/show_bottom_sheet.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class FavoriteScreenView extends GetView<FavoriteScreenController> {
   const FavoriteScreenView({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Color(0xfff5f5f5),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Color(0xfff5f5f5),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
         title: Text(
           "Favorites".tr,
-          style: GoogleFonts.googleSans(
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
+          style: AppFonts.fontHeader.copyWith(
+            fontSize: 24,
+            color: theme.colorScheme.secondary,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         centerTitle: false,
@@ -31,34 +36,63 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
                 focusNode: controller.createListFocusNode,
                 label: "List name".tr,
                 onDone: () async {
-                  // Handle create new list logic here
                   await controller.createFavoriteList();
                 },
               );
             },
             child: Container(
-              margin: EdgeInsets.only(right: 20),
-              width: 30,
-              height: 30,
+              margin: const EdgeInsets.only(right: 20),
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.black, width: 1),
+                color: theme.colorScheme.primaryContainer,
+                border: Border.all(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                  width: 2,
+                ),
               ),
-              child: Center(child: Icon(Icons.add)),
+              child: Center(
+                child: Icon(
+                  Icons.add,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
             ),
           ),
         ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: CircularProgressIndicator(
+              color: theme.colorScheme.primary,
+            ),
+          );
         }
+
+        if (controller.favoriteLists.isEmpty) {
+          return Center(
+            child: Text(
+              "No favorite lists yet".tr,
+              style: AppFonts.fontsGeneral.copyWith(
+                color: theme.textTheme.titleSmall?.color,
+              ),
+            ),
+          );
+        }
+
         return SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [SizedBox(height: 30), _buildCard(), SizedBox(height: 30),],
+              children: [
+                const SizedBox(height: 30),
+                _buildCard(context),
+                const SizedBox(height: 30),
+              ],
             ),
           ),
         );
@@ -66,21 +100,25 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
     );
   }
 
-  Widget _buildCard() {
+  Widget _buildCard(BuildContext context) {
+    final theme = Theme.of(context);
+
     return ListView.separated(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      separatorBuilder: (context, index) => SizedBox(height: 20),
-      itemCount:
-          controller.favoriteLists.length, // Replace with actual data count
+      itemCount: controller.favoriteLists.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 20),
       itemBuilder: (context, index) {
         final item = controller.favoriteLists[index];
+
         return GestureDetector(
           onTap: () async {
-            // Handle card tap
             final result = await Get.toNamed(
               Routes.FAV_SCREEN_2,
-              arguments: {'listName': item['name'], 'listId': item['id']},
+              arguments: {
+                'listName': item['name'],
+                'listId': item['id'],
+              },
             );
 
             if (result == true) {
@@ -89,57 +127,80 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
           },
           child: Container(
             width: double.infinity,
-            height: 200,
+            height: 210,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.grey[300]!, width: 1),
+              color: theme.colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: theme.dividerColor.withValues(alpha: 0.2),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
                   width: Get.width,
                   height: 140,
                   decoration: BoxDecoration(
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
+                    color: theme.brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(14),
+                      topRight: Radius.circular(14),
                     ),
                   ),
-                  // child: Image.asset("")
-                  child: Center(child: Icon(Icons.image_outlined, size: 28)),
+                  child: Center(
+                    child: Icon(
+                      Icons.image_outlined,
+                      size: 35,
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.7,
+                      ),
+                    ),
+                  ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 12),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
                   child: Row(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item['name'],
-                            style: GoogleFonts.googleSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item['name'] ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppFonts.fontsGeneral.copyWith(
+                                color: theme.colorScheme.secondary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "0 activities",
-                            style: GoogleFonts.googleSans(
-                              fontSize: 14,
-                              color: Colors.black54
+                            const SizedBox(height: 4),
+                            Text(
+                              "${item['count'] ?? 0} activities",
+                              style:
+                                  AppFonts.fontDescriptionsmall.copyWith(
+                                color:
+                                    theme.textTheme.titleSmall?.color,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      Spacer(),
                       Icon(
-                        Icons.arrow_forward_ios_outlined,
+                        Icons.arrow_forward_ios_rounded,
                         size: 18,
-                        color: Colors.grey[900],
+                        color: theme.colorScheme.secondary,
                       ),
                     ],
                   ),

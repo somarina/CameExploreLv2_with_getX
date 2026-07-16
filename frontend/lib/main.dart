@@ -76,7 +76,7 @@ void _setupDeepLinks() {
       await Future.delayed(Duration(seconds: 1));
       _handleTelegramCallback(initialUri.queryParameters);
     }
-  });
+  });                                                                                                                                                                                                                                                                                                                                                               
 }
 
 void _handleTelegramCallback(Map<String, String> params) async {

@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/reviews", tags=["Listing Reviews"])
 reviews_collection = db["listing_reviews"]
 places_collection = db["places"]
 hotels_collection = db["hotels"]
-packages_collection = db["packages"]
+packages_collection = db["travel_packages"]
 
 
 # ── helpers ──────────────────────────────────────────────────────────────
@@ -181,7 +181,7 @@ async def create_place_review(
 
 # ── PACKAGE REVIEWS (5-star) ─────────────────────────────────────────────
 
-@router.get("/travel_packagepackage/{package_id}")
+@router.get("/package/{package_id}")
 async def get_package_reviews(
     package_id: str,
     limit: int = Query(20, ge=1, le=100),
@@ -198,7 +198,7 @@ async def get_package_reviews(
     return ok("Reviews fetched successfully", {"summary": summary, "items": reviews})
 
 
-@router.post("/travel_package/{package_id}")
+@router.post("/package/{package_id}")
 async def create_package_review(
     package_id: str,
     payload: PackageReviewCreate,

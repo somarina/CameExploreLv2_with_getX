@@ -25,7 +25,7 @@ class PlaceModel {
   factory PlaceModel.fromJson(Map<String, dynamic> json) {
   return PlaceModel(
     id: json["id"].toString(),
-    name: json["name"] ?? "",
+    name: json["name_en"] ?? "",
     description: json["description"] ?? "",
     province: json["province"] ?? "",
     category: json["category"] ?? "",

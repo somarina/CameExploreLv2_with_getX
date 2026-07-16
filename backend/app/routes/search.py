@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api/search", tags=["Search"])
 
 places_collection = db["places"]
 hotels_collection = db["hotels"]
-packages_collection = db["packages"]
+packages_collection = db["travel_packages"]
 
 
 def keyword_query(keyword: str, fields: list[str]) -> dict:

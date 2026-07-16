@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/favorite_screen/custom_bottomSheet/show_bottom_sheet.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
@@ -15,231 +16,73 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Color(0xfff5f5f5),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
+                const SizedBox(height: 20),
+
                 Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white, // background color
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[300]!,
-                            blurRadius: 4,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+                    _circleButton(
+                      theme,
+                      child: SvgPicture.asset(
+                        "assets/svg/normalBack.svg",
+                        width: 26,
+                        height: 26,
+                        color: theme.colorScheme.primary,
                       ),
-                      child: Bounceable(
-                        onTap: () {
-                          Get.back();
-                        },
-                        child: Container(
-                          width: 46,
-                          height: 46,
-                          decoration: BoxDecoration(
-                            // color: Theme.of(context).scaffoldBackgroundColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: SvgPicture.asset(
-                              "assets/svg/normalBack.svg",
-                              width: 26,
-                              height: 26,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ),
+                      onTap: () => Get.back(),
                     ),
-                    Spacer(),
+
+                    const Spacer(),
+
                     Obx(
                       () => Text(
                         controller.listName.value,
-                        style: GoogleFonts.googleSans(
+                        style: AppFonts.fontsGeneral.copyWith(
                           fontSize: 18,
-                          fontWeight: FontWeight.w500,
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    Spacer(),
-                    Bounceable(
+
+                    const Spacer(),
+
+                    _circleButton(
+                      theme,
+                      child: Icon(
+                        Icons.share,
+                        color: theme.colorScheme.primary,
+                      ),
                       onTap: () {
                         SharePlus.instance.share(
                           ShareParams(text: controller.listName.value),
                         );
                       },
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300]!,
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Icon(Icons.share, color: Color(0xff009A3F)),
-                        ),
-                      ),
                     ),
-                    SizedBox(width: 10),
-                    Bounceable(
-                      onTap: () {
-                        Get.bottomSheet(
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 20,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(20),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 5,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                GestureDetector(
-                                  onTap: () {
-                                    Get.back();
-                                    Get.bottomSheet(
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 20,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20),
-                                          ),
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  "Cancel".tr,
-                                                  style: GoogleFonts.googleSans(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                Text(
-                                                  "Rename list".tr,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                Text(
-                                                  "Done".tr,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Get.back();
-                                      controller.renameCtrl.text =
-                                          controller.listName.value;
-                                      AppBottomSheets.showBottomSheet(
-                                        title: "Rename list".tr,
-                                        label: "Enter new list name".tr,
-                                        controller: controller.renameCtrl,
-                                        focusNode: controller.renameFocusNode,
-                                        onDone: () async {
-                                          await controller.renameFavoriteList();
-                                        },
-                                      );
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.edit,
-                                          color: Color(0xff009A3F),
-                                        ),
-                                        SizedBox(width: 15),
-                                        Text(
-                                          "Rename list".tr,
-                                          style: GoogleFonts.googleSans(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                            color: Color(0xff009A3F),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
 
-                                SizedBox(height: 30),
-                                showDialog(),
-                                SizedBox(height: 30),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300]!,
-                              blurRadius: 4,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.more_vert,
-                            color: Color(0xff009A3F),
-                          ),
-                        ),
+                    const SizedBox(width: 10),
+
+                    _circleButton(
+                      theme,
+                      child: Icon(
+                        Icons.more_vert,
+                        color: theme.colorScheme.primary,
                       ),
+                      onTap: _showOptionsBottomSheet,
                     ),
                   ],
                 ),
-                _buildEmptyList(),
+
+                _buildEmptyList(context),
               ],
             ),
           ),
@@ -248,9 +91,100 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
     );
   }
 
-  Widget _buildEmptyList() {
+  Widget _circleButton(
+    ThemeData theme, {
+    required Widget child,
+    required VoidCallback onTap,
+  }) {
+    return Bounceable(
+      onTap: onTap,
+      child: Container(
+        width: 46,
+        height: 46,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: theme.colorScheme.primaryContainer,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Center(child: child),
+      ),
+    );
+  }
+
+  void _showOptionsBottomSheet() {
+    final theme = Get.theme;
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primaryContainer,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 50,
+              height: 5,
+              decoration: BoxDecoration(
+                color: theme.dividerColor,
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+
+            const SizedBox(height: 25),
+
+            GestureDetector(
+              onTap: () {
+                Get.back();
+
+                controller.renameCtrl.text = controller.listName.value;
+
+                AppBottomSheets.showBottomSheet(
+                  title: "Rename list".tr,
+                  label: "Enter new list name".tr,
+                  controller: controller.renameCtrl,
+                  focusNode: controller.renameFocusNode,
+                  onDone: () async {
+                    await controller.renameFavoriteList();
+                  },
+                );
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.edit, color: theme.colorScheme.primary),
+                  const SizedBox(width: 15),
+                  Text(
+                    "Rename list".tr,
+                    style: AppFonts.fontsGeneral.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            _deleteWidget(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyList(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: controller.favoriteItems.isEmpty
           ? SizedBox(
               height: Get.height * 0.8,
@@ -259,146 +193,98 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                 children: [
                   Text(
                     "This list is empty".tr,
-                    style: GoogleFonts.googleSans(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w300,
+                    style: AppFonts.fontsSubTitle.copyWith(
+                      color: theme.colorScheme.secondary,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   ElevatedButton(
                     onPressed: () {
-                      Get.offAllNamed(Routes.BUTTON_NAVBAR);
+                      Get.toNamed(Routes.NEARBY_SCREEN);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xff009A3F),
-                      padding: EdgeInsets.symmetric(
+                      backgroundColor: theme.colorScheme.primary,
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
                       ),
                     ),
                     child: Text(
                       "Find things to do".tr,
-                      style: GoogleFonts.googleSans(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppFonts.fontsButton,
                     ),
                   ),
                 ],
               ),
             )
-          : _buildFavList(),
+          : _buildFavList(context),
     );
   }
 
-  Widget _buildFavList() {
+  Widget _buildFavList(BuildContext context) {
+    final theme = Theme.of(context);
+
     return ListView.separated(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: 2,
-      separatorBuilder: (_, __) => SizedBox(height: 10),
+      itemCount: controller.favoriteItems.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
-        return Bounceable(
-          onTap: () {},
-          child: Card(
-            elevation: 5,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.all(15),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          clipBehavior: Clip.hardEdge,
-                          width: 112,
-                          height: 112,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            color: Colors.grey,
-                          ),
+        return Card(
+          color: theme.colorScheme.primaryContainer,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Row(
+              children: [
+                Container(
+                  width: 112,
+                  height: 112,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+
+                const SizedBox(width: 20),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Angkor Wat",
+                        style: AppFonts.fontsGeneral.copyWith(
+                          color: theme.colorScheme.secondary,
                         ),
-                        Positioned(
-                          right: 8,
-                          top: 8,
-                          child: Icon(Icons.favorite, color: Colors.red),
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Row(
                         children: [
-                          Text("Angkor Wat"),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on_sharp,
-                                size: 20,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(width: 5),
-                              Expanded(child: Text("Siem Reap")),
-                            ],
+                          Icon(
+                            Icons.location_on,
+                            size: 18,
+                            color: theme.textTheme.titleSmall?.color,
                           ),
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Icon(Icons.star, size: 20, color: Colors.amber),
-                              SizedBox(width: 5),
-                              Text("8.9"),
-                              SizedBox(width: 15),
-                              Container(
-                                width: 5,
-                                height: 5,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xffCEDFCE),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  "Temple",
-                                  style: const TextStyle(
-                                    color: Color(0xff009A3F),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.calendar_today,
-                                size: 20,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(width: 5),
-                              Text("បានរក្សាទុកថ្មីៗ"),
-                            ],
+                          const SizedBox(width: 5),
+                          Text(
+                            "Siem Reap",
+                            style: AppFonts.fontDescriptionsmall,
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         );
@@ -406,95 +292,43 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
     );
   }
 
-  Widget showDialog() {
+  Widget _deleteWidget() {
     return GestureDetector(
-      onTap: () async {
-        // Handle delete list logic here
-        await controller.deleteFavoriteList();
+      onTap: () {
         Get.dialog(
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: Get.width * 0.8,
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+          AlertDialog(
+            backgroundColor: Get.theme.colorScheme.primaryContainer,
+            title: Text(
+              "Delete list".tr,
+              style: AppFonts.fontsGeneral.copyWith(
+                color: Get.theme.colorScheme.secondary,
+              ),
+            ),
+            content: Text(
+              "delete_list_confirm".trParams({
+                'listName': controller.listName.value,
+              }),
+              style: AppFonts.fontDescriptionsmall,
+            ),
+            actions: [
+              TextButton(
+                onPressed: Get.back,
+                child: Text(
+                  "Cancel".tr,
+                  style: GoogleFonts.googleSans(color: Get.theme.colorScheme.primary),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Delete list".tr,
-                      style: GoogleFonts.googleSans(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "delete_list_confirm".trParams({
-                        'listName': controller.listName.value,
-                      }),
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.googleSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black54,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[200],
-                            ),
-                            child: Text(
-                              "Cancel".tr,
-                              style: GoogleFonts.googleSans(
-                                color: Color(0xff009A3F),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              // Handle delete logic here
-                              await controller.deleteFavoriteList();
-                              Get.back();
-                              Get.back();
-                              Get.back();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[200],
-                            ),
-                            child: Text(
-                              "Delete".tr,
-                              style: GoogleFonts.googleSans(
-                                color: Colors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              ),
+              TextButton(
+                onPressed: () async {
+                  await controller.deleteFavoriteList();
+
+                  Get.back();
+                  Get.back();
+                  Get.back();
+                },
+                child: Text(
+                  "Delete".tr,
+                  style: GoogleFonts.googleSans(color: Colors.red),
                 ),
               ),
             ],
@@ -503,18 +337,125 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
       },
       child: Row(
         children: [
-          Icon(Icons.delete, color: Colors.red),
-          SizedBox(width: 15),
+          const Icon(Icons.delete, color: Colors.red),
+          const SizedBox(width: 15),
           Text(
             "Delete list".tr,
-            style: GoogleFonts.googleSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.red,
-            ),
+            style: AppFonts.fontsGeneral.copyWith(color: Colors.red),
           ),
         ],
       ),
     );
   }
+  // Widget showDialog() {
+  //   return GestureDetector(
+  //     onTap: () async {
+  //       // Handle delete list logic here
+  //       await controller.deleteFavoriteList();
+  //       Get.dialog(
+  //         Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Container(
+  //               width: Get.width * 0.8,
+  //               padding: EdgeInsets.all(20),
+  //               decoration: BoxDecoration(
+  //                 color: Colors.white,
+  //                 borderRadius: BorderRadius.circular(16),
+  //               ),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.center,
+  //                 children: [
+  //                   Text(
+  //                     "Delete list".tr,
+  //                     style: GoogleFonts.googleSans(
+  //                       fontSize: 18,
+  //                       fontWeight: FontWeight.w600,
+  //                       color: Colors.black,
+  //                       decoration: TextDecoration.none,
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 10),
+  //                   Text(
+  //                     "delete_list_confirm".trParams({
+  //                       'listName': controller.listName.value,
+  //                     }),
+  //                     textAlign: TextAlign.center,
+  //                     style: GoogleFonts.googleSans(
+  //                       fontSize: 15,
+  //                       fontWeight: FontWeight.w500,
+  //                       color: Colors.black54,
+  //                       decoration: TextDecoration.none,
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 20),
+  //                   Row(
+  //                     children: [
+  //                       Expanded(
+  //                         child: ElevatedButton(
+  //                           onPressed: () {
+  //                             Get.back();
+  //                           },
+  //                           style: ElevatedButton.styleFrom(
+  //                             backgroundColor: Colors.grey[200],
+  //                           ),
+  //                           child: Text(
+  //                             "Cancel".tr,
+  //                             style: GoogleFonts.googleSans(
+  //                               color: Color(0xff009A3F),
+  //                               fontSize: 16,
+  //                               fontWeight: FontWeight.w500,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       SizedBox(width: 10),
+  //                       Expanded(
+  //                         child: ElevatedButton(
+  //                           onPressed: () async {
+  //                             // Handle delete logic here
+  //                             await controller.deleteFavoriteList();
+  //                             Get.back();
+  //                             Get.back();
+  //                             Get.back();
+  //                           },
+  //                           style: ElevatedButton.styleFrom(
+  //                             backgroundColor: Colors.grey[200],
+  //                           ),
+  //                           child: Text(
+  //                             "Delete".tr,
+  //                             style: GoogleFonts.googleSans(
+  //                               color: Colors.red,
+  //                               fontSize: 16,
+  //                               fontWeight: FontWeight.w500,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //     child: Row(
+  //       children: [
+  //         Icon(Icons.delete, color: Colors.red),
+  //         SizedBox(width: 15),
+  //         Text(
+  //           "Delete list".tr,
+  //           style: GoogleFonts.googleSans(
+  //             fontSize: 16,
+  //             fontWeight: FontWeight.w500,
+  //             color: Colors.red,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
