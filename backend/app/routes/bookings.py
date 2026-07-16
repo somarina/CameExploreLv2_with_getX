@@ -16,7 +16,7 @@ router = APIRouter(prefix="/bookings", tags=["Bookings"])
 
 bookings_collection = db["bookings"]
 hotels_collection = db["hotels"]
-packages_collection = db["packages"]
+packages_collection = db["travel_packages"]
 
 ACTIVE_STATUSES = ("pending", "confirmed")
 

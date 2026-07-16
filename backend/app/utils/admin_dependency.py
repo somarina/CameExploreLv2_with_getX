@@ -9,13 +9,6 @@ admins_collection = db["admins"]
 
 
 async def get_current_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Validates an admin JWT and loads the admin document from the
-    separate 'admins' collection (NOT the 'users' collection).
-
-    This keeps admin accounts fully isolated from personal/company
-    accounts, even if they happen to share an email in the users table.
-    """
     token = credentials.credentials
     payload = decode_access_token(token)
 

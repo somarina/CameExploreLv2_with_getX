@@ -22,6 +22,22 @@ favorite_items = db["favorite_items"]
 places_collection = db["places"]
 
 
+async def _get_owned_list(list_id: str, current_user: dict):
+    """Fetch a favorites list and verify it belongs to current_user.
+    Raises 404 if it doesn't exist or belongs to someone else — same
+    response either way, so we don't leak which list_ids exist."""
+    if not ObjectId.is_valid(list_id):
+        raise HTTPException(status_code=404, detail="List not found")
+
+    lst = await favorite_lists.find_one({
+        "_id": ObjectId(list_id),
+        "user_id": str(current_user["_id"]),
+    })
+    if not lst:
+        raise HTTPException(status_code=404, detail="List not found")
+    return lst
+
+
 # ------------------------------------------
 @router.post("/lists")
 async def create_list(
@@ -116,6 +132,10 @@ async def add_item(
     payload: AddFavoriteItemSchema,
     current_user: dict = Depends(get_current_user)
 ):
+    await _get_owned_list(list_id, current_user)
+
+    if not ObjectId.is_valid(payload.place_id):
+        raise HTTPException(status_code=404, detail="Place not found")
 
     place = await places_collection.find_one({
         "_id": ObjectId(payload.place_id)
@@ -155,6 +175,7 @@ async def get_items(
     list_id: str,
     current_user: dict = Depends(get_current_user)
 ):
+    await _get_owned_list(list_id, current_user)
 
     results = []
 
@@ -171,9 +192,9 @@ async def get_items(
         if place:
             results.append({
                 "place_id": str(place["_id"]),
-                "name": place["name"],
-                "province": place["province"],
-                "category": place["category"],
+                "name": place.get("name_en") or place.get("name"),
+                "province": place.get("province"),
+                "category": place.get("category"),
                 "image_url": place.get("image_url")
             })
 
@@ -186,6 +207,7 @@ async def delete_item(
     place_id: str,
     current_user: dict = Depends(get_current_user)
 ):
+    await _get_owned_list(list_id, current_user)
 
     await favorite_items.delete_one({
         "list_id": list_id,
