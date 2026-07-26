@@ -5,5 +5,6 @@ class GuestInfoScreenViewBinding extends Bindings {
    @override
    void dependencies() {
        Get.lazyPut(() => GuestInfoScreenViewController());
+       Get.lazyPut(() => UserProfileScreenViewController());
    }
 }

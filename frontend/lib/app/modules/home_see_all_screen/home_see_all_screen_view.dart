@@ -128,6 +128,7 @@ class HomeSeeAllScreenView extends GetView<HomeSeeAllScreenViewController> {
             title: "អង្គរវត្ត",
             location: "សៀមរាប, ប្រទេសកម្ពុជា",
             rating: 4.9,
+            review_count: 0,
             distance: "200.10 km",
             isFavorite: controller.homeCtrl.favorites[index],
             onFavorite: () => controller.homeCtrl.toggleFavorite(index),

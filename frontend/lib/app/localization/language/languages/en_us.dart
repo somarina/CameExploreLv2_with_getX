@@ -166,14 +166,13 @@ Map<String, String> enUS = {
   "Gallery": "Gallery",
   "Camera": "Camera",
 
-  // 
+  //
   "name": "Name",
   "contact_us": "Contact Us",
   "leave": "Leave",
   "now": "Now",
   "open": "Open",
   "phone": "Phone",
-
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////     Login Screen
@@ -213,7 +212,7 @@ Map<String, String> enUS = {
   "List name": "List name",
   "Enter new list name": "Enter new list name",
   "delete_list_confirm":
-  "Are you sure you want to delete your @listName list? All the activities you've saved will be lost.",
+      "Are you sure you want to delete your @listName list? All the activities you've saved will be lost.",
 
   // Search Screen
   "Most search": "Most search",
@@ -368,7 +367,8 @@ Map<String, String> enUS = {
   //////////////////////////////////
   "confirm_title": "Reset Password",
   "confirm_reset_title": "Reset your password?",
-  "confirm_reset_subtitle": "Your account will have its password reset. Are you sure you want to continue?",
+  "confirm_reset_subtitle":
+      "Your account will have its password reset. Are you sure you want to continue?",
   "confirm_yes": "Confirm",
   "confirm_no": "Cancel",
   "reset_password_title": "New Password",
@@ -475,7 +475,7 @@ Map<String, String> enUS = {
   "per_adult": " per adult",
   "select_date_package": "Select date",
   "check_availability": "Check availability",
-  "available_options_count": "Choose from 4 available options",
+  "available_options_count": "Choose from 1 available options",
   "package_sunrise_tour": "Angkor Wat: Small-Group Sunrise Tour",
   "duration_hours": "Duration: 8 hours",
   "guide_language": "Guide: English",
@@ -568,5 +568,17 @@ Map<String, String> enUS = {
   "receipt_saved": "Receipt saved to Gallery",
   "save_failed": "Failed to save image",
 
-   "add_your_request":"Add your request",
+  "add_your_request": "Add your request",
+
+  "entry_fee": "Entry Fee",
+  "foreign_adult": "Foreign Adult",
+  "foreign_child": "Foreign Child (<12)",
+  "cambodian_citizen": "Cambodian Citizen",
+  "free": "ឥតគិតថ្លៃ",
+
+  "hotel_category": "Hotel",
+
+  "max_people": "Max people",
+  "no_reviews_yet": "No reviews yet",
+  "hello": "Hello",
 };

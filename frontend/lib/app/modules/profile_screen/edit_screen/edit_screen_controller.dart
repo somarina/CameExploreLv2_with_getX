@@ -7,6 +7,7 @@ class EditScreenViewController extends GetxController {
   final lastnameCtrl = TextEditingController();
   final newEmailCtrl = TextEditingController();
   final newPhoneCtrl = TextEditingController();
+  var homeCtrl = Get.find<HomeScreenController>();
 
   var selectedGender = ''.obs;
   var isLoading = false.obs;
@@ -22,21 +23,6 @@ class EditScreenViewController extends GetxController {
     arg = Get.arguments as UserModel;
     _loadUser();
   }
-
-  // void _loadUser() {
-  //   var fullName = arg.name.split(" ");
-
-  //   firstnameCtrl.text = fullName.isNotEmpty ? fullName[0] : "";
-  //   lastnameCtrl.text = fullName.length > 1 ? fullName[1] : "";
-
-  //   newEmailCtrl.text = arg.email;
-  //   newPhoneCtrl.text = arg.phone;
-  //   selectedGender.value = arg.gender;
-
-  //   if (arg.avatar.isNotEmpty) {
-  //     pickedImage.value = File(arg.avatar);
-  //   }
-  // }
 
   void _loadUser() {
     var fullName = arg.name.split(" ");
@@ -59,16 +45,7 @@ class EditScreenViewController extends GetxController {
 
     if (image != null) {
       pickedImage.value = File(image.path);
-
       profileImage.value = "m";
-
-      // var response=  await ProfileServices().uploadAvatarService(
-      //     avatarPath: image.path,
-      //   );
-
-      //   profileImage.value = response["data"]["profile_image"];
-
-      //   debugPrint(profileImage.value );
     }
   }
 
@@ -87,7 +64,6 @@ class EditScreenViewController extends GetxController {
 
       String avatarUrl = userProfileController.user.avatar;
 
-      // ✅ upload only if new image picked
       if (pickedImage.value != null) {
         final profileResponse = await ProfileServices().uploadAvatarService(
           avatarPath: pickedImage.value!.path,
@@ -103,6 +79,7 @@ class EditScreenViewController extends GetxController {
         gender: selectedGender.value,
         avatar: avatarUrl,
       );
+      homeCtrl.getProfile();
 
       if (response["result"] == true) {
         await userProfileController.getProfile();
@@ -113,55 +90,11 @@ class EditScreenViewController extends GetxController {
       }
     } catch (e) {
       debugPrint("Edit profile error: $e");
-      Get.snackbar("Error", e.toString());
+      Get.snackbar("Error", "Cannot updated profile.");
     } finally {
       isLoading.value = false;
     }
   }
-  // Future<void> editProfile() async {
-  //   if (firstnameCtrl.text.isEmpty ||
-  //       lastnameCtrl.text.isEmpty ||
-  //       newEmailCtrl.text.isEmpty ||
-  //       newPhoneCtrl.text.isEmpty ||
-  //       selectedGender.value.isEmpty) {
-  //     Get.snackbar("Warning", "Please fill all fields");
-  //     return;
-  //   }
-
-  //   try {
-  //     isLoading.value = true;
-
-  //     var profileResponse = await ProfileServices().uploadAvatarService(
-  //       avatarPath: pickedImage.value!.path,
-  //     );
-
-  //     profileImage.value = profileResponse["data"]["profile_image"];
-
-  //     debugPrint(profileImage.value);
-
-  //     final response = await ProfileServices().updateProfileService(
-  //       name: "${firstnameCtrl.text} ${lastnameCtrl.text}".trim(),
-  //       email: newEmailCtrl.text,
-  //       phone: newPhoneCtrl.text,
-  //       gender: selectedGender.value,
-  //       avatar: profileImage.value.isEmpty
-  //           ? userProfileController.user.avatar
-  //           : profileImage.value,
-  //     );
-
-  //     if (response["result"] == true) {
-  //       await userProfileController.getProfile();
-  //       Get.back();
-  //       Get.snackbar(response["message"], "Profile updated");
-  //     } else {
-  //       Get.snackbar(response["message"], "Update failed");
-  //     }
-  //   } catch (e) {
-  //     Get.snackbar("Error", "Something went wrong");
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
 
   @override
   void onClose() {

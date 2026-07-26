@@ -54,6 +54,22 @@ class BaseApiService {
     }
   }
 
+  // Future<dynamic> postFormData({
+  //   required String endpoint,
+  //   required FormData data,
+  // }) async {
+  //   try {
+  //     var response = await apiConfig.dio.post(
+  //       endpoint,
+  //       data: data,
+  //       options: Options(contentType: "multipart/form-data"),
+  //     );
+  //     return response.data;
+  //   } on DioException catch (e) {
+  //     debugPrint("Error ${e.toString()}");
+  //   }
+  // }
+
   Future<dynamic> postFormData({
     required String endpoint,
     required FormData data,
@@ -70,7 +86,19 @@ class BaseApiService {
     }
   }
 
-
-
-  
+  Future<dynamic> postFormDataFiles({
+    required String endpoint,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      var response = await apiConfig.dio.post(
+        endpoint,
+        data: data,
+        options: Options(contentType: "application/json"),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      debugPrint("Error ${e.toString()}");
+    }
+  }
 }

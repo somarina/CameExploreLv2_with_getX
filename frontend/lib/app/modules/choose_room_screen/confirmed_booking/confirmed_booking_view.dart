@@ -105,11 +105,16 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                         ),
 
                         SizedBox(height: 24),
-                        _detailRow("booking_ref".tr, "", context),
+                        _detailRow(
+                          "booking_ref".tr,
+                          controller.bookingRef,
+                          context,
+                        ),
                         _detailRow("hotel".tr, controller.hotel, context),
+
                         _detailRow(
                           "room_type".tr,
-                          controller.roomType,
+                          controller.roomTypeWithRooms,
                           context,
                         ),
                         _detailRow("check_in".tr, controller.checkIn, context),
@@ -134,6 +139,8 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                           controller.guestEmail,
                           context,
                         ),
+                        if (controller.note.isNotEmpty)
+                          _detailRow("note".tr, controller.note, context),
                         _detailRow("payment".tr, "ABA Pay", context),
                         _detailRow(
                           "transaction_date".tr,

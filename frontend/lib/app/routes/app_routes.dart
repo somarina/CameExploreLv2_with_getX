@@ -48,6 +48,8 @@ abstract class Routes {
   static const OTP_SCREEN = _Paths.OTP_SCREEN;
   static const ABOUTORGANIZATION_SCREEN = _Paths.ABOUTORGANIZATION_SCREEN;
   static const DETAILDEVELOPER_SCREEN = _Paths.DETAILDEVELOPER_SCREEN;
+
+  static const GALLERY_SEEALL = _Paths.GALLERY_SEEALL;
 }
 
 abstract class _Paths {
@@ -96,4 +98,5 @@ abstract class _Paths {
   static const PACKAGE_CF_BOOKING = '/package-cf-booking';
   static const ABOUTORGANIZATION_SCREEN = '/aboutorgranization-screen';
   static const DETAILDEVELOPER_SCREEN = '/detaildeveloper-screen';
+  static const GALLERY_SEEALL = '/gallery-seeall';
 }

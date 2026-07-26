@@ -29,7 +29,10 @@ class BookingScreenView extends GetView<BookingScreenController> {
         children: [
           Container(
             color: Theme.of(context).scaffoldBackgroundColor,
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
+            ),
             child: Obx(
               () => Row(
                 children: [
@@ -41,7 +44,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                     onTap: () => controller.changeStatus(BookingStatus.all),
                     context: context,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   _buildFilterChip(
                     label: 'upcoming'.tr,
                     count: controller.countUpcoming,
@@ -52,7 +55,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                         controller.changeStatus(BookingStatus.upcoming),
                     context: context,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   _buildFilterChip(
                     label: 'completed'.tr,
                     count: controller.countCompleted,
@@ -70,28 +73,49 @@ class BookingScreenView extends GetView<BookingScreenController> {
 
           Expanded(
             child: Obx(() {
-              final items = controller.filteredBookings;
-              if (items.isEmpty) {
+              if (controller.isLoading.value) {
                 return Center(
-                  child: Text(
-                    'no_bookings_found'.tr,
-                    style: GoogleFonts.googleSans(
-                      color: Colors.grey,
-                      fontSize: 16,
-                    ),
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 );
               }
-              return ListView.builder(
-                padding: EdgeInsets.all(16.0),
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return _buildBookingCard(items[index], context);
-                },
+
+              final items = controller.filteredBookings;
+              if (items.isEmpty) {
+                return RefreshIndicator(
+                  onRefresh: () => controller.fetchMyBookings(),
+                  child: ListView(
+                    children: [
+                      const SizedBox(height: 150),
+                      Center(
+                        child: Text(
+                          'no_bookings_found'.tr,
+                          style: GoogleFonts.googleSans(
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return RefreshIndicator(
+                onRefresh: () => controller.fetchMyBookings(),
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return _buildBookingCard(items[index], context);
+                  },
+                ),
               );
             }),
           ),
-          SizedBox(height: 50),
+
+          const SizedBox(height: 50),
         ],
       ),
     );
@@ -107,7 +131,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).colorScheme.primary
@@ -126,19 +150,19 @@ class BookingScreenView extends GetView<BookingScreenController> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: isSelected
                     ? Colors.white.withOpacity(0.2)
-                    : Color.fromARGB(255, 238, 236, 236),
+                    : const Color.fromARGB(255, 238, 236, 236),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '$count',
                 style: GoogleFonts.googleSans(
-                  color: isSelected ? Colors.white : Color(0xFF6B7280),
+                  color: isSelected ? Colors.white : const Color(0xFF6B7280),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -151,10 +175,14 @@ class BookingScreenView extends GetView<BookingScreenController> {
   }
 
   Widget _buildBookingCard(BookingModel booking, BuildContext context) {
-    bool isUpcoming = booking.status == BookingStatus.upcoming;
+    bool isUpcoming =
+        booking.status == BookingStatus.upcoming ||
+        booking.status == BookingStatus.pending;
+
+    bool isPackage = booking.bookingType == 'package';
 
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(24),
@@ -162,7 +190,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -172,19 +200,31 @@ class BookingScreenView extends GetView<BookingScreenController> {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
                 child: Image.network(
                   booking.imageUrl,
                   height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 180,
+                      color: Colors.grey.shade300,
+                      child: Icon(
+                        isPackage ? Icons.tour : Icons.hotel,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
                 ),
               ),
-
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),
                     gradient: LinearGradient(
@@ -204,23 +244,29 @@ class BookingScreenView extends GetView<BookingScreenController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      booking.hotelName,
-                      style: GoogleFonts.googleSans(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(
+                      width: Get.width * 0.85,
+                      child: Text(
+                        booking
+                            .hotelName, // Contains Package Name or Hotel Name
+                        style: GoogleFonts.googleSans(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.location_on,
                           color: Colors.white70,
                           size: 16,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           booking.location,
                           style: GoogleFonts.googleSans(
@@ -240,9 +286,8 @@ class BookingScreenView extends GetView<BookingScreenController> {
               ),
             ],
           ),
-
           Padding(
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -255,14 +300,14 @@ class BookingScreenView extends GetView<BookingScreenController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            booking.roomType,
+                            isPackage ? booking.hotelName : booking.roomType,
                             style: GoogleFonts.googleSans(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             booking.id,
                             style: GoogleFonts.googleSans(
@@ -287,13 +332,15 @@ class BookingScreenView extends GetView<BookingScreenController> {
                           ),
                         ),
                         Text(
-                          booking.nights == 1
-                              ? 'night_singular'.tr
-                              : 'nights_plural'.trParams({
-                                  'count': booking.nights.toString(),
-                                }),
+                          isPackage
+                              ? ''
+                              : (booking.nights == 1
+                                    ? 'night_singular'.tr
+                                    : 'nights_plural'.trParams({
+                                        'count': booking.nights.toString(),
+                                      })),
                           style: GoogleFonts.googleSans(
-                            color: Color(0xFF9CA3AF),
+                            color: const Color(0xFF9CA3AF),
                             fontSize: 12,
                           ),
                         ),
@@ -301,10 +348,9 @@ class BookingScreenView extends GetView<BookingScreenController> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-
+                const SizedBox(height: 20),
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
@@ -314,26 +360,30 @@ class BookingScreenView extends GetView<BookingScreenController> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.calendar_today_outlined,
                         size: 16,
                         color: Color(0xFF6B7280),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
-                        '${booking.startDate}  —  ${booking.endDate}',
+                        isPackage ||
+                                booking.endDate.isEmpty ||
+                                booking.endDate == booking.startDate
+                            ? booking.startDate
+                            : '${booking.startDate}  —  ${booking.endDate}',
                         style: GoogleFonts.googleSans(
                           color: Theme.of(context).textTheme.titleSmall!.color,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Spacer(),
-                      Icon(
+                      const Spacer(),
+                      const Icon(
                         Icons.people_outline,
                         size: 18,
                         color: Color(0xFF6B7280),
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         '${booking.guests}',
                         style: GoogleFonts.googleSans(
@@ -344,12 +394,11 @@ class BookingScreenView extends GetView<BookingScreenController> {
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
-
+                const SizedBox(height: 20),
                 if (isUpcoming) ...[
                   CustomButton(
                     title: 'view_details'.tr,
-                    margin: EdgeInsets.all(0),
+                    margin: EdgeInsets.zero,
                     onTap: () => controller.showBookingDetailsBottomSheet(
                       context,
                       booking,
@@ -358,13 +407,39 @@ class BookingScreenView extends GetView<BookingScreenController> {
                 ] else ...[
                   Row(
                     children: [
+                      // --- 1. WRITE A REVIEW BUTTON ---
                       Expanded(
                         child: Bounceable(
-                          onTap: () {
-                            Get.toNamed(Routes.REVIEW_HOTEL);
+                          onTap: () async {
+                            final routeName = isPackage
+                                ? Routes.PACKAGE_REVIEW
+                                : Routes.REVIEW_HOTEL;
+
+                            final result = await Get.toNamed(
+                              routeName,
+                              arguments: {
+                                'id': isPackage
+                                    ? booking.packageId
+                                    : booking.hotelId,
+                                'hotel_id': booking.hotelId,
+                                'package_id': booking.packageId,
+                                'booking_id': booking.id,
+                                'name_en': booking.hotelName,
+                                'name_km': booking.hotelName,
+                                'hotelName': booking.hotelName,
+                                'image_url': booking.imageUrl,
+                                'imageUrl': booking.imageUrl,
+                                'images': [booking.imageUrl],
+                                'check_in': booking.startDate,
+                              },
+                            );
+
+                            if (result == true) {
+                              controller.fetchMyBookings();
+                            }
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 14),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                             decoration: BoxDecoration(
                               color: Theme.of(
                                 context,
@@ -383,7 +458,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                                   size: 18,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Text(
                                   'write_a_review'.tr,
                                   style: GoogleFonts.googleSans(
@@ -399,12 +474,38 @@ class BookingScreenView extends GetView<BookingScreenController> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
 
+                      // --- 2. BOOK AGAIN BUTTON ---
                       Expanded(
                         child: Bounceable(
                           onTap: () {
-                            Get.toNamed(Routes.CHOOSE_ROOM);
+                            if (isPackage) {
+                              Get.toNamed(
+                                Routes.PACKAGE_DETAIL,
+                                arguments: {
+                                  "id": booking.packageId ?? booking.id,
+                                  "name_en": booking.hotelName,
+                                  "name_km": booking.hotelName,
+                                  "price_per_person": booking.price,
+                                  "duration_days": booking.nights,
+                                  "description_en": booking.note,
+                                  "image_url": booking.imageUrl,
+                                  "images": booking.images,
+                                },
+                              );
+                            } else {
+                              Get.toNamed(
+                                Routes.CHOOSE_ROOM,
+                                arguments: {
+                                  'id': booking.hotelId,
+                                  'hotel_id': booking.hotelId,
+                                  'name_en': booking.hotelName,
+                                  'image_url': booking.imageUrl,
+                                  'location': booking.location,
+                                },
+                              );
+                            }
                           },
                           child: Container(
                             width: Get.width,
@@ -439,9 +540,9 @@ class BookingScreenView extends GetView<BookingScreenController> {
 
   Widget _buildStatusTag(bool isUpcoming) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isUpcoming ? Color(0xFFE0E7FF) : Color(0xFFD1FAE5),
+        color: isUpcoming ? const Color(0xFFE0E7FF) : const Color(0xFFD1FAE5),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -449,14 +550,18 @@ class BookingScreenView extends GetView<BookingScreenController> {
         children: [
           Icon(
             isUpcoming ? Icons.access_time_filled : Icons.check_circle,
-            color: isUpcoming ? Color(0xFF2563EB) : Color(0xFF059669),
+            color: isUpcoming
+                ? const Color(0xFF2563EB)
+                : const Color(0xFF059669),
             size: 14,
           ),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             isUpcoming ? 'upcoming'.tr : 'completed'.tr,
             style: GoogleFonts.googleSans(
-              color: isUpcoming ? Color(0xFF2563EB) : Color(0xFF059669),
+              color: isUpcoming
+                  ? const Color(0xFF2563EB)
+                  : const Color(0xFF059669),
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),

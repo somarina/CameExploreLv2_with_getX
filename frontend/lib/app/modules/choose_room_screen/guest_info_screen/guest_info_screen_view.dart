@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/core/api/services/booking_services.dart';
+import 'package:frontend/app/modules/booking_screen/controllers/booking_screen_controller.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
+import 'package:frontend/app/modules/profile_screen/userProfile_screen/user_profile_screen_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
@@ -180,86 +183,13 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Angkor wat private tour",
-                          style: GoogleFonts.googleSans(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "\$120",
-                        style: GoogleFonts.googleSans(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "taxes_and_fees".tr,
-                          style: GoogleFonts.googleSans(
-                            fontSize: 14,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "included".tr,
-                        style: GoogleFonts.googleSans(
-                          fontSize: 14,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 30),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "total".tr,
-                          style: GoogleFonts.googleSans(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "\$149",
-                        style: GoogleFonts.googleSans(
-                          fontSize: 24,
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 30),
+
+            _buildPriceSummaryCard(context),
+
+            const SizedBox(height: 30),
+
             Row(
               children: [
                 Text(
@@ -295,29 +225,24 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 fillColor: controller.themeCtrl.getDark()
                     ? Color(0xFF1a1a1a)
                     : Color(0xffF3F4F6),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
 
+                // border: OutlineInputBorder(
+                //   borderRadius: BorderRadius.circular(24),
+                //   borderSide: BorderSide.none,
+                // ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: controller.themeCtrl.getDark()
-                      ? BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 1,
-                        )
-                      : BorderSide.none,
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1,
+                  ),
                 ),
-
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: controller.themeCtrl.getDark()
-                      ? BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 1.5,
-                        )
-                      : BorderSide.none,
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1.5,
+                  ),
                 ),
                 counterText: "",
               ),
@@ -337,123 +262,298 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
             ),
             SizedBox(height: 30),
 
-            SizedBox(
-              width: double.infinity,
-              height: 58,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade700,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                onPressed: () {
-                  final now = DateTime.now();
-                  controller.transactionDate.value = DateFormat(
-                    'dd MMM yyyy, hh:mm a',
-                  ).format(now);
-                  if (!controller.validateGuestInfo()) return;
-
-                  showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24),
-                      ),
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                height: 58,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                    builder: (context) {
-                      return Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 5,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(10),
+                  ),
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () async {
+                          controller.isLoading.value = true;
+
+                          try {
+                            final now = DateTime.now();
+
+                            controller.transactionDate.value = DateFormat(
+                              'dd MMM yyyy, hh:mm a',
+                            ).format(now);
+
+                            if (!controller.validateGuestInfo()) {
+                              return;
+                            }
+
+                            await showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primaryContainer,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(24),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              "scan_to_pay".tr,
-                              style: GoogleFonts.googleSans(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Image.asset(
-                              "assets/svg/qrr.png",
-                              height: 260,
-                              width: 320,
-                              fit: BoxFit.cover,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "scan_instruction".tr,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.googleSans(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            CustomButton(
-                              title: "done".tr,
-                              margin: EdgeInsets.zero,
-                              onTap: () {
-                                Get.toNamed(
-                                  Routes.CONFIRM_BOOKING,
-                                  arguments: {
-                                    "firstName": controller.firstNameCtrl.text,
-                                    "lastName": controller.lastNameCtrl.text,
-                                    "email": controller.emailCtrl.text,
-                                    "phone": controller.phoneCtrl.text,
-                                    "checkIn": controller.checkIn,
-                                    "checkOut": controller.checkOut,
-                                    "roomType": "Private 6 Bunk Bed Room",
-                                    "hotel": "Bamboo Bungalow",
-                                    "guests": "6 adults",
-                                    "rooms": "1 Room",
-                                    "totalPrice": "\$149",
-                                    "transactionDate": DateFormat(
-                                      'MMM dd, yyyy hh:mm a',
-                                    ).format(now),
-                                  },
+                              builder: (context) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(24),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 50,
+                                        height: 5,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Text(
+                                        "scan_to_pay".tr,
+                                        style: GoogleFonts.googleSans(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Image.asset(
+                                        "assets/svg/qrr.png",
+                                        height: 260,
+                                        width: 320,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        "scan_instruction".tr,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.googleSans(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      SizedBox(height: 24),
+                                      CustomButton(
+                                        title: "done".tr,
+                                        margin: EdgeInsets.zero,
+                                        onTap: () async {
+                                          Get.back();
+
+                                          String? createdBookingId =
+                                              await controller.createBooking();
+
+                                          if (createdBookingId != null) {
+                                            final int count =
+                                                controller.roomsCount;
+                                            final String roomsText = count > 1
+                                                ? "$count Rooms"
+                                                : "$count Room";
+
+                                            Get.offAllNamed(
+                                              Routes.CONFIRM_BOOKING,
+                                              arguments: {
+                                                "bookingRef": createdBookingId,
+                                                "firstName": controller
+                                                    .firstNameCtrl
+                                                    .text,
+                                                "lastName": controller
+                                                    .lastNameCtrl
+                                                    .text,
+                                                "email":
+                                                    controller.emailCtrl.text,
+                                                "phone":
+                                                    controller.phoneCtrl.text,
+                                                "checkIn": controller.checkIn,
+                                                "checkOut": controller.checkOut,
+                                                "roomType":
+                                                    controller.roomTypeName,
+                                                "hotel": controller.hotelName,
+                                                "guests":
+                                                    "${controller.adultsCount} Adults, ${controller.childrenCount} Children",
+                                                "rooms": roomsText,
+                                                "totalPrice":
+                                                    "\$${controller.calculatedTotalPrice.toStringAsFixed(0)}",
+                                                "transactionDate": DateFormat(
+                                                  'MMM dd, yyyy hh:mm a',
+                                                ).format(DateTime.now()),
+                                              },
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      SizedBox(height: 20),
+                                    ],
+                                  ),
                                 );
                               },
+                            );
+                          } finally {
+                            controller.isLoading.value = false;
+                          }
+                        },
+
+                  child: controller.isLoading.value
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
                             ),
-                            const SizedBox(height: 20),
-                          ],
+                          ),
+                        )
+                      : Text(
+                          "pay_via_khqr".tr,
+                          style: GoogleFonts.googleSans(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      );
-                    },
-                  );
-                },
-                child: Text(
-                  "pay_via_khqr".tr,
-                  style: GoogleFonts.googleSans(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+
+            SizedBox(height: 30),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildPriceSummaryCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Theme.of(context).colorScheme.primary),
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: controller.roomTypeName,
+                            style: GoogleFonts.googleSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          if (controller.roomsCount > 1)
+                            TextSpan(
+                              text: "  (${controller.roomsCount} Rooms)",
+                              style: GoogleFonts.googleSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall!
+                                    .color
+                                    ?.withValues(alpha: 0.7),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+
+                    Text(
+                      "\$${controller.pricePerNight.toStringAsFixed(0)} x ${controller.nights > 0 ? controller.nights : 1} ${controller.nights == 1 ? 'night' : 'nights'}",
+                      style: GoogleFonts.googleSans(
+                        fontSize: 13,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                "\$${controller.calculatedTotalPrice.toStringAsFixed(0)}",
+                style: GoogleFonts.googleSans(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "taxes_and_fees".tr,
+                  style: GoogleFonts.googleSans(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ),
+              Text(
+                "included".tr,
+                style: GoogleFonts.googleSans(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 30),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "total".tr,
+                  style: GoogleFonts.googleSans(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ),
+              Text(
+                "\$${controller.calculatedTotalPrice.toStringAsFixed(0)}",
+                style: GoogleFonts.googleSans(
+                  fontSize: 24,
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _bookingCard(BuildContext context) {
+    // Dynamic values from roomType map
+    final String roomName =
+        controller.roomType["name_en"] ??
+        controller.roomType["name_kh"] ??
+        "Standard Room";
+    final int capacity =
+        controller.roomType["capacity"] ??
+        (controller.adultsCount + controller.childrenCount);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
@@ -559,7 +659,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                   children: [
                     Expanded(
                       child: Text(
-                        "Private 6 Bung Bed Room",
+                        roomName,
                         style: GoogleFonts.googleSans(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -575,7 +675,9 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                         ),
                       ),
                       child: Text(
-                        "room_count".trParams({'count': '1'}),
+                        "room_count".trParams({
+                          'count': '${controller.roomsCount}',
+                        }),
                         style: GoogleFonts.googleSans(
                           fontSize: 14,
                           color: Colors.grey,
@@ -587,12 +689,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 const SizedBox(height: 18),
                 _roomInfoRow(
                   Icons.person_outline,
-                  "price_for_adults".trParams({'count': '6'}),
-                  context,
-                ),
-                _roomInfoRow(
-                  Icons.bed_outlined,
-                  "bunk beds".trParams({'count': '6'}),
+                  "price_for_adults".trParams({'count': '$capacity'}),
                   context,
                 ),
                 _roomInfoRow(Icons.block, "non_smoking".tr, context),
@@ -643,34 +740,6 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                           "special_discount".tr,
                           style: GoogleFonts.googleSans(
                             color: const Color(0xff00897B),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xffFFF5EA),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("🔥", style: TextStyle(fontSize: 20)),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          "high_demand".tr,
-                          style: GoogleFonts.googleSans(
-                            color: const Color(0xffE65100),
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                           ),

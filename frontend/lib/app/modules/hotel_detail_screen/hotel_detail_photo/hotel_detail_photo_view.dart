@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/modules/detail_places_screen/Gallery/gallery_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,52 +12,64 @@ class HotelDetailPhotoView extends GetView<HotelDetailPhotoViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
-          "Bamboo Bunggalow Photos",
+          "Photos (${controller.hotelPhotos.length.toString()})",
           style: GoogleFonts.googleSans(
+            fontSize: 20,
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
       ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (controller.hotelPhotos.isNotEmpty) ...[
+                SizedBox(height: 18),
 
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisExtent: 120,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: controller.hotelPhotos.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 1.2,
+                  ),
+                  itemBuilder: (_, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        // Open Fullscreen Gallery
+                        Get.to(
+                          () => GalleryView(
+                            images: controller.hotelPhotos,
+                            initialIndex: index,
+                          ),
+                        );
+                      },
+                      child: Hero(
+                        tag: controller.hotelPhotos[index],
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.network(
+                            controller.hotelPhotos[index],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return ClipRRect(
-                    borderRadius: BorderRadiusGeometry.circular(12),
-                    child: Image.asset(
-                      "assets/images/bamboo.png",
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+              ],
+            ],
+          ),
         ),
       ),
     );

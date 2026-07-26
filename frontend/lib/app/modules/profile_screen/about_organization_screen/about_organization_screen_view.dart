@@ -58,7 +58,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                       ),
                       Text(
                         "about_app_desc".tr,
-                        textAlign: TextAlign.center, // for text center
+                        textAlign: TextAlign.center,
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 16,
                           color: Theme.of(context).colorScheme.secondary,
