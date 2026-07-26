@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
+import 'package:frontend/app/modules/discover_screen/search_screen/discover_place_model.dart';
 import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
@@ -21,6 +22,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
 
   @override
   Widget build(BuildContext context) {
+    print(controller.place);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(

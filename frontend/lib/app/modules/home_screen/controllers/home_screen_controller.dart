@@ -233,13 +233,29 @@ class HomeScreenController extends GetxController {
     trendingPlaces.value = trendingPlaces.take(10).toList();
   }
 
+  Map<String, dynamic> convertPlace(Map place) {
+    return {
+      "id": place["id"],
+      "name_en": place["nameEn"] ?? place["name"] ?? "",
+      "name_km": place["nameKm"] ?? "",
+      "description_en": place["description"] ?? "",
+      "province": place["province"] ?? "",
+      "image_url": place["imageUrl"] ?? place["image_url"] ?? "",
+      "latitude": place["latitude"] ?? 0,
+      "longitude": place["longitude"] ?? 0,
+      "rating": place["rating"] ?? 0,
+      "phoneNum": place["phoneNum"],
+    };
+  }
+
   @override
-  void onInit() {
+  void onInit() async {
     // TODO: implement onInit
     super.onInit();
     getProfile();
     getAvatar();
     getCategories();
     getPlaces();
+    await favoriteController.loadFavoriteStatus();
   }
 }

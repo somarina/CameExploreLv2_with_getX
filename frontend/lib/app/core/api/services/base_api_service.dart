@@ -69,8 +69,4 @@ class BaseApiService {
       debugPrint("Error ${e.toString()}");
     }
   }
-
-
-
-  
 }

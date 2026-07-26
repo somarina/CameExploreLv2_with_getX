@@ -154,7 +154,7 @@ class MainApp extends StatelessWidget {
       locale: language == "kmKH" ? Locale("kmKH") : Locale("enUS"),
 
       // routes
-      initialRoute: Routes.SPLASH_SCREEN,
+      initialRoute: Routes.LOGIN_SCREEN,
       getPages: AppPages.routes,
     );
   }

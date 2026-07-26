@@ -203,6 +203,7 @@ Map<String, String> kmKH = {
   "Done": "រួចរាល់",
   "Delete": "លុប",
   "Create a list": "បង្កើតបញ្ជី",
+  "Create a new list": "បង្កើតបញ្ជីថ្មី",
   "Select a list": "ជ្រើសរើសបញ្ជី",
   "List name": "ឈ្មោះបញ្ជី",
   "Enter new list name": "បញ្ចូលឈ្មោះបញ្ជីថ្មី",
@@ -214,6 +215,7 @@ Map<String, String> kmKH = {
   "Popular places": "កន្លែងពេញនិយម",
   "people searched this": "នាក់បានស្វែងរកទីកន្លែងនេះ",
   "searches": "ស្វែងរក",
+  "Find the place you want to go": "ស្វែងរកទីកន្លែងដែលអ្នកចង់ទៅ...",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///// Home
   "trending": "កំពុងពេញនិយម",

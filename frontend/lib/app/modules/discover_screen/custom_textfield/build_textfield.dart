@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../core/constants/app_fonts/app_fonst.dart';
 
@@ -39,7 +40,7 @@ class BuildTextfield extends StatelessWidget {
         decoration: InputDecoration(
           filled: true,
           fillColor: Theme.of(context).colorScheme.primaryContainer,
-          hintText: "ស្វែងរកកន្លែងទេសចរណ៍...",
+          hintText: "Find the place you want to go".tr,
           hintStyle: AppFonts.fontBtnSearch.copyWith(
             color: Theme.of(context).textTheme.titleSmall!.color,
           ),
