@@ -8,6 +8,8 @@ class RegisterSchema(BaseModel):
     gender: str
     email: EmailStr
     phone: str
+    business_type: str
+    address: str
 
     password: str = Field(..., min_length=8, max_length=72)
     confirm_password: str = Field(..., min_length=8, max_length=72)
@@ -32,6 +34,35 @@ class RegisterSchema(BaseModel):
 
         return value
 
+class RegisterCompanySchema(BaseModel):
+    name: str
+    email: EmailStr
+    phone: str
+    business_type: str
+    address: str
+
+    password: str = Field(..., min_length=8, max_length=72)
+    confirm_password: str = Field(..., min_length=8, max_length=72)
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value):
+
+        # at least 1 number
+        if not re.search(r"\d", value):
+            raise ValueError(
+                "Password must contain at least 1 number"
+            )
+
+        # at least 2 letters
+        letters = re.findall(r"[a-zA-Z]", value)
+
+        if len(letters) < 2:
+            raise ValueError(
+                "Password must contain at least 2 letters"
+            )
+
+        return value
 
 class LoginSchema(BaseModel):
     email_or_phone: str

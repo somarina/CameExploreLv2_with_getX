@@ -89,7 +89,7 @@ async def update_profile_info(
 
         update_data["email"] = email
 
-    if payload.phone is not None:
+    if payload.phone is not None and payload.phone.strip() != "":
         if await users_collection.find_one({"phone": payload.phone, "_id": {"$ne": current_user["_id"]}}):
             err("Phone already used")
 

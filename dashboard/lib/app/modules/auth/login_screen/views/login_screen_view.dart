@@ -126,7 +126,6 @@ class LoginScreenView extends GetView<LoginScreenController> {
                 ),
               ),
             ),
-          
           ],
         ),
       );
@@ -325,6 +324,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
                       ),
                     ),
                   ),
+
                   Text(
                     "remember_me".tr,
                     style: _font(
@@ -336,7 +336,9 @@ class LoginScreenView extends GetView<LoginScreenController> {
                 ],
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed(Routes.FORGET_PASSWORD);
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                 ),
@@ -355,7 +357,8 @@ class LoginScreenView extends GetView<LoginScreenController> {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: ElevatedButton(
+            child: Obx(
+              () => ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
                 elevation: 0,
@@ -363,8 +366,17 @@ class LoginScreenView extends GetView<LoginScreenController> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onPressed: controller.login,
-              child: Text(
+              onPressed: controller.isLoading.value ? null : controller.login,
+              child: controller.isLoading.value
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.4,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
                 "sign_in".tr,
                 style: _font(
                   "sign_in".tr,
@@ -374,43 +386,10 @@ class LoginScreenView extends GetView<LoginScreenController> {
                 ),
               ),
             ),
-          ),
+            ),
+            ),
 
           SizedBox(height: 14),
-
-          Center(
-            child: Text(
-              "continue_with".tr,
-              textAlign: TextAlign.center,
-              style: _font(
-                "continue_with".tr,
-                color: subtitleColor,
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
-              ),
-            ),
-          ),
-
-          SizedBox(height: 14),
-
-          Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _socialCircleButton(
-                  imagePath: "assets/icons/google_icon.png",
-                  isDark: isDark,
-                  onTap: controller.continueWithGoogle,
-                ),
-                SizedBox(width: 16),
-                _socialCircleButton(
-                  imagePath: "assets/icons/telegram_icon.png",
-                  isDark: isDark,
-                  onTap: controller.continueWithTelegram,
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

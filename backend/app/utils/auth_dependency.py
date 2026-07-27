@@ -102,6 +102,31 @@ async def _load_admin_from_payload(payload: dict):
     return admin
 
 
+async def get_current_user_or_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Dependency for routes that any *logged-in* caller may use — a normal
+    user OR an admin. Accepts:
+      - an admin-collection token (type=admin, admin_id) from the admin
+        dashboard login, OR
+      - a normal users-collection token (user_id) — including legacy
+        accounts whose role/roles happen to include 'admin'.
+
+    Returns the user/admin dict, with 'active_role' set so callers can do
+    is_admin(current_user) if they need to branch on it (e.g. "owner or
+    admin can delete")."""
+    payload = decode_access_token(credentials.credentials)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    admin = await _load_admin_from_payload(payload)
+    if admin:
+        return admin
+
+    if "user_id" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    return await get_current_user(credentials)
+
+
 async def require_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Dependency that only lets admin accounts through. Accepts both an
     admin-collection token (type=admin, from auth_dashboard.py login) and

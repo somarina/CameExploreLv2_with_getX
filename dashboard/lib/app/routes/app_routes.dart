@@ -10,6 +10,7 @@ abstract class Routes {
   static const PERSONAL_REGISTER_SCREEN = _Paths.PERSONAL_REGISTER_SCREEN;
   static const COMPANY_REGISTER_SCREEN = _Paths.COMPANY_REGISTER_SCREEN;
   static const ADMIN_SCREEN = _Paths.ADMIN_SCREEN;
+  static const FORGET_PASSWORD = _Paths.FORGET_PASSWORD;
 }
 
 abstract class _Paths {
@@ -19,4 +20,5 @@ abstract class _Paths {
   static const PERSONAL_REGISTER_SCREEN = '/personal-register-screen';
   static const COMPANY_REGISTER_SCREEN = '/company-register-screen';
   static const ADMIN_SCREEN = '/admin-screen';
+  static const FORGET_PASSWORD = '/forget-password';
 }

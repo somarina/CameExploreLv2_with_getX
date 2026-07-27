@@ -85,7 +85,7 @@ class PersonalRegisterScreenView extends GetView<RegisterScreenController> {
                                         isDark: isDark,
                                         onTap: () => Get.back(),
                                       ),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: 8),
                                       _circleIconButton(
                                         icon: isDark
                                             ? Icons.light_mode
@@ -98,8 +98,7 @@ class PersonalRegisterScreenView extends GetView<RegisterScreenController> {
                                 ],
                               ),
 
-                              const SizedBox(height: 14),
-
+                              SizedBox(height: 14),
                             ],
                           ),
                         ),

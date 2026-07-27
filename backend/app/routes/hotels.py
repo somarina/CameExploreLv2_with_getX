@@ -64,6 +64,8 @@ def serialize_hotel(hotel: dict, lang: Optional[str] = None) -> dict:
         "province_km": hotel.get("province_km"),
         "address_en": hotel.get("address_en"),
         "address_km": hotel.get("address_km"),
+        "phoneNum": hotel.get("phoneNum"),
+        "email": hotel.get("email"),
         "star_rating": hotel.get("star_rating"),
         "image_url": hotel.get("image_url"),
         "images": hotel.get("images", []),
@@ -94,6 +96,7 @@ def serialize_hotel(hotel: dict, lang: Optional[str] = None) -> dict:
 async def get_hotels(
     lang: Optional[str] = Query(None),
     province: Optional[str] = Query(None),
+    search: Optional[str] = Query(None, description="Search by hotel name, address, or amenities"),
     status: Optional[str] = Query(None, description="admin only: pending | approved | rejected"),
     limit: int = Query(50, ge=1, le=200),
     skip: int = Query(0, ge=0),
@@ -108,6 +111,12 @@ async def get_hotels(
 
     if province:
         query["province"] = {"$regex": f"^{province}$", "$options": "i"}
+
+    if search:
+        query["$or"] = [
+            {f: {"$regex": search, "$options": "i"}}
+            for f in ("name_en", "name_km", "address_en", "address_km", "amenities")
+        ]
 
     total = await hotels_collection.count_documents(query)
     cursor = hotels_collection.find(query).skip(skip).limit(limit)
