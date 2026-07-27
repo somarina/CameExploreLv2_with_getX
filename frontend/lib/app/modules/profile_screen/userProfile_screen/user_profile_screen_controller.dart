@@ -12,6 +12,8 @@ class UserProfileScreenViewController extends GetxController {
   var authService = AuthServices();
 
   late UserModel user;
+
+  bool get isGuest => box.read('userMode') == 'guest';
   ImageProvider? getAvatar() {
     final u = user;
 
@@ -30,10 +32,28 @@ class UserProfileScreenViewController extends GetxController {
   }
 
   Future<void> getProfile() async {
+    // Guests have no token — calling this hits a login-only endpoint,
+    // which returns 401 and forces a "session expired" bounce to Login.
+    if (isGuest) {
+      user = UserModel(
+        id: '',
+        name: 'Guest',
+        email: '',
+        phone: '',
+        avatar: '',
+        gender: '',
+      );
+      isLogin.value = false;
+      return;
+    }
     isLoading.value = true;
-    var response = await authService.fetchProfile();
-    user = UserModel.fromMap(response['data']);
-    isLoading.value = false;
+    try {
+      var response = await authService.fetchProfile();
+      user = UserModel.fromMap(response['data']);
+      isLogin.value = true;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override

@@ -197,7 +197,12 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text("create acc".tr, style: AppFonts.fontsButton),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.offAllNamed(Routes.LOGIN_SCREEN);
+                    },
+                    child: Text("create acc".tr, style: AppFonts.fontsButton),
+                  ),
                 ),
               ],
             ),

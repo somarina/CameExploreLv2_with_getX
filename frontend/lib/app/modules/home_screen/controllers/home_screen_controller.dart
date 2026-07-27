@@ -8,9 +8,13 @@ import 'package:frontend/app/core/api/services/review_hotel_services.dart';
 import 'package:frontend/app/core/api/services/travel_package_services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class HomeScreenController extends GetxController {
   // final favoriteController = Get.find<FavoriteScreenController>();
+
+  final _box = GetStorage();
+  bool get isGuest => _box.read('userMode') == 'guest';
 
   var currentIndex = 0.obs;
   var authService = AuthServices();
@@ -156,6 +160,12 @@ class HomeScreenController extends GetxController {
   }
 
   Future<void> getProfile() async {
+    // Guests have no token — calling this hits a login-only endpoint,
+    // which returns 401 and forces a "session expired" bounce to Login.
+    if (isGuest) {
+      user.value = null;
+      return;
+    }
     try {
       isLoadingPf.value = true;
       var response = await authService.fetchProfile();
@@ -355,24 +365,6 @@ class HomeScreenController extends GetxController {
 
   @override
   void onInit() {
-  Map<String, dynamic> convertPlace(Map place) {
-    return {
-      "id": place["id"],
-      "name_en": place["nameEn"] ?? place["name"] ?? "",
-      "name_km": place["nameKm"] ?? "",
-      "description_en": place["description"] ?? "",
-      "province": place["province"] ?? "",
-      "image_url": place["imageUrl"] ?? place["image_url"] ?? "",
-      "latitude": place["latitude"] ?? 0,
-      "longitude": place["longitude"] ?? 0,
-      "rating": place["rating"] ?? 0,
-      "phoneNum": place["phoneNum"],
-    };
-  }
-
-  @override
-  void onInit() async {
-    // TODO: implement onInit
     super.onInit();
     
     getProfile();
@@ -382,6 +374,5 @@ class HomeScreenController extends GetxController {
     getHotels();
     getPackages();
 
-    await favoriteController.loadFavoriteStatus();
   }
 }

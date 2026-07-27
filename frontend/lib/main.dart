@@ -32,10 +32,10 @@ void main() async {
   Get.put(ThemeModeViewController());
   Get.put(LoginScreenController());
   // Get.put(UserProfileScreenViewController());
-  Get.put(HomeScreenController());
-  Get.put(FavoriteScreenController());
-  Get.put(SearchScreenController());
-  Get.put(BookingScreenController());
+  Get.lazyPut(() => HomeScreenController());
+  Get.lazyPut(() => FavoriteScreenController());
+  Get.lazyPut(() => SearchScreenController());
+  Get.lazyPut(() => BookingScreenController());
 }
 
 Future<void> _initServicesInBackground() async {
@@ -150,7 +150,7 @@ class MainApp extends StatelessWidget {
       locale: language == "kmKH" ? Locale("kmKH") : Locale("enUS"),
 
       // routes
-      initialRoute: Routes.LOGIN_SCREEN,
+      initialRoute: Routes.SPLASH_SCREEN,
       getPages: AppPages.routes,
     );
   }
