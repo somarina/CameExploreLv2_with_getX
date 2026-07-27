@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
+import '../../../core/api/services/dashboard_auth_service.dart';
+import '../../../routes/app_pages.dart';
 import '../models/admin_colors.dart';
 import '../models/admin_models.dart';
 
@@ -8,14 +11,36 @@ import '../models/admin_models.dart';
 enum AdminSection { dashboard, managePlaces, manageUsers, approvals, analytics }
 
 class AdminScreenController extends GetxController {
+  final DashboardAuthService _authService = DashboardAuthService();
+
   // ====================== NAVIGATION STATE ======================
   final Rx<AdminSection> currentSection = AdminSection.dashboard.obs;
 
   void goTo(AdminSection section) => currentSection.value = section;
 
-  // ====================== ADMIN PROFILE (mock for now) ======================
-  final adminName = 'somarina'.obs;
-  final adminRole = 'Admin'.obs;
+  // ====================== ADMIN PROFILE (from login) ======================
+  final adminName = ''.obs;
+  final adminRole = ''.obs;
+
+  void _loadAdminProfile() {
+    final box = GetStorage();
+    final name = box.read<String>('dashboard_admin_name') ?? '';
+    final role = box.read<String>('dashboard_active_role') ?? '';
+    adminName.value = name.isNotEmpty ? name : 'Admin';
+    adminRole.value = role.isNotEmpty
+        ? role[0].toUpperCase() + role.substring(1)
+        : 'Admin';
+  }
+
+  Future<void> logout() async {
+    await _authService.logoutService();
+    final box = GetStorage();
+    await box.remove('dashboard_token');
+    await box.remove('dashboard_admin_name');
+    await box.remove('dashboard_active_role');
+    await box.remove('dashboard_email');
+    Get.offAllNamed(Routes.LOGIN_SCREEN);
+  }
 
   // ====================== TOP-LEVEL STATS (mock for now) ======================
   // TODO: replace with real counts from GET /api/dashboard/auth/admin + places API
@@ -220,5 +245,6 @@ class AdminScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadAdminProfile();
   }
 }

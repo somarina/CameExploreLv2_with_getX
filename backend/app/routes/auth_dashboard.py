@@ -21,7 +21,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends
 
 from app.db.daatabase import db
-from app.schemas.auth_schemas import RegisterSchema, LoginSchema
+from app.schemas.auth_schemas import RegisterCompanySchema, RegisterSchema, LoginSchema
 from app.utils.jwt import create_access_token, decode_access_token
 from app.utils.password import hash_password, verify_password
 from app.utils.auth_dependency import get_current_user
@@ -131,7 +131,7 @@ async def register_personal(payload: RegisterSchema):
 
 # ====================== REGISTER COMPANY ======================
 @router.post("/register/company")
-async def register_company(payload: RegisterSchema):
+async def register_company(payload: RegisterCompanySchema):
 
     email = payload.email.lower()
     existing = await users_collection.find_one({"email": email})
@@ -162,9 +162,10 @@ async def register_company(payload: RegisterSchema):
     now = datetime.utcnow()
     company = {
         "name": payload.name,
-        "gender": payload.gender,
         "email": email,
         "phone": payload.phone,
+        "business_type": payload.business_type,
+        "address": payload.address,
         "password": hash_password(payload.password),
         "profile_image": "",
         "roles": ["company"],

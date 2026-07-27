@@ -198,28 +198,42 @@ class _AdminAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isCompact) {
-      return CircleAvatar(
-        radius: 18,
+    final avatarMenu = PopupMenuButton<String>(
+      tooltip: 'Account',
+      offset: const Offset(0, 48),
+      onSelected: (value) {
+        if (value == 'logout') controller.logout();
+      },
+      itemBuilder: (context) => const [
+        PopupMenuItem(
+          value: 'logout',
+          child: Row(
+            children: [
+              Icon(Icons.logout_rounded, size: 18, color: AdminColors.red),
+              SizedBox(width: 10),
+              Text('Logout'),
+            ],
+          ),
+        ),
+      ],
+      child: CircleAvatar(
+        radius: isCompact ? 18 : 21,
         backgroundColor: AdminColors.primary,
         child: Obx(() => Text(
               controller.adminName.value.isNotEmpty ? controller.adminName.value[0].toUpperCase() : 'A',
-              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12),
+              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w700, fontSize: isCompact ? 12 : 14),
             )),
-      );
+      ),
+    );
+
+    if (isCompact) {
+      return avatarMenu;
     }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        CircleAvatar(
-          radius: 21,
-          backgroundColor: AdminColors.primary,
-          child: Obx(() => Text(
-                controller.adminName.value.isNotEmpty ? controller.adminName.value[0].toUpperCase() : 'A',
-                style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w700),
-              )),
-        ),
+        avatarMenu,
         const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

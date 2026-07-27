@@ -10,7 +10,7 @@ from app.models.booking_models import (
     PackageBookingCreate,
     BookingStatusUpdate,
 )
-from app.utils.auth_dependency import get_current_user, require_company_or_admin, is_admin
+from app.utils.auth_dependency import get_current_user_or_admin, require_company_or_admin, is_admin
 
 router = APIRouter(prefix="/bookings", tags=["Bookings"])
 
@@ -74,12 +74,12 @@ async def owns_booking_target(user_id: str, booking: dict) -> bool:
     return False
 
 
-# ── CREATE (any logged-in user) ─────────────────────────────────────────────
+# ── CREATE (any logged-in user or admin) ────────────────────────────────
 
 @router.post("/hotel")
 async def book_hotel(
     payload: HotelBookingCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     if not ObjectId.is_valid(payload.hotel_id):
         err("Invalid hotel_id", 400)
@@ -119,6 +119,7 @@ async def book_hotel(
         "check_in": payload.check_in.isoformat(),
         "check_out": payload.check_out.isoformat(),
         "rooms_booked": payload.rooms_booked,
+        "number_of_people": payload.number_of_people,   # ← new
         "total_price": total_price,
         "status": "pending",
         "guest_note": payload.guest_note,
@@ -136,7 +137,7 @@ async def book_hotel(
 @router.post("/package")
 async def book_package(
     payload: PackageBookingCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     if not ObjectId.is_valid(payload.package_id):
         err("Invalid package_id", 400)
@@ -180,7 +181,7 @@ async def get_my_bookings(
     status: Optional[str] = Query(None),
     limit: int = Query(50, ge=1, le=200),
     skip: int = Query(0, ge=0),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     query = {"user_id": str(current_user["_id"])}
     if status:
@@ -233,7 +234,7 @@ async def get_received_bookings(
 @router.get("/{booking_id}")
 async def get_booking(
     booking_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     oid = get_object_id(booking_id)
     booking = await bookings_collection.find_one({"_id": oid})
@@ -254,7 +255,7 @@ async def get_booking(
 async def update_booking_status(
     booking_id: str,
     payload: BookingStatusUpdate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     oid = get_object_id(booking_id)
     booking = await bookings_collection.find_one({"_id": oid})
@@ -283,3 +284,31 @@ async def update_booking_status(
     )
     updated = await bookings_collection.find_one({"_id": oid})
     return ok("Booking status updated", serialize_booking(updated))
+
+
+# ── DELETE (admin only) ──────────────────────────────────────────────────
+
+@router.delete("/{booking_id}")
+async def delete_booking(
+    booking_id: str,
+    current_user: dict = Depends(get_current_user_or_admin),
+):
+    """
+    Permanently remove a booking record. Admin-only.
+
+    Regular users and business (hotel/package) owners should use
+    PUT /{booking_id}/status with status="cancelled" instead — that keeps
+    the record (price, dates, payment trail) for history/reporting/support,
+    it just marks it cancelled. This DELETE is a hard delete with no undo,
+    reserved for admin cleanup (test data, spam, legal removal requests).
+    """
+    oid = get_object_id(booking_id)
+    booking = await bookings_collection.find_one({"_id": oid})
+    if not booking:
+        err("Booking not found", 404)
+
+    if not is_admin(current_user):
+        err("Only admins can delete a booking. Use status=cancelled to cancel it instead.", 403)
+
+    await bookings_collection.delete_one({"_id": oid})
+    return ok("Booking deleted successfully")

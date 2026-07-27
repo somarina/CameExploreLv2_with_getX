@@ -12,6 +12,7 @@ class HotelBookingCreate(BaseModel):
     check_in: date
     check_out: date
     rooms_booked: int = Field(1, gt=0)
+    number_of_people: int = Field(1, gt=0)   # ← new
     guest_note: Optional[str] = None
 
     @model_validator(mode="after")

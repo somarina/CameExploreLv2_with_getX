@@ -1,12 +1,14 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
+import cloudinary.uploader
 
+from app.config.cloudinary_config import *
 from app.db.daatabase import db
 from app.models.review_models import PlaceReviewCreate, PackageReviewCreate, HotelReviewCreate
-from app.utils.auth_dependency import get_current_user, is_admin
+from app.utils.auth_dependency import get_current_user_or_admin, is_admin
 
 router = APIRouter(prefix="/api/reviews", tags=["Listing Reviews"])
 
@@ -131,6 +133,60 @@ async def get_review_summary(target_type: str, target_id: str) -> dict:
     return {"overall": overall, "review_count": count, "histogram": histogram}
 
 
+# ── SHARED: image upload (Cloudinary) ────────────────────────────────────
+
+@router.post("/upload-images/{target_type}/{target_id}", summary="Upload review images to Cloudinary")
+async def upload_review_images(
+    target_type: str,
+    target_id: str,
+    file1: UploadFile = File(...),
+    file2: Optional[UploadFile] = File(None),
+    file3: Optional[UploadFile] = File(None),
+    file4: Optional[UploadFile] = File(None),
+    file5: Optional[UploadFile] = File(None),
+    current_user: dict = Depends(get_current_user_or_admin),
+):
+    """
+    Upload up to 5 review photos to Cloudinary and get back their URLs.
+    target_type must be 'place', 'hotel', or 'package', and target_id must be
+    the real place/hotel/package ID the review is for — this is what lets us
+    know *whose* review the images belong to (e.g. a specific hotel vs a
+    specific package), and it organizes the Cloudinary folder accordingly.
+
+    Uses individual file slots (not a list) so Swagger UI renders proper
+    "Choose File" buttons for each, same as the profile avatar upload.
+
+    Call this first, then pass the returned URLs in the `images` field when
+    creating that place/hotel/package review.
+    """
+    collections = {
+        "place": places_collection,
+        "hotel": hotels_collection,
+        "package": packages_collection,
+    }
+    if target_type not in collections:
+        err("target_type must be 'place', 'hotel', or 'package'", 400)
+
+    oid = get_object_id(target_id, f"{target_type} ID")
+    if not await collections[target_type].find_one({"_id": oid}):
+        err(f"{target_type.capitalize()} not found", 404)
+
+    files = [f for f in [file1, file2, file3, file4, file5] if f is not None]
+
+    urls = []
+    try:
+        for file in files:
+            result = cloudinary.uploader.upload(
+                file.file,
+                folder=f"camexplore/reviews/{target_type}/{target_id}",
+            )
+            urls.append(result["secure_url"])
+    except Exception as e:
+        err(str(e), 500)
+
+    return ok("Images uploaded successfully", {"images": urls})
+
+
 # ── PLACE REVIEWS (5-star) ──────────────────────────────────────────────
 
 @router.get("/place/{place_id}")
@@ -154,7 +210,7 @@ async def get_place_reviews(
 async def create_place_review(
     place_id: str,
     payload: PlaceReviewCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     oid = get_object_id(place_id, "place ID")
     if not await places_collection.find_one({"_id": oid}):
@@ -202,7 +258,7 @@ async def get_package_reviews(
 async def create_package_review(
     package_id: str,
     payload: PackageReviewCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     oid = get_object_id(package_id, "package ID")
     if not await packages_collection.find_one({"_id": oid}):
@@ -250,7 +306,7 @@ async def get_hotel_reviews(
 async def create_hotel_review(
     hotel_id: str,
     payload: HotelReviewCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     oid = get_object_id(hotel_id, "hotel ID")
     if not await hotels_collection.find_one({"_id": oid}):
@@ -284,7 +340,7 @@ async def create_hotel_review(
 @router.post("/{review_id}/helpful")
 async def toggle_helpful(
     review_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     oid = get_object_id(review_id, "review ID")
     review = await reviews_collection.find_one({"_id": oid})
@@ -309,7 +365,7 @@ async def toggle_helpful(
 @router.delete("/{review_id}")
 async def delete_review(
     review_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user_or_admin),
 ):
     oid = get_object_id(review_id, "review ID")
     review = await reviews_collection.find_one({"_id": oid})

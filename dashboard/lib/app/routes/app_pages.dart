@@ -8,6 +8,8 @@ import '../modules/auth/register_screen/bindings/register_screen_binding.dart';
 import '../modules/auth/register_screen/views/organization_register_screen_view.dart';
 import '../modules/auth/register_screen/views/personal_register_screen_view.dart';
 import '../modules/auth/register_screen/views/register_screen_view.dart';
+import '../modules/auth/forget_password/bindings/forget_password_binding.dart';
+import '../modules/auth/forget_password/views/forget_password_view.dart';
 
 part 'app_routes.dart';
 
@@ -41,6 +43,11 @@ class AppPages {
       name: _Paths.ADMIN_SCREEN,
       page: () => const AdminScreenView(),
       binding: AdminScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.FORGET_PASSWORD,
+      page: () => const ForgetPasswordView(),
+      binding: ForgetPasswordBinding(),
     ),
   ];
 }

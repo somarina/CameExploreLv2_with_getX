@@ -1,15 +1,14 @@
-// ignore_for_file: unused_element, deprecated_member_use, unused_local_variable
+// ignore_for_file: unused_local_variable, deprecated_member_use, unused_element
 
 import 'dart:ui';
 
-import 'package:dashboard/app/modules/auth/register_screen/controllers/register_screen_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../controllers/forget_password_controller.dart';
 
-class OrganizationRegisterScreenView extends GetView<RegisterScreenController> {
-  const OrganizationRegisterScreenView({super.key});
-
+class ForgetPasswordView extends GetView<ForgetPasswordController> {
+  const ForgetPasswordView({super.key});
   static const primaryColor = Color(0xFF00C17C);
 
   @override
@@ -63,7 +62,7 @@ class OrganizationRegisterScreenView extends GetView<RegisterScreenController> {
                           ],
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -97,8 +96,39 @@ class OrganizationRegisterScreenView extends GetView<RegisterScreenController> {
                                   ),
                                 ],
                               ),
-
-                              SizedBox(height: 14),
+                              // SizedBox(height: 5),
+                              Center(child: Text("Forget Password",style: GoogleFonts.spaceGrotesk(fontSize: 25),)),
+                              Center(child: Text("Enter your email and we'll send you instructions to reset your password.",textAlign: .center,style: GoogleFonts.spaceGrotesk(fontSize: 10),)),
+                              SizedBox(height: 10,),
+                              Center(
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber
+                                  )
+                                ),
+                              ),
+                              SizedBox(height: 10,),
+                              Text("Email Address"),
+                              Center(
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber
+                                  )
+                                ),
+                              ),
+                              SizedBox(height: 10,),
+                              ElevatedButton(
+                                onPressed: (){},
+                                child: Row(
+                                  children: [
+                                    Text('Send Reset Link'),
+                                  ],
+                                )
+                              ),
                             ],
                           ),
                         ),
@@ -158,5 +188,4 @@ class OrganizationRegisterScreenView extends GetView<RegisterScreenController> {
       ),
     );
   }
-
 }

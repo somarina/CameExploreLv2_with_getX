@@ -31,12 +31,6 @@ void main() async {
 
   Get.put(ThemeModeViewController());
   Get.put(LoginScreenController());
-  // Get.put(HomeScreenController());
-  // Get.put(SearchScreenController());
-  // Get.put(BookingScreenController());
-  // Get.put(FavoriteScreenController());
-  // Get.put(UserProfileScreenViewController());
-  // Get.put(ExploreViewController());
   Get.put(HomeScreenController());
   Get.put(FavoriteScreenController());
   Get.put(SearchScreenController());
