@@ -6,6 +6,7 @@ class DetailPlacesScreenViewController extends GetxController {
   // var homeCtrl = HomeScreenController();
   final HomeScreenController homeCtrl = Get.find<HomeScreenController>();
   late final Map<String, dynamic> place;
+  late final DiscoverPlaceModel places;
   void changeIndex(int index) {
     currentIndex.value = index;
   }
@@ -64,5 +65,10 @@ class DetailPlacesScreenViewController extends GetxController {
     super.onInit();
 
     place = Get.arguments;
+
+    print("DETAIL KEYS:");
+    place.forEach((key, value) {
+      print("$key => $value");
+    });
   }
 }

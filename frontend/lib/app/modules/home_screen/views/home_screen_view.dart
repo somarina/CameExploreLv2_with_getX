@@ -313,110 +313,114 @@ class HomeScreenView extends GetView<HomeScreenController> {
   }
 
   Widget _buildTrendingPlaces(BuildContext context) {
-  return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 20),
-    child: Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              "Tren_places".tr,
-              style: AppFonts.fontsSubTitlew500.copyWith(
-                color: Theme.of(context).colorScheme.secondary,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                "Tren_places".tr,
+                style: AppFonts.fontsSubTitlew500.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
-            ),
-            Spacer(),
-            Bounceable(
-              onTap: () {
-                Get.find<ButtonNavbarController>().changePage(1);
-              },
-              child: Row(
-                children: [
-                  Text(
-                    "see_all".tr,
-                    style: AppFonts.fontsSubTitlew500.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                  SizedBox(width: 6),
-                  Icon(
-                    Icons.arrow_forward_ios_sharp,
-                    color: Theme.of(context).primaryColor,
-                    size: 18,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 20),
-        Obx(() {
-          if (controller.isLoadingPf.value && controller.places.isEmpty) {
-            return SizedBox(
-              height: 270,
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          if (controller.isLoadingPlaces.value &&
-              controller.trendingPlaces.isEmpty) {
-            return SizedBox(
-              height: 270,
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          return SizedBox(
-            height: 270,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.trendingPlaces.length,
-              itemBuilder: (context, index) {
-                final place = controller.trendingPlaces[index];
-
-                return Obx(
-                  () => Padding(
-                    padding: EdgeInsets.only(right: 16),
-                    child: Bounceable(
-                      onTap: () {
-                        Get.toNamed(
-                          Routes.DETAIL_PLACES,
-                          arguments: controller.trendingPlaces[index],
-                        );
-                      },
-                      child: CardPlace(
-                        width: Get.width * 0.8,
-                        image:
-                            (place['image_url'] != null &&
-                                    place['image_url']
-                                        .toString()
-                                        .startsWith('http'))
-                                ? place['image_url']
-                                : "",
-                        category: place['category'] ?? "General",
-                        title: place['name_en'] ?? "Unknown Place",
-                        location: "${place['province'] ?? 'Cambodia'}",
-                        rating: (place['rating'] != null)
-                            ? double.tryParse(place['rating'].toString()) ??
-                                5.0
-                            : 5.0,
-                        distance:
-                            "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
-                        isFavorite: controller.favorites[index],
-                        onFavorite: () => controller.toggleFavorite(index),
+              Spacer(),
+              Bounceable(
+                onTap: () {
+                  Get.find<ButtonNavbarController>().changePage(1);
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "see_all".tr,
+                      style: AppFonts.fontsSubTitlew500.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 16,
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          );
-        }),
-      ],
-    ),
-  );
-}
+                    SizedBox(width: 6),
+                    Icon(
+                      Icons.arrow_forward_ios_sharp,
+                      color: Theme.of(context).primaryColor,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Obx(() {
+            if (controller.isLoadingPf.value && controller.places.isEmpty) {
+              return SizedBox(
+                height: 270,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (controller.isLoadingPlaces.value &&
+                controller.trendingPlaces.isEmpty) {
+              return SizedBox(
+                height: 270,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            return SizedBox(
+              height: 270,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.trendingPlaces.length,
+                itemBuilder: (context, index) {
+                  final place = controller.trendingPlaces[index];
+
+                  return Obx(
+                    () => Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: Bounceable(
+                        onTap: () {
+                          Get.toNamed(
+                            Routes.DETAIL_PLACES,
+                            arguments: controller.trendingPlaces[index],
+                          );
+                        },
+                        child: CardPlace(
+                          width: Get.width * 0.8,
+                          image:
+                              (place['image_url'] != null &&
+                                  place['image_url'].toString().startsWith(
+                                    'http',
+                                  ))
+                              ? place['image_url']
+                              : "",
+                          category: place['category'] ?? "General",
+                          title: place['name_en'] ?? "Unknown Place",
+                          location: "${place['province'] ?? 'Cambodia'}",
+                          rating: (place['rating'] != null)
+                              ? double.tryParse(place['rating'].toString()) ??
+                                    5.0
+                              : 5.0,
+                          distance:
+                              "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
+                          isFavorite: controller.favoriteController.isFavorite(
+                            place["id"].toString(),
+                          ),
+                          onFavorite: () => controller.favoriteController
+                              .toggleFavorite(place["id"].toString(), context),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
   Widget _buildNearby(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -685,8 +689,11 @@ class HomeScreenView extends GetView<HomeScreenController> {
                               : 5.0,
                           distance:
                               "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favorites[index],
-                          onFavorite: () => controller.toggleFavorite(index),
+                          isFavorite: controller.favoriteController.isFavorite(
+                            place["id"].toString(),
+                          ),
+                          onFavorite: () => controller.favoriteController
+                              .toggleFavorite(place["id"].toString(), context),
                         ),
                       ),
                     ),
