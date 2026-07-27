@@ -431,9 +431,6 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           category: controller.getCategory(place),
                           title: controller.getPlaceName(place),
                           location: controller.getAddress(place),
-                          category: place['category'] ?? "General",
-                          title: place['name_en'] ?? "Unknown Place",
-                          location: "${place['province'] ?? 'Cambodia'}",
                           rating: (place['rating'] != null)
                               ? double.tryParse(place['rating'].toString()) ??
                                     5.0
@@ -443,13 +440,6 @@ class HomeScreenView extends GetView<HomeScreenController> {
                               "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
                           isFavorite: controller.favorites[index],
                           onFavorite: () => controller.toggleFavorite(index),
-                          distance:
-                              "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favoriteController.isFavorite(
-                            place["id"].toString(),
-                          ),
-                          onFavorite: () => controller.favoriteController
-                              .toggleFavorite(place["id"].toString(), context),
                         ),
                       ),
                     ),
@@ -792,11 +782,8 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           review_count: place['review_count'] ?? 0,
                           distance:
                               "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favoriteController.isFavorite(
-                            place["id"].toString(),
-                          ),
-                          onFavorite: () => controller.favoriteController
-                              .toggleFavorite(place["id"].toString(), context),
+                          isFavorite: controller.favorites[index],
+                          onFavorite: () => controller.toggleFavorite(index),
                         ),
                       ),
                     ),

@@ -8,8 +8,6 @@ class RegisterSchema(BaseModel):
     gender: str
     email: EmailStr
     phone: str
-    business_type: str
-    address: str
 
     password: str = Field(..., min_length=8, max_length=72)
     confirm_password: str = Field(..., min_length=8, max_length=72)

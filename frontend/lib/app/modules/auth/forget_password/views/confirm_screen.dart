@@ -78,7 +78,7 @@ class ConfirmScreen extends GetView<ForgetPasswordController> {
               ),
 
               SizedBox(height: 12),
-
+ 
               Text(
                 "confirm_reset_subtitle".tr,
                 style: isEnglish
