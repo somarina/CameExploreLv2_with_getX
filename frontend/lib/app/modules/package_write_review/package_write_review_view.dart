@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:frontend/app/core/api/services/review_place.dart';
+import 'package:frontend/app/modules/detail_places_screen/detail_places_screen_view.dart';
+import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
+import 'package:frontend/app/modules/package_detail_screen/package_detail_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
@@ -195,7 +199,7 @@ class PackageWriteReviewView extends GetView<PackageWriteReviewViewController> {
               counterText: "",
             ),
           ),
-         
+
           SizedBox(height: 10),
           Align(
             alignment: Alignment.centerRight,
@@ -331,7 +335,17 @@ class PackageWriteReviewView extends GetView<PackageWriteReviewViewController> {
   }
 
   Widget _submitButton() {
-    return CustomButton(title: "submit_review".tr, margin: EdgeInsets.all(0));
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      return CustomButton(
+        title: "submit_review".tr,
+        margin: EdgeInsets.zero,
+        onTap: () => controller.submitReview(),
+      );
+    });
   }
 
   Widget _card({required Widget child, required BuildContext context}) {

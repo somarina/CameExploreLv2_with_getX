@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/core/api/services/booking_package_services.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
+import 'package:frontend/app/modules/profile_screen/userProfile_screen/user_profile_screen_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
@@ -354,22 +357,18 @@ class PackageCheckoutScreenView
 
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: controller.themeCtrl.getDark()
-                      ? BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 1,
-                        )
-                      : BorderSide.none,
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1,
+                  ),
                 ),
 
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: controller.themeCtrl.getDark()
-                      ? BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 1.5,
-                        )
-                      : BorderSide.none,
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1.5,
+                  ),
                 ),
                 counterText: "",
               ),
@@ -388,7 +387,7 @@ class PackageCheckoutScreenView
               ),
             ),
             SizedBox(height: 30),
-           
+
             SizedBox(
               width: double.infinity,
               height: 58,
@@ -464,33 +463,47 @@ class PackageCheckoutScreenView
                             ),
 
                             SizedBox(height: 24),
-                            CustomButton(
-                              title: "Done",
-                              margin: EdgeInsets.all(0),
-                              onTap: () {
-                                Get.offAllNamed(
-                                  Routes.PACKAGE_CF_BOOKING,
-                                  arguments: {
-                                    ...controller.bookingData,
+                            Obx(
+                              () => controller.isBookingLoading.value
+                                  ? const Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : CustomButton(
+                                      title: "Done",
+                                      margin: EdgeInsets.all(0),
+                                      onTap: () async {
+                                        final isSuccess = await controller
+                                            .createBooking();
 
-                                    "total": controller.total,
-
-                                    "firstName": controller.firstNameCtrl.text
-                                        .trim(),
-                                    "lastName": controller.lastNameCtrl.text
-                                        .trim(),
-                                    "email": controller.emailCtrl.text.trim(),
-                                    "phone": controller.phoneCtrl.text.trim(),
-
-                                    "payment": controller.selectedPayment.value,
-
-                                    "transactionDate": DateTime.now()
-                                        .toIso8601String(),
-                                  },
-                                );
-                              },
+                                        if (isSuccess) {
+                                          Get.offAllNamed(
+                                            Routes.PACKAGE_CF_BOOKING,
+                                            arguments: {
+                                              ...controller.bookingData,
+                                              "total": controller.total,
+                                              "firstName": controller
+                                                  .firstNameCtrl
+                                                  .text
+                                                  .trim(),
+                                              "lastName": controller
+                                                  .lastNameCtrl
+                                                  .text
+                                                  .trim(),
+                                              "email": controller.emailCtrl.text
+                                                  .trim(),
+                                              "phone": controller.phoneCtrl.text
+                                                  .trim(),
+                                              "payment": controller
+                                                  .selectedPayment
+                                                  .value,
+                                              "transactionDate": DateTime.now()
+                                                  .toIso8601String(),
+                                            },
+                                          );
+                                        }
+                                      },
+                                    ),
                             ),
-
                             SizedBox(height: 20),
                           ],
                         ),

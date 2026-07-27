@@ -32,10 +32,13 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                 Row(
                   children: [
                     Text(
-                      "\$10",
+                      "\$${controller.price}",
                       style: GoogleFonts.googleSans(
                         fontSize: 24,
-                        color: Theme.of(context).colorScheme.secondary,
+                        fontWeight: .bold
+                        ,
+                        // color: Theme.of(context).colorScheme.secondary,
+                        color: Colors.red
                       ),
                     ),
                     SizedBox(width: 6),
@@ -93,25 +96,25 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
               SizedBox(height: 10),
 
               /// MAP
-              Container(
-                height: 200,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Center(
-                  child: Text(
-                    "map_placeholder".tr,
-                    style: GoogleFonts.googleSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+              // Container(
+              //   height: 200,
+              //   width: double.infinity,
+              //   decoration: BoxDecoration(
+              //     color: Colors.grey.shade300,
+              //     borderRadius: BorderRadius.circular(6),
+              //   ),
+              //   child: Center(
+              //     child: Text(
+              //       "map_placeholder".tr,
+              //       style: GoogleFonts.googleSans(
+              //         fontSize: 14,
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //     ),
+              //   ),
+              // ),
 
-              SizedBox(height: 18),
+              // SizedBox(height: 18),
 
               /// LEGEND
               Row(
@@ -163,27 +166,22 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
 
               _transportItem(context),
 
-              _timelineItem(
-                icon: Icons.location_on,
-                title: "angkor_wat_title".tr,
-                subtitle: "angkor_wat_details".tr,
-                duration: "duration_3h".tr,
-                context: context,
-              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: controller.itinerary.length,
+                itemBuilder: (context, index) {
+                  final item = controller.itinerary[index];
 
-              _timelineItem(
-                icon: Icons.location_on,
-                title: "ta_prohm_temple".tr,
-                subtitle: "ta_prohm_details".tr,
-                context: context,
-              ),
-
-              _timelineItem(
-                icon: Icons.circle,
-                title: "dropoff_options".tr,
-                subtitle: "siem_reap_krong".tr,
-                isLast: true,
-                context: context,
+                  return _timelineItem(
+                    icon: Icons.location_on,
+                    title: "place_id ${item["place_id"]}",
+                    subtitle: item[controller.noteKey] ?? "",
+                    isFirst: index == 0,
+                    isLast: index == controller.itinerary.length - 1,
+                    context: context,
+                  );
+                },
               ),
 
               SizedBox(height: 30),

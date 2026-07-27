@@ -63,7 +63,14 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
                         children: [
                           Image.asset(AppImage.lightImage, height: 100),
                           SizedBox(height: 8),
-                          Text("light".tr),
+                          Text(
+                            "light".tr,
+                            style: GoogleFonts.googleSans(
+                              color: Get.isDarkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
                           SizedBox(height: 8),
                           controller.selectMode.value == 0
                               ? SvgPicture.asset(
@@ -85,7 +92,14 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
                         children: [
                           Image.asset(AppImage.darkImage, height: 100),
                           SizedBox(height: 8),
-                          Text("dark".tr),
+                          Text(
+                            "dark".tr,
+                            style: GoogleFonts.googleSans(
+                              color: Get.isDarkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
                           SizedBox(height: 8),
 
                           controller.selectMode.value == 1

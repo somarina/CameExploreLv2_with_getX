@@ -18,9 +18,13 @@ import 'package:frontend/app/modules/package_checkout_screen/package_checkout_sc
 import 'package:frontend/app/modules/package_detail_screen/package_detail_screen_view.dart';
 import 'package:frontend/app/modules/package_write_review/package_write_review_view.dart';
 import 'package:frontend/app/modules/profile_screen/about_app_screen/about_app_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/about_organization_screen/about_organization_screen_binding.dart';
+import 'package:frontend/app/modules/profile_screen/about_organization_screen/about_organization_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_binding.dart';
 import 'package:frontend/app/modules/profile_screen/change_pwd_screen/change_pwd_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/comment_screen/comment_screen_view.dart';
+import 'package:frontend/app/modules/profile_screen/detail_developer/detail_developer_binding.dart';
+import 'package:frontend/app/modules/profile_screen/detail_developer/detail_developer_view.dart';
 import 'package:frontend/app/modules/profile_screen/edit_screen/edit_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/help_support_screen/help_support_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/notification_screen/notification_screen_view.dart';
@@ -224,8 +228,9 @@ class AppPages {
       name: _Paths.DETAIL_SCREEN,
       page: () => const DetailPlacesScreenView(),
       binding: DetailPlacesScreenViewBinding(),
-),
-    GetPage(      name: _Paths.CHOOSE_ROOM,
+    ),
+    GetPage(
+      name: _Paths.CHOOSE_ROOM,
       page: () => const ChooseRoomScreenView(),
       binding: ChooseRoomScreenViewBinding(),
     ),
@@ -300,6 +305,21 @@ class AppPages {
       name: _Paths.DETAIL_SCREEN,
       page: () => const DetailPlacesScreenView(),
       binding: DetailPlacesScreenViewBinding(),
+    ),
+    // GetPage(
+    //   name: _Paths.GALLERY,
+    //   page: () => const DetailPlacesScreenView(),
+    //   binding: DetailPlacesScreenViewBinding(),
+    // ),
+    GetPage(
+      name: _Paths.ABOUTORGANIZATION_SCREEN,
+      page: () => const AboutOrganizationScreenView(),
+      binding: AboutOrganizationBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAILDEVELOPER_SCREEN,
+      page: () => const DetailDeveloperView(),
+      binding: DetailDeveloperBinding(),
     ),
   ];
 }

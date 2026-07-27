@@ -1,12 +1,17 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:frontend/app/core/api/services/review_hotel_services.dart';
+import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
+import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_screen_view.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 part 'hotel_write_review_binding.dart';
 part 'hotel_write_review_controller.dart';
@@ -67,6 +72,15 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
   }
 
   Widget _hotelCard(BuildContext context) {
+    final List<String> hotelImages = List<String>.from(
+      controller.hotel["images"] ?? [],
+    );
+    final String singleImageUrl =
+        controller.hotel["imageUrl"] ?? controller.hotel["image_url"] ?? "";
+    final String coverImageUrl = singleImageUrl.isNotEmpty
+        ? singleImageUrl
+        : (hotelImages.isNotEmpty ? hotelImages.first : "");
+
     return _card(
       context: context,
       child: Row(
@@ -76,37 +90,53 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
             height: 100,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-            child: Image.asset("assets/images/bamboo.png", fit: BoxFit.cover),
+            child: coverImageUrl.isNotEmpty
+                ? Image.network(
+                    coverImageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey.shade300,
+                      child: const Icon(Icons.broken_image, color: Colors.grey),
+                    ),
+                  )
+                : Container(
+                    color: Colors.grey.shade300,
+                    child: const Icon(Icons.hotel, color: Colors.grey),
+                  ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "reviewing_title".tr, 
+                  "reviewing_title".tr,
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
-                    fontSize: 12,
+                    fontSize: 13,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  "Grand Palace Hotel",
+                  controller.hotel["hotelName"] ??
+                      controller.hotel["name_en"] ??
+                      "Hotel Name",
                   style: GoogleFonts.googleSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  "${"stayed_in".tr} Apr 2026",
-                  style: GoogleFonts.googleSans(
-                    color: Theme.of(context).textTheme.titleSmall!.color,
-                    fontSize: 14,
-                  ),
-                ),
+                const SizedBox(height: 8),
+
+                // Dynamic Stayed Date Text
+                // Text(
+                //   "${"stayed_in".tr} ${controller.stayedDateText}",
+                //   style: GoogleFonts.googleSans(
+                //     color: Theme.of(context).textTheme.titleSmall!.color,
+                //     fontSize: 14,
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -124,7 +154,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
           Row(
             children: [
               Text(
-                "overall_score".tr, 
+                "overall_score".tr,
                 style: GoogleFonts.googleSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -140,8 +170,8 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
           SizedBox(height: 16),
           Obx(
             () => Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(10, (index) {
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(5, (index) {
                 final score = index + 1;
                 final isSelected = score <= controller.overallScore.value;
 
@@ -189,14 +219,14 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "terrible".tr, // Recommended key: "Terrible"
+                "terrible".tr,
                 style: GoogleFonts.googleSans(
                   color: Theme.of(context).textTheme.titleSmall!.color,
                   fontSize: 14,
                 ),
               ),
               Text(
-                "amazing".tr, // Recommended key: "Amazing"
+                "amazing".tr,
                 style: GoogleFonts.googleSans(
                   color: Theme.of(context).textTheme.titleSmall!.color,
                   fontSize: 14,
@@ -216,7 +246,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "rate_category".tr, 
+            "rate_category".tr,
             style: GoogleFonts.googleSans(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -239,9 +269,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item
-                                  .key
-                                  .tr, 
+                              item.key.tr,
                               style: GoogleFonts.googleSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -251,9 +279,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
                               ),
                             ),
                             Text(
-                              controller
-                                  .getRatingLabel(rating)
-                                  .tr,
+                              controller.getRatingLabel(rating).tr,
                               style: GoogleFonts.googleSans(
                                 color: controller.getRatingColor(rating),
                                 fontSize: 13,
@@ -319,8 +345,7 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
             maxLines: 5,
             maxLength: 250,
             decoration: InputDecoration(
-              hintText: "share_experience_hint"
-                  .tr, 
+              hintText: "share_experience_hint".tr,
               hintStyle: GoogleFonts.googleSans(
                 color: Theme.of(context).textTheme.titleSmall!.color,
               ),
@@ -493,7 +518,8 @@ class WriteReviewScreenView extends GetView<WriteReviewScreenViewController> {
     return CustomButton(
       title: "submit_review".tr,
       margin: EdgeInsets.all(0),
-    ); 
+      onTap: controller.submitReview,
+    );
   }
 
   Widget _card({required Widget child, required BuildContext context}) {

@@ -53,8 +53,10 @@ class FavoriteService {
     required String listId,
     required String placeId,
   }) async {
-    return await baseApi.delete(
-      endpoint: '/api/favorites/lists/$listId/items/$placeId',
-    );
+    final endpoint = '/api/favorites/lists/$listId/items/$placeId';
+
+    print("DELETE Endpoint: $endpoint");
+
+    return await baseApi.delete(endpoint: endpoint);
   }
 }

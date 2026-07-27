@@ -31,6 +31,7 @@ void main() async {
 
   Get.put(ThemeModeViewController());
   Get.put(LoginScreenController());
+  // Get.put(UserProfileScreenViewController());
   Get.put(HomeScreenController());
   Get.put(FavoriteScreenController());
   Get.put(SearchScreenController());
@@ -70,7 +71,7 @@ void _setupDeepLinks() {
       await Future.delayed(Duration(seconds: 1));
       _handleTelegramCallback(initialUri.queryParameters);
     }
-  });                                                                                                                                                                                                                                                                                                                                                               
+  });
 }
 
 void _handleTelegramCallback(Map<String, String> params) async {
@@ -109,7 +110,7 @@ void _handleTelegramCallback(Map<String, String> params) async {
 
       await Future.delayed(const Duration(milliseconds: 300));
       Get.offAllNamed('/button-navigation');
-    } else { 
+    } else {
       Get.snackbar(
         'Telegram Login Failed',
         response?["message"] ?? 'Something went wrong',
@@ -125,6 +126,7 @@ void _handleTelegramCallback(Map<String, String> params) async {
     );
   }
 }
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -148,7 +150,7 @@ class MainApp extends StatelessWidget {
       locale: language == "kmKH" ? Locale("kmKH") : Locale("enUS"),
 
       // routes
-      initialRoute: Routes.SPLASH_SCREEN,
+      initialRoute: Routes.LOGIN_SCREEN,
       getPages: AppPages.routes,
     );
   }

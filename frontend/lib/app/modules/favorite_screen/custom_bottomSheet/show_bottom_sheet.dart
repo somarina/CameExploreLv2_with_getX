@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_controller.dart';

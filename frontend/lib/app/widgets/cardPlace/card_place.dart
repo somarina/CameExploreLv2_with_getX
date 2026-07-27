@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,8 @@ class CardPlace extends StatelessWidget {
   final VoidCallback? onFavorite;
   final double width;
   final bool isFavorite;
+  final int review_count;
+  final bool showNavigationIcon; // Added parameter to toggle navigation icon
 
   const CardPlace({
     super.key,
@@ -20,10 +23,12 @@ class CardPlace extends StatelessWidget {
     required this.title,
     required this.location,
     required this.rating,
+    required this.review_count,
     required this.distance,
     this.onFavorite,
     required this.width,
     required this.isFavorite,
+    this.showNavigationIcon = true, // Default to true so existing places keep the icon
   });
 
   @override
@@ -44,43 +49,35 @@ class CardPlace extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(24),
                 ),
-                child: Image.network(
-                  image,
+                child: CachedNetworkImage(
+                  imageUrl: image,
                   height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    height: 160,
+                    width: double.infinity,
+                    color: Colors.grey.shade200,
+                    child: const Center(
+                      child: SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CircularProgressIndicator(strokeWidth: 2.5),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    height: 160,
+                    width: double.infinity,
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.broken_image_outlined,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                  ),
                 ),
               ),
-
-              // Trending
-              // Positioned(
-              //   top: 16,
-              //   left: 16,
-              //   child: Container(
-              //     padding: const EdgeInsets.symmetric(
-              //       horizontal: 16,
-              //       vertical: 8,
-              //     ),
-              //     decoration: BoxDecoration(
-              //       color: Theme.of(context).colorScheme.primaryContainer,
-              //       borderRadius: BorderRadius.circular(30),
-              //     ),
-              //     child: Row(
-              //       mainAxisSize: MainAxisSize.min,
-              //       children: [
-              //         Text("🔥"),
-              //         SizedBox(width: 2),
-              //         Text(
-              //           "Trending",
-              //           style: GoogleFonts.googleSans(
-              //             fontWeight: FontWeight.w500,
-              //             color: Theme.of(context).colorScheme.secondary,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
 
               // Favorite
               Positioned(
@@ -89,7 +86,7 @@ class CardPlace extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onFavorite,
                   child: Container(
-                    padding: EdgeInsets.all(6),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primaryContainer,
                       shape: BoxShape.circle,
@@ -109,13 +106,10 @@ class CardPlace extends StatelessWidget {
                 bottom: 20,
                 left: 16,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 6,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16),
                       bottomLeft: Radius.circular(16),
                       bottomRight: Radius.circular(16),
@@ -126,7 +120,7 @@ class CardPlace extends StatelessWidget {
                     style: GoogleFonts.googleSans(
                       fontSize: 14,
                       color: Colors.white,
-                      fontWeight: .w500,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -153,18 +147,18 @@ class CardPlace extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Icon(Icons.star, color: Colors.amber, size: 22),
-                    SizedBox(width: 4),
+                    const Icon(Icons.star, color: Colors.amber, size: 22),
+                    const SizedBox(width: 4),
                     Text(
                       "$rating",
                       style: GoogleFonts.googleSans(
                         fontSize: 16,
-                        fontWeight: .bold,
+                        fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                     Text(
-                      " (500+)",
+                      " ($review_count)",
                       style: GoogleFonts.googleSans(
                         color: Theme.of(context).textTheme.titleSmall!.color,
                       ),
@@ -172,7 +166,7 @@ class CardPlace extends StatelessWidget {
                   ],
                 ),
 
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
 
                 // Location + Distance
                 Row(
@@ -182,28 +176,36 @@ class CardPlace extends StatelessWidget {
                       color: Theme.of(context).textTheme.titleSmall!.color,
                       size: 20,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         location,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.googleSans(
                           fontSize: 14,
                           color: Theme.of(context).textTheme.titleSmall!.color,
                         ),
                       ),
                     ),
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: 18,
-                      color: Theme.of(context).textTheme.titleSmall!.color,
-                    ),
-                    Text(
-                      distance,
-                      style: GoogleFonts.googleSans(
-                        //  color: Theme.of(context).textTheme.titleSmall!.color,
-                        color: Theme.of(context).textTheme.titleSmall!.color,
+                    if (distance.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      // Conditionally show icon
+                      if (showNavigationIcon) ...[
+                        Icon(
+                          Icons.navigation_outlined,
+                          size: 18,
+                          color: Theme.of(context).textTheme.titleSmall!.color,
+                        ),
+                        const SizedBox(width: 4),
+                      ],
+                      Text(
+                        distance,
+                        style: GoogleFonts.googleSans(
+                          color: Theme.of(context).textTheme.titleSmall!.color,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ],

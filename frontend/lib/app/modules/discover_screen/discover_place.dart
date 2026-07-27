@@ -19,7 +19,7 @@ class DiscoverPlace {
   factory DiscoverPlace.fromMap(Map<String, dynamic> json) {
     return DiscoverPlace(
       id: json['id'] as int,
-      name: json['name'] as String,
+      name: json['name_en'] as String,
       location: json['location'] as String,
       rating: json['rating'] as double,
       image: json['image_url'] as String,
