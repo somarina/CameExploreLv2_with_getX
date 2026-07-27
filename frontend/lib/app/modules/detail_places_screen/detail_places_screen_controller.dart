@@ -225,7 +225,10 @@ class DetailPlacesScreenViewController extends GetxController {
   // Reactive Getters reading directly from place
   List<String> get tags => List<String>.from(place["tags"] ?? []);
   List<String> get images => List<String>.from(place["images"] ?? []);
-
+  // var homeCtrl = HomeScreenController();
+  final HomeScreenController homeCtrl = Get.find<HomeScreenController>();
+  late final Map<String, dynamic> place;
+  late final DiscoverPlaceModel places;
   void changeIndex(int index) {
     currentIndex.value = index;
   }
@@ -303,5 +306,16 @@ class DetailPlacesScreenViewController extends GetxController {
   void onClose() {
     scrollController.dispose();
     super.onClose();
+
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+
+    place = Get.arguments;
+
+    print("DETAIL KEYS:");
+    place.forEach((key, value) {
+      print("$key => $value");
+    });
   }
 }

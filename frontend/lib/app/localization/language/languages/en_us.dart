@@ -208,6 +208,7 @@ Map<String, String> enUS = {
   "Done": "Done",
   "Delete": "Delete",
   "Create a list": "Create a list",
+  "Create a new list": "Create a new list",
   "Select a list": "Select a list",
   "List name": "List name",
   "Enter new list name": "Enter new list name",
@@ -219,6 +220,7 @@ Map<String, String> enUS = {
   "Popular places": "Popular places",
   "people searched this": "people searched this",
   "searches": "searches",
+  "Find the place you want to go": "Find the place you want to go...",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Home

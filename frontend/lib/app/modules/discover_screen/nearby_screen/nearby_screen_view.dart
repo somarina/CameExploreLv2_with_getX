@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/discover_screen/nearby_screen/nearby_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:get/get.dart';
@@ -37,41 +39,134 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20),
+
+                // Obx(
+                //   () => Padding(
+                //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                //     child: SizedBox(
+                //       height: 100,
+                //       child: ListView.separated(
+                //         scrollDirection: Axis.horizontal,
+                //         itemCount: controller.categories.length,
+                //         separatorBuilder: (_, __) => SizedBox(width: 20),
+                //         itemBuilder: (context, index) {
+                //           final item = controller.categories[index];
+
+                //           return Column(
+                //             children: [
+                //               GestureDetector(
+                //                 onTap: () {},
+                //                 child: Container(
+                //                   width: 60,
+                //                   height: 60,
+                //                   decoration: BoxDecoration(
+                //                     shape: BoxShape.circle,
+                //                     // color: Color(0xff009A3F),
+                //                   ),
+                //                   child: Center(
+                //                     child: Image.network(
+                //                       item["icon_url"] ?? "",
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ),
+                //               SizedBox(height: 10),
+                //               Text(
+                //                 Get.locale?.languageCode == 'kmKH'
+                //                     ? (item["name_km"] ?? item["name"] ?? "")
+                //                     : (item["name"] ?? ""),
+                //                 style: GoogleFonts.googleSans(),
+                //               ),
+                //             ],
+                //           );
+                //         },
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
+                // REPLACE YOUR EXISTING CATEGORY LIST Obx BLOCK WITH THIS:
                 Obx(
                   () => Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     child: SizedBox(
                       height: 100,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: controller.categories.length,
-                        separatorBuilder: (_, __) => SizedBox(width: 20),
+                        separatorBuilder: (_, __) => const SizedBox(width: 20),
                         itemBuilder: (context, index) {
                           final item = controller.categories[index];
 
-                          return Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {},
-                                child: Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xff009A3F),
-                                  ),
-                                  child: Center(
-                                    child: Text(item["icon"] ?? ""),
+                          return Obx(() {
+                            final isSelected =
+                                controller.selectedCategory.value
+                                    .toLowerCase() ==
+                                (item["name"] ?? "").toString().toLowerCase();
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    controller.filterByCategory(
+                                      item["name"] ?? "",
+                                    );
+                                  },
+                                  child: Container(
+                                    width: 60,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isSelected
+                                          ? const Color(0xff009A3F)
+                                          : Colors.grey.shade200,
+                                    ),
+                                    child: Center(
+                                      child: CachedNetworkImage(
+                                        imageUrl: item["icon_url"] ?? "",
+                                        width: 32,
+                                        height: 32,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors.black87,
+                                        fit: BoxFit.contain,
+                                        placeholder: (context, url) =>
+                                            const SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(
+                                              Icons.category,
+                                              size: 24,
+                                            ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                item["name"] ?? "",
-                                style: GoogleFonts.googleSans(),
-                              ),
-                            ],
-                          );
+                                const SizedBox(height: 8),
+                                Text(
+                                  item["name"] ?? "",
+                                  style: GoogleFonts.googleSans(
+                                    fontSize: 12,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: isSelected
+                                        ? const Color(0xff009A3F)
+                                        : Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium?.color,
+                                  ),
+                                ),
+                              ],
+                            );
+                          });
                         },
                       ),
                     ),
@@ -187,16 +282,20 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
         itemBuilder: (context, index) {
           final place = controller.nearbyPlaces[index];
 
-          return Bounceable(
-            onTap: () {
-              Get.toNamed(Routes.DETAIL_PLACES, arguments: place);
-            },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    Container(
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Bounceable(
+                    onTap: () {
+                      print(place.toJson());
+                      Get.toNamed(
+                        Routes.DETAIL_PLACES,
+                        arguments: place.toJson(),
+                      );
+                    },
+                    child: Container(
                       width: 110,
                       height: 110,
                       decoration: BoxDecoration(
@@ -208,134 +307,159 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: () {},
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Obx(() {
+                      final isFav = controller.favoriteController.isFavorite(
+                        place.id,
+                      );
+
+                      return GestureDetector(
+                        onTap: () {
+                          controller.favoriteController.toggleFavorite(
+                            place.id,
+                            context,
+                          );
+                        },
                         child: Container(
-                          padding: EdgeInsets.all(3),
+                          padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            Icons.favorite_border,
-                            color: Colors.black54,
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            color: isFav
+                                ? Colors.red
+                                : Theme.of(context).textTheme.titleSmall!.color,
                           ),
                         ),
+                      );
+                    }),
+                  ),
+                ],
+              ),
+
+              SizedBox(width: 20),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      Get.locale?.languageCode == "kmKH"
+                          ? place.nameKm
+                          : place.nameEn,
+                      style: AppFonts.fontsSubTitlew500.copyWith(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.secondary,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                    ),
+
+                    SizedBox(height: 10),
+
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 18,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        SizedBox(width: 5),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Text(
+                                Get.locale?.languageCode == "kmKH"
+                                    ? place.provinceKm
+                                    : place.province,
+
+                                style: GoogleFonts.googleSans(
+                                  fontSize: 14,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.titleSmall?.color,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                "${place.distance.toStringAsFixed(1)} km",
+                                style: GoogleFonts.googleSans(
+                                  fontSize: 14,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.titleSmall?.color,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 10),
+
+                    Row(
+                      children: [
+                        SizedBox(width: 5),
+                        Icon(Icons.star, size: 18, color: Colors.amber),
+                        SizedBox(width: 5),
+                        Text(
+                          "4.5",
+                          style: GoogleFonts.googleSans(
+                            fontSize: 14,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.titleSmall?.color,
+                          ),
+                        ),
+
+                        SizedBox(width: 10),
+
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+
+                        SizedBox(width: 10),
+
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xffCEDFCE),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            Get.locale?.languageCode == "kmKH"
+                                ? place.categoryKm
+                                : place.category,
+
+                            style: GoogleFonts.googleSans(
+                              fontSize: 12,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-
-                SizedBox(width: 20),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        place.name,
-                        style: GoogleFonts.googleSans(
-                          fontSize: 16,
-                          color: Theme.of(context).textTheme.titleMedium?.color,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            size: 18,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          SizedBox(width: 5),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Text(
-                                  place.province,
-                                  style: GoogleFonts.googleSans(
-                                    fontSize: 14,
-                                    color: Theme.of(
-                                      context,
-                                    ).textTheme.titleSmall?.color,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  "${place.distance.toStringAsFixed(1)} km",
-                                  style: GoogleFonts.googleSans(
-                                    fontSize: 14,
-                                    color: Theme.of(
-                                      context,
-                                    ).textTheme.titleSmall?.color,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Row(
-                        children: [
-                          SizedBox(width: 5),
-                          Icon(Icons.star, size: 18, color: Colors.amber),
-                          SizedBox(width: 5),
-                          Text(
-                            "4.5",
-                            style: GoogleFonts.googleSans(
-                              fontSize: 14,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.titleSmall?.color,
-                            ),
-                          ),
-
-                          SizedBox(width: 10),
-
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-
-                          SizedBox(width: 10),
-
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xffCEDFCE),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              place.category,
-                              style: GoogleFonts.googleSans(
-                                fontSize: 12,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       );

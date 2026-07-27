@@ -355,6 +355,24 @@ class HomeScreenController extends GetxController {
 
   @override
   void onInit() {
+  Map<String, dynamic> convertPlace(Map place) {
+    return {
+      "id": place["id"],
+      "name_en": place["nameEn"] ?? place["name"] ?? "",
+      "name_km": place["nameKm"] ?? "",
+      "description_en": place["description"] ?? "",
+      "province": place["province"] ?? "",
+      "image_url": place["imageUrl"] ?? place["image_url"] ?? "",
+      "latitude": place["latitude"] ?? 0,
+      "longitude": place["longitude"] ?? 0,
+      "rating": place["rating"] ?? 0,
+      "phoneNum": place["phoneNum"],
+    };
+  }
+
+  @override
+  void onInit() async {
+    // TODO: implement onInit
     super.onInit();
     
     getProfile();
@@ -364,5 +382,6 @@ class HomeScreenController extends GetxController {
     getHotels();
     getPackages();
 
+    await favoriteController.loadFavoriteStatus();
   }
 }

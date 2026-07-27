@@ -85,7 +85,6 @@ class BaseApiService {
       debugPrint("Error ${e.toString()}");
     }
   }
-
   Future<dynamic> postFormDataFiles({
     required String endpoint,
     required Map<String, dynamic> data,
@@ -101,4 +100,5 @@ class BaseApiService {
       debugPrint("Error ${e.toString()}");
     }
   }
+}
 }

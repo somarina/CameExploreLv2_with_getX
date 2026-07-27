@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 class FavScreen2ViewController extends GetxController {
   final FavoriteService favoriteService = FavoriteService();
+  final favoriteController = Get.find<FavoriteScreenController>();
 
   RxString listName = ''.obs;
   RxString listId = ''.obs;
@@ -21,12 +22,30 @@ class FavScreen2ViewController extends GetxController {
   void onInit() {
     super.onInit();
 
+    print("Arguments: ${Get.arguments}");
+
     listName.value = Get.arguments['listName'] ?? '';
     listId.value = Get.arguments['listId'] ?? '';
 
-    renameCtrl.addListener(() {
-      canRename.value = renameCtrl.text.trim().isNotEmpty;
-    });
+    print("List ID: ${listId.value}");
+
+    getFavoriteItems();
+  }
+
+  Future<void> getFavoriteItems() async {
+    try {
+      isLoading.value = true;
+
+      final response = await favoriteService.getFavoriteItems(listId.value);
+
+      print("Favorite Items Response: $response");
+
+      favoriteItems.assignAll(response);
+
+      print("Items: ${favoriteItems.length}");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> renameFavoriteList() async {
@@ -96,10 +115,25 @@ class FavScreen2ViewController extends GetxController {
     }
   }
 
-  
   String capitalizeFirst(String text) {
     if (text.isEmpty) return text;
 
     return text[0].toUpperCase() + text.substring(1).toLowerCase();
+  }
+
+  Future<void> deleteFavorite(String placeId) async {
+    await favoriteService.deleteFavoriteItem(
+      listId: listId.value,
+      placeId: placeId,
+    );
+
+    favoriteItems.removeWhere((item) => item["place_id"].toString() == placeId);
+
+    favoriteItems.refresh();
+
+    favoriteController.placeListMap.remove(placeId);
+    favoriteController.placeListMap.refresh();
+
+    Get.find<FavoriteScreenController>().getFavoriteLists();
   }
 }
