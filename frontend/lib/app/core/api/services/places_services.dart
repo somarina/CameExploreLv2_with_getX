@@ -44,6 +44,7 @@ class PlacesServices {
 
     var response = await baseApi.get(
       endpoint: "/places",
+//       queryParameters: query,
       queryParameters: {
         if (category != null) "category": category,
         if (search != null) "search": search,

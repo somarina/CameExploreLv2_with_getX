@@ -1,8 +1,9 @@
 part of 'choose_room_screen_view.dart';
 
 class ChooseRoomScreenViewController extends GetxController {
-  var roomCount = 1.obs;
+  final HotelServices _hotelServices = HotelServices();
 
+  var roomCount = 1.obs;
   var currentIndex = 0.obs;
   List<String> imgList = [
     'assets/images/homescreen/slider1.png',
@@ -12,6 +13,43 @@ class ChooseRoomScreenViewController extends GetxController {
 
   void changeIndex(int index) {
     currentIndex.value = index;
+  }
+
+  var hotel = <String, dynamic>{}.obs; // Made reactive to trigger UI updates
+  var isLoading = false.obs;
+
+  List get roomTypes => hotel["room_types"] ?? [];
+
+  @override
+  void onInit() {
+    super.onInit();
+    final args = Get.arguments;
+    if (args != null && args is Map) {
+      hotel.assignAll(Map<String, dynamic>.from(args));
+    }
+
+    // If room_types is missing/empty, fetch the full hotel details from API
+    if (roomTypes.isEmpty) {
+      fetchHotelDetails();
+    }
+  }
+
+  Future<void> fetchHotelDetails() async {
+    final String hotelId = (hotel["id"] ?? hotel["hotel_id"] ?? "").toString();
+    if (hotelId.isEmpty) return;
+
+    try {
+      isLoading.value = true;
+      final response = await _hotelServices.fetchHotelById(hotelId);
+
+      if (response != null && response['result'] == true && response['data'] != null) {
+        hotel.assignAll(Map<String, dynamic>.from(response['data']));
+      }
+    } catch (e) {
+      print("Error fetching hotel room types: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   var rooms = 1.obs;
@@ -26,56 +64,49 @@ class ChooseRoomScreenViewController extends GetxController {
       Container(
         decoration: BoxDecoration(
           color: Get.theme.scaffoldBackgroundColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Row(
-                  mainAxisAlignment: .center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Center(
-                      child: Text(
-                        "Rooms and Guests",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.googleSans(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
+                    Text(
+                      "Rooms and Guests",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.googleSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ],
                 ),
               ),
-
-              Divider(height: 1),
-
+              const Divider(height: 1),
               _counterTile(
                 title: "Rooms",
                 value: rooms,
                 min: 1,
                 context: Get.context!,
               ),
-
               _counterTile(
                 title: "Adults",
                 value: adults,
                 min: 1,
                 context: Get.context!,
               ),
-
               _counterTile(
                 title: "Children",
                 value: children,
                 min: 0,
                 context: Get.context!,
               ),
-
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -91,7 +122,7 @@ class ChooseRoomScreenViewController extends GetxController {
     required BuildContext context,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: [
           Expanded(
@@ -103,7 +134,6 @@ class ChooseRoomScreenViewController extends GetxController {
               ),
             ),
           ),
-
           Obx(
             () => IconButton(
               onPressed: value.value > min ? () => value.value-- : null,
@@ -116,7 +146,6 @@ class ChooseRoomScreenViewController extends GetxController {
               ),
             ),
           ),
-
           Obx(
             () => SizedBox(
               width: 40,
@@ -132,10 +161,9 @@ class ChooseRoomScreenViewController extends GetxController {
               ),
             ),
           ),
-
           IconButton(
             onPressed: () => value.value++,
-            icon: Icon(
+            icon: const Icon(
               Icons.add_circle_outline_sharp,
               color: Color(0xFF009A3F),
               size: 32,

@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/app/core/api/Model/user_model.dart';
 import 'package:frontend/app/core/api/services/profile_services.dart';
 import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
 import 'package:frontend/app/core/constants/app_image.dart';
+import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:frontend/app/modules/profile_screen/userProfile_screen/user_profile_screen_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,114 +21,132 @@ class EditScreenView extends GetView<EditScreenViewController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        leading: IconButton(
-          icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-        title: Text(
-          "editprofile".tr,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 24,
-            fontWeight: .bold,
-            color: Theme.of(context).colorScheme.secondary,
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            leading: IconButton(
+              icon: SvgPicture.asset(AppImage.arrowBackIcon, width: 30, height: 30),
+              onPressed: () {
+                Get.back();
+              },
+            ),
+            title: Text(
+              "editprofile".tr,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(child: _profile()),
+                  _label("fristName".tr, context),
+                  const SizedBox(height: 5),
+                  _textField(controller.firstnameCtrl, context),
+                  const SizedBox(height: 20),
+                  _label("lastName".tr, context),
+                  const SizedBox(height: 5),
+                  _textField(controller.lastnameCtrl, context),
+                  const SizedBox(height: 20),
+                  _label("email".tr, context),
+                  const SizedBox(height: 5),
+                  _textField(controller.newEmailCtrl, context),
+                  const SizedBox(height: 20),
+                  _label("phone".tr, context),
+                  const SizedBox(height: 5),
+                  _textField(controller.newPhoneCtrl, context),
+                  const SizedBox(height: 20),
+                  _label("gender".tr, context),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Obx(
+                          () => _gender(
+                            "male".tr,
+                            controller.selectedGender.value == "Male",
+                            () => controller.selectedGender("Male"),
+                            context,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Obx(
+                          () => _gender(
+                            "female".tr,
+                            controller.selectedGender.value == "Female",
+                            () => controller.selectedGender("Female"),
+                            context,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _btn(
+                          text: "cancel".tr,
+                          color: Colors.red,
+                          onTap: () => Get.back(),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Obx(
+                          () => _btn(
+                            text: "save".tr,
+                            color: AppColors.lightPrimaryColor,
+                            onTap: controller.isLoading.value
+                                ? () {}
+                                : controller.editProfile,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: .start,
-          children: [
-            Center(
-              child:
-                  //  CircleAvatar(radius: 60)
-                  _profile(),
-            ),
-            _label("fristName".tr, context),
-            SizedBox(height: 5),
-            _textField(controller.firstnameCtrl, context),
-            SizedBox(height: 20),
-            _label("lastName".tr, context),
-            SizedBox(height: 5),
-            _textField(controller.lastnameCtrl, context),
-            SizedBox(height: 20),
-            _label("email".tr, context),
-            SizedBox(height: 5),
-            _textField(controller.newEmailCtrl, context),
-            SizedBox(height: 20),
-            _label("phone".tr, context),
-            SizedBox(height: 5),
-            _textField(controller.newPhoneCtrl, context),
-            SizedBox(height: 20),
-            _label("gender".tr, context),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                Expanded(
-                  child: Obx(
-                    () => _gender(
-                      "male".tr,
-                      controller.selectedGender.value == "Male",
-                      () => controller.selectedGender("Male"),
-                      context,
-                    ),
+        Obx(
+          () => controller.isLoading.value
+              ? Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-                SizedBox(width: 20),
-                Expanded(
-                  child: Obx(
-                    () => _gender(
-                      "female".tr,
-                      controller.selectedGender.value == "Female",
-                      () => controller.selectedGender("Female"),
-                      context,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: _btn(
-                    text: "cancel".tr,
-                    color: Colors.red,
-                    onTap: () => Get.back(),
-                  ),
-                ),
-                SizedBox(width: 20),
-                Expanded(
-                  child: _btn(
-                    onTap: controller.editProfile,
-                    text: "save".tr,
-                    color: AppColors.lightPrimaryColor,
-                  ),
-                ),
-              ],
-            ),
-          ],
+                )
+              : const SizedBox.shrink(),
         ),
-      ),
+      ],
     );
   }
 
   Widget _profile() {
     return Obx(
-      () => GestureDetector(
+      () => Bounceable(
         onTap: () {
+          if (controller.isLoading.value) return;
+
           Get.bottomSheet(
             Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
@@ -134,7 +154,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    leading: Icon(Icons.camera_alt),
+                    leading: const Icon(Icons.camera_alt),
                     title: Text(
                       "Camera".tr,
                       style: GoogleFonts.spaceGrotesk(
@@ -143,13 +163,12 @@ class EditScreenView extends GetView<EditScreenViewController> {
                       ),
                     ),
                     onTap: () async {
-                      // controller.pickImage(ImageSource.camera);
                       await controller.pickImage(ImageSource.camera);
                       Get.back();
                     },
                   ),
                   ListTile(
-                    leading: Icon(Icons.image),
+                    leading: const Icon(Icons.image),
                     title: Text(
                       "Gallery".tr,
                       style: GoogleFonts.spaceGrotesk(
@@ -169,12 +188,10 @@ class EditScreenView extends GetView<EditScreenViewController> {
         },
         child: CircleAvatar(
           radius: 60,
-
           backgroundColor: Colors.grey.shade300,
           backgroundImage: controller.profileImage.value.isEmpty
               ? NetworkImage(controller.userProfileController.user.avatar)
-              : FileImage(controller.pickedImage.value!),
-
+              : FileImage(controller.pickedImage.value!) as ImageProvider,
           child: controller.pickedImage.value == null
               ? const Icon(Icons.camera_alt, size: 30, color: Colors.grey)
               : null,
@@ -199,7 +216,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
             style: GoogleFonts.spaceGrotesk(
               fontSize: 16,
               color: Colors.white,
-              fontWeight: .bold,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -241,13 +258,13 @@ class EditScreenView extends GetView<EditScreenViewController> {
   }
 
   Widget _label(String text, BuildContext context) => Text(
-    text,
-    style: GoogleFonts.spaceGrotesk(
-      fontSize: 16,
-      fontWeight: .bold,
-      color: Theme.of(context).colorScheme.secondary,
-    ),
-  );
+        text,
+        style: GoogleFonts.spaceGrotesk(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+      );
 
   Widget _textField(TextEditingController controller, BuildContext context) {
     return TextFormField(
@@ -262,18 +279,15 @@ class EditScreenView extends GetView<EditScreenViewController> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-            color: AppColors.lightPrimaryColor, // focus color
-            width: 2,
-          ),
+          borderSide: BorderSide(color: AppColors.lightPrimaryColor, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.red, width: 1.5),
+          borderSide: const BorderSide(color: Colors.red, width: 1.5),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.redAccent, width: 2),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 2),
         ),
       ),
     );

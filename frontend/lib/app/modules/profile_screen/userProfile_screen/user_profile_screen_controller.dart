@@ -5,9 +5,6 @@ class UserProfileScreenViewController extends GetxController {
   final RxBool isLogin = true.obs;
   var isLoading = false.obs;
 
-  // mock user data
-  // var userName = "vouchly".obs;
-  // var email = "vouchly@gmail.com".obs;
   var isdark = true.obs;
   //
   var box = GetStorage();
@@ -29,12 +26,14 @@ class UserProfileScreenViewController extends GetxController {
       return NetworkImage(avatar);
     }
 
-    // // local file image (image_picker)
-    // if (avatar.startsWith("file") || avatar.contains("/")) {
-    //   return FileImage(File(avatar));
-    // }
-
     return null;
+  }
+
+  Future<void> getProfile() async {
+    isLoading.value = true;
+    var response = await authService.fetchProfile();
+    user = UserModel.fromMap(response['data']);
+    isLoading.value = false;
   }
 
   @override
@@ -77,15 +76,6 @@ class UserProfileScreenViewController extends GetxController {
     }
   }
 
-  // // ------------------ theme -----------------------
-  // void changeTheme(ThemeMode mode) async {
-  //   await box.write("isdark", mode == ThemeMode.dark ? true : false);
-  //   Get.changeThemeMode(mode);
-  // }
-
-  // ------------------ Translate -----------------------
-  // var isActive = "kmKH".obs;
-  // bool isActive = true;
   void updateLocale(String value) async {
     await box.write("language", value);
     if (value == "kmKH") {
@@ -98,6 +88,17 @@ class UserProfileScreenViewController extends GetxController {
       Get.updateLocale(Locale("enUS"));
     }
   }
+
+  // // ------------------ theme -----------------------
+  // void changeTheme(ThemeMode mode) async {
+  //   await box.write("isdark", mode == ThemeMode.dark ? true : false);
+  //   Get.changeThemeMode(mode);
+  // }
+
+  // ------------------ Translate -----------------------
+  // var isActive = "kmKH".obs;
+  // bool isActive = true;
+
   // var selectedLang = 'km'.obs;
 
   // // late String avatar;
@@ -114,11 +115,4 @@ class UserProfileScreenViewController extends GetxController {
   //     Get.updateLocale(const Locale('en', 'US'));
   //   }
   // }
-
-  Future<void> getProfile() async {
-    isLoading.value = true;
-    var response = await authService.fetchProfile();
-    user = UserModel.fromMap(response['data']);
-    isLoading.value = false;
-  }
 }

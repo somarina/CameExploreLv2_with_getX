@@ -5,5 +5,6 @@ class DetailPlacesScreenViewBinding extends Bindings {
    @override
    void dependencies() {
        Get.lazyPut(() => DetailPlacesScreenViewController());
+       
    }
 }
