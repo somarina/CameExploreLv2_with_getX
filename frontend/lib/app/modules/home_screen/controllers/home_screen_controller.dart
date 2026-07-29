@@ -3,8 +3,8 @@ import 'package:frontend/app/core/api/Model/user_model.dart';
 import 'package:frontend/app/core/api/services/auth_services.dart';
 import 'package:frontend/app/core/api/services/category_service.dart';
 import 'package:frontend/app/core/api/services/places_services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
 class HomeScreenController extends GetxController {
