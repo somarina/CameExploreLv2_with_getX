@@ -14,8 +14,8 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       bottomNavigationBar: Container(
-        padding: EdgeInsets.fromLTRB(24, 16, 24, 30),
-        decoration: BoxDecoration(),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 30),
+        decoration: const BoxDecoration(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -35,13 +35,11 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                       "\$${controller.price}",
                       style: GoogleFonts.googleSans(
                         fontSize: 24,
-                        fontWeight: .bold
-                        ,
-                        // color: Theme.of(context).colorScheme.secondary,
-                        color: Colors.red
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
                       ),
                     ),
-                    SizedBox(width: 6),
+                    const SizedBox(width: 6),
                     Text(
                       "per_adult".tr,
                       style: GoogleFonts.googleSans(
@@ -53,12 +51,10 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                 ),
               ],
             ),
-
-            SizedBox(height: 20),
-
+            const SizedBox(height: 20),
             CustomButton(
               title: "check_availability".tr,
-              margin: EdgeInsets.all(0),
+              margin: EdgeInsets.zero,
               onTap: () {
                 Get.back();
               },
@@ -89,42 +85,21 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10),
-
-              /// MAP
-              // Container(
-              //   height: 200,
-              //   width: double.infinity,
-              //   decoration: BoxDecoration(
-              //     color: Colors.grey.shade300,
-              //     borderRadius: BorderRadius.circular(6),
-              //   ),
-              //   child: Center(
-              //     child: Text(
-              //       "map_placeholder".tr,
-              //       style: GoogleFonts.googleSans(
-              //         fontSize: 14,
-              //         fontWeight: FontWeight.bold,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-
-              // SizedBox(height: 18),
+              const SizedBox(height: 10),
 
               /// LEGEND
               Row(
                 children: [
                   Icon(
                     Icons.location_on_outlined,
-                    size: 20,
+                    size: 22,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  SizedBox(width: 6),
+                  const SizedBox(width: 6),
                   Text(
                     "main_stop".tr,
                     style: GoogleFonts.googleSans(
@@ -132,15 +107,15 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
-                  SizedBox(width: 40),
+                  const SizedBox(width: 40),
                   Row(
                     children: [
                       Icon(
                         Icons.circle,
-                        size: 16,
+                        size: 14,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         "other_stop".tr,
                         style: GoogleFonts.googleSans(
@@ -153,38 +128,49 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                 ],
               ),
 
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
-              /// TIMELINE
-              _timelineItem(
-                icon: Icons.location_on,
-                title: "pickup_options".tr,
-                subtitle: "siem_reap_krong".tr,
-                isFirst: true,
-                context: context,
-              ),
-
-              _transportItem(context),
-
+              /// TIMELINE LIST
               ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: controller.itinerary.length,
                 itemBuilder: (context, index) {
                   final item = controller.itinerary[index];
+                  final isLast = index == controller.itinerary.length - 1;
+                  final String stopType = item["stop_type"] ?? "other";
+                  final bool isMain = stopType == "main";
 
-                  return _timelineItem(
-                    icon: Icons.location_on,
-                    title: "place_id ${item["place_id"]}",
-                    subtitle: item[controller.noteKey] ?? "",
-                    isFirst: index == 0,
-                    isLast: index == controller.itinerary.length - 1,
-                    context: context,
+                  final String title = item[controller.titleKey] ?? item["title_en"] ?? "";
+                  final String subtitle = item[controller.noteKey] ?? item["note_en"] ?? "";
+                  final int transportMinutes = item["transport_duration_minutes"] ?? 0;
+                  final String transportMode = item["transport_mode"] ?? "Van";
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Stop Node
+                      _timelineItem(
+                        isMainStop: isMain,
+                        title: title,
+                        subtitle: subtitle,
+                        isLast: isLast,
+                        context: context,
+                      ),
+
+                      // Intermediary Transport Section (Rendered only between items)
+                      if (!isLast)
+                        _transportItem(
+                          context: context,
+                          mode: transportMode,
+                          durationMinutes: transportMinutes,
+                        ),
+                    ],
                   );
                 },
               ),
 
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -192,15 +178,16 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
     );
   }
 
+  /// Timeline Node for Stops
   Widget _timelineItem({
-    required IconData icon,
+    required bool isMainStop,
     required String title,
     required String subtitle,
-    String? duration,
-    bool isFirst = false,
-    bool isLast = false,
+    required bool isLast,
     required BuildContext context,
   }) {
+    const Color brandGreen = Color(0xff008C2A);
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,27 +197,33 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
             child: Column(
               children: [
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 28,
+                  height: 28,
                   decoration: BoxDecoration(
-                    color: Color(0xff008C2A),
+                    color: isMainStop ? brandGreen : Colors.transparent,
                     shape: BoxShape.circle,
+                    border: isMainStop
+                        ? null
+                        : Border.all(color: brandGreen, width: 2),
                   ),
-                  child: Icon(icon, color: Colors.white, size: 20),
+                  child: Icon(
+                    isMainStop ? Icons.location_on : Icons.circle,
+                    color: isMainStop ? Colors.white : brandGreen,
+                    size: isMainStop ? 18 : 10,
+                  ),
                 ),
+                // Only render vertical connector line if NOT the last item
                 if (!isLast)
                   Expanded(
-                    child: Container(width: 3, color: Color(0xff008C2A)),
+                    child: Container(width: 2, color: brandGreen),
                   ),
               ],
             ),
           ),
-
-          SizedBox(width: 18),
-
+          const SizedBox(width: 18),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(top: 4),
+              padding: const EdgeInsets.only(top: 2, bottom: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -242,9 +235,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
-
-                  SizedBox(height: 6),
-
+                  const SizedBox(height: 6),
                   Text(
                     subtitle,
                     style: GoogleFonts.googleSans(
@@ -252,19 +243,6 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                       fontSize: 14,
                     ),
                   ),
-
-                  if (duration != null) ...[
-                    SizedBox(height: 8),
-                    Text(
-                      duration,
-                      style: GoogleFonts.googleSans(
-                        color: Colors.grey.shade600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-
-                  SizedBox(height: 30),
                 ],
               ),
             ),
@@ -274,7 +252,33 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
     );
   }
 
-  Widget _transportItem(BuildContext context) {
+  /// Timeline Node for Transport / Travel between stops
+  Widget _transportItem({
+    required BuildContext context,
+    required String mode,
+    required int durationMinutes,
+  }) {
+    const Color brandGreen = Color(0xff008C2A);
+
+    IconData getTransportIcon(String transportMode) {
+      switch (transportMode.toLowerCase()) {
+        case 'bus':
+        case 'coach':
+          return Icons.directions_bus;
+        case 'van':
+        case 'minivan':
+          return Icons.airport_shuttle;
+        case 'car':
+        case 'taxi':
+          return Icons.directions_car;
+        case 'walking':
+        case 'walk':
+          return Icons.directions_walk;
+        default:
+          return Icons.airport_shuttle;
+      }
+    }
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,40 +288,44 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
             child: Column(
               children: [
                 Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: Color(0xff008C2A),
+                  width: 28,
+                  height: 28,
+                  decoration: const BoxDecoration(
+                    color: brandGreen,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.directions_bus, color: Colors.white),
+                  child: Icon(
+                    getTransportIcon(mode),
+                    color: Colors.white,
+                    size: 16,
+                  ),
                 ),
-                Expanded(child: Container(width: 3, color: Color(0xff008C2A))),
+                Expanded(
+                  child: Container(width: 2, color: brandGreen),
+                ),
               ],
             ),
           ),
-
-          SizedBox(width: 18),
-
+          const SizedBox(width: 18),
           Padding(
-            padding: EdgeInsets.only(top: 4, bottom: 12),
+            padding: const EdgeInsets.only(top: 2, bottom: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "bus_coach".tr,
+                  mode,
                   style: GoogleFonts.googleSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
-                  "duration_45m".tr,
+                  "$durationMinutes ${"mins".tr}",
                   style: GoogleFonts.googleSans(
                     color: Theme.of(context).textTheme.titleSmall!.color,
-                    fontSize: 14,
+                    fontSize: 13,
                   ),
                 ),
               ],

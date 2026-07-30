@@ -12,8 +12,7 @@ class WriteReviewScreenViewController extends GetxController {
   late final Map<String, dynamic> hotel;
 
   var hotelDetailCtrl = Get.find<HotelDetailScreenViewController>();
-      var homelCtrl = Get.find<HomeScreenController>();
-
+  var homelCtrl = Get.find<HomeScreenController>();
 
   final categories = <String, int>{
     "cleaniness": 0,
@@ -113,20 +112,15 @@ class WriteReviewScreenViewController extends GetxController {
   }
 
   Future<void> submitReview() async {
-    if (overallScore.value == 0) {
-      Get.snackbar("Error", "Please select an overall score.");
+    final String hId = (hotel["hotel_id"] ?? hotel["id"] ?? hotel["_id"] ?? "")
+        .toString();
+    if (hId.isEmpty) {
+      Get.snackbar("Error", "Invalid Hotel ID.");
       return;
     }
 
     if (reviewController.text.trim().isEmpty) {
       Get.snackbar("Error", "Please write your review.");
-      return;
-    }
-
-    final String hId = (hotel["hotel_id"] ?? hotel["id"] ?? hotel["_id"] ?? "")
-        .toString();
-    if (hId.isEmpty) {
-      Get.snackbar("Error", "Invalid Hotel ID.");
       return;
     }
 
@@ -136,40 +130,43 @@ class WriteReviewScreenViewController extends GetxController {
         barrierDismissible: false,
       );
 
-      List<String> base64Images = [];
-
-      for (File file in selectedImages) {
-        final bytes = await file.readAsBytes();
-        final base64String = base64Encode(bytes);
-
-        base64Images.add("data:image/jpeg;base64,$base64String");
+      // 1. Upload images to Cloudinary first
+      List<String> imageUrls = [];
+      if (selectedImages.isNotEmpty) {
+        imageUrls = await reviewService.uploadImages(
+          files: selectedImages,
+          hotelId: hId,
+        );
       }
 
-      final data = {
-        "hotel_id": hId,
-        "overall": overallScore.value,
-        "cleanliness": categories["cleaniness"] ?? 0,
-        "comfort": categories["comfort"] ?? 0,
-        "location": categories["location"] ?? 0,
-        "facilities": categories["facilities"] ?? 0,
-        "staff": categories["staff"] ?? 0,
-        "value": categories["value_money"] ?? 0,
+      // 2. Build JSON matching the exact backend schema
+      final Map<String, dynamic> data = {
+        "cleanliness": categories["cleanliness"] ?? 5,
+        "location": categories["location"] ?? 5,
+        "staff": categories["staff"] ?? 5,
+        "value": categories["value"] ?? categories["value_money"] ?? 5,
         "comment": reviewController.text.trim(),
-        "images": base64Images,
-        "stayed_date": stayedDateText,
+        "images": imageUrls, // Array of uploaded Cloudinary URLs
+        "stayed_date": stayedDateText, // e.g., "2026-07-29"
       };
 
+      // 3. Post review payload
       final response = await reviewService.createReview(
         data: data,
         hotelId: hId,
       );
-      hotelDetailCtrl.getHotelReviews();
-      homelCtrl.getHotels();
-
 
       if (Get.isDialogOpen ?? false) Get.back();
 
-      if (response != null && response["result"] == true) {
+      if (response != null) {
+        // Refresh active hotel detail & home views
+        if (Get.isRegistered<HotelDetailScreenViewController>()) {
+          Get.find<HotelDetailScreenViewController>().getHotelReviews();
+        }
+        if (Get.isRegistered<HomeScreenController>()) {
+          Get.find<HomeScreenController>().getHotels();
+        }
+
         Get.back(result: true);
         Get.snackbar(
           "Success",
@@ -178,12 +175,13 @@ class WriteReviewScreenViewController extends GetxController {
       } else {
         Get.snackbar(
           "Error",
-          response?["message"] ?? "Failed to submit review. Server error.",
+          response?["message"] ?? "Failed to submit review.",
         );
       }
     } catch (e) {
       if (Get.isDialogOpen ?? false) Get.back();
-      Get.snackbar("Error", e.toString());
+      debugPrint("Error submitting hotel review: $e");
+      Get.snackbar("Error", "Something went wrong. Please try again.");
     }
   }
 

@@ -576,11 +576,25 @@ Map<String, String> enUS = {
   "foreign_adult": "Foreign Adult",
   "foreign_child": "Foreign Child (<12)",
   "cambodian_citizen": "Cambodian Citizen",
-  "free": "ឥតគិតថ្លៃ",
+  "free": "Free",
 
   "hotel_category": "Hotel",
 
   "max_people": "Max people",
   "no_reviews_yet": "No reviews yet",
   "hello": "Hello",
+
+  "food": "Food",
+
+  "no_place_found": "No place found!",
+  "no_hotel_found": "No hotel found!",
+  "no_packages_found": "No package found!",
+  "no_nearby_places_found": "No nearby places found!",
+  "no_recommended_food_found": "No recommended food found!",
+  "recommended_food": "Recommended food",
+  "package": "Package",
+  "date": "Date",
+  "Travel-Package": "Travel-Package",
+  "no_restaurant_found":"No restaurant found!",
+  "Restaurant":"Restaurant"
 };

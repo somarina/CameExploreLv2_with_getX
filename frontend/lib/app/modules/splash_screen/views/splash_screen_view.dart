@@ -25,7 +25,7 @@ class SplashScreenView extends GetView<SplashScreenController> {
             );
           },
           child: Image.asset(
-            'assets/images/logo.png',
+            'assets/logo_white_bg.jpg',
             width: 170,
             height: 170,
           ),

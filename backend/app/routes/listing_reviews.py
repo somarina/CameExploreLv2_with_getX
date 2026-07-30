@@ -318,6 +318,7 @@ async def create_hotel_review(
         "target_id": hotel_id,
         "user_id": str(current_user["_id"]),
         "user_name": current_user.get("name", "Anonymous User"),
+        "rating": payload.rating,
         "cleanliness": payload.cleanliness,
         "location": payload.location,
         "staff": payload.staff,

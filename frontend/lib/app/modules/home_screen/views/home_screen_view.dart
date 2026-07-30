@@ -35,8 +35,12 @@ class HomeScreenView extends GetView<HomeScreenController> {
               _buildTrendingPlaces(context),
               SizedBox(height: 30),
               _buildNearby(context),
+              SizedBox(height: 20),
+              // _buildTopPlaces(context),
+              // SizedBox(height: 30),
+              _buildFood(context),
               SizedBox(height: 30),
-              _buildTopPlaces(context),
+              _buildRestaurant(context),
               SizedBox(height: 30),
               _buildHotel(context),
               SizedBox(height: 30),
@@ -115,22 +119,40 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on_outlined,
-                                    color: Color(0xffEAEAEA),
-                                    size: 24,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      controller.currentLocation,
-                                      style: AppFonts.fontLocation,
-                                      overflow: TextOverflow.ellipsis,
+                              // Interactive Location Row
+                              InkWell(
+                                onTap: () => controller.getCurrentLocation(),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on_outlined,
+                                      color: Color(0xffEAEAEA),
+                                      size: 24,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: controller.isLoadingLocation.value
+                                          ? Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: SizedBox(
+                                                height: 24,
+                                                width: 24,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: Colors.white,
+                                                    ),
+                                              ),
+                                            )
+                                          : Text(
+                                              controller.currentLocation.value,
+                                              style: AppFonts.fontLocation,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -212,24 +234,24 @@ class HomeScreenView extends GetView<HomeScreenController> {
 
   Widget _buildSlider(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         width: Get.width,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          // color: Color(0xff1A1A1A),
           color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
               blurRadius: 10,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: Column(
           children: [
+            // Banner Carousel
             CarouselSlider(
               options: CarouselOptions(
                 height: 160,
@@ -257,7 +279,9 @@ class HomeScreenView extends GetView<HomeScreenController> {
                 );
               }).toList(),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
+
+            // Carousel Dot Indicator
             Obx(
               () => AnimatedSmoothIndicator(
                 activeIndex: controller.currentIndex.value,
@@ -270,7 +294,9 @@ class HomeScreenView extends GetView<HomeScreenController> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
+
+            // Categories Section
             _buildCategory(),
           ],
         ),
@@ -279,71 +305,83 @@ class HomeScreenView extends GetView<HomeScreenController> {
   }
 
   Widget _buildCategory() {
-    return Obx(
-      () => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 110,
-            child: ListView.builder(
-              physics: const ClampingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.categories.length,
-              itemBuilder: (context, index) {
-                final item = controller.categories[index];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: Bounceable(
-                    onTap: () {
-                      // Pass the category item map to NearbyScreen
-                      Get.toNamed(Routes.NEARBY_SCREEN, arguments: item);
-                    },
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: CachedNetworkImage(
-                              imageUrl: item["icon_url"] ?? "",
-                              width: 42,
-                              height: 42,
-                              fit: BoxFit.contain,
-                              placeholder: (context, url) => const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 3,
-                                ),
-                              ),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.category),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          controller.isKhmer
-                              ? (item['name_km'] ?? item['name'] ?? '')
-                              : (item['name'] ?? ''),
-                          style: GoogleFonts.googleSans(
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+    return Obx(() {
+      // 1. Loading State
+      if (controller.isLoadingCategory.value) {
+        return const SizedBox(
+          height: 110,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      // 2. Empty State
+      if (controller.categories.isEmpty) {
+        return SizedBox(
+          height: 110,
+          child: Center(
+            child: Text(
+              "no_categories_found".tr,
+              style: GoogleFonts.googleSans(fontSize: 12, color: Colors.grey),
             ),
           ),
-        ],
-      ),
-    );
+        );
+      }
+
+      // 3. Category Horizontal List
+      return SizedBox(
+        height: 110,
+        child: ListView.builder(
+          physics: const ClampingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          itemCount: controller.categories.length,
+          itemBuilder: (context, index) {
+            final item = controller.categories[index];
+            return Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Bounceable(
+                onTap: () {
+                  Get.toNamed(Routes.NEARBY_SCREEN, arguments: item);
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: Center(
+                        child: CachedNetworkImage(
+                          imageUrl: item["icon_url"] ?? "",
+                          width: 42,
+                          height: 42,
+                          fit: BoxFit.contain,
+                          placeholder: (context, url) => const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.category),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      controller.isKhmer
+                          ? (item['name_km'] ?? item['name'] ?? '')
+                          : (item['name'] ?? ''),
+                      style: GoogleFonts.googleSans(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    });
   }
 
   Widget _buildTrendingPlaces(BuildContext context) {
@@ -401,6 +439,21 @@ class HomeScreenView extends GetView<HomeScreenController> {
               );
             }
 
+            if (controller.filteredPackages.isEmpty) {
+              return SizedBox(
+                height: 180,
+                child: Center(
+                  child: Text(
+                    "no_place_found".tr,
+                    style: GoogleFonts.googleSans(
+                      color: Theme.of(context).textTheme.titleSmall!.color,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              );
+            }
+
             return SizedBox(
               height: 270,
               child: ListView.builder(
@@ -455,10 +508,11 @@ class HomeScreenView extends GetView<HomeScreenController> {
 
   Widget _buildNearby(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title Row
           Row(
             children: [
               Text(
@@ -467,11 +521,9 @@ class HomeScreenView extends GetView<HomeScreenController> {
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Bounceable(
-                onTap: () {
-                  Get.toNamed(Routes.NEARBY_SCREEN);
-                },
+                onTap: () => Get.toNamed(Routes.NEARBY_SCREEN),
                 child: Row(
                   children: [
                     Text(
@@ -481,7 +533,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(width: 6),
+                    const SizedBox(width: 6),
                     Icon(
                       Icons.arrow_forward_ios_sharp,
                       color: Theme.of(context).primaryColor,
@@ -492,24 +544,55 @@ class HomeScreenView extends GetView<HomeScreenController> {
               ),
             ],
           ),
-          Obx(
-            () => ListView.builder(
-              padding: EdgeInsets.only(top: 20),
+
+          // Dynamic State Rendering inside Obx
+          Obx(() {
+            // 1. Loading State
+            if (controller.isLoadingPlaces.value ||
+                controller.isLoadingLocation.value) {
+              return const SizedBox(
+                height: 200,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            // 2. Empty State
+            if (controller.nearbyPlaces.isEmpty) {
+              return Container(
+                height: 120,
+                margin: const EdgeInsets.only(top: 20),
+                alignment: Alignment.center,
+                child: Text(
+                  "no_nearby_places_found".tr,
+                  style: GoogleFonts.googleSans(
+                    color: Theme.of(context).textTheme.titleSmall!.color,
+                    fontSize: 14,
+                  ),
+                ),
+              );
+            }
+
+            // 3. Data Loaded State
+            return ListView.builder(
+              padding: const EdgeInsets.only(top: 20),
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: controller.nearbyPlaces.length,
               itemBuilder: (context, index) {
                 final place = controller.nearbyPlaces[index];
+
+                // Safe favorite state check
+                final isFav = index < controller.favorites.length
+                    ? controller.favorites[index]
+                    : false;
+
                 return Bounceable(
                   onTap: () {
-                    Get.toNamed(
-                      Routes.DETAIL_PLACES,
-                      arguments: controller.nearbyPlaces[index],
-                    );
+                    Get.toNamed(Routes.DETAIL_PLACES, arguments: place);
                   },
                   child: Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    padding: EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(28),
@@ -517,50 +600,81 @@ class HomeScreenView extends GetView<HomeScreenController> {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.08),
                           blurRadius: 10,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
                     child: Row(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: CachedNetworkImage(
-                            imageUrl: place["image_url"] ?? "",
-                            width: 110,
-                            height: 110,
-                            fit: BoxFit.cover,
-
-                            placeholder: (context, url) => Container(
-                              width: 110,
-                              height: 110,
-                              color: Colors.grey.shade200,
-                              child: const Center(
-                                child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                        // Stack Image and Favorite Button
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: CachedNetworkImage(
+                                imageUrl: place["image_url"] ?? "",
+                                width: 110,
+                                height: 110,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  width: 110,
+                                  height: 110,
+                                  color: Colors.grey.shade200,
+                                  child: const Center(
+                                    child: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  width: 110,
+                                  height: 110,
+                                  color: Colors.grey.shade200,
+                                  child: const Icon(
+                                    Icons.broken_image_outlined,
+                                    color: Colors.grey,
+                                    size: 32,
                                   ),
                                 ),
                               ),
                             ),
-
-                            errorWidget: (context, url, error) => Container(
-                              width: 110,
-                              height: 110,
-                              color: Colors.grey.shade200,
-                              child: const Icon(
-                                Icons.broken_image_outlined,
-                                color: Colors.grey,
-                                size: 32,
+                            Positioned(
+                              top: 6,
+                              right: 6,
+                              child: GestureDetector(
+                                onTap: () => controller.toggleFavorite(index),
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    isFav
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isFav
+                                        ? Colors.red
+                                        : Theme.of(
+                                            context,
+                                          ).textTheme.titleSmall!.color,
+                                    size: 18,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
 
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
 
+                        // Details
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -574,12 +688,12 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.secondary,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
 
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
 
+                              // Address Row
                               Row(
                                 children: [
                                   Icon(
@@ -589,7 +703,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                       context,
                                     ).textTheme.titleSmall!.color,
                                   ),
-                                  SizedBox(width: 4),
+                                  const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
                                       controller.getAddress(place),
@@ -606,20 +720,22 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                 ],
                               ),
 
-                              SizedBox(height: 12),
+                              const SizedBox(height: 12),
 
+                              // Rating & Distance Row
                               Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.star,
                                     color: Color(0xFFFFB800),
                                     size: 20,
                                   ),
-                                  SizedBox(width: 4),
+                                  const SizedBox(width: 4),
                                   Text(
                                     (place["rating"] ?? 0)
                                         .toDouble()
-                                        .toStringAsFixed(1),
+                                        .toString(),
+
                                     style: GoogleFonts.googleSans(
                                       fontSize: 13,
                                       color: Theme.of(
@@ -628,17 +744,20 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                     ),
                                   ),
 
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
 
-                                  Icon(
-                                    Icons.access_time_outlined,
+                                  const Icon(
+                                    Icons.near_me_outlined,
                                     size: 18,
                                     color: Color(0xFFADB5BD),
                                   ),
+                                  const SizedBox(width: 2),
 
-                                  // SizedBox(width: 4),
                                   Text(
-                                    "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
+                                    controller.getFormattedDistance(
+                                      place["latitude"],
+                                      place["longitude"],
+                                    ),
                                     style: TextStyle(
                                       fontSize: 13,
                                       color: Theme.of(
@@ -647,16 +766,16 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                     ),
                                   ),
 
-                                  Spacer(),
+                                  const Spacer(),
 
                                   Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
                                       color: Theme.of(context).primaryColor,
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                         topLeft: Radius.circular(16),
                                         bottomLeft: Radius.circular(16),
                                         bottomRight: Radius.circular(16),
@@ -681,8 +800,8 @@ class HomeScreenView extends GetView<HomeScreenController> {
                   ),
                 );
               },
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
@@ -843,18 +962,35 @@ class HomeScreenView extends GetView<HomeScreenController> {
             height: 270,
             child: Obx(() {
               if (controller.isLoadingHotels.value) {
-                return const Center(child: CircularProgressIndicator());
+                return SizedBox(
+                  height: 270,
+                  child: Center(child: CircularProgressIndicator()),
+                );
               }
 
               if (controller.hotels.isEmpty) {
                 return const Center(child: Text("No hotels found"));
               }
+              if (controller.filteredPackages.isEmpty) {
+                return SizedBox(
+                  height: 180,
+                  child: Center(
+                    child: Text(
+                      "no_hotel_found".tr,
+                      style: GoogleFonts.googleSans(
+                        color: Theme.of(context).textTheme.titleSmall!.color,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                );
+              }
 
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: controller.hotels.length,
+                itemCount: controller.filteredHotels.length,
                 itemBuilder: (context, index) {
-                  final hotel = controller.hotels[index];
+                  final hotel = controller.filteredHotels[index];
 
                   return Padding(
                     padding: const EdgeInsets.only(right: 16),
@@ -884,24 +1020,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                     hotel["address_km"] ??
                                     ""),
 
-                          rating: (() {
-                            final double overallScore =
-                                double.tryParse(
-                                  (hotel["overall_score"] ??
-                                          hotel["overall"] ??
-                                          0.0)
-                                      .toString(),
-                                ) ??
-                                0.0;
-
-                            final double starRating =
-                                double.tryParse(
-                                  (hotel["star_rating"] ?? 0.0).toString(),
-                                ) ??
-                                0.0;
-
-                            return overallScore > 0 ? overallScore : starRating;
-                          })(),
+                          rating: (hotel["rating"] ?? 0).toDouble(),
 
                           review_count:
                               int.tryParse(
@@ -933,6 +1052,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
+          // Header Row
           Row(
             children: [
               Text(
@@ -942,54 +1062,84 @@ class HomeScreenView extends GetView<HomeScreenController> {
                 ),
               ),
               const Spacer(),
-              Row(
-                children: [
-                  Bounceable(
-                    onTap: () {
-                      Get.find<ButtonNavbarController>().changePage(1);
-                    },
-                    child: Text(
+              Bounceable(
+                onTap: () {
+                  Get.find<ButtonNavbarController>().changePage(1);
+                },
+                child: Row(
+                  children: [
+                    Text(
                       "see_all".tr,
                       style: AppFonts.fontsSubTitlew500.copyWith(
                         color: Theme.of(context).primaryColor,
                         fontSize: 16,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 6),
-                  Icon(
-                    Icons.arrow_forward_ios_sharp,
-                    color: Theme.of(context).primaryColor,
-                    size: 18,
-                  ),
-                ],
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.arrow_forward_ios_sharp,
+                      color: Theme.of(context).primaryColor,
+                      size: 18,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
           const SizedBox(height: 20),
 
           Obx(() {
-            if (controller.isLoadingPackages.value) {
+            // 1. Loading State
+            if (controller.isLoadingPackages.value ||
+                controller.isLoadingLocation.value) {
               return const SizedBox(
                 height: 270,
                 child: Center(child: CircularProgressIndicator()),
               );
             }
 
-            if (controller.packages.isEmpty) {
-              return const SizedBox(
-                height: 270,
-                child: Center(child: Text("No packages found")),
+            // 2. Empty State (Checked against filteredPackages)
+            if (controller.filteredPackages.isEmpty) {
+              return SizedBox(
+                height: 180,
+                child: Center(
+                  child: Text(
+                    "no_packages_found".tr,
+                    style: GoogleFonts.googleSans(
+                      color: Theme.of(context).textTheme.titleSmall!.color,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
               );
             }
 
+            // 3. Loaded Data List
             return SizedBox(
               height: 270,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: controller.packages.length,
+                itemCount: controller.filteredPackages.length,
                 itemBuilder: (context, index) {
-                  final package = controller.packages[index];
+                  final package = controller.filteredPackages[index];
+
+                  // Safe check for favorites list length
+                  final isFav = index < controller.favorites.length
+                      ? controller.favorites[index]
+                      : false;
+
+                  // Localization for title
+                  final String packageTitle = controller.isKhmer
+                      ? (package["name_km"] ?? package["name_en"] ?? "")
+                      : (package["name_en"] ?? package["name_km"] ?? "");
+
+                  // Dynamic Location Fallback (NO MORE HARDCODED SIEM REAP)
+                  final String packageLocation =
+                      package["address_en"] ??
+                      package["address_km"] ??
+                      package["location"] ??
+                      package["province"] ??
+                      controller.currentLocation.value;
 
                   return Padding(
                     padding: const EdgeInsets.only(right: 16),
@@ -1000,20 +1150,238 @@ class HomeScreenView extends GetView<HomeScreenController> {
                       child: CardPlace(
                         width: Get.width * 0.8,
                         image: package["image_url"] ?? "",
-                        category: "Travel-Package",
-                        title: controller.isKhmer
-                            ? (package["name_km"] ?? package["name_en"] ?? "")
-                            : (package["name_en"] ?? package["name_km"] ?? ""),
-                        location:
-                            package["address_en"] ??
-                            package["location"] ??
-                            "Siem Reap, Cambodia",
+                        category: "Travel-Package".tr,
+                        title: packageTitle,
+                        location: packageLocation,
                         rating: (package["rating"] ?? 0).toDouble(),
                         review_count: package["review_count"] ?? 0,
-                        distance: "\$${package["price_per_person"]}/person",
-                        isFavorite: controller.favorites[index],
+                        distance:
+                            "\$${package["price_per_person"] ?? 0}/person",
+                        isFavorite: isFav,
                         onFavorite: () => controller.toggleFavorite(index),
                         showNavigationIcon: false,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFood(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                "food".tr,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppFonts.fontsSubTitlew500.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              const Spacer(),
+              Bounceable(
+                onTap: () {
+                  Get.find<ButtonNavbarController>().changePage(1);
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "see_all".tr,
+                      style: AppFonts.fontsSubTitlew500.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.arrow_forward_ios_sharp,
+                      color: Theme.of(context).primaryColor,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Obx(() {
+            if (controller.isLoadingPlaces.value &&
+                controller.foodPlaces.isEmpty) {
+              return const SizedBox(
+                height: 270,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (controller.foodPlaces.isEmpty) {
+              return const SizedBox(
+                height: 270,
+                child: Center(child: Text("No food items found")),
+              );
+            }
+
+            return SizedBox(
+              height: 270,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.foodPlaces.length,
+                itemBuilder: (context, index) {
+                  final place = controller.foodPlaces[index];
+
+                  final isFav = index < controller.favorites.length
+                      ? controller.favorites[index]
+                      : false;
+
+                  // Outer Obx handles updates, no inner Obx needed here
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Bounceable(
+                      onTap: () {
+                        Get.toNamed(
+                          Routes.DETAIL_PLACES,
+                          arguments: controller.foodPlaces[index],
+                        );
+                      },
+                      child: CardPlace(
+                        width: Get.width * 0.8,
+                        image:
+                            (place['image_url'] != null &&
+                                place['image_url'].toString().startsWith(
+                                  'http',
+                                ))
+                            ? place['image_url']
+                            : "",
+                        category: controller.getCategory(place),
+                        title: controller.getPlaceName(place),
+                        location: controller.getAddress(place),
+                        distance: "",
+                        rating: (place["rating"] ?? 0).toDouble(),
+                        review_count: place['review_count'] ?? 0,
+                        isFavorite: isFav,
+                        onFavorite: () => controller.toggleFavorite(index),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRestaurant(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                "Restaurant".tr,
+                style: AppFonts.fontsSubTitlew500.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              const Spacer(),
+              Bounceable(
+                onTap: () {
+                  Get.find<ButtonNavbarController>().changePage(1);
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "see_all".tr,
+                      style: AppFonts.fontsSubTitlew500.copyWith(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.arrow_forward_ios_sharp,
+                      color: Theme.of(context).primaryColor,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Obx(() {
+            // Show loader while fetching initial data
+            if (controller.isLoadingPlaces.value && controller.places.isEmpty) {
+              return const SizedBox(
+                height: 270,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            // Empty state handler
+            if (controller.restaurantPlaces.isEmpty) {
+              return SizedBox(
+                height: 180,
+                child: Center(
+                  child: Text(
+                    "no_restaurant_found".tr,
+                    style: GoogleFonts.googleSans(
+                      color: Theme.of(context).textTheme.titleSmall!.color,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            return SizedBox(
+              height: 270,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.restaurantPlaces.length,
+                itemBuilder: (context, index) {
+                  final place = controller.restaurantPlaces[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Bounceable(
+                      onTap: () {
+                        Get.toNamed(Routes.DETAIL_PLACES, arguments: place);
+                      },
+                      child: CardPlace(
+                        width: Get.width * 0.8,
+                        image:
+                            (place['image_url'] != null &&
+                                place['image_url'].toString().startsWith(
+                                  'http',
+                                ))
+                            ? place['image_url']
+                            : "",
+                        category: controller.getCategory(place),
+                        title: controller.getPlaceName(place),
+                        location: controller.getAddress(place),
+                        rating: (place['rating'] != null)
+                            ? double.tryParse(place['rating'].toString()) ?? 5.0
+                            : 5.0,
+                        review_count: place['review_count'] ?? 0,
+                        distance: controller.getFormattedDistance(
+                          place["latitude"],
+                          place["longitude"],
+                        ),
+                        isFavorite: controller.favorites.length > index
+                            ? controller.favorites[index]
+                            : false,
+                        onFavorite: () => controller.toggleFavorite(index),
                       ),
                     ),
                   );

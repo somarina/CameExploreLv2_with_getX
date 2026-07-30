@@ -52,12 +52,18 @@ class PackageDetailScreenViewController extends GetxController {
   List<Map<String, dynamic>> get itinerary =>
       List<Map<String, dynamic>>.from(package["itinerary"] ?? []);
 
+  final selectedStartTime = "".obs;
+  List<String> get startTimes => List<String>.from(package["start_time"] ?? []);
   @override
   void onInit() {
     super.onInit();
 
     if (Get.arguments != null) {
       package.assignAll(Map<String, dynamic>.from(Get.arguments));
+    }
+
+    if (startTimes.isNotEmpty) {
+      selectedStartTime.value = startTimes.first;
     }
 
     if (adultCount.value > maxPeople) {
@@ -69,6 +75,42 @@ class PackageDetailScreenViewController extends GetxController {
 
   void changeIndex(int index) {
     currentIndex.value = index;
+  }
+
+  String get packageLocation {
+    // Extract province/location dynamic field
+    final String province = isKhmer
+        ? (package["province_km"] ??
+              package["province"] ??
+              package["location_km"] ??
+              package["address_km"] ??
+              "")
+        : (package["province_en"] ??
+              package["province"] ??
+              package["location_en"] ??
+              package["address_en"] ??
+              "");
+
+   
+    String locationName = province.trim();
+
+    if (locationName.isEmpty) {
+      final String title = packageName;
+      if (title.contains(":")) {
+        locationName = title.split(":").first.trim();
+      } else if (title.contains("-")) {
+        locationName = title.split("-").first.trim();
+      } else {
+        locationName = ""; 
+      }
+    }
+
+
+    if (locationName.toLowerCase().contains("cambodia")) {
+      return locationName;
+    }
+
+    return "$locationName, Cambodia";
   }
 
   Future<void> fetchReviews() async {

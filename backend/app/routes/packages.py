@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -81,6 +81,7 @@ def serialize_package(package: dict, lang: Optional[str] = None) -> dict:
         "duration_days": package.get("duration_days"),
         "price_per_person": package.get("price_per_person"),
         "max_people": package.get("max_people"),
+        "start_time": package.get("start_time", []),  
         "image_url": package.get("image_url"),
         "images": package.get("images", []),
         "tags": package.get("tags", []),
