@@ -16,7 +16,7 @@ class AppBottomSheets {
 
     return Get.bottomSheet(
       Container(
-        height: Get.height * 0.57,
+        height: Get.height * 0.5,
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
           color: theme.colorScheme.primaryContainer,

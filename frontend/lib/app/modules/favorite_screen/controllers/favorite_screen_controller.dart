@@ -1,9 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/favorite_service.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/favorite_screen/custom_bottomSheet/show_bottom_sheet.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+enum FavoriteItemType { place, hotel, package }
 
 class FavoriteScreenController extends GetxController {
   final FavoriteService favoriteService = FavoriteService();
@@ -14,10 +19,15 @@ class FavoriteScreenController extends GetxController {
   RxList favoriteItems = [].obs;
   RxString selectedListId = "".obs;
   String currentListId = "";
+  RxMap<String, int> activityCounts = <String, int>{}.obs;
+  RxMap<String, String> listImages = <String, String>{}.obs;
 
   final TextEditingController createListCtrl = TextEditingController();
 
   final FocusNode createListFocusNode = FocusNode();
+  final box = GetStorage();
+
+  bool get isGuest => box.read("token") == null;
 
   @override
   void onInit() {
@@ -27,19 +37,86 @@ class FavoriteScreenController extends GetxController {
       canCreateList.value = createListCtrl.text.trim().isNotEmpty;
     });
 
-    getFavoriteLists();
+    // getFavoriteLists();
+    loadFavoriteStatus();
+  }
+
+  @override
+  void onReady() async {
+    super.onReady();
+    loadFavoriteStatus();
+
+    await getFavoriteLists();
   }
 
   /// GET FAVORITE LISTS
+  // Future<void> getFavoriteLists() async {
+  //   try {
+  //     isLoading.value = true;
+
+  //     final response = await favoriteService.getFavoriteLists();
+
+  //     favoriteLists.value = response ?? [];
+
+  //     // activityCounts.clear();
+  //     // listImages.clear();
+
+  //     for (final list in favoriteLists) {
+  //       final listId = list["id"].toString();
+
+  //       final items = await favoriteService.getFavoriteItems(listId);
+
+  //       activityCounts[listId] = items.length;
+
+  //       if (items.isNotEmpty) {
+  //         // Pick a random image
+  //         final random = Random();
+
+  //         list["cover_image"] =
+  //             items[random.nextInt(items.length)]["image_url"];
+  //       } else {
+  //         list["cover_image"] = null;
+  //       }
+  //     }
+
+  //     activityCounts.refresh();
+  //     listImages.refresh();
+  //   } catch (e) {
+  //     debugPrint("Get Favorite Error: $e");
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
   Future<void> getFavoriteLists() async {
     try {
       isLoading.value = true;
 
       final response = await favoriteService.getFavoriteLists();
 
-      print("Get Response: $response");
-
       favoriteLists.value = response ?? [];
+
+      activityCounts.clear();
+
+      for (final list in favoriteLists) {
+        final listId = list["id"].toString();
+
+        final response = await favoriteService.getFavoriteItems(listId);
+
+        final items = response["data"] ?? [];
+
+        if (items.isNotEmpty) {
+          final random = Random();
+
+          list["cover_image"] =
+              items[random.nextInt(items.length)]["image_url"];
+        } else {
+          list["cover_image"] = null;
+        }
+
+        activityCounts[listId] = items.length;
+      }
+
+      activityCounts.refresh();
     } catch (e) {
       debugPrint("Get Favorite Error: $e");
     } finally {
@@ -105,14 +182,16 @@ class FavoriteScreenController extends GetxController {
     return text[0].toUpperCase() + text.substring(1);
   }
 
-  RxMap<String, String> placeListMap = <String, String>{}.obs;
+  RxMap<String, dynamic> favoriteItemsMap = <String, dynamic>{}.obs;
 
-  bool isFavorite(String placeId) {
-    return placeListMap.containsKey(placeId);
+  bool isFavorite(String itemId, FavoriteItemType itemType) {
+    final key = "${itemType.name}_$itemId";
+    return favoriteItemsMap.containsKey(key);
   }
 
   void showSavedSnackbar(
-    String placeId,
+    String itemId,
+    FavoriteItemType itemType,
     BuildContext context,
     String listName,
   ) {
@@ -123,15 +202,22 @@ class FavoriteScreenController extends GetxController {
       mainButton: TextButton(
         onPressed: () {
           Get.closeCurrentSnackbar();
-          showSelectListBottomSheet(placeId, context);
+
+          showSelectListBottomSheet(itemId, itemType, context);
         },
-        child: const Text("Change"),
+        child: Text("Change"),
       ),
     );
   }
 
-  void showSelectListBottomSheet(String placeId, BuildContext context) {
-    final currentListId = placeListMap[placeId];
+  void showSelectListBottomSheet(
+    String itemId,
+    FavoriteItemType itemType,
+    BuildContext context,
+  ) {
+    final key = "${itemType.name}_$itemId";
+
+    final currentListId = favoriteItemsMap[key];
 
     final List<Map<String, dynamic>> sortedLists = [...favoriteLists];
 
@@ -148,12 +234,12 @@ class FavoriteScreenController extends GetxController {
         height: Get.height * 0.8,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primaryContainer,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Row(
                 children: [
                   GestureDetector(
@@ -180,6 +266,16 @@ class FavoriteScreenController extends GetxController {
 
                   IconButton(
                     onPressed: () {
+                      // if (isGuest) {
+                      //   _showLoginDialog(context);
+                      //   return;
+                      // }
+                      if (isGuest) {
+                        _showLoginDialog(
+                          context,
+                        ); // _showLoginDialog(context)
+                        return;
+                      }
                       Get.back();
 
                       Future.delayed(const Duration(milliseconds: 200), () {
@@ -206,12 +302,17 @@ class FavoriteScreenController extends GetxController {
                 padding: const EdgeInsets.all(20),
                 itemCount: sortedLists.length + 1,
                 separatorBuilder: (_, __) => const Divider(),
+
                 itemBuilder: (context, index) {
+                  // Create new list button
                   if (index == sortedLists.length) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: Center(
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                          ),
                           onPressed: () {
                             Get.back();
 
@@ -225,7 +326,13 @@ class FavoriteScreenController extends GetxController {
                               },
                             );
                           },
-                          child: Text("Create a new list".tr),
+                          child: Text(
+                            "Create a new list".tr,
+                            style: GoogleFonts.googleSans(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -235,19 +342,24 @@ class FavoriteScreenController extends GetxController {
 
                   return Obx(() {
                     final isSelected =
-                        placeListMap[placeId] == list["id"].toString();
+                        favoriteItemsMap[key] == list["id"].toString();
+                    final theme = Theme.of(context);
 
                     return InkWell(
                       borderRadius: BorderRadius.circular(16),
+
                       onTap: () {
-                        movePlaceToList(
-                          placeId,
+                        moveItemToList(
+                          itemId,
+                          itemType,
                           list["id"].toString(),
                           list["name"].toString(),
+                          context,
                         );
                       },
+
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: EdgeInsets.symmetric(vertical: 16),
                         child: Row(
                           children: [
                             Container(
@@ -257,19 +369,48 @@ class FavoriteScreenController extends GetxController {
                                 color: Colors.grey.shade300,
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: const Icon(Icons.image_outlined),
+                              child: list["cover_image"] == null
+                                  ? const Icon(Icons.image_outlined)
+                                  : ClipRRect(
+                                      borderRadius: BorderRadius.circular(5),
+                                      child: Image.network(
+                                        list["cover_image"],
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                             ),
 
-                            const SizedBox(width: 16),
+                            SizedBox(width: 16),
 
                             Expanded(
-                              child: Text(
-                                list["name"],
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              child: Obx(() {
+                                final listId = list["id"]?.toString() ?? "";
+                                final count = activityCounts[listId] ?? 0;
+
+                                return ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  title: SizedBox(
+                                    width: 200,
+                                    child: Text(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      list["name"]?.toString() ?? "",
+                                      style: AppFonts.fontsGeneral.copyWith(
+                                        color: theme.colorScheme.secondary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    "$count ${count == 1 ? 'activity' : 'activities'}",
+                                    style: AppFonts.fontDescriptionsmall
+                                        .copyWith(
+                                          color:
+                                              theme.textTheme.titleSmall?.color,
+                                        ),
+                                  ),
+                                );
+                              }),
                             ),
 
                             if (isSelected)
@@ -294,67 +435,152 @@ class FavoriteScreenController extends GetxController {
     );
   }
 
-  Future<void> movePlaceToList(
-    String placeId,
+  void _showLoginDialog(BuildContext context) {
+    final theme = Theme.of(context);
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        title: Text(
+          "Login Required".tr,
+          style: AppFonts.fontHeader.copyWith(
+            fontSize: 18,
+            color: Theme.of(context).textTheme.bodyMedium!.color,
+          ),
+        ),
+        content: Text(
+          "Please log in or create an account to save items to your favorites."
+              .tr,
+          style: AppFonts.fontDescription.copyWith(
+            color: Theme.of(context).textTheme.titleSmall!.color,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "Cancel".tr,
+              style: GoogleFonts.googleSans(color: theme.colorScheme.primary),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              Get.toNamed("/login-screen");
+            },
+            child: Text("Login".tr),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Future<void> moveItemToList(
+  //   String itemId,
+  //   FavoriteItemType itemType,
+  //   String listId,
+  //   String listName,
+  //   BuildContext context,
+  // ) async {
+  //   final key = "${itemType.name}_$itemId";
+
+  //   try {
+  //     await favoriteService.addFavoriteItem(
+  //       listId: listId,
+  //       itemId: itemId,
+  //       type: itemType,
+  //     );
+
+  //     // await getFavoriteLists();
+
+  //     // favoriteItemsMap[key] = listId;
+  //     // favoriteItemsMap.refresh();
+  //     await favoriteService.addFavoriteItem(
+  //       listId: listId,
+  //       itemId: itemId,
+  //       type: itemType,
+  //     );
+
+  //     // update count immediately
+  //     activityCounts[listId] = (activityCounts[listId] ?? 0) + 1;
+
+  //     activityCounts.refresh();
+
+  //     favoriteItemsMap[key] = listId;
+  //     favoriteItemsMap.refresh();
+
+  //     await getFavoriteLists();
+
+  //     Get.back();
+
+  //     showSavedSnackbar(itemId, itemType, context, listName);
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+  Future<void> moveItemToList(
+    String itemId,
+    FavoriteItemType itemType,
     String listId,
     String listName,
+    BuildContext context,
   ) async {
+    final key = "${itemType.name}_$itemId";
+
+    print("ADDING FAVORITE KEY: $key");
+
     try {
-      final currentList = placeListMap[placeId];
+      await favoriteService.addFavoriteItem(
+        listId: listId,
+        itemId: itemId,
+        type: itemType,
+      );
 
-      // Already in this list
-      if (currentList == listId) {
-        Get.back();
+      favoriteItemsMap[key] = listId;
 
-        Get.snackbar(
-          "Already saved",
-          "This place is already in '$listName'.",
-          snackPosition: SnackPosition.BOTTOM,
-        );
-        return;
-      }
+      favoriteItemsMap.refresh();
 
-      // Move from old list to new list
-      if (currentList != null) {
-        await favoriteService.deleteFavoriteItem(
-          listId: currentList,
-          placeId: placeId,
-        );
-      }
+      print("UPDATED MAP:");
+      print(favoriteItemsMap);
 
-      await favoriteService.addFavoriteItem(listId: listId, placeId: placeId);
-
-      placeListMap[placeId] = listId;
-      placeListMap.refresh();
-
-      if (currentListId == currentList) {
-        await getFavoriteItems(currentList!);
-      }
-
-      if (currentListId == listId) {
-        await getFavoriteItems(listId);
-      }
+      await getFavoriteLists();
 
       Get.back();
 
-      showSavedSnackbar(placeId, Get.context!, listName);
+      showSavedSnackbar(itemId, itemType, context, listName);
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Failed to move place",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print(e);
     }
   }
 
-  Future<void> toggleFavorite(String placeId, BuildContext context) async {
-    if (isFavorite(placeId)) {
-      final listId = placeListMap[placeId]!;
+  Future<void> toggleFavorite(
+    String itemId,
+    FavoriteItemType itemType,
+    BuildContext context,
+  ) async {
+    if (isGuest) {
+      _showLoginDialog(context);
+      return;
+    }
+    final key = "${itemType.name}_$itemId";
 
-      placeListMap.remove(placeId);
-      placeListMap.refresh();
+    if (isFavorite(itemId, itemType)) {
+      final listId = favoriteItemsMap[key];
 
-      await deleteFavorite(listId: listId, placeId: placeId);
+      if (listId == null) return;
+
+      favoriteItemsMap.remove(key);
+      favoriteItemsMap.refresh();
+
+      await deleteFavorite(listId: listId, itemId: itemId);
 
       Get.snackbar(
         "Removed",
@@ -362,44 +588,125 @@ class FavoriteScreenController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
     } else {
-      showSelectListBottomSheet(placeId, context);
+      showSelectListBottomSheet(itemId, itemType, context);
     }
   }
 
   Future<void> getFavoriteItems(String listId) async {
-    currentListId = listId;
+    try {
+      final response = await favoriteService.getFavoriteItems(listId);
 
-    final response = await favoriteService.getFavoriteItems(listId);
+      print("Favorite response: $response");
 
-    favoriteItems.value = response ?? [];
+      if (response["result"] == true) {
+        final data = response["data"];
+
+        if (data is List) {
+          favoriteItems.assignAll(List<Map<String, dynamic>>.from(data));
+
+          // Update favorite status map
+          favoriteItemsMap.clear();
+
+          for (var item in favoriteItems) {
+            final itemId = item["id"]?.toString();
+            final itemType = item["item_type"]?.toString();
+
+            if (itemId != null && itemType != null) {
+              final key = "${itemType}_$itemId";
+
+              favoriteItemsMap[key] = listId;
+            }
+          }
+
+          favoriteItemsMap.refresh();
+
+          // Update activity count for this list
+          activityCounts[listId] = favoriteItems.length;
+          activityCounts.refresh();
+        } else {
+          favoriteItems.clear();
+
+          favoriteItemsMap.clear();
+
+          activityCounts[listId] = 0;
+
+          activityCounts.refresh();
+        }
+
+        print("Favorite count: ${favoriteItems.length}");
+        print("Activity count: ${activityCounts[listId]}");
+      } else {
+        favoriteItems.clear();
+
+        activityCounts[listId] = 0;
+
+        activityCounts.refresh();
+      }
+    } catch (e) {
+      print("Get Favorite Error: $e");
+    }
   }
 
   Future<void> deleteFavorite({
     required String listId,
-    required String placeId,
+    required String itemId,
   }) async {
-    print("Delete List ID: $listId");
-    print("Delete Place ID: $placeId");
+    try {
+      print("Delete List ID: $listId");
+      print("Delete Item ID: $itemId");
 
-    await favoriteService.deleteFavoriteItem(listId: listId, placeId: placeId);
+      await favoriteService.deleteFavoriteItem(listId: listId, itemId: itemId);
 
-    await getFavoriteItems(listId);
+      await getFavoriteItems(listId);
+      await getFavoriteLists();
+    } catch (e) {
+      print("Delete favorite error: $e");
+    }
   }
 
+  // Future<void> loadFavoriteStatus() async {
+  //   favoriteItemsMap.clear();
+
+  //   await getFavoriteLists();
+
+  //   for (final list in favoriteLists) {
+  //     final items = await favoriteService.getFavoriteItems(
+  //       list["id"].toString(),
+  //     );
+
+  //     for (final item in items) {
+  //       favoriteItemsMap["place_${item["place_id"]}"] = list["id"].toString();
+  //     }
+  //   }
+  // }
+
   Future<void> loadFavoriteStatus() async {
-    placeListMap.clear();
+    favoriteItemsMap.clear();
 
     await getFavoriteLists();
 
     for (final list in favoriteLists) {
-      final items = await favoriteService.getFavoriteItems(
+      final response = await favoriteService.getFavoriteItems(
         list["id"].toString(),
       );
 
-      for (final item in items) {
-        placeListMap[item["place_id"].toString()] = list["id"].toString();
+      if (response["result"] == true) {
+        final items = response["data"] ?? [];
+
+        for (final item in items) {
+          final id = item["id"]?.toString();
+          final type = item["item_type"]?.toString();
+
+          if (id != null && type != null) {
+            favoriteItemsMap["${type}_$id"] = list["id"].toString();
+          }
+        }
       }
     }
+
+    favoriteItemsMap.refresh();
+
+    print("Favorite map: $favoriteItemsMap");
   }
 
   @override

@@ -46,7 +46,7 @@ import '../modules/booking_screen/bindings/booking_screen_binding.dart';
 import '../modules/booking_screen/views/booking_screen_view.dart';
 import '../modules/button_navbar/bindings/button_navbar_binding.dart';
 import '../modules/button_navbar/views/button_navbar_view.dart';
-import '../modules/discover_screen/explore_screen/explore_screen_view.dart';
+import '../modules/discover_screen/search_result_screen/search_result_screen_view.dart';
 import '../modules/discover_screen/nearby_screen/nearby_screen_binding.dart';
 import '../modules/discover_screen/nearby_screen/nearby_screen_view.dart';
 import '../modules/discover_screen/search_screen/search_screen_view.dart';
@@ -125,9 +125,9 @@ class AppPages {
       binding: FavScreen2ViewBinding(),
     ),
     GetPage(
-      name: _Paths.EXPLORE_SCREEN,
+      name: _Paths.SEARCH_RESULT_SCREEN,
       page: () => const ExploreView(),
-      binding: ExploreScreenBinding(),
+      binding: SearchResultScreenBinding(),
     ),
     GetPage(
       name: _Paths.NEARBY_SCREEN,

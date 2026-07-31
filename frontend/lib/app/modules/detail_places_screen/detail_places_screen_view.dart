@@ -8,7 +8,7 @@ import 'package:frontend/app/core/api/services/review_place.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/detail_places_screen/Gallery/gallery_view.dart';
 import 'package:frontend/app/modules/detail_places_screen/Gallery_seeall/gallery_seeall_view.dart';
-import 'package:frontend/app/modules/discover_screen/search_screen/discover_place_model.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
@@ -188,63 +188,63 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
     });
   }
 
-Widget _feeRow(
-  IconData icon,
-  String title,
-  String price,
-  BuildContext context,
-) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start, 
-    children: [
-      Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: Icon(
-          icon,
-          size: 22,
-          color: Theme.of(context).colorScheme.primary,
+  Widget _feeRow(
+    IconData icon,
+    String title,
+    String price,
+    BuildContext context,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Icon(
+            icon,
+            size: 22,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
-      ),
-      const SizedBox(width: 12),
+        const SizedBox(width: 12),
 
-
-      Text(
-        title,
-        style: GoogleFonts.googleSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: Theme.of(context).colorScheme.secondary,
+        Text(
+          title,
+          style: GoogleFonts.googleSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
         ),
-      ),
-      const SizedBox(width: 8),
+        const SizedBox(width: 8),
 
-      Expanded(
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withAlpha(20),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              price,
-              textAlign: TextAlign.right,
-              maxLines: 4, 
-              overflow: TextOverflow.ellipsis, 
-              style: GoogleFonts.googleSans(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                height: 1.3, 
-                color: Theme.of(context).colorScheme.primary,
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withAlpha(20),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                price,
+                textAlign: TextAlign.right,
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.googleSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  height: 1.3,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
+
   Widget _buildTags(BuildContext context) {
     final controller = Get.find<DetailPlacesScreenViewController>();
 
@@ -367,8 +367,20 @@ Widget _feeRow(
                           review_count: nearbyPlace['review_count'] ?? 0,
                           distance:
                               "${controller.calculateDistance(controller.place["latitude"], controller.place["longitude"], nearbyPlace["latitude"], nearbyPlace["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favorites[index],
-                          onFavorite: () => controller.toggleFavorite(index),
+                          // isFavorite: controller.favorites[index],
+                          // onFavorite: () => controller.toggleFavorite(index),
+                          isFavorite: controller.favCtrl.isFavorite(
+                            nearbyPlace['id'].toString(),
+                            FavoriteItemType.place,
+                          ),
+
+                          onFavorite: () {
+                            controller.favCtrl.toggleFavorite(
+                              nearbyPlace['id'].toString(),
+                              FavoriteItemType.place,
+                              context,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -949,7 +961,40 @@ Widget _feeRow(
                   child: _circleButton("assets/svg/normalShare.svg", context),
                 ),
                 SizedBox(width: 16),
-                _circleButton("assets/svg/normalFav.svg", context),
+                // _circleButton("assets/svg/normalFav.svg", context),
+                Obx(() {
+                  final isFav = controller.favCtrl.isFavorite(
+                    controller.place["id"].toString(),
+                    FavoriteItemType.place,
+                  );
+
+                  return Bounceable(
+                    onTap: () {
+                      controller.favCtrl.toggleFavorite(
+                        controller.place["id"].toString(),
+                        FavoriteItemType.place,
+                        context,
+                      );
+                    },
+                    child: Container(
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          size: 26,
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav
+                              ? Colors.red
+                              : Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
           ],

@@ -3,6 +3,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/button_navbar/controllers/button_navbar_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/modules/favorite_screen/custom_bottomSheet/show_bottom_sheet.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
@@ -22,69 +23,80 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                SizedBox(height: 20),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            // await controller.getFavoriteItems();
+            // controller.isLoading.value = true;
 
-                Row(
-                  children: [
-                    _circleButton(
-                      theme,
-                      child: SvgPicture.asset(
-                        "assets/svg/normalBack.svg",
-                        width: 26,
-                        height: 26,
-                        color: theme.colorScheme.primary,
+            await controller.getFavoriteItems();
+
+            controller.isLoading.value = false;
+          },
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      _circleButton(
+                        theme,
+                        child: SvgPicture.asset(
+                          "assets/svg/normalBack.svg",
+                          width: 26,
+                          height: 26,
+                          color: theme.colorScheme.primary,
+                        ),
+                        onTap: () => Get.back(),
                       ),
-                      onTap: () => Get.back(),
-                    ),
 
-                    Spacer(),
+                      Spacer(),
 
-                    Obx(
-                      () => Text(
-                        controller.listName.value,
-                        style: AppFonts.fontsGeneral.copyWith(
-                          fontSize: 18,
-                          color: theme.colorScheme.secondary,
-                          fontWeight: FontWeight.w600,
+                      Obx(
+                        () => Text(
+                          controller.listName.value,
+                          style: AppFonts.fontsGeneral.copyWith(
+                            fontSize: 18,
+                            color: theme.colorScheme.secondary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
 
-                    Spacer(),
+                      Spacer(),
 
-                    _circleButton(
-                      theme,
-                      child: Icon(
-                        Icons.share,
-                        color: theme.colorScheme.primary,
+                      _circleButton(
+                        theme,
+                        child: Icon(
+                          Icons.share,
+                          color: theme.colorScheme.primary,
+                        ),
+                        onTap: () {
+                          SharePlus.instance.share(
+                            ShareParams(text: controller.listName.value),
+                          );
+                        },
                       ),
-                      onTap: () {
-                        SharePlus.instance.share(
-                          ShareParams(text: controller.listName.value),
-                        );
-                      },
-                    ),
 
-                    SizedBox(width: 10),
+                      SizedBox(width: 10),
 
-                    _circleButton(
-                      theme,
-                      child: Icon(
-                        Icons.more_vert,
-                        color: theme.colorScheme.primary,
+                      _circleButton(
+                        theme,
+                        child: Icon(
+                          Icons.more_vert,
+                          color: theme.colorScheme.primary,
+                        ),
+                        onTap: _showOptionsBottomSheet,
                       ),
-                      onTap: _showOptionsBottomSheet,
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
 
-                _buildEmptyList(context),
-              ],
+                  _buildEmptyList(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -186,7 +198,10 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
 
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
+        return SizedBox(
+          height: Get.height * 0.8,
+          child: Center(child: CircularProgressIndicator()),
+        );
       }
 
       if (controller.favoriteItems.isEmpty) {
@@ -250,6 +265,25 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
 
   Widget _buildFavList(BuildContext context) {
     final theme = Theme.of(context);
+    String timeAgo(String savedAt) {
+      final savedDate = DateTime.parse("${savedAt}Z").toUtc();
+      final now = DateTime.now().toUtc();
+
+      final difference = now.difference(savedDate);
+
+      if (difference.inDays > 0) {
+        final days = difference.inDays;
+        return "${"saved".tr} $days ${days > 1 ? "days".tr : "day".tr} ${"ago".tr}";
+      } else if (difference.inHours > 0) {
+        final hours = difference.inHours;
+        return "${"saved".tr} $hours ${hours > 1 ? "hours".tr : "hour".tr} ${"ago".tr}";
+      } else if (difference.inMinutes > 0) {
+        final minutes = difference.inMinutes;
+        return "${"saved".tr} $minutes ${minutes > 1 ? "minutes".tr : "minute".tr} ${"ago".tr}";
+      } else {
+        return "saved_just_now".tr;
+      }
+    }
 
     return Obx(
       () => ListView.separated(
@@ -263,41 +297,32 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
           debugPrint(item.toString());
 
           return Bounceable(
-            onTap: () {
-              final placeData = {
-                "id": item["place_id"] ?? "",
+            // onTap: () {
+            //   if (item["item_type"] == "place") {
+            //     Get.toNamed(Routes.DETAIL_PLACES, arguments: item);
+            //   }
+            // },
+            onTap: () async {
+              final type = FavoriteItemType.values.firstWhere(
+                (e) => e.name == item["item_type"],
+              );
 
-                // Name
-                "name_en": item["name"] ?? "",
-                "name_km": item["name"] ?? "",
+              switch (type) {
+                case FavoriteItemType.place:
+                  Get.toNamed(Routes.DETAIL_PLACES, arguments: item);
 
-                // Description
-                "description_en": item["description"] ?? "",
-                "description_km": item["description"] ?? "",
+                  break;
 
-                // Province
-                "province": item["province"] ?? "",
-                "province_km": item["province"] ?? "",
+                case FavoriteItemType.hotel:
+                  Get.toNamed(Routes.HOTEL_DETAIL, arguments: item);
 
-                // Category
-                "category": item["category"] ?? "",
-                "category_km": item["category"] ?? "",
+                  break;
 
-                // Image
-                "image_url": item["image_url"] ?? "",
+                case FavoriteItemType.package:
+                  Get.toNamed(Routes.PACKAGE_DETAIL, arguments: item);
 
-                // Location
-                "latitude": (item["latitude"] ?? 0).toDouble(),
-                "longitude": (item["longitude"] ?? 0).toDouble(),
-
-                // Rating
-                "rating": (item["rating"] ?? 0).toDouble(),
-
-                // Optional fields used by Detail Screen
-                "phoneNum": item["phoneNum"] ?? "",
-              };
-
-              Get.toNamed(Routes.DETAIL_PLACES, arguments: placeData);
+                  break;
+              }
             },
             child: Card(
               color: theme.colorScheme.primaryContainer,
@@ -316,9 +341,13 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       height: 112,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
-                        image: item["image_url"] != null
+                        image:
+                            (item["image_url"] != null &&
+                                item["image_url"].toString().isNotEmpty)
                             ? DecorationImage(
-                                image: NetworkImage(item["image_url"]),
+                                image: NetworkImage(
+                                  item["image_url"].toString(),
+                                ),
                                 fit: BoxFit.cover,
                               )
                             : null,
@@ -326,7 +355,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       ),
                     ),
 
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
 
                     // Text
                     Expanded(
@@ -334,16 +363,17 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item["name"] ?? "",
+                            Get.locale?.languageCode == "kmKH"
+                                ? (item["name_km"] ?? "")
+                                : (item["name_en"] ?? ""),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: AppFonts.fontsGeneral.copyWith(
                               color: theme.colorScheme.secondary,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
 
                           SizedBox(height: 8),
-
                           Row(
                             children: [
                               Icon(
@@ -353,18 +383,11 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                               ),
                               SizedBox(width: 4),
                               Text(
-                                item["province"] ?? "",
+                                Get.locale?.languageCode == "kmKH"
+                                    ? (item["province_km"] ?? "")
+                                    : (item["province"] ?? ""),
                                 style: GoogleFonts.googleSans(
-                                  fontSize: 14,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.titleSmall?.color,
-                                ),
-                              ),
-                              Text(
-                                ", Cambodia",
-                                style: GoogleFonts.googleSans(
-                                  fontSize: 14,
+                                  fontSize: 15,
                                   color: Theme.of(
                                     context,
                                   ).textTheme.titleSmall?.color,
@@ -376,7 +399,65 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                           Row(
                             children: [
                               Icon(Icons.star, size: 20, color: Colors.amber),
+                              SizedBox(width: 5),
                               Text(item["rating"]?.toString() ?? "0.0"),
+                              SizedBox(width: 10),
+
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+
+                              SizedBox(width: 20),
+
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xffCEDFCE),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  Get.locale?.languageCode == "kmKH"
+                                      ? (item["category_km"] ?? "")
+                                      : (item["category"] ?? ""),
+
+                                  style: GoogleFonts.googleSans(
+                                    fontSize: 14,
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_month,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(width: 5),
+
+                              Text(
+                                timeAgo(item["saved_at"]),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.googleSans(
+                                  fontSize: 14,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.titleSmall?.color,
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -385,12 +466,33 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
 
                     // Favorite Icon
                     Bounceable(
+                      // onTap: () async {
+                      //   final type = FavoriteItemType.values.firstWhere(
+                      //     (e) => e.name == item["item_type"],
+                      //     orElse: () => FavoriteItemType.place,
+                      //   );
+
+                      //   await controller.deleteFavorite(
+                      //     item["id"].toString(),
+                      //     type,
+                      //   );
+                      // },
                       onTap: () async {
+                        final itemType = item["item_type"]?.toString();
+
+                        if (itemType == null) return;
+
+                        final type = FavoriteItemType.values.firstWhere(
+                          (e) => e.name == itemType,
+                          orElse: () => FavoriteItemType.place,
+                        );
+
                         await controller.deleteFavorite(
-                          item["place_id"].toString(),
+                          item["id"].toString(),
+                          type,
                         );
                       },
-                      child: const Icon(Icons.favorite, color: Colors.red),
+                      child: Icon(Icons.favorite, color: Colors.red),
                     ),
                   ],
                 ),

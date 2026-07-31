@@ -32,17 +32,51 @@ class FavScreen2ViewController extends GetxController {
     getFavoriteItems();
   }
 
+  // Future<void> getFavoriteItems() async {
+  //   try {
+  //     isLoading.value = true;
+
+  //     final response = await favoriteService.getFavoriteItems(listId.value);
+
+  //     for (var item in response) {
+  //       final detail = await favoriteService.getPlaceById(
+  //         item["place_id"].toString(),
+  //       );
+
+  //       if (detail != null) {
+  //         item.addAll(detail);
+  //       }
+  //     }
+
+  //     favoriteItems.assignAll(response);
+
+  //     print(favoriteItems);
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
+
   Future<void> getFavoriteItems() async {
     try {
       isLoading.value = true;
 
       final response = await favoriteService.getFavoriteItems(listId.value);
 
-      print("Favorite Items Response: $response");
+      print("Fav2 response: $response");
 
-      favoriteItems.assignAll(response);
+      if (response["result"] == true) {
+        final data = response["data"];
 
-      print("Items: ${favoriteItems.length}");
+        if (data is List) {
+          favoriteItems.assignAll(data);
+        } else {
+          favoriteItems.clear();
+        }
+      }
+
+      print("Fav2 count: ${favoriteItems.length}");
+    } catch (e) {
+      print("Fav2 get error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -121,19 +155,44 @@ class FavScreen2ViewController extends GetxController {
     return text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 
-  Future<void> deleteFavorite(String placeId) async {
+  // Future<void> deleteFavorite(String itemId, FavoriteItemType itemType) async {
+  //   await favoriteService.deleteFavoriteItem(
+  //     listId: listId.value,
+  //     itemId: itemId,
+  //     type: itemType,
+  //   );
+
+  //   favoriteItems.removeWhere(
+  //     (item) =>
+  //         item["id"].toString() == itemId && item["item_type"] == itemType.name,
+  //   );
+
+  //   favoriteItems.refresh();
+
+  //   favoriteController.favoriteItemsMap.remove("${itemType.name}_$itemId");
+
+  //   favoriteController.favoriteItemsMap.refresh();
+
+  //   await Get.find<FavoriteScreenController>().getFavoriteLists();
+  // }
+
+  Future<void> deleteFavorite(String itemId, FavoriteItemType itemType) async {
     await favoriteService.deleteFavoriteItem(
       listId: listId.value,
-      placeId: placeId,
+      itemId: itemId,
     );
 
-    favoriteItems.removeWhere((item) => item["place_id"].toString() == placeId);
+    favoriteItems.removeWhere(
+      (item) =>
+          item["id"].toString() == itemId && item["item_type"] == itemType.name,
+    );
 
     favoriteItems.refresh();
 
-    favoriteController.placeListMap.remove(placeId);
-    favoriteController.placeListMap.refresh();
+    favoriteController.favoriteItemsMap.remove("${itemType.name}_$itemId");
 
-    Get.find<FavoriteScreenController>().getFavoriteLists();
+    favoriteController.favoriteItemsMap.refresh();
+
+    await favoriteController.getFavoriteLists();
   }
 }
