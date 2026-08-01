@@ -45,7 +45,11 @@ class PlacesServices {
     var response = await baseApi.get(
       endpoint: "/places",
       // queryParameters: query,
-      queryParameters: {"category": ?category, "search": ?search},
+      // queryParameters: {"category": ?category, "search": ?search},
+      queryParameters: {
+        "category": ?category,
+        "search": ?search,
+      },
     );
     return response;
   }
