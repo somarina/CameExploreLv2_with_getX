@@ -7,15 +7,23 @@ import 'package:get_storage/get_storage.dart';
 import 'app/controllers/theme_controller.dart'; // adjust path to where you put it
 import 'app/modules/admin_screen/views/widgets/boot_shimmer_screen.dart';
 import 'app/routes/app_pages.dart';
+import 'app/core/web/maps_script_loader.dart';
+
+const String _googleMapsApiKey = String.fromEnvironment('GOOGLE_MAPS_API_KEY');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const BootShimmerScreen());
 
+  // Wait for the Google Maps JS script to finish loading (web only; no-op
+  // elsewhere) before mounting the real app, so any screen with a
+  // GoogleMap never builds before `google.maps` actually exists.
+  final mapsReady = injectGoogleMapsScript(_googleMapsApiKey);
+
   await GetStorage.init();
   Get.put(ThemeController(), permanent: true); // <-- this line must run
 
-  await Future.delayed(const Duration(milliseconds: 500));
+  await mapsReady;
 
   runApp(DashboardApp(
     startRoute: _resolveStartRoute(),
@@ -24,9 +32,14 @@ void main() async {
 
 String _resolveStartRoute() {
   final token = GetStorage().read<String>('dashboard_token');
-  return (token != null && token.isNotEmpty)
-      ? Routes.ADMIN_SCREEN
-      : Routes.LOGIN_SCREEN;
+  if (token == null || token.isEmpty) {
+    return Routes.LOGIN_SCREEN;
+  }
+
+  final activeRole = GetStorage().read<String>('dashboard_active_role') ?? '';
+  return activeRole.toLowerCase() == 'company'
+      ? Routes.COMPANY_SCREEN
+      : Routes.ADMIN_SCREEN;
 }
 
 class DashboardApp extends StatelessWidget {
@@ -55,6 +68,7 @@ class DashboardApp extends StatelessWidget {
         darkTheme: ThemeData.dark(),
 
         initialRoute: startRoute,
+        // initialRoute: Routes.COMPANY_SCREEN,
         getPages: AppPages.routes,
       );
     });

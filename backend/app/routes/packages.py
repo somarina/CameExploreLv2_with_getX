@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from app.db.daatabase import db
 from app.models.package_models import PackageCreate, PackageUpdate
 from app.utils.auth_dependency import (
-    get_current_user_optional,
+    get_current_user_or_admin_optional,
     require_admin,
     require_company_or_admin,
     is_admin,
@@ -111,7 +111,7 @@ async def get_packages(
     status: Optional[str] = Query(None, description="admin only: pending | approved | rejected"),
     limit: int = Query(50, ge=1, le=200),
     skip: int = Query(0, ge=0),
-    current_user: Optional[dict] = Depends(get_current_user_optional),
+    current_user: Optional[dict] = Depends(get_current_user_or_admin_optional),
 ):
     query = {}
     if current_user and is_admin(current_user):
@@ -154,7 +154,7 @@ async def get_my_packages(
 async def get_package(
     package_id: str,
     lang: Optional[str] = Query(None),
-    current_user: Optional[dict] = Depends(get_current_user_optional),
+    current_user: Optional[dict] = Depends(get_current_user_or_admin_optional),
 ):
     oid = get_object_id(package_id)
     package = await packages_collection.find_one({"_id": oid})

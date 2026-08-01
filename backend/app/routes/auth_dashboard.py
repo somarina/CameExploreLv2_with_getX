@@ -16,12 +16,25 @@ IMPORTANT DESIGN CHANGE:
 Company/personal accounts remain in "users" with a 'roles' array,
 exactly as before — unchanged.
 """
+import os
+import secrets
+import smtplib
 
-from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Depends
 
 from app.db.daatabase import db
-from app.schemas.auth_schemas import RegisterCompanySchema, RegisterSchema, LoginSchema
+# from app.schemas.auth_schemas import RegisterCompanySchema, RegisterSchema, LoginSchema
+from app.schemas.auth_schemas import (
+    RegisterCompanySchema,
+    RegisterSchema,
+    LoginSchema,
+    AdminForgotPasswordSchema,
+    AdminVerifyOtpSchema,
+    AdminResetPasswordSchema,
+)
 from app.utils.jwt import create_access_token, decode_access_token
 from app.utils.password import hash_password, verify_password
 from app.utils.auth_dependency import get_current_user
@@ -34,6 +47,7 @@ router = APIRouter(
 
 users_collection = db["users"]
 admins_collection = db["admins"]
+admin_otp_collection = db["dashboard_admin_otp_codes"]
 
 
 def ok(message: str, data: dict = None):
@@ -81,6 +95,300 @@ def make_admin_token(admin: dict):
         "type": "admin",
     })
 
+def send_admin_reset_email(to_email: str, otp: str):
+
+    sender = os.getenv("GMAIL_SENDER")
+    app_password = os.getenv("GMAIL_APP_PASSWORD")
+
+    if not sender or not app_password:
+        return False
+
+
+    text = f"""
+Hello Admin,
+
+We received a request to reset your CamExplore Dashboard password.
+
+Your verification code is:
+
+{otp}
+
+This code expires in 3 minutes.
+
+If you did not request this password reset, please ignore this email.
+
+CamExplore Team
+"""
+
+
+    html = f"""
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+
+<style>
+
+body {{
+    margin:0;
+    padding:40px;
+    background:#f4f6f9;
+    font-family:Arial,Helvetica,sans-serif;
+}}
+
+.wrapper {{
+    max-width:520px;
+    margin:auto;
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}}
+
+.header {{
+    background:#009A3F;
+    color:white;
+    text-align:center;
+    padding:35px;
+}}
+
+.logo {{
+    width:70px;
+    height:70px;
+    background:white;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    color:#009A3F;
+}}
+
+.content {{
+    padding:35px;
+}}
+
+.title {{
+    font-size:28px;
+    font-weight:bold;
+    color:#222;
+}}
+
+.desc {{
+    color:#666;
+    line-height:1.7;
+}}
+
+.otp-box {{
+    margin:30px 0;
+    padding:30px;
+    background:#eefaf2;
+    border-radius:14px;
+    border:2px solid #d7f1df;
+    text-align:center;
+}}
+
+.label {{
+    color:#009A3F;
+    font-size:13px;
+    font-weight:bold;
+    letter-spacing:2px;
+}}
+
+.otp {{
+    margin-top:15px;
+    font-size:42px;
+    font-weight:bold;
+    color:#009A3F;
+    letter-spacing:12px;
+}}
+
+.warning {{
+    background:#FFF8E8;
+    border-left:5px solid #F4B400;
+    padding:18px;
+    border-radius:8px;
+    color:#555;
+}}
+
+.footer {{
+    text-align:center;
+    padding:25px;
+    color:#888;
+    font-size:13px;
+    border-top:1px solid #eee;
+}}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="wrapper">
+
+
+<div class="header">
+
+<div class="logo">
+🌿
+</div>
+
+<h1>
+CamExplore
+</h1>
+
+<p>
+Dashboard Administration
+</p>
+
+</div>
+
+
+<div class="content">
+
+
+<div class="title">
+Admin Password Reset
+</div>
+
+
+<br>
+
+
+<div class="desc">
+
+Hello Admin,
+
+<br><br>
+
+We received a request to reset your CamExplore Dashboard administrator password.
+
+<br><br>
+
+Use the verification code below to continue.
+
+</div>
+
+
+
+<div class="otp-box">
+
+<div class="label">
+ADMIN VERIFICATION CODE
+</div>
+
+
+<div class="otp">
+{otp}
+</div>
+
+
+</div>
+
+
+
+<p>
+⏰ This code expires in <b>3 minutes</b>.
+</p>
+
+
+<div class="warning">
+
+<b>Didn't request this?</b>
+
+<br><br>
+
+Ignore this email.
+
+Your administrator password will remain unchanged.
+
+</div>
+
+
+
+<br>
+
+
+<p style="color:#666;">
+
+🔒 Never share this code with anyone.
+
+CamExplore will never ask for your OTP.
+
+</p>
+
+
+</div>
+
+
+
+<div class="footer">
+
+© 2026 CamExplore
+
+<br><br>
+
+Dashboard Security System
+
+</div>
+
+
+
+</div>
+
+
+</body>
+
+</html>
+"""
+
+
+    msg = MIMEMultipart("alternative")
+
+    msg["Subject"] = "CamExplore Admin | Password Reset Code"
+    msg["From"] = f"CamExplore <{sender}>"
+    msg["To"] = to_email
+
+
+    msg.attach(
+        MIMEText(text, "plain")
+    )
+
+    msg.attach(
+        MIMEText(html, "html")
+    )
+
+
+    try:
+
+        with smtplib.SMTP_SSL(
+            "smtp.gmail.com",
+            465
+        ) as smtp:
+
+            smtp.login(
+                sender,
+                app_password
+            )
+
+            smtp.sendmail(
+                sender,
+                to_email,
+                msg.as_string()
+            )
+
+
+        return True
+
+
+    except Exception as e:
+
+        print("ADMIN EMAIL ERROR:", e)
+
+        return False
 
 # ====================== REGISTER PERSONAL ======================
 @router.post("/register/personal")
@@ -269,6 +577,223 @@ async def login(payload: LoginSchema):
 
     return ok("Login successful", data)
 
+# ====================== ADMIN FORGOT PASSWORD ======================
+
+@router.post("/forgot-password")
+async def admin_forgot_password(
+    payload: AdminForgotPasswordSchema
+):
+
+    email = payload.email.lower()
+
+
+    admin = await admins_collection.find_one(
+        {
+            "email": email
+        }
+    )
+
+
+    if not admin:
+        err(
+            "Admin account not found",
+            404
+        )
+
+
+    otp = str(
+        secrets.randbelow(900000) + 100000
+    )
+
+
+    await admin_otp_collection.delete_many(
+        {
+            "email": email
+        }
+    )
+
+
+    await admin_otp_collection.insert_one(
+        {
+            "email": email,
+            "otp": otp,
+            "verified": False,
+            "expires_at": datetime.utcnow()
+                + timedelta(minutes=3),
+            "created_at": datetime.utcnow()
+        }
+    )
+
+
+    sent = send_admin_reset_email(
+        email,
+        otp
+    )
+
+
+    if not sent:
+        err(
+            "Failed to send OTP",
+            500
+        )
+
+
+    return ok(
+        "OTP sent successfully"
+    )
+
+
+
+@router.post("/verify-otp")
+async def admin_verify_otp(
+    payload: AdminVerifyOtpSchema
+):
+
+    otp_data = await admin_otp_collection.find_one(
+        {
+            "email": payload.email.lower(),
+            "otp": payload.otp
+        }
+    )
+
+
+    if not otp_data:
+        err(
+            "Invalid OTP"
+        )
+
+
+    if otp_data["expires_at"] < datetime.utcnow():
+        err(
+            "OTP expired"
+        )
+
+
+    await admin_otp_collection.update_one(
+        {
+            "_id": otp_data["_id"]
+        },
+        {
+            "$set":
+            {
+                "verified": True
+            }
+        }
+    )
+
+
+    return ok(
+        "OTP verified successfully"
+    )
+
+
+
+@router.post("/reset-password")
+async def admin_reset_password(
+    payload: AdminResetPasswordSchema
+):
+
+    if payload.new_password != payload.confirm_password:
+        err(
+            "Password and confirm password do not match"
+        )
+
+
+    otp_data = await admin_otp_collection.find_one(
+        {
+            "email": payload.email.lower(),
+            "otp": payload.otp,
+            "verified": True
+        }
+    )
+
+
+    if not otp_data:
+        err(
+            "OTP not verified"
+        )
+
+
+    result = await admins_collection.update_one(
+        {
+            "email": payload.email.lower()
+        },
+        {
+            "$set":
+            {
+                "password":
+                    hash_password(
+                        payload.new_password
+                    ),
+                "updated_at":
+                    datetime.utcnow()
+            }
+        }
+    )
+
+
+    if result.matched_count == 0:
+        err(
+            "Admin not found",
+            404
+        )
+
+
+    await admin_otp_collection.delete_many(
+        {
+            "email": payload.email.lower()
+        }
+    )
+
+
+    return ok(
+        "Password reset successful"
+    )
+
+# ====================== CHANGE ADMIN PASSWORD ======================
+from pydantic import BaseModel
+
+class ChangePasswordSchema(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_password: str
+
+
+@router.put("/change-password")
+async def change_admin_password(
+    payload: ChangePasswordSchema,
+    current_admin: dict = Depends(get_current_admin),
+):
+    # Check current password
+    if not verify_password(
+        payload.current_password,
+        current_admin["password"],
+    ):
+        err("Current password is incorrect")
+
+    # Check confirmation
+    if payload.new_password != payload.confirm_password:
+        err("Password and confirm password do not match")
+
+    # Prevent same password
+    if verify_password(
+        payload.new_password,
+        current_admin["password"],
+    ):
+        err("New password cannot be the same as the current password")
+
+    # Update password
+    await admins_collection.update_one(
+        {"_id": current_admin["_id"]},
+        {
+            "$set": {
+                "password": hash_password(payload.new_password),
+                "updated_at": datetime.utcnow(),
+            }
+        }
+    )
+
+    return ok("Password changed successfully")
 
 # ====================== LOGOUT ======================
 @router.delete("/logout")

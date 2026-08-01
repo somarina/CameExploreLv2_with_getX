@@ -22,11 +22,11 @@ class AdminDashboardPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AdminTopBar(
-              title: 'Dashboard',
-              subtitle: 'Welcome back, ${controller.adminName.value}👋',
+              title: 'dashboard'.tr,
+              subtitle: '${'welcome_back_admin'.tr}, ${controller.adminName.value}👋',
               controller: controller,
               trailingAction: AdminPrimaryButton(
-                label: 'Review Requests',
+                label: 'review_requests'.tr,
                 count: controller.pendingCount,
                 icon: Icons.check_circle_outline,
                 onTap: () => controller.goTo(AdminSection.approvals),
@@ -42,7 +42,7 @@ class AdminDashboardPage extends StatelessWidget {
                     icon: Icons.place_outlined,
                     iconColor: AdminColors.primary,
                     iconBg: AdminColors.primaryLight,
-                    label: 'Total Places',
+                    label: 'total_places'.tr,
                     value: '${controller.totalPlaces}',
                     badgeText: '+8%',
                     badgeColor: AdminColors.primary,
@@ -52,9 +52,9 @@ class AdminDashboardPage extends StatelessWidget {
                     icon: Icons.access_time_rounded,
                     iconColor: AdminColors.amber,
                     iconBg: AdminColors.amberLight,
-                    label: 'Pending Review',
+                    label: 'pending_review'.tr,
                     value: '${controller.pendingCount}',
-                    badgeText: 'Now',
+                    badgeText: 'now'.tr,
                     badgeColor: AdminColors.amber,
                     badgeBg: AdminColors.amberLight,
                   ),
@@ -62,7 +62,7 @@ class AdminDashboardPage extends StatelessWidget {
                     icon: Icons.check_circle_outline,
                     iconColor: AdminColors.green,
                     iconBg: AdminColors.greenLight,
-                    label: 'Approved',
+                    label: 'approved'.tr,
                     value: '${controller.approvedCount}',
                     badgeText: '+12%',
                     badgeColor: AdminColors.green,
@@ -72,7 +72,7 @@ class AdminDashboardPage extends StatelessWidget {
                     icon: Icons.apartment_rounded,
                     iconColor: AdminColors.purple,
                     iconBg: AdminColors.purpleLight,
-                    label: 'Companies',
+                    label: 'companies'.tr,
                     value: '${controller.totalCompanies}',
                     badgeText: '+5%',
                     badgeColor: AdminColors.purple,
@@ -168,9 +168,9 @@ class _SubmissionsChart extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AdminSectionHeader(
-          title: 'Submissions Overview',
-          subtitle: 'Weekly place submissions & approvals',
+        AdminSectionHeader(
+          title: 'submissions_overview'.tr,
+          subtitle: 'submissions_overview_subtitle'.tr,
         ),
         const SizedBox(height: 20),
         SizedBox(
@@ -248,9 +248,9 @@ class _SubmissionsChart extends StatelessWidget {
         const SizedBox(height: 12),
         Row(
           children: [
-            _legendDot(AdminColors.primary, 'Submissions'),
+            _legendDot(AdminColors.primary, 'submissions'.tr),
             const SizedBox(width: 20),
-            _legendDot(AdminColors.green, 'Approved'),
+            _legendDot(AdminColors.green, 'approved'.tr),
           ],
         ),
       ],
@@ -307,11 +307,11 @@ class _TopCategories extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AdminSectionHeader(
-          title: 'Top Categories',
-          subtitle: 'Place distribution',
+        AdminSectionHeader(
+          title: 'top_categories'.tr,
+          subtitle: 'place_distribution'.tr,
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         SizedBox(
           height: 160,
           child: PieChart(
@@ -411,8 +411,8 @@ class _RecentSubmissions extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AdminSectionHeader(
-              title: 'Recent Submissions',
-              subtitle: 'Latest place requests',
+              title: 'recent_submissions'.tr,
+              subtitle: 'latest_place_requests'.tr,
               trailing: TextButton.icon(
                 onPressed: () => controller.goTo(AdminSection.managePlaces),
                 icon: const Icon(
@@ -421,7 +421,7 @@ class _RecentSubmissions extends StatelessWidget {
                   color: AdminColors.primary,
                 ),
                 label: Text(
-                  'View All',
+                  'view_all'.tr,
                   style: GoogleFonts.inter(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
@@ -432,11 +432,11 @@ class _RecentSubmissions extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _TableHeader(colWidths: colWidths),
-            const Divider(height: 24, color: AdminColors.border),
+            Divider(height: 24, color: AdminColors.border),
             ...recent.map((p) => _PlaceRow(place: p, colWidths: colWidths)),
             const SizedBox(height: 20),
             AdminPrimaryButton(
-              label: 'Go to Approval Center',
+              label: 'go_to_approval_center'.tr,
               icon: Icons.check_circle_outline,
               onTap: () => controller.goTo(AdminSection.approvals),
             ),
@@ -470,27 +470,27 @@ class _TableHeader extends StatelessWidget {
       children: [
         SizedBox(
           width: colWidths[0],
-          child: Text('PLACE', style: style),
+          child: Text('col_place'.tr, style: style),
         ),
         SizedBox(
           width: colWidths[1],
-          child: Text('COMPANY', style: style),
+          child: Text('col_company'.tr, style: style),
         ),
         SizedBox(
           width: colWidths[2],
-          child: Text('CATEGORY', style: style),
+          child: Text('col_category'.tr, style: style),
         ),
         SizedBox(
           width: colWidths[3],
-          child: Text('PROVINCE', style: style),
+          child: Text('col_province'.tr, style: style),
         ),
         SizedBox(
           width: colWidths[4],
-          child: Text('DATE', style: style),
+          child: Text('col_date'.tr, style: style),
         ),
         SizedBox(
           width: colWidths[5],
-          child: Text('STATUS', style: style),
+          child: Text('col_status'.tr, style: style),
         ),
       ],
     );
@@ -595,20 +595,20 @@ class _PlaceRow extends StatelessWidget {
   Widget _statusChip(PlaceStatus status) {
     switch (status) {
       case PlaceStatus.approved:
-        return const AdminStatusChip(
-          text: 'Approved',
+        return AdminStatusChip(
+          text: 'approved'.tr,
           color: AdminColors.green,
           bg: AdminColors.greenLight,
         );
       case PlaceStatus.rejected:
-        return const AdminStatusChip(
-          text: 'Rejected',
+        return AdminStatusChip(
+          text: 'rejected'.tr,
           color: AdminColors.red,
           bg: AdminColors.redLight,
         );
       case PlaceStatus.pending:
-        return const AdminStatusChip(
-          text: 'Pending',
+        return AdminStatusChip(
+          text: 'pending'.tr,
           color: AdminColors.amber,
           bg: AdminColors.amberLight,
         );

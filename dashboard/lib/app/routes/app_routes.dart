@@ -11,6 +11,9 @@ abstract class Routes {
   static const COMPANY_REGISTER_SCREEN = _Paths.COMPANY_REGISTER_SCREEN;
   static const ADMIN_SCREEN = _Paths.ADMIN_SCREEN;
   static const FORGET_PASSWORD = _Paths.FORGET_PASSWORD;
+  static const OTP_VERIFICATION = _Paths.OTP_VERIFICATION;
+  static const RESET_PASSWORD = _Paths.RESET_PASSWORD;
+  static const COMPANY_SCREEN = _Paths.COMPANY_SCREEN;
 }
 
 abstract class _Paths {
@@ -21,4 +24,7 @@ abstract class _Paths {
   static const COMPANY_REGISTER_SCREEN = '/company-register-screen';
   static const ADMIN_SCREEN = '/admin-screen';
   static const FORGET_PASSWORD = '/forget-password';
+  static const OTP_VERIFICATION = '/otp-verification';
+  static const RESET_PASSWORD = '/reset-password';
+  static const COMPANY_SCREEN = '/company-screen';
 }

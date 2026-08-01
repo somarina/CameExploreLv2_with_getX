@@ -1,7 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../utils/admin_export/admin_export.dart';
 import '../../controllers/admin_screen_controller.dart';
 import '../../models/admin_colors.dart';
 import '../../models/admin_models.dart';
@@ -41,8 +44,8 @@ class _AdminManageUsersPageState extends State<AdminManageUsersPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AdminTopBar(
-                  title: 'Manage Users',
-                  subtitle: 'All registered companies and partners',
+                  title: 'manage_users'.tr,
+                  subtitle: 'manage_users_subtitle'.tr,
                   controller: controller,
                 ),
                 const SizedBox(height: 24),
@@ -60,7 +63,7 @@ class _AdminManageUsersPageState extends State<AdminManageUsersPage> {
                     mainAxisSpacing: 16,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: isMobile ? 2.0 : 2.4,
+                    childAspectRatio: isMobile ? 1.5 : 2.0,
                     children: cards,
                   );
                 }),
@@ -74,12 +77,12 @@ class _AdminManageUsersPageState extends State<AdminManageUsersPage> {
                         children: [
                           Expanded(
                             child: AdminSearchField(
-                              hint: 'Search by company, email, location...',
+                              hint: 'search_company_email_location'.tr,
                               onChanged: (v) => setState(() => _query = v),
                             ),
                           ),
                           const SizedBox(width: 12),
-                          _ExportButton(onTap: () {}),
+                          _ExportButton(onTap: () => exportCompaniesToExcel(filtered)),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -87,7 +90,7 @@ class _AdminManageUsersPageState extends State<AdminManageUsersPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: _TableHeader(),
                       ),
-                      const Divider(height: 24, color: AdminColors.border),
+                      Divider(height: 24, color: AdminColors.border),
                       if (filtered.isEmpty)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 48),
@@ -95,9 +98,9 @@ class _AdminManageUsersPageState extends State<AdminManageUsersPage> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.search_off_rounded, size: 36, color: AdminColors.textSecondary),
+                                Icon(Icons.search_off_rounded, size: 36, color: AdminColors.textSecondary),
                                 const SizedBox(height: 10),
-                                Text('No companies match your search.',
+                                Text('no_companies_match_search'.tr,
                                     style: GoogleFonts.inter(fontSize: 13.5, color: AdminColors.textSecondary)),
                               ],
                             ),
@@ -165,16 +168,20 @@ class _StatBoxState extends State<_StatBox> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.label,
-                      style: GoogleFonts.inter(fontSize: 12.5, color: AdminColors.textSecondary, fontWeight: FontWeight.w500),
-                      overflow: TextOverflow.ellipsis),
-                  const SizedBox(height: 2),
-                  Text(widget.value, style: GoogleFonts.spaceGrotesk(fontSize: 22, fontWeight: FontWeight.w700, color: widget.color)),
-                ],
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.label,
+                        style: GoogleFonts.inter(fontSize: 12.5, color: AdminColors.textSecondary, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 2),
+                    Text(widget.value, style: GoogleFonts.spaceGrotesk(fontSize: 22, fontWeight: FontWeight.w700, color: widget.color)),
+                  ],
+                ),
               ),
             ),
           ],
@@ -218,7 +225,7 @@ class _ExportButtonState extends State<_ExportButton> {
             children: [
               Icon(Icons.download_outlined, size: 18, color: _hovering ? AdminColors.primary : AdminColors.textPrimary),
               const SizedBox(width: 8),
-              Text('Export',
+              Text('export'.tr,
                   style: GoogleFonts.inter(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
@@ -233,20 +240,35 @@ class _ExportButtonState extends State<_ExportButton> {
 }
 
 // ══════════════════════════ Table header ══════════════════════════
+// Flex ratios below MUST match the Expanded flex values in _CompanyRow
+// so header labels line up with their data columns.
+// COMPANY=3, CONTACT=2, BUSINESS TYPE=3, LOCATION=2, PLACES=1, JOINED=2, ACTIONS=2
 
 class _TableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: AdminColors.textSecondary, letterSpacing: 0.4);
+
+    Widget cell(String label, int flex) => Expanded(
+          flex: flex,
+          child: Text(
+            label,
+            style: style,
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+
     return Row(
       children: [
-        Expanded(flex: 3, child: Text('COMPANY', style: style)),
-        Expanded(flex: 3, child: Text('CONTACT', style: style)),
-        Expanded(flex: 2, child: Text('BUSINESS TYPE', style: style)),
-        Expanded(flex: 2, child: Text('LOCATION', style: style)),
-        Expanded(flex: 1, child: Text('PLACES', style: style)),
-        Expanded(flex: 2, child: Text('JOINED', style: style)),
-        Expanded(flex: 2, child: Text('ACTIONS', style: style)),
+        cell('col_company'.tr, 3),
+        cell('col_contact'.tr, 2),
+        cell('col_business_type'.tr, 3),
+        cell('col_location'.tr, 2),
+        cell('col_places'.tr, 1),
+        cell('col_joined'.tr, 2),
+        cell('col_actions'.tr, 2),
       ],
     );
   }
@@ -307,29 +329,29 @@ class _CompanyRowState extends State<_CompanyRow> {
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(children: [
-                    const Icon(Icons.mail_outline, size: 13, color: AdminColors.textSecondary),
+                    Icon(Icons.mail_outline, size: 13, color: AdminColors.textSecondary),
                     const SizedBox(width: 6),
                     Flexible(child: Text(company.email, style: GoogleFonts.inter(fontSize: 12.5, color: AdminColors.textPrimary), overflow: TextOverflow.ellipsis)),
                   ]),
                   const SizedBox(height: 3),
                   Row(children: [
-                    const Icon(Icons.call_outlined, size: 13, color: AdminColors.textSecondary),
+                    Icon(Icons.call_outlined, size: 13, color: AdminColors.textSecondary),
                     const SizedBox(width: 6),
-                    Text(company.phone, style: GoogleFonts.inter(fontSize: 12.5, color: AdminColors.textPrimary)),
+                    Flexible(child: Text(company.phone, style: GoogleFonts.inter(fontSize: 12.5, color: AdminColors.textPrimary), overflow: TextOverflow.ellipsis)),
                   ]),
                 ],
               ),
             ),
-            Expanded(flex: 2, child: _BusinessTypeBadge(label: company.businessType, color: company.businessTypeColor)),
+            Expanded(flex: 3, child: _BusinessTypeBadge(label: company.businessType, color: company.businessTypeColor)),
             Expanded(
               flex: 2,
               child: Row(children: [
-                const Icon(Icons.location_on_outlined, size: 14, color: AdminColors.textSecondary),
+                Icon(Icons.location_on_outlined, size: 14, color: AdminColors.textSecondary),
                 const SizedBox(width: 4),
                 Flexible(child: Text(company.location, style: GoogleFonts.inter(fontSize: 13, color: AdminColors.textPrimary), overflow: TextOverflow.ellipsis)),
               ]),
@@ -345,15 +367,28 @@ class _CompanyRowState extends State<_CompanyRow> {
                 ),
               ),
             ),
-            Expanded(flex: 2, child: Text(company.joined, style: GoogleFonts.inter(fontSize: 13, color: AdminColors.textPrimary))),
             Expanded(
               flex: 2,
-              child: Row(
-                children: [
-                  _ActionIconButton(icon: Icons.visibility_outlined, tooltip: 'View Details', color: AdminColors.textSecondary, onTap: () {}),
-                  _ActionIconButton(icon: Icons.person_off_outlined, tooltip: 'Suspend', color: AdminColors.amber, onTap: () {}),
-                  _ActionIconButton(icon: Icons.delete_outline, tooltip: 'Remove', color: AdminColors.red, onTap: () => _confirmDelete(context, company, controller)),
-                ],
+              child: Text(
+                company.joined,
+                style: GoogleFonts.inter(fontSize: 13, color: AdminColors.textPrimary),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _ActionIconButton(icon: Icons.visibility_outlined, tooltip: 'view_details'.tr, color: AdminColors.textSecondary, onTap: () {}),
+                    _ActionIconButton(icon: Icons.person_off_outlined, tooltip: 'suspend'.tr, color: AdminColors.amber, onTap: () {}),
+                    _ActionIconButton(icon: Icons.delete_outline, tooltip: 'remove'.tr, color: AdminColors.red, onTap: () => _confirmDelete(context, company, controller)),
+                  ],
+                ),
               ),
             ),
           ],
@@ -367,16 +402,16 @@ class _CompanyRowState extends State<_CompanyRow> {
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Remove "${company.name}"?', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
-        content: Text('This will remove the company account. This action cannot be undone.', style: GoogleFonts.inter()),
+        title: Text('${'remove_question'.tr} "${company.name}"?', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
+        content: Text('remove_company_message'.tr, style: GoogleFonts.inter()),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('cancel'.tr)),
           TextButton(
             onPressed: () {
               controller.companies.remove(company);
               Navigator.pop(context);
             },
-            child: const Text('Remove', style: TextStyle(color: AdminColors.red)),
+            child: Text('remove'.tr, style: const TextStyle(color: AdminColors.red)),
           ),
         ],
       ),
@@ -398,7 +433,12 @@ class _BusinessTypeBadge extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(20)),
-        child: Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: color), overflow: TextOverflow.ellipsis),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: color),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }

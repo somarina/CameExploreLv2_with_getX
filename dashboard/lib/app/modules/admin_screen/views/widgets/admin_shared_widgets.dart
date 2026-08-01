@@ -211,7 +211,7 @@ class AdminSearchField extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.search, size: 20, color: AdminColors.textSecondary),
+          Icon(Icons.search, size: 20, color: AdminColors.textSecondary),
           const SizedBox(width: 10),
           Expanded(
             child: TextField(

@@ -102,6 +102,42 @@ async def _load_admin_from_payload(payload: dict):
     return admin
 
 
+async def get_current_user_or_admin_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security),
+):
+    """Same idea as get_current_user_optional, but also resolves an
+    admin-collection token (type=admin). Public/mixed GET endpoints
+    (places/hotels/packages listing + detail) use this so a logged-in
+    admin viewer sees every status, not just 'approved' — plain
+    get_current_user_optional  understands user-collection tokens
+    and silently returns None for an admin session, which was hiding
+    pending submissions from the dashboard."""
+    if not credentials:
+        return None
+
+    payload = decode_access_token(credentials.credentials)
+    if not payload:
+        return None
+
+    admin = await _load_admin_from_payload(payload)
+    if admin:
+        return admin
+
+    if "user_id" not in payload:
+        return None
+
+    user_id = payload["user_id"]
+    if not ObjectId.is_valid(user_id):
+        return None
+
+    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        return None
+
+    user["active_role"] = payload.get("active_role")
+    return user
+
+
 async def get_current_user_or_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Dependency for routes that any *logged-in* caller may use — a normal
     user OR an admin. Accepts:

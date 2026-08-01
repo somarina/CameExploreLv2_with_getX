@@ -68,8 +68,8 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AdminTopBar(
-                  title: 'Approvals',
-                  subtitle: 'Review and manage place submission requests',
+                  title: 'approvals'.tr,
+                  subtitle: 'approvals_subtitle'.tr,
                   controller: controller,
                 ),
                 const SizedBox(height: 28),
@@ -107,7 +107,7 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
               ),
               const SizedBox(height: 12),
               Text(
-                isPending ? 'All caught up — nothing pending review.' : 'No submissions match your filters.',
+                isPending ? 'All caught up — nothing pending review.' : 'no_submissions_match_filters'.tr,
                 style: GoogleFonts.inter(fontSize: 14, color: AdminColors.textSecondary),
               ),
             ],
@@ -129,10 +129,10 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
           mainAxisSpacing: isMobile ? 12 : 16,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: isMobile ? 2.2 : 2.5,
+          childAspectRatio: isMobile ? 1.6 : 2.1,
           children: [
             _StatCard(
-              label: 'Total',
+              label: 'total'.tr,
               value: total,
               color: AdminColors.primary,
               icon: Icons.grid_view_rounded,
@@ -140,7 +140,7 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
               onTap: () => setState(() => _selectedFilter = 'All'),
             ),
             _StatCard(
-              label: 'Pending',
+              label: 'pending'.tr,
               value: pending,
               color: AdminColors.amber,
               icon: Icons.schedule_rounded,
@@ -148,7 +148,7 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
               onTap: () => setState(() => _selectedFilter = 'Pending'),
             ),
             _StatCard(
-              label: 'Approved',
+              label: 'approved'.tr,
               value: approved,
               color: AdminColors.green,
               icon: Icons.check_circle_outline_rounded,
@@ -156,7 +156,7 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
               onTap: () => setState(() => _selectedFilter = 'Approved'),
             ),
             _StatCard(
-              label: 'Rejected',
+              label: 'rejected'.tr,
               value: rejected,
               color: AdminColors.red,
               icon: Icons.cancel_outlined,
@@ -186,13 +186,13 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
         onChanged: (v) => setState(() => _searchQuery = v),
         style: GoogleFonts.inter(fontSize: 13.5, color: AdminColors.textPrimary),
         decoration: InputDecoration(
-          hintText: 'Search by place or company...',
+          hintText: 'search_place_company'.tr,
           hintStyle: GoogleFonts.inter(fontSize: 13.5, color: AdminColors.textSecondary),
-          prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AdminColors.textSecondary),
+          prefixIcon: Icon(Icons.search_rounded, size: 20, color: AdminColors.textSecondary),
           suffixIcon: _searchQuery.isEmpty
               ? null
               : IconButton(
-                  icon: const Icon(Icons.close_rounded, size: 18, color: AdminColors.textSecondary),
+                  icon: Icon(Icons.close_rounded, size: 18, color: AdminColors.textSecondary),
                   onPressed: () {
                     _searchController.clear();
                     setState(() => _searchQuery = '');
@@ -240,14 +240,14 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-            child: Text('Submissions', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
+            child: Text('submissions'.tr, style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
           ),
-          const Divider(color: AdminColors.border, height: 0),
+          Divider(color: AdminColors.border, height: 0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             child: _tableHeaderRow(),
           ),
-          const Divider(color: AdminColors.border, height: 0),
+          Divider(color: AdminColors.border, height: 0),
           ...items.map((place) => _ApprovalTableRow(
                 place: place,
                 onApprove: () => controller.approvePlace(place),
@@ -269,14 +269,14 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
     final style = _tableHeaderStyle();
     return Row(
       children: [
-        Expanded(flex: 3, child: Text('PLACE', style: style)),
-        Expanded(flex: 2, child: Text('COMPANY', style: style)),
-        Expanded(flex: 2, child: Text('CATEGORY', style: style)),
-        Expanded(flex: 1, child: Text('PROVINCE', style: style)),
-        Expanded(flex: 1, child: Text('FEE', style: style)),
-        Expanded(flex: 1, child: Text('DATE', style: style)),
-        Expanded(flex: 1, child: Text('STATUS', style: style)),
-        SizedBox(width: 130, child: Text('ACTIONS', style: style)),
+        Expanded(flex: 3, child: Text('col_place'.tr, style: style)),
+        Expanded(flex: 2, child: Text('col_company'.tr, style: style)),
+        Expanded(flex: 2, child: Text('col_category'.tr, style: style)),
+        Expanded(flex: 1, child: Text('col_province'.tr, style: style)),
+        Expanded(flex: 1, child: Text('col_fee'.tr, style: style)),
+        Expanded(flex: 1, child: Text('col_date'.tr, style: style)),
+        Expanded(flex: 1, child: Text('col_status'.tr, style: style)),
+        SizedBox(width: 130, child: Text('col_actions'.tr, style: style)),
       ],
     );
   }
@@ -341,7 +341,7 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                               ),
                               icon: const Icon(Icons.close_rounded, size: 16),
-                              label: Text('Reject', style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 12)),
+                              label: Text('reject'.tr, style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 12)),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -356,7 +356,7 @@ class _AdminApprovalsPageState extends State<AdminApprovalsPage> {
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                               ),
                               icon: const Icon(Icons.check_rounded, size: 16),
-                              label: Text('Approve', style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 12)),
+                              label: Text('approve'.tr, style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 12)),
                             ),
                           ),
                         ],
@@ -449,22 +449,26 @@ class _StatCardState extends State<_StatCard> {
               ),
               const SizedBox(width: 14),
               Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(widget.label, style: GoogleFonts.inter(fontSize: 12.5, color: AdminColors.textSecondary, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 2),
-                    TweenAnimationBuilder<int>(
-                      tween: IntTween(begin: 0, end: widget.value),
-                      duration: const Duration(milliseconds: 700),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) => Text(
-                        '$value',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 24, fontWeight: FontWeight.w700, color: widget.color),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(widget.label, style: GoogleFonts.inter(fontSize: 12.5, color: AdminColors.textSecondary, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 2),
+                      TweenAnimationBuilder<int>(
+                        tween: IntTween(begin: 0, end: widget.value),
+                        duration: const Duration(milliseconds: 700),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, value, _) => Text(
+                          '$value',
+                          style: GoogleFonts.spaceGrotesk(fontSize: 24, fontWeight: FontWeight.w700, color: widget.color),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -667,15 +671,15 @@ class _StatusBadge extends StatelessWidget {
     switch (status) {
       case PlaceStatus.approved:
         color = AdminColors.green;
-        label = 'Approved';
+        label = 'approved'.tr;
         break;
       case PlaceStatus.rejected:
         color = AdminColors.red;
-        label = 'Rejected';
+        label = 'rejected'.tr;
         break;
       case PlaceStatus.pending:
         color = AdminColors.amber;
-        label = 'Pending';
+        label = 'pending'.tr;
         break;
     }
 
@@ -712,9 +716,9 @@ class _ActionButtons extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _ActionIconButton(icon: Icons.visibility_outlined, tooltip: 'View Details', color: AdminColors.textSecondary, onTap: () {}),
-        _ActionIconButton(icon: Icons.check_circle_outline, tooltip: 'Approve', color: AdminColors.green, onTap: onApprove),
-        _ActionIconButton(icon: Icons.cancel_outlined, tooltip: 'Reject', color: AdminColors.red, onTap: onReject),
+        _ActionIconButton(icon: Icons.visibility_outlined, tooltip: 'view_details'.tr, color: AdminColors.textSecondary, onTap: () {}),
+        _ActionIconButton(icon: Icons.check_circle_outline, tooltip: 'approve'.tr, color: AdminColors.green, onTap: onApprove),
+        _ActionIconButton(icon: Icons.cancel_outlined, tooltip: 'reject'.tr, color: AdminColors.red, onTap: onReject),
       ],
     );
   }

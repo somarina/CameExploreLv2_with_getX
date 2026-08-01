@@ -7,9 +7,12 @@ PlaceStatus = Literal["pending", "approved", "rejected"]
 class PlaceCreate(BaseModel):
     # Bilingual content (Cambodia tourism app -> English + Khmer required)
     name_en: str = Field(..., min_length=1, description="Place name in English")
-    name_km: str = Field(..., min_length=1, description="Place name in Khmer")
+    # Khmer fields are optional at the API layer — the company Add Place form
+    # only collects English right now, so the route falls back to the English
+    # value when these are left blank instead of rejecting the submission.
+    name_km: Optional[str] = Field(None, description="Place name in Khmer")
     description_en: str = Field(..., min_length=1, description="Description in English")
-    description_km: str = Field(..., min_length=1, description="Description in Khmer")
+    description_km: Optional[str] = Field(None, description="Description in Khmer")
 
     province: str
     province_km: Optional[str] = None
@@ -31,13 +34,10 @@ class PlaceCreate(BaseModel):
     # Ignored/overridden server-side for company submissions (always forced
     # to "pending"). Only admins creating a place directly can set this.
     status: PlaceStatus = "approved"
-    rating: Optional[float] = 0
-    status: str = "approved"
-    phoneNum: str
-    rating_star: Optional[float] = None
     rating_star: Optional[float] = 0
-    status: str = "approved"
-    phoneNum: str
+    # Falls back to the submitter's registered phone number when omitted.
+    phoneNum: Optional[str] = None
+
 
 class PlaceUpdate(BaseModel):
     name_en: Optional[str] = None
@@ -62,6 +62,9 @@ class PlaceUpdate(BaseModel):
     opening_hours: Optional[str] = None
     entry_fee: Optional[str] = None
     tags: Optional[List[str]] = None
+
+    rating_star: Optional[float] = None
+    phoneNum: Optional[str] = None
 
     status: Optional[PlaceStatus] = None
     # Admin-only: short note explaining an approval/rejection decision.
@@ -91,7 +94,3 @@ class PlaceUpdate(BaseModel):
 #     latitude: Optional[float] = None
 #     longitude: Optional[float] = None
 #     status: Optional[str] = None
-    rating: Optional[float] = None
-    status: Optional[str] = None
-    status: Optional[str] = None
-    phoneNum: Optional[str] = None

@@ -35,7 +35,11 @@ class AdminSidebar extends StatelessWidget {
                     color: AdminColors.primary,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.shield, color: Colors.white, size: 22),
+                  child: const Icon(
+                    Icons.shield,
+                    color: Colors.white,
+                    size: 22,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -43,24 +47,31 @@ class AdminSidebar extends StatelessWidget {
                   children: [
                     Text(
                       'CamExplore',
-                      style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w700, color: AdminColors.textPrimary),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AdminColors.textPrimary,
+                      ),
                     ),
                     Text(
-                      'Admin Panel',
-                      style: GoogleFonts.inter(fontSize: 12.5, color: AdminColors.textSecondary),
+                      'admin_panel'.tr,
+                      style: GoogleFonts.inter(
+                        fontSize: 12.5,
+                        color: AdminColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: AdminColors.border),
+          Divider(height: 1, color: AdminColors.border),
 
           // ---------- Nav items ----------
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
             child: Text(
-              'ADMINISTRATION',
+              'administration'.tr,
               style: GoogleFonts.inter(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w700,
@@ -69,62 +80,83 @@ class AdminSidebar extends StatelessWidget {
               ),
             ),
           ),
-          Obx(() => Column(
-            children: [
-              _NavItem(
-                icon: Icons.grid_view_rounded,
-                label: 'Dashboard',
-                selected: controller.currentSection.value == AdminSection.dashboard,
-                onTap: () => controller.goTo(AdminSection.dashboard),
-              ),
-              _NavItem(
-                icon: Icons.place_outlined,
-                label: 'Manage Places',
-                selected: controller.currentSection.value == AdminSection.managePlaces,
-                onTap: () => controller.goTo(AdminSection.managePlaces),
-              ),
-              _NavItem(
-                icon: Icons.people_outline,
-                label: 'Manage Users',
-                selected: controller.currentSection.value == AdminSection.manageUsers,
-                onTap: () => controller.goTo(AdminSection.manageUsers),
-              ),
-              _NavItem(
-                icon: Icons.description_outlined,
-                label: 'Approvals',
-                selected: controller.currentSection.value == AdminSection.approvals,
-                badgeCount: controller.pendingCount,
-                onTap: () => controller.goTo(AdminSection.approvals),
-              ),
-              _NavItem(
-                icon: Icons.bar_chart_rounded,
-                label: 'Analytics',
-                selected: controller.currentSection.value == AdminSection.analytics,
-                onTap: () => controller.goTo(AdminSection.analytics),
-              ),
-            ],
-          )),
+          Obx(
+            () => Column(
+              children: [
+                _NavItem(
+                  icon: Icons.grid_view_rounded,
+                  label: 'dashboard'.tr,
+                  selected:
+                      controller.currentSection.value == AdminSection.dashboard,
+                  onTap: () => controller.goTo(AdminSection.dashboard),
+                ),
+                _NavItem(
+                  icon: Icons.place_outlined,
+                  label: 'manage_places'.tr,
+                  selected:
+                      controller.currentSection.value ==
+                      AdminSection.managePlaces,
+                  onTap: () => controller.goTo(AdminSection.managePlaces),
+                ),
+                _NavItem(
+                  icon: Icons.people_outline,
+                  label: 'manage_users'.tr,
+                  selected:
+                      controller.currentSection.value ==
+                      AdminSection.manageUsers,
+                  onTap: () => controller.goTo(AdminSection.manageUsers),
+                ),
+                _NavItem(
+                  icon: Icons.description_outlined,
+                  label: 'approvals'.tr,
+                  selected:
+                      controller.currentSection.value == AdminSection.approvals,
+                  badgeCount: controller.pendingCount,
+                  onTap: () => controller.goTo(AdminSection.approvals),
+                ),
+                _NavItem(
+                  icon: Icons.bar_chart_rounded,
+                  label: 'analytics'.tr,
+                  selected:
+                      controller.currentSection.value == AdminSection.analytics,
+                  onTap: () => controller.goTo(AdminSection.analytics),
+                ),
+              ],
+            ),
+          ),
 
           const Spacer(),
-          const Divider(height: 1, color: AdminColors.border),
+          Divider(height: 1, color: AdminColors.border),
           const SizedBox(height: 8),
 
-          _NavItem(icon: Icons.settings_outlined, label: 'Settings', selected: false, onTap: () {}),
-
-          Obx(() => _NavItem(
-            icon: themeController.isDarkMode.value ? Icons.dark_mode : Icons.dark_mode_outlined,
-            label: 'Dark Mode',
-            selected: false,
-            onTap: themeController.toggleTheme,
-            trailing: Switch.adaptive(
-              value: themeController.isDarkMode.value,
-              activeColor: AdminColors.primary,
-              onChanged: (_) => themeController.toggleTheme(),
+          Obx(
+            () => _NavItem(
+              icon: Icons.settings_outlined,
+              label: 'settings'.tr,
+              selected:
+                  controller.currentSection.value == AdminSection.settings,
+              onTap: () => controller.goTo(AdminSection.settings),
             ),
-          )),
+          ),
+
+          Obx(
+            () => _NavItem(
+              icon: themeController.isDarkMode.value
+                  ? Icons.dark_mode
+                  : Icons.dark_mode_outlined,
+              label: 'dark_mode'.tr,
+              selected: false,
+              onTap: themeController.toggleTheme,
+              trailing: Switch.adaptive(
+                value: themeController.isDarkMode.value,
+                activeColor: AdminColors.primary,
+                onChanged: (_) => themeController.toggleTheme(),
+              ),
+            ),
+          ),
           _NavItem(
             icon: Icons.logout,
-            label: 'Logout',
+            label: 'logout'.tr,
             selected: false,
             onTap: () => _showLogoutDialog(context, controller),
           ),
@@ -134,7 +166,10 @@ class AdminSidebar extends StatelessWidget {
     );
   }
 
-  void _showLogoutDialog(BuildContext context, AdminScreenController controller) {
+  void _showLogoutDialog(
+    BuildContext context,
+    AdminScreenController controller,
+  ) {
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.35),
@@ -170,14 +205,21 @@ class AdminSidebar extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Logout',
-                          style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: AdminColors.textPrimary),
+                          'logout'.tr,
+                          style: GoogleFonts.inter(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: AdminColors.textPrimary,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Are you sure you want to log out of your account?',
+                          'logout_confirm_message'.tr,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.inter(fontSize: 13, color: AdminColors.textSecondary),
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: AdminColors.textSecondary,
+                          ),
                         ),
                         const SizedBox(height: 20),
                         Row(
@@ -186,11 +228,23 @@ class AdminSidebar extends StatelessWidget {
                               child: TextButton(
                                 onPressed: () => Navigator.pop(context),
                                 style: TextButton.styleFrom(
-                                  backgroundColor: AdminColors.background.withOpacity(0.6),
-                                  padding: const EdgeInsets.symmetric(vertical: 13),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                  backgroundColor: AdminColors.background
+                                      .withOpacity(0.6),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 13,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
                                 ),
-                                child: Text('Cancel', style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w600, color: AdminColors.textPrimary)),
+                                child: Text(
+                                  'cancel'.tr,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: AdminColors.textPrimary,
+                                  ),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -202,10 +256,21 @@ class AdminSidebar extends StatelessWidget {
                                 },
                                 style: TextButton.styleFrom(
                                   backgroundColor: AdminColors.red,
-                                  padding: const EdgeInsets.symmetric(vertical: 13),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 13,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
                                 ),
-                                child: Text('Logout', style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w600, color: Colors.white)),
+                                child: Text(
+                                  'logout'.tr,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -221,7 +286,6 @@ class AdminSidebar extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _NavItem extends StatelessWidget {
@@ -258,7 +322,11 @@ class _NavItem extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(icon, size: 20, color: selected ? Colors.white : AdminColors.textSecondary),
+                Icon(
+                  icon,
+                  size: 20,
+                  color: selected ? Colors.white : AdminColors.textSecondary,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -272,7 +340,10 @@ class _NavItem extends StatelessWidget {
                 ),
                 if (badgeCount != null && badgeCount! > 0)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: selected ? Colors.white : AdminColors.red,
                       borderRadius: BorderRadius.circular(20),
