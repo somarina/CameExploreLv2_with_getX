@@ -195,7 +195,10 @@ async def get_items(
                 "name": place.get("name_en") or place.get("name"),
                 "province": place.get("province"),
                 "category": place.get("category"),
-                "image_url": place.get("image_url")
+                "image_url": place.get("image_url"),
+                "rating": place.get("rating", 0),
+                "review_count": place.get("review_count", 0),
+                "saved_at": item.get("created_at"),
             })
 
     return results

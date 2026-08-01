@@ -31,16 +31,11 @@ void main() async {
 
   Get.put(ThemeModeViewController());
   Get.put(LoginScreenController());
-  // Get.put(HomeScreenController());
-  // Get.put(SearchScreenController());
-  // Get.put(BookingScreenController());
-  // Get.put(FavoriteScreenController());
   // Get.put(UserProfileScreenViewController());
-  // Get.put(ExploreViewController());
-  Get.put(HomeScreenController());
-  Get.put(FavoriteScreenController());
-  Get.put(SearchScreenController());
-  Get.put(BookingScreenController());
+  Get.lazyPut(() => HomeScreenController());
+  Get.lazyPut(() => FavoriteScreenController());
+  Get.lazyPut(() => SearchScreenController());
+  Get.lazyPut(() => BookingScreenController());
 }
 
 Future<void> _initServicesInBackground() async {
@@ -76,7 +71,7 @@ void _setupDeepLinks() {
       await Future.delayed(Duration(seconds: 1));
       _handleTelegramCallback(initialUri.queryParameters);
     }
-  });                                                                                                                                                                                                                                                                                                                                                               
+  });
 }
 
 void _handleTelegramCallback(Map<String, String> params) async {
@@ -115,7 +110,7 @@ void _handleTelegramCallback(Map<String, String> params) async {
 
       await Future.delayed(const Duration(milliseconds: 300));
       Get.offAllNamed('/button-navigation');
-    } else { 
+    } else {
       Get.snackbar(
         'Telegram Login Failed',
         response?["message"] ?? 'Something went wrong',
@@ -131,6 +126,7 @@ void _handleTelegramCallback(Map<String, String> params) async {
     );
   }
 }
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 

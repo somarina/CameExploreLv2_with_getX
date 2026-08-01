@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Literal
 
 ListingStatus = Literal["pending", "approved", "rejected"]
@@ -34,6 +34,10 @@ class HotelCreate(BaseModel):
     address_en: Optional[str] = None
     address_km: Optional[str] = None
 
+    # Contact info so guests can reach the hotel directly to book/inquire.
+    phoneNum: Optional[str] = None
+    email: Optional[EmailStr] = None
+
     star_rating: Optional[float] = Field(None, ge=0, le=5)
     image_url: Optional[str] = None
     images: Optional[List[str]] = []
@@ -57,6 +61,9 @@ class HotelUpdate(BaseModel):
     province_km: Optional[str] = None
     address_en: Optional[str] = None
     address_km: Optional[str] = None
+
+    phoneNum: Optional[str] = None
+    email: Optional[EmailStr] = None
 
     star_rating: Optional[float] = Field(None, ge=0, le=5)
     image_url: Optional[str] = None

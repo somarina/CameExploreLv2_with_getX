@@ -10,7 +10,7 @@ import 'reset_password_screen.dart';
 
 class ForgetPasswordView extends GetView<ForgetPasswordController> {
   const ForgetPasswordView({super.key});
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(

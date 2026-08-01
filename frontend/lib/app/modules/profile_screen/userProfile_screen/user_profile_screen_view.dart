@@ -1,5 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/api/Model/user_model.dart';
 import 'package:frontend/app/core/api/services/auth_services.dart';
@@ -22,6 +23,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
 
   @override
   Widget build(BuildContext context) {
+    controller.getProfile();
     return Scaffold(
       backgroundColor: AppColors.lightPrimaryColor,
       body: SingleChildScrollView(
@@ -107,11 +109,11 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
         children: [
           Text("acc".tr, style: AppFonts.fontHeader),
           Spacer(),
-          GestureDetector(
+          Bounceable(
             onTap: () {
               controller.isLogin.value
                   ? Get.toNamed(Routes.EDIT_SCREEN, arguments: controller.user)
-                  : Get.toNamed(Routes.SECURITY_SCREEN); ////
+                  : Get.toNamed(Routes.SECURITY_SCREEN);
             },
             child: SvgPicture.asset(AppImage.editIcon),
           ),
@@ -195,7 +197,12 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text("create acc".tr, style: AppFonts.fontsButton),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.offAllNamed(Routes.LOGIN_SCREEN);
+                    },
+                    child: Text("create acc".tr, style: AppFonts.fontsButton),
+                  ),
                 ),
               ],
             ),
@@ -299,7 +306,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
 
           SizedBox(width: 10),
 
-          GestureDetector(
+          Bounceable(
             onTap: () {},
             onTapDown: (detail) {
               showCustomPopupMenu(
@@ -354,7 +361,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     required VoidCallback onTap,
     bool isActive = true,
   }) {
-    return GestureDetector(
+    return Bounceable(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
@@ -446,7 +453,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             return Stack(
               children: [
                 Positioned.fill(
-                  child: GestureDetector(
+                  child: Bounceable(
                     onTap: () => Navigator.pop(context),
                     child: Container(color: Colors.transparent),
                   ),
@@ -485,44 +492,43 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
   Widget _login(BuildContext context) {
     return Obx(
       () => controller.isLoading.value
-          ? CircularProgressIndicator(color: Colors.white)
-          :
-            // Shimmer.fromColors(
-            //   baseColor: Colors.grey.shade200,
-            //   highlightColor: Colors.grey.shade300,
-            //   child: Container(height: 50, color: Colors.grey),
-            // )
-            // ListView.builder(
-            //   shrinkWrap: true,
-            //     physics: const NeverScrollableScrollPhysics(),
-            //     padding: const EdgeInsets.all(16),
-            //     itemCount: 10
-            //     itemBuilder: (context, index) {
-            //       return buildShimmer(context);
-            //     },):
-            Column(
-              crossAxisAlignment: .center,
+          ? const CircularProgressIndicator(color: Colors.white)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 DottedBorder(
-                  options: CircularDottedBorderOptions(
-                    dashPattern: [80, 15], // size long or short
-                    strokeWidth: 3, // size big or small
+                  options: const CircularDottedBorderOptions(
+                    dashPattern: [80, 15],
+                    strokeWidth: 3,
                     padding: EdgeInsets.all(5),
                     color: Color(0xffE7000B),
                   ),
                   child: CircleAvatar(
                     radius: 45,
-                    // backgroundImage: AssetImage('assets/images/profile.png'),
+                    backgroundColor: Colors.grey.shade300,
                     backgroundImage: controller.isLoading.value
                         ? null
                         : controller.getAvatar(),
+                    child: controller.isLoading.value
+                        ? const CircularProgressIndicator(
+                            color: Color(0xffE7000B),
+                            strokeWidth: 2.5,
+                          )
+                        : (controller.getAvatar() == null
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 40,
+                                  color: Colors.grey,
+                                )
+                              : null),
                   ),
                 ),
+                const SizedBox(height: 10),
                 Text(
                   controller.user.name,
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 22,
-                    fontWeight: .bold,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
@@ -533,12 +539,12 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                     color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _container(
                   context,
                   child: Column(
                     children: [
-                      GestureDetector(
+                      Bounceable(
                         onTap: () {
                           Get.toNamed(Routes.CHANGEPWD_SCREEN);
                         },
@@ -550,13 +556,9 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                         ),
                       ),
                       _language(context),
-
-                      GestureDetector(
+                      Bounceable(
                         onTap: () async {
                           await Get.toNamed(Routes.THEME_SCREEN);
-
-                          // controller.changeTheme(ThemeMode.dark);
-                          // Get.changeThemeMode(.dark);
                         },
                         child: _menuItem(
                           Get.context!,
@@ -565,7 +567,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                           suffixIcon: AppImage.btnIcon,
                         ),
                       ),
-                      GestureDetector(
+                      Bounceable(
                         onTap: () {
                           Get.toNamed(Routes.NOTIFICATION_SCREEN);
                         },
@@ -576,7 +578,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                           suffixIcon: AppImage.btnIcon,
                         ),
                       ),
-                      GestureDetector(
+                      Bounceable(
                         onTap: () {
                           Get.toNamed(Routes.SECURITY_SCREEN);
                         },
@@ -587,7 +589,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                           suffixIcon: AppImage.btnIcon,
                         ),
                       ),
-                      GestureDetector(
+                      Bounceable(
                         onTap: () {
                           Get.toNamed(Routes.FEEDBACK_SCREEN);
                         },
@@ -598,7 +600,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                           suffixIcon: AppImage.btnIcon,
                         ),
                       ),
-                      GestureDetector(
+                      Bounceable(
                         onTap: () {
                           Get.toNamed(Routes.HELPSUPPORT_SCREEN);
                         },
@@ -609,7 +611,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                           suffixIcon: AppImage.btnIcon,
                         ),
                       ),
-                      GestureDetector(
+                      Bounceable(
                         onTap: () {
                           Get.toNamed(Routes.ABOUTAPP_SCREEN);
                         },
@@ -620,7 +622,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                           suffixIcon: AppImage.btnIcon,
                         ),
                       ),
-                      GestureDetector(
+                      Bounceable(
                         onTap: () {
                           Get.toNamed(Routes.ABOUTORGANIZATION_SCREEN);
                         },

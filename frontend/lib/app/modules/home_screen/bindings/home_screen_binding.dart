@@ -7,10 +7,11 @@ class HomeScreenBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<HomeScreenController>(
-      () => HomeScreenController(),
+      () => HomeScreenController(), 
     );
     Get.lazyPut<ExploreViewController>(
       () => ExploreViewController(),
     );
+
   }
 }

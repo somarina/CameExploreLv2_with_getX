@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
+import 'package:frontend/app/modules/button_navbar/controllers/button_navbar_controller.dart';
 import 'package:frontend/app/modules/favorite_screen/custom_bottomSheet/show_bottom_sheet.dart';
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
@@ -23,10 +24,10 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 Row(
                   children: [
@@ -41,7 +42,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       onTap: () => Get.back(),
                     ),
 
-                    const Spacer(),
+                    Spacer(),
 
                     Obx(
                       () => Text(
@@ -54,7 +55,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       ),
                     ),
 
-                    const Spacer(),
+                    Spacer(),
 
                     _circleButton(
                       theme,
@@ -69,7 +70,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       },
                     ),
 
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
 
                     _circleButton(
                       theme,
@@ -183,112 +184,221 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
   Widget _buildEmptyList(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: controller.favoriteItems.isEmpty
-          ? SizedBox(
-              height: Get.height * 0.8,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "This list is empty".tr,
-                    style: AppFonts.fontsSubTitle.copyWith(
-                      color: theme.colorScheme.secondary,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
 
-                  const SizedBox(height: 20),
-
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed(Routes.NEARBY_SCREEN);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                    ),
-                    child: Text(
-                      "Find things to do".tr,
-                      style: AppFonts.fontsButton,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : _buildFavList(context),
-    );
-  }
-
-  Widget _buildFavList(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: controller.favoriteItems.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
-      itemBuilder: (context, index) {
-        return Card(
-          color: theme.colorScheme.primaryContainer,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Row(
+      if (controller.favoriteItems.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: SizedBox(
+            height: Get.height * 0.8,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 112,
-                  height: 112,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(14),
+                Text(
+                  "This list is empty".tr,
+                  style: AppFonts.fontsSubTitle.copyWith(
+                    color: theme.colorScheme.secondary,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
+                SizedBox(height: 20),
 
-                const SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    Get.find<ButtonNavbarController>().changePage(0);
 
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Angkor Wat",
-                        style: AppFonts.fontsGeneral.copyWith(
-                          color: theme.colorScheme.secondary,
-                        ),
-                      ),
+                    Get.offAllNamed(Routes.BUTTON_NAVBAR);
 
-                      const SizedBox(height: 10),
-
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 18,
-                            color: theme.textTheme.titleSmall?.color,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            "Siem Reap",
-                            style: AppFonts.fontDescriptionsmall,
-                          ),
-                        ],
-                      ),
-                    ],
+                    await controller.favoriteController.getFavoriteItems(
+                      controller.listId.value,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                    elevation: 5,
+                    shadowColor: Colors.black26,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Text(
+                    "Find things to do".tr,
+                    style: GoogleFonts.googleSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         );
-      },
+      }
+
+      return _buildFavList(context);
+    });
+  }
+
+  Widget _buildFavList(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Obx(
+      () => ListView.separated(
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.only(top: 20),
+        shrinkWrap: true,
+        itemCount: controller.favoriteItems.length,
+        separatorBuilder: (_, __) => SizedBox(height: 10),
+        itemBuilder: (context, index) {
+          final item = controller.favoriteItems[index];
+          debugPrint(item.toString());
+
+          return Bounceable(
+            onTap: () {
+              final placeData = {
+                "id": item["place_id"] ?? "",
+
+                // Name
+                "name_en": item["name"] ?? "",
+                "name_km": item["name"] ?? "",
+
+                // Description
+                "description_en": item["description"] ?? "",
+                "description_km": item["description"] ?? "",
+
+                // Province
+                "province": item["province"] ?? "",
+                "province_km": item["province"] ?? "",
+
+                // Category
+                "category": item["category"] ?? "",
+                "category_km": item["category"] ?? "",
+
+                // Image
+                "image_url": item["image_url"] ?? "",
+
+                // Location
+                "latitude": (item["latitude"] ?? 0).toDouble(),
+                "longitude": (item["longitude"] ?? 0).toDouble(),
+
+                // Rating
+                "rating": (item["rating"] ?? 0).toDouble(),
+
+                // Optional fields used by Detail Screen
+                "phoneNum": item["phoneNum"] ?? "",
+              };
+
+              Get.toNamed(Routes.DETAIL_PLACES, arguments: placeData);
+            },
+            child: Card(
+              color: theme.colorScheme.primaryContainer,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image
+                    Container(
+                      width: 112,
+                      height: 112,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        image: item["image_url"] != null
+                            ? DecorationImage(
+                                image: NetworkImage(item["image_url"]),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+
+                    const SizedBox(width: 16),
+
+                    // Text
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item["name"] ?? "",
+                            style: AppFonts.fontsGeneral.copyWith(
+                              color: theme.colorScheme.secondary,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+
+                          SizedBox(height: 8),
+
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                size: 18,
+                                color: theme.primaryColor,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                item["province"] ?? "",
+                                style: GoogleFonts.googleSans(
+                                  fontSize: 14,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.titleSmall?.color,
+                                ),
+                              ),
+                              Text(
+                                ", Cambodia",
+                                style: GoogleFonts.googleSans(
+                                  fontSize: 14,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.titleSmall?.color,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(Icons.star, size: 20, color: Colors.amber),
+                              Text(item["rating"]?.toString() ?? "0.0"),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Favorite Icon
+                    Bounceable(
+                      onTap: () async {
+                        await controller.deleteFavorite(
+                          item["place_id"].toString(),
+                        );
+                      },
+                      child: const Icon(Icons.favorite, color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -315,7 +425,9 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                 onPressed: Get.back,
                 child: Text(
                   "Cancel".tr,
-                  style: GoogleFonts.googleSans(color: Get.theme.colorScheme.primary),
+                  style: GoogleFonts.googleSans(
+                    color: Get.theme.colorScheme.primary,
+                  ),
                 ),
               ),
               TextButton(
@@ -347,115 +459,4 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
       ),
     );
   }
-  // Widget showDialog() {
-  //   return GestureDetector(
-  //     onTap: () async {
-  //       // Handle delete list logic here
-  //       await controller.deleteFavoriteList();
-  //       Get.dialog(
-  //         Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Container(
-  //               width: Get.width * 0.8,
-  //               padding: EdgeInsets.all(20),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.white,
-  //                 borderRadius: BorderRadius.circular(16),
-  //               ),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.center,
-  //                 children: [
-  //                   Text(
-  //                     "Delete list".tr,
-  //                     style: GoogleFonts.googleSans(
-  //                       fontSize: 18,
-  //                       fontWeight: FontWeight.w600,
-  //                       color: Colors.black,
-  //                       decoration: TextDecoration.none,
-  //                     ),
-  //                   ),
-  //                   SizedBox(height: 10),
-  //                   Text(
-  //                     "delete_list_confirm".trParams({
-  //                       'listName': controller.listName.value,
-  //                     }),
-  //                     textAlign: TextAlign.center,
-  //                     style: GoogleFonts.googleSans(
-  //                       fontSize: 15,
-  //                       fontWeight: FontWeight.w500,
-  //                       color: Colors.black54,
-  //                       decoration: TextDecoration.none,
-  //                     ),
-  //                   ),
-  //                   SizedBox(height: 20),
-  //                   Row(
-  //                     children: [
-  //                       Expanded(
-  //                         child: ElevatedButton(
-  //                           onPressed: () {
-  //                             Get.back();
-  //                           },
-  //                           style: ElevatedButton.styleFrom(
-  //                             backgroundColor: Colors.grey[200],
-  //                           ),
-  //                           child: Text(
-  //                             "Cancel".tr,
-  //                             style: GoogleFonts.googleSans(
-  //                               color: Color(0xff009A3F),
-  //                               fontSize: 16,
-  //                               fontWeight: FontWeight.w500,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       SizedBox(width: 10),
-  //                       Expanded(
-  //                         child: ElevatedButton(
-  //                           onPressed: () async {
-  //                             // Handle delete logic here
-  //                             await controller.deleteFavoriteList();
-  //                             Get.back();
-  //                             Get.back();
-  //                             Get.back();
-  //                           },
-  //                           style: ElevatedButton.styleFrom(
-  //                             backgroundColor: Colors.grey[200],
-  //                           ),
-  //                           child: Text(
-  //                             "Delete".tr,
-  //                             style: GoogleFonts.googleSans(
-  //                               color: Colors.red,
-  //                               fontSize: 16,
-  //                               fontWeight: FontWeight.w500,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //     child: Row(
-  //       children: [
-  //         Icon(Icons.delete, color: Colors.red),
-  //         SizedBox(width: 15),
-  //         Text(
-  //           "Delete list".tr,
-  //           style: GoogleFonts.googleSans(
-  //             fontSize: 16,
-  //             fontWeight: FontWeight.w500,
-  //             color: Colors.red,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

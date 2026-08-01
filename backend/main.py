@@ -39,6 +39,7 @@ async def startup_check():
     except Exception as e:
         print(f"MongoDB Atlas connection failed: {e}")
 
+
 # ── Global error handlers───────────────────────────────────
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):

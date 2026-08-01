@@ -216,6 +216,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
         controller: controller.emailController,
         keyboardType: TextInputType.emailAddress,
         onChanged: (_) => controller.clearIdError(),
+        style: TextStyle(color: Get.isDarkMode ? Colors.white : Colors.black),
         validator: (value) {
           final v = (value ?? '').trim();
 
@@ -245,6 +246,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
         controller: controller.phoneController,
         keyboardType: TextInputType.phone,
         onChanged: (_) => controller.clearIdError(),
+        style: TextStyle(color: Get.isDarkMode ? Colors.white : Colors.black),
         validator: (value) {
           final v = (value ?? '').trim();
 
@@ -275,6 +277,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
         obscureText: controller.obscure.value,
         maxLength: 32,
         onChanged: (_) => controller.clearPassError(),
+        style: TextStyle(color: Get.isDarkMode ? Colors.white : Colors.black),
         validator: (value) {
           final v = (value ?? '').trim();
 

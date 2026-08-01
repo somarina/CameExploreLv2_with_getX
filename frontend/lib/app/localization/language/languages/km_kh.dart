@@ -168,7 +168,6 @@ Map<String, String> kmKH = {
   "cancel": "បោះបង់",
   "save": "រក្សាទុក",
 
-
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////     Login Screen\\
   "Login": "ចូលគណនី",
@@ -203,6 +202,7 @@ Map<String, String> kmKH = {
   "Done": "រួចរាល់",
   "Delete": "លុប",
   "Create a list": "បង្កើតបញ្ជី",
+  "Create a new list": "បង្កើតបញ្ជីថ្មី",
   "Select a list": "ជ្រើសរើសបញ្ជី",
   "List name": "ឈ្មោះបញ្ជី",
   "Enter new list name": "បញ្ចូលឈ្មោះបញ្ជីថ្មី",
@@ -214,6 +214,7 @@ Map<String, String> kmKH = {
   "Popular places": "កន្លែងពេញនិយម",
   "people searched this": "នាក់បានស្វែងរកទីកន្លែងនេះ",
   "searches": "ស្វែងរក",
+  "Find the place you want to go": "ស្វែងរកទីកន្លែងដែលអ្នកចង់ទៅ...",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///// Home
   "trending": "កំពុងពេញនិយម",
@@ -356,20 +357,21 @@ Map<String, String> kmKH = {
   'reset_success': 'ពាក្យសម្ងាត់ត្រូវបានផ្លាស់ប្ដូររួចរាល់',
   'try_again': 'សូមព្យាយាមម្ដងទៀត',
   /////////////////////////////////
-  "confirm_title": "បង្គីតតារុសម្មាត់ថ្មី",
+  "confirm_title": "បង្គីតពាក្យសម្មាត់ថ្មី",
   "confirm_reset_title": "កំណត់ពាក្យសម្ងាត់ឡើងវិញ",
-  "confirm_reset_subtitle": "តារុសម្មាត់របស់អ្នកនឹងត្រូវបានកំណត់ឡើងវិញ។ តើអ្នកពិតជាចង់បន្តមែនទេ?",
+  "confirm_reset_subtitle":
+      "ពាក្យសម្ងាត់របស់អ្នកនឹងត្រូវបានកំណត់ឡើងវិញ។ តើអ្នកពិតជាចង់បន្តមែនទេ?",
   "confirm_yes": "បញ្ជាក់",
   "confirm_no": "មិនព្រម",
-  "reset_password_title": "តារុសម្មាត់ថ្មី",
-  "new_password_label": "តារុសម្មាត់ថ្មី",
-  "new_password_hint": "បញ្ចូលតារុសម្មាត់ថ្មី",
-  "confirm_password_label": "បញ្ជាក់តារុសម្មាត់",
-  "confirm_password_hint": "បញ្ចូលតារុសម្មាត់ម្តងទៀត",
-  "reset_password_btn": "កំណត់តារុសម្មាត់",
-  "password_required": "តារុសម្មាត់នេះត្រូវការ",
-  "password_too_short": "តារុសម្មាត់ត្រូវមានយ៉ាងហោចណាស់ 8 តួ",
-  "password_mismatch": "តារុសម្មាត់មិនត្រូវគ្នា",
+  "reset_password_title": "កំណត់ពាក្យសម្មាត់ថ្មី",
+  "new_password_label": "ពាក្យសម្មាត់ថ្មី",
+  "new_password_hint": "បញ្ចូលពាក្យសម្មាត់ថ្មី",
+  "confirm_password_label": "បញ្ជាក់ពាក្យសម្មាត់ថ្មី",
+  "confirm_password_hint": "បញ្ចូលពាក្យសម្មាត់ថ្មីម្តងទៀត",
+  "reset_password_btn": "កំណត់ពាក្យសម្មាត់ថ្មី",
+  "password_required": "សូមបញ្ចូលពាក្យសម្ងាត់",
+  "password_too_short": "ពាក្យសម្ងាត់ត្រូវមានយ៉ាងហោចណាស់ 8 តួ",
+  "password_mismatch": "ពាក្យសម្ងាត់មិនត្រូវគ្នា",
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
   // choose room
@@ -464,7 +466,7 @@ Map<String, String> kmKH = {
   "per_adult": " ក្នុងម្នាក់",
   "select_date_package": "ជ្រើសរើសថ្ងៃ",
   "check_availability": "ពិនិត្យមើលភាពទំនេរ",
-  "available_options_count": "ជ្រើសរើសពីជម្រើសមានស្រាប់ចំនួន 4",
+  "available_options_count": "ជ្រើសរើសពីជម្រើសមានស្រាប់ចំនួន 1",
   "package_sunrise_tour": "ប្រាសាទអង្គរវត្ត៖ ដំណើរកម្សាន្តមើលថ្ងៃរះជាក្រុមតូច",
   "duration_hours": "រយៈពេល៖ 8 ម៉ោង",
   "guide_language": "មគ្គុទ្ទេសក៍៖ ភាសាអង់គ្លេស",
@@ -558,5 +560,17 @@ Map<String, String> kmKH = {
   "receipt_saved": "វិក្កយបត្រត្រូវបានរក្សាទុកទៅក្នុងវិចិត្រសាល",
   "save_failed": "មិនអាចរក្សាទុករូបភាពបានឡើយ",
 
-  "add_your_request":"សំណើរបស់អ្នក",
+  "add_your_request": "សំណើរបស់អ្នក",
+
+  "entry_fee": "ថ្លៃសំបុត្រចូល",
+  "foreign_adult": "ជនបរទេស ពេញវ័យ",
+  "foreign_child": "កុមារបរទេស (<12)",
+  "cambodian_citizen": "ប្រជាពលរដ្ឋខ្មែរ",
+  "free": "ឥតគិតថ្លៃ",
+
+  "hotel_category": "កន្លែងស្នាក់នៅ",
+
+    "max_people": "ចំនួនមនុស្ស",
+    "no_reviews_yet":"មិនទាន់មានការវាយតម្លៃ",
+    "hello":"សួស្តី",
 };

@@ -79,12 +79,21 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 # ── PUBLIC ────────────────────────────────────────────────────────────────
 
 @router.get("/")
-async def get_categories():
+async def get_categories(
+    search: Optional[str] = Query(None, description="Search bar: filter category tiles by name (EN/KM)"),
+):
     """List every category with a live count of approved places in it."""
     await ensure_seeded()
 
+    query = {}
+    if search:
+        query["$or"] = [
+            {"name": {"$regex": search, "$options": "i"}},
+            {"name_km": {"$regex": search, "$options": "i"}},
+        ]
+
     data = []
-    async for cat in categories_collection.find().sort("name", 1):
+    async for cat in categories_collection.find(query).sort("name", 1):
         count = await places_collection.count_documents({
             "category": {"$regex": f"^{cat['name']}$", "$options": "i"},
             "status": "approved",
@@ -263,21 +272,29 @@ async def delete_category(
 # NOTE: this dynamic route must stay LAST — FastAPI matches routes in
 # declaration order, so static paths like "/nearby" above have to be
 # declared before this one, or they'd get swallowed as a category name.
+
 @router.get("/{category_name}")
 async def get_places_by_category(
     category_name: str,
     lang: Optional[str] = Query(None, description="'en' or 'km'"),
     province: Optional[str] = Query(None),
+    search: Optional[str] = Query(None, description="Search bar: filter places within this category by name/address/tags"),
     limit: int = Query(50, ge=1, le=200),
     skip: int = Query(0, ge=0),
 ):
-    """Tap a category tile -> get every approved place under it."""
+    """Tap a category tile -> get every approved place under it, optionally filtered by a search bar."""
     query = {
         "category": {"$regex": f"^{category_name}$", "$options": "i"},
         "status": "approved",
     }
     if province:
         query["province"] = {"$regex": f"^{province}$", "$options": "i"}
+
+    if search:
+        query["$or"] = [
+            {f: {"$regex": search, "$options": "i"}}
+            for f in ("name_en", "name_km", "address_en", "address_km", "tags")
+        ]
 
     total = await places_collection.count_documents(query)
     cursor = places_collection.find(query).skip(skip).limit(limit)
