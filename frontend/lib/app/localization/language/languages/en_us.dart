@@ -214,6 +214,19 @@ Map<String, String> enUS = {
   "Enter new list name": "Enter new list name",
   "delete_list_confirm":
       "Are you sure you want to delete your @listName list? All the activities you've saved will be lost.",
+  "No favorite lists yet": "No favorite lists yet",
+  "Login Required": "Login Required",
+  "Please log in or create an account to save items to your favorites.": "Please log in or create an account to save items to your favorites.",
+
+  "saved": "Saved",
+  "day": "day",
+  "days": "days",
+  "hour": "hour",
+  "hours": "hours",
+  "minute": "minute",
+  "minutes": "minutes",
+  "ago": "ago",
+  "saved_just_now": "Saved just now",
 
   // Search Screen
   "Most search": "Most search",

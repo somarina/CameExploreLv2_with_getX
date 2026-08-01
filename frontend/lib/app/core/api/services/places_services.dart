@@ -44,6 +44,8 @@ class PlacesServices {
 
     var response = await baseApi.get(
       endpoint: "/places",
+      // queryParameters: query,
+      // queryParameters: {"category": ?category, "search": ?search},
       queryParameters: {
         "category": ?category,
         "search": ?search,
@@ -53,8 +55,14 @@ class PlacesServices {
   }
 
   // ── Get Place Detail ──────────────────────────────────────────────────────
+  // Future<Map<String, dynamic>> fetchPlaceDetail({required String id}) async {
+  //   var response = await baseApi.get(endpoint: "/api/places/$id");
+  //   return response;
+  // }
+
   Future<Map<String, dynamic>> fetchPlaceDetail({required String id}) async {
-    var response = await baseApi.get(endpoint: "/api/places/$id");
+    final response = await baseApi.get(endpoint: "/places/$id");
+
     return response;
   }
 

@@ -7,12 +7,13 @@ import 'package:frontend/app/core/api/services/places_services.dart';
 import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/core/api/services/review_hotel_services.dart';
 import 'package:frontend/app/core/api/services/travel_package_services.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class HomeScreenController extends GetxController {
-  // final favoriteController = Get.find<FavoriteScreenController>();
+  final favoriteController = Get.find<FavoriteScreenController>();
 
   final _box = GetStorage();
   bool get isGuest => _box.read('userMode') == 'guest';

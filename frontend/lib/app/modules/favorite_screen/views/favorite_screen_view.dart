@@ -66,9 +66,7 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
       body: Obx(() {
         if (controller.isLoading.value) {
           return Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
+            child: CircularProgressIndicator(color: theme.colorScheme.primary),
           );
         }
 
@@ -110,15 +108,13 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
       separatorBuilder: (_, __) => const SizedBox(height: 20),
       itemBuilder: (context, index) {
         final item = controller.favoriteLists[index];
+        final imageUrl = item["cover_image"] ?? "";
 
         return GestureDetector(
           onTap: () async {
             final result = await Get.toNamed(
               Routes.FAV_SCREEN_2,
-              arguments: {
-                'listName': item['name'],
-                'listId': item['id'],
-              },
+              arguments: {'listName': item['name'], 'listId': item['id']},
             );
 
             if (result == true) {
@@ -149,27 +145,36 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
                   width: Get.width,
                   height: 140,
                   decoration: BoxDecoration(
-                    color: theme.brightness == Brightness.dark
-                        ? Colors.grey.shade800
-                        : Colors.grey.shade300,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(14),
                       topRight: Radius.circular(14),
                     ),
+                    image: imageUrl.isNotEmpty
+                        ? DecorationImage(
+                            image: NetworkImage(imageUrl),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                    color: theme.brightness == Brightness.dark
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade300,
                   ),
-                  child: Center(
-                    child: Icon(
-                      Icons.image_outlined,
-                      size: 35,
-                      color: theme.colorScheme.onSurface.withValues(
-                        alpha: 0.7,
-                      ),
-                    ),
-                  ),
+                  child: imageUrl.isEmpty
+                      ? Center(
+                          child: Icon(
+                            Icons.image_outlined,
+                            size: 35,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.7,
+                            ),
+                          ),
+                        )
+                      : null,
                 ),
-                const SizedBox(height: 12),
+
+                SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  padding: EdgeInsets.symmetric(horizontal: 14),
                   child: Row(
                     children: [
                       Expanded(
@@ -185,15 +190,20 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "${item['count'] ?? 0} activities",
-                              style:
-                                  AppFonts.fontDescriptionsmall.copyWith(
-                                color:
-                                    theme.textTheme.titleSmall?.color,
-                              ),
-                            ),
+                            SizedBox(height: 4),
+                            Obx(() {
+                              final count =
+                                  controller.activityCounts[item["id"]
+                                      .toString()] ??
+                                  0;
+
+                              return Text(
+                                "$count ${count == 1 ? 'activity' : 'activities'}",
+                                style: AppFonts.fontDescriptionsmall.copyWith(
+                                  color: theme.textTheme.titleSmall?.color,
+                                ),
+                              );
+                            }),
                           ],
                         ),
                       ),
