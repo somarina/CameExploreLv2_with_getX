@@ -3,15 +3,17 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../../../core/api/services/dashboard_auth_service.dart';
+import '../../../core/api/services/dashboard_places_service.dart';
 import '../../../routes/app_pages.dart';
 import '../models/admin_colors.dart';
 import '../models/admin_models.dart';
 
 /// Which section of the dashboard is currently visible.
-enum AdminSection { dashboard, managePlaces, manageUsers, approvals, analytics }
+enum AdminSection { dashboard, managePlaces, manageUsers, approvals, analytics, settings }
 
 class AdminScreenController extends GetxController {
   final DashboardAuthService _authService = DashboardAuthService();
+  final DashboardPlacesService _placesService = DashboardPlacesService();
 
   // ====================== NAVIGATION STATE ======================
   final Rx<AdminSection> currentSection = AdminSection.dashboard.obs;
@@ -50,87 +52,82 @@ class AdminScreenController extends GetxController {
   int get rejectedCount => places.where((p) => p.status == PlaceStatus.rejected).length;
   int get totalCompanies => companies.length;
 
-  // ====================== MOCK: PLACES ======================
-  final RxList<AdminPlace> places = <AdminPlace>[
-    AdminPlace(
-      name: 'Banteay Srei Temple',
-      subtitle: 'The citadel of the women',
-      company: 'Angkor Tourism Co.',
-      category: 'Temple',
-      province: 'Siem Reap',
-      fee: '\$37',
-      submittedDate: 'Apr 28, 2026',
-      status: PlaceStatus.pending,
-      imageColor: AdminColors.primary,
-    ),
-    AdminPlace(
-      name: 'Koh Rong Paradise Beach',
-      subtitle: 'Crystal clear waters',
-      company: 'Coastal Adventures',
-      category: 'Beach',
-      province: 'Preah Sihanouk',
-      fee: 'Free',
-      submittedDate: 'Apr 29, 2026',
-      status: PlaceStatus.pending,
-      imageColor: AdminColors.teal,
-    ),
-    AdminPlace(
-      name: 'Royal Palace Museum',
-      subtitle: 'Historic royal residence',
-      company: 'Heritage Travel',
-      category: 'Cultural Site',
-      province: 'Phnom Penh',
-      fee: '\$10',
-      submittedDate: 'Apr 25, 2026',
-      status: PlaceStatus.approved,
-      imageColor: AdminColors.amber,
-    ),
-    AdminPlace(
-      name: 'Kampot Restaurant',
-      subtitle: 'Kampot Restaurant',
-      company: 'somarina',
-      category: 'Historical Monument',
-      province: 'Kam Pot',
-      fee: '\$12',
-      submittedDate: 'Jun 23, 2026',
-      status: PlaceStatus.pending,
-      imageColor: AdminColors.purple,
-    ),
-  ].obs;
+  // ====================== PLACES (real /places data) ======================
+  final RxList<AdminPlace> places = <AdminPlace>[].obs;
+  final isLoadingPlaces = false.obs;
 
-  void approvePlace(AdminPlace place) {
-    final index = places.indexOf(place);
-    if (index == -1) return;
-    places[index] = AdminPlace(
-      name: place.name,
-      subtitle: place.subtitle,
-      company: place.company,
-      category: place.category,
-      province: place.province,
-      fee: place.fee,
-      submittedDate: place.submittedDate,
-      status: PlaceStatus.approved,
-      imageColor: place.imageColor,
+  static const _placeColorCycle = [
+    AdminColors.primary,
+    AdminColors.teal,
+    AdminColors.amber,
+    AdminColors.purple,
+    AdminColors.green,
+    AdminColors.red,
+  ];
+
+  AdminPlace _placeFromJson(Map<String, dynamic> json, int index) {
+    final rawStatus = (json["status"] ?? "pending").toString();
+    final status = switch (rawStatus) {
+      "approved" => PlaceStatus.approved,
+      "rejected" => PlaceStatus.rejected,
+      _ => PlaceStatus.pending,
+    };
+    final fee = json["entry_fee"]?.toString();
+    final createdAt = json["created_at"]?.toString();
+    return AdminPlace(
+      id: (json["id"] ?? "").toString(),
+      name: (json["name_en"] ?? json["name"] ?? "").toString(),
+      subtitle: (json["description_en"] ?? json["description"] ?? "").toString(),
+      company: (json["owner_name"] ?? "—").toString(),
+      category: (json["category"] ?? "").toString(),
+      province: (json["province"] ?? "").toString(),
+      fee: (fee == null || fee.isEmpty) ? "Free" : fee,
+      submittedDate: createdAt != null && createdAt.length >= 10 ? createdAt.substring(0, 10) : "",
+      status: status,
+      imageColor: _placeColorCycle[index % _placeColorCycle.length],
     );
   }
 
-  void rejectPlace(AdminPlace place) {
-    final index = places.indexOf(place);
-    if (index == -1) return;
-    places[index] = AdminPlace(
-      name: place.name,
-      subtitle: place.subtitle,
-      company: place.company,
-      category: place.category,
-      province: place.province,
-      fee: place.fee,
-      submittedDate: place.submittedDate,
-      status: PlaceStatus.rejected,
-      imageColor: place.imageColor,
-    );
+  /// Loads every place regardless of status — admins see the full queue
+  /// (pending/approved/rejected), unlike the public/company views.
+  Future<void> loadPlaces() async {
+    isLoadingPlaces.value = true;
+    final response = await _placesService.getPlaces();
+    if (response is Map && response["result"] == true) {
+      final items = (response["data"]?["items"] as List?) ?? [];
+      places.assignAll([
+        for (int i = 0; i < items.length; i++) _placeFromJson(Map<String, dynamic>.from(items[i]), i),
+      ]);
+    }
+    isLoadingPlaces.value = false;
   }
 
-  void deletePlace(AdminPlace place) => places.remove(place);
+  Future<void> approvePlace(AdminPlace place) async {
+    final response = await _placesService.reviewPlace(placeId: place.id, status: "approved");
+    if (response is Map && response["result"] == true) {
+      await loadPlaces();
+    } else {
+      Get.snackbar("Couldn't approve", (response is Map ? response["message"] : null)?.toString() ?? "Please try again");
+    }
+  }
+
+  Future<void> rejectPlace(AdminPlace place, {String? note}) async {
+    final response = await _placesService.reviewPlace(placeId: place.id, status: "rejected", reviewNote: note);
+    if (response is Map && response["result"] == true) {
+      await loadPlaces();
+    } else {
+      Get.snackbar("Couldn't reject", (response is Map ? response["message"] : null)?.toString() ?? "Please try again");
+    }
+  }
+
+  Future<void> deletePlace(AdminPlace place) async {
+    final response = await _placesService.deletePlace(place.id);
+    if (response is Map && response["result"] == true) {
+      places.removeWhere((p) => p.id == place.id);
+    } else {
+      Get.snackbar("Couldn't delete", (response is Map ? response["message"] : null)?.toString() ?? "Please try again");
+    }
+  }
 
   // ====================== MOCK: COMPANIES ======================
   final RxList<AdminCompany> companies = <AdminCompany>[
@@ -246,5 +243,6 @@ class AdminScreenController extends GetxController {
   void onInit() {
     super.onInit();
     _loadAdminProfile();
+    loadPlaces();
   }
 }

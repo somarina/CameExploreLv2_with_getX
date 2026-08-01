@@ -199,19 +199,19 @@ class _AdminAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final avatarMenu = PopupMenuButton<String>(
-      tooltip: 'Account',
+      tooltip: 'account'.tr,
       offset: const Offset(0, 48),
       onSelected: (value) {
         if (value == 'logout') controller.logout();
       },
-      itemBuilder: (context) => const [
+      itemBuilder: (context) => [
         PopupMenuItem(
           value: 'logout',
           child: Row(
             children: [
               Icon(Icons.logout_rounded, size: 18, color: AdminColors.red),
               SizedBox(width: 10),
-              Text('Logout'),
+              Text('logout'.tr),
             ],
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 enum PlaceStatus { pending, approved, rejected }
 
 class AdminPlace {
+  final String id;
   final String name;
   final String subtitle;
   final String company;
@@ -14,6 +15,7 @@ class AdminPlace {
   final Color imageColor;
 
   const AdminPlace({
+    this.id = "",
     required this.name,
     required this.subtitle,
     required this.company,

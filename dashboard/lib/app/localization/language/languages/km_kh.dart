@@ -1,4 +1,5 @@
 Map<String, String> kmKH = {
+  // Auth - Login
   'welcome_back': 'ចូលប្រើប្រាស់',
   'sign_in_to_continue': 'តើអ្នកមិនធ្លាប់មានគណនីមែនទេ?',
   'email': 'អ៊ីមែល',
@@ -9,9 +10,198 @@ Map<String, String> kmKH = {
   'continue_with': 'ចូលប្រើប្រាស់ជាមួយ',
   'continue_with_google': 'ចូលប្រើប្រាស់ជាមួយ Google',
   'continue_with_telegram': 'ចូលប្រើប្រាស់ជាមួយ Telegram',
+
+  // Auth - Register
   'register': 'បង្កើតគណនី',
   'already_have_account': 'មានគណនីហើយមែនទេ?',
   'register_as_travel_agency': 'ក្រុមហ៊ុន',
   'register_as_individual': 'ផ្ទាល់ខ្លួន',
 
+  // Auth - Forget Password
+  'forget_password_title': 'ភ្លេចពាក្យសម្ងាត់',
+  'forget_password_subtitle': 'បញ្ចូលអ៊ីមែលរបស់អ្នក ហើយយើងនឹងផ្ញើការណែនាំដើម្បីកំណត់ពាក្យសម្ងាត់ឡើងវិញ។',
+  'email_address': 'អាសយដ្ឋានអ៊ីមែល',
+  'send_reset_link': 'ផ្ញើតំណភ្ជាប់កំណត់ឡើងវិញ',
+
+  // Admin - Sidebar
+  'admin_panel': 'ផ្ទាំងគ្រប់គ្រង',
+  'administration': 'ការគ្រប់គ្រង',
+  'dashboard': 'ផ្ទាំងគ្រប់គ្រងទូទៅ',
+  'manage_places': 'គ្រប់គ្រងទីកន្លែង',
+  'manage_users': 'គ្រប់គ្រងអ្នកប្រើប្រាស់',
+  'approvals': 'ការអនុម័ត',
+  'analytics': 'ការវិភាគ',
+  'settings': 'ការកំណត់',
+  'dark_mode': 'របៀបងងឹត',
+  'logout': 'ចាកចេញ',
+  'logout_confirm_message': 'តើអ្នកប្រាកដថាចង់ចាកចេញពីគណនីរបស់អ្នកមែនទេ?',
+  'cancel': 'បោះបង់',
+
+  // Admin - Top bar
+  'account': 'គណនី',
+
+  // Admin - Settings page
+  'settings_subtitle': 'គ្រប់គ្រងគណនី និងចំណូលចិត្តរបស់អ្នក',
+  'profile': 'ព័ត៌មានផ្ទាល់ខ្លួន',
+  'security': 'សុវត្ថិភាព',
+  'notifications': 'ការជូនដំណឹង',
+  'appearance': 'រូបរាង',
+  'profile_information': 'ព័ត៌មានផ្ទាល់ខ្លួន',
+  'display_name': 'ឈ្មោះបង្ហាញ',
+  'email_username': 'អ៊ីមែល / ឈ្មោះអ្នកប្រើ',
+  'bio_description': 'ជីវប្រវត្តិ / ការពិពណ៌នា',
+  'bio_hint': 'ការពិពណ៌នាសង្ខេបអំពីតួនាទីអភិបាលរបស់អ្នក...',
+  'save_profile': 'រក្សាទុកព័ត៌មានផ្ទាល់ខ្លួន',
+  'profile_updated': 'ព័ត៌មានផ្ទាល់ខ្លួនត្រូវបានធ្វើបច្ចុប្បន្នភាព',
+  'profile_updated_message': 'ព័ត៌មានផ្ទាល់ខ្លួនរបស់អ្នកត្រូវបានរក្សាទុក។',
+  'change_password': 'ប្តូរពាក្យសម្ងាត់',
+  'current_password': 'ពាក្យសម្ងាត់បច្ចុប្បន្ន',
+  'enter_current_password': 'បញ្ចូលពាក្យសម្ងាត់បច្ចុប្បន្ន',
+  'new_password': 'ពាក្យសម្ងាត់ថ្មី',
+  'min_8_characters': 'យ៉ាងតិច ៨ តួអក្សរ',
+  'confirm_new_password': 'បញ្ជាក់ពាក្យសម្ងាត់ថ្មី',
+  'repeat_new_password': 'វាយពាក្យសម្ងាត់ថ្មីម្តងទៀត',
+  'password_requirements': 'លក្ខខណ្ឌពាក្យសម្ងាត់',
+  'req_at_least_8': 'យ៉ាងតិច ៨ តួអក្សរ',
+  'req_one_uppercase': 'អក្សរធំយ៉ាងតិចមួយ',
+  'req_one_number': 'លេខយ៉ាងតិចមួយ',
+  'update_password': 'ធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់',
+  'passwords_do_not_match': 'ពាក្យសម្ងាត់មិនត្រូវគ្នា',
+  'passwords_do_not_match_message': 'សូមប្រាកដថាប្រអប់ពាក្យសម្ងាត់ថ្មីទាំងពីរត្រូវគ្នា។',
+  'password_updated': 'ពាក្យសម្ងាត់ត្រូវបានធ្វើបច្ចុប្បន្នភាព',
+  'password_updated_message': 'ពាក្យសម្ងាត់របស់អ្នកត្រូវបានផ្លាស់ប្តូរដោយជោគជ័យ។',
+  'notification_preferences': 'ចំណូលចិត្តការជូនដំណឹង',
+  'email_notifications': 'ការជូនដំណឹងតាមអ៊ីមែល',
+  'email_notifications_subtitle': 'ទទួលបានព័ត៌មានថ្មីៗតាមអ៊ីមែល',
+  'approval_alerts': 'ការជូនដំណឹងអំពីការអនុម័ត',
+  'approval_alerts_subtitle': 'ជូនដំណឹងនៅពេលទីកន្លែងត្រូវបានអនុម័ត ឬបដិសេធ',
+  'system_announcements': 'សេចក្តីប្រកាសប្រព័ន្ធ',
+  'system_announcements_subtitle': 'ព័ត៌មាន និងការជូនដំណឹងអំពីការថែទាំទូទាំងវេទិកា',
+  'weekly_summary': 'សេចក្តីសង្ខេបប្រចាំសប្តាហ៍',
+  'weekly_summary_subtitle': 'សេចក្តីសង្ខេបនៃសកម្មភាពរបស់អ្នកជារៀងរាល់ថ្ងៃច័ន្ទ',
+  'save_preferences': 'រក្សាទុកចំណូលចិត្ត',
+  'preferences_saved': 'ចំណូលចិត្តត្រូវបានរក្សាទុក',
+  'preferences_saved_message': 'ចំណូលចិត្តការជូនដំណឹងរបស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាព។',
+  'theme': 'ស្បែក',
+  'light': 'ភ្លឺ',
+  'dark': 'ងងឹត',
+  'language': 'ភាសា',
+  'save_appearance': 'រក្សាទុករូបរាង',
+  'appearance_saved': 'រូបរាងត្រូវបានរក្សាទុក',
+  'appearance_saved_message': 'ចំណូលចិត្តរូបរាងរបស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាព។',
+  'danger_zone': 'តំបន់គ្រោះថ្នាក់',
+  'sign_out_all_sessions': 'ចាកចេញពីគ្រប់វគ្គទាំងអស់',
+  'sign_out_all_sessions_subtitle': 'ចាកចេញរបស់អ្នកពីគ្រប់ឧបករណ៍',
+  'sign_out': 'ចាកចេញ',
+  'sign_out_confirm_message': 'នេះនឹងចាកចេញអ្នកពីគ្រប់ឧបករណ៍ទាំងអស់។ បន្តទេ?',
+
+  // Admin - Dashboard page
+  'review_requests': 'ពិនិត្យសំណើ',
+  'total_places': 'ទីកន្លែងសរុប',
+  'pending_review': 'កំពុងរង់ចាំពិនិត្យ',
+  'now': 'ឥឡូវនេះ',
+  'companies': 'ក្រុមហ៊ុន',
+  'submissions_overview': 'ទិដ្ឋភាពទូទៅនៃការដាក់ស្នើ',
+  'submissions_overview_subtitle': 'ការដាក់ស្នើ និងការអនុម័តប្រចាំសប្តាហ៍',
+  'top_categories': 'ប្រភេទកំពូល',
+  'place_distribution': 'ការចែកចាយទីកន្លែង',
+  'recent_submissions': 'ការដាក់ស្នើថ្មីៗ',
+  'latest_place_requests': 'សំណើទីកន្លែងចុងក្រោយបំផុត',
+  'view_all': 'មើលទាំងអស់',
+  'go_to_approval_center': 'ទៅកាន់មជ្ឈមណ្ឌលអនុម័ត',
+  'submissions': 'ការដាក់ស្នើ',
+  'welcome_back_admin': 'សូមស្វាគមន៍ការត្រឡប់មកវិញ',
+
+  // Admin - Analytics page
+  'analytics_subtitle': 'ការយល់ដឹងអំពីការដាក់ស្នើទីកន្លែងទេសចរណ៍កម្ពុជា',
+  'total_submissions': 'ការដាក់ស្នើសរុប',
+  'approval_rate': 'អត្រាអនុម័ត',
+  'avg_per_month': 'មធ្យមភាគ / ខែ',
+  'active': 'សកម្ម',
+  'monthly_trend': 'និន្នាការប្រចាំខែ',
+  'monthly_trend_subtitle': 'ការដាក់ស្នើ ការអនុម័ត និងការបដិសេធតាមពេលវេលា',
+  'top_provinces': 'ខេត្តកំពូល',
+  'top_provinces_subtitle': 'ការចែកចាយទីកន្លែងតាមខេត្ត',
+  'category_breakdown': 'ការបំបែកតាមប្រភេទ',
+  'category_breakdown_subtitle': 'ភាគរយតាមប្រភេទទីកន្លែង',
+  'approval_summary': 'សេចក្តីសង្ខេបការអនុម័ត',
+  'province_performance': 'សមិទ្ធផលខេត្ត',
+  'province_performance_subtitle': 'ស្ថិតិការដាក់ស្នើទីកន្លែងតាមខេត្ត',
+
+  // Admin - Approvals page
+  'approvals_subtitle': 'ពិនិត្យ និងគ្រប់គ្រងសំណើដាក់ស្នើទីកន្លែង',
+  'search_place_company': 'ស្វែងរកតាមទីកន្លែង ឬក្រុមហ៊ុន...',
+  'no_submissions_match_filters': 'គ្មានការដាក់ស្នើត្រូវនឹងតម្រងរបស់អ្នកទេ។',
+  'total': 'សរុប',
+
+  // Admin - Manage Places page
+  'manage_places_subtitle': 'ពិនិត្យ អនុម័ត និងគ្រប់គ្រងទីតាំងទាំងអស់ដែលបានដាក់ស្នើ',
+  'search_name_company_province': 'ស្វែងរកតាមឈ្មោះ ក្រុមហ៊ុន ខេត្ត...',
+  'no_places_match_filter': 'គ្មានទីកន្លែងត្រូវនឹងតម្រងនេះទេ។',
+  'action_cannot_be_undone': 'សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។',
+  'delete_question': 'លុប',
+
+  // Admin - Manage Users page
+  'manage_users_subtitle': 'ក្រុមហ៊ុន និងដៃគូដែលបានចុះឈ្មោះទាំងអស់',
+  'search_company_email_location': 'ស្វែងរកតាមក្រុមហ៊ុន អ៊ីមែល ទីតាំង...',
+  'no_companies_match_search': 'គ្មានក្រុមហ៊ុនត្រូវនឹងការស្វែងរករបស់អ្នកទេ។',
+  'export': 'នាំចេញ',
+  'suspend': 'ផ្អាក',
+  'remove': 'ដកចេញ',
+  'remove_question': 'ដកចេញ',
+  'remove_company_message': 'នេះនឹងដកគណនីក្រុមហ៊ុនចេញ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។',
+
+  // Shared - status / actions / table columns
+  'pending': 'កំពុងរង់ចាំ',
+  'approved': 'បានអនុម័ត',
+  'rejected': 'បានបដិសេធ',
+  'approve': 'អនុម័ត',
+  'reject': 'បដិសេធ',
+  'delete': 'លុប',
+  'view_details': 'មើលព័ត៌មានលម្អិត',
+  'col_place': 'ទីកន្លែង',
+  'col_company': 'ក្រុមហ៊ុន',
+  'col_category': 'ប្រភេទ',
+  'col_province': 'ខេត្ត',
+  'col_date': 'កាលបរិច្ឆេទ',
+  'col_status': 'ស្ថានភាព',
+  'col_actions': 'សកម្មភាព',
+  'col_fee': 'ថ្លៃសេវា',
+  'col_submitted': 'បានដាក់ស្នើ',
+  'col_contact': 'ទំនាក់ទំនង',
+  'col_business_type': 'ប្រភេទអាជីវកម្ម',
+  'col_location': 'ទីតាំង',
+  'col_places': 'ទីកន្លែង',
+  'col_joined': 'ចូលរួម',
+  'col_share': 'ចំណែក',
+  'col_growth': 'កំណើន',
+
+  "forget_password_subtitlee":"សូមបញ្ចូលអាសយដ្ឋានអ៊ីមែលរបស់អ្នក ដើម្បីទទួលលេខកូដផ្ទៀងផ្ទាត់ (OTP)។",
+
+  "enter_your_email": "បញ្ចូលអាសយដ្ឋានអ៊ីមែលរបស់អ្នក",
+
+  "send_otp_code": "ផ្ញើលេខកូដ OTP",
+
+  "otp_verification_title": "ផ្ទៀងផ្ទាត់លេខកូដ OTP",
+  "otp_verification_subtitle":
+      "សូមបញ្ចូលលេខកូដផ្ទៀងផ្ទាត់ ៦ ខ្ទង់ ដែលបានផ្ញើទៅអ៊ីមែលរបស់អ្នក។",
+
+  "resend_code": "ផ្ញើលេខកូដម្ដងទៀត",
+  "resend_code_in": "អាចផ្ញើលេខកូដម្ដងទៀតក្នុង",
+
+  "verify_code": "ផ្ទៀងផ្ទាត់លេខកូដ",
+
+  "reset_password_title": "កំណត់ពាក្យសម្ងាត់ថ្មី",
+  "reset_password_subtitle":
+      "បង្កើតពាក្យសម្ងាត់ថ្មីសម្រាប់គណនីរបស់អ្នក។",
+
+  "enter_new_password": "បញ្ចូលពាក្យសម្ងាត់ថ្មី",
+
+  "confirm_password": "បញ្ជាក់ពាក្យសម្ងាត់",
+  "re_enter_new_password": "បញ្ចូលពាក្យសម្ងាត់ថ្មីម្ដងទៀត",
+
+  "password_hint":
+      "ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច ៨ តួអក្សរ និងមានទាំងអក្សរ និងលេខ។",
+
+  "reset_password_button": "កំណត់ពាក្យសម្ងាត់ថ្មី",
 };

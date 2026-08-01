@@ -60,7 +60,7 @@ class _EmailStep extends StatelessWidget {
             physics: BouncingScrollPhysics(),
             padding: EdgeInsets.fromLTRB(24, 12, 24, keyboard + 16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Header
                 Row(
@@ -117,21 +117,25 @@ class _EmailStep extends StatelessWidget {
                   builder: (context, _) {
                     final t = controller.shakeController.value;
 
-                    final offset =
-                        (10 * (1 - t)) * ((t * 10).floor().isEven ? 1 : -1);
+                    final offset = t == 0
+                        ? 0.0
+                        : (10 * (1 - t)) *
+                            ((t * 10).floor().isEven ? 1 : -1);
 
                     return Transform.translate(
                       offset: Offset(offset, 0),
-                      child: TextFormField(
-                        controller: controller.emailOrPhoneController,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: TextFormField(
+                          controller: controller.emailOrPhoneController,
 
-                        autovalidateMode: controller.showValidation.value
-                            ? AutovalidateMode.always
-                            : AutovalidateMode.disabled,
+                          autovalidateMode: controller.showValidation.value
+                              ? AutovalidateMode.always
+                              : AutovalidateMode.disabled,
 
-                        style: isEnglish
-                            ? GoogleFonts.spaceGrotesk(fontSize: 15)
-                            : GoogleFonts.googleSans(fontSize: 15),
+                          style: isEnglish
+                              ? GoogleFonts.spaceGrotesk(fontSize: 15)
+                              : GoogleFonts.googleSans(fontSize: 15),
 
                         decoration: InputDecoration(
                           hintText: "enter_email".tr,
@@ -209,19 +213,18 @@ class _EmailStep extends StatelessWidget {
 
                           return null;
                         },
-                      ),
+                      ),),
                     );
                   },
                 ),
 
                 SizedBox(height: 24),
 
-                Center(
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: Obx(
-                      () => ElevatedButton(
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: Obx(
+                    () => ElevatedButton(
                         onPressed: controller.isLoading.value
                             ? null
                             : controller.requestOtp,
@@ -258,7 +261,7 @@ class _EmailStep extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
+                
               ],
             ),
           ),

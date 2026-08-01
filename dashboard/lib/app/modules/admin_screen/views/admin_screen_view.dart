@@ -8,6 +8,7 @@ import 'pages/admin_approvals_page.dart';
 import 'pages/admin_dashboard_page.dart';
 import 'pages/admin_manage_places_page.dart';
 import 'pages/admin_manage_users_page.dart';
+import 'pages/admin_settings_page.dart';
 import 'widgets/admin_sidebar.dart';
 
 class AdminScreenView extends GetView<AdminScreenController> {
@@ -35,7 +36,9 @@ class AdminScreenView extends GetView<AdminScreenController> {
                   child: AdminSidebar(controller: controller),
                 ),
                 Expanded(
-                  child: Obx(() => _buildPageContent(controller.currentSection.value)),
+                  child: Obx(
+                    () => _buildPageContent(controller.currentSection.value),
+                  ),
                 ),
               ],
             ),
@@ -61,7 +64,7 @@ class AdminScreenView extends GetView<AdminScreenController> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.menu, color: AdminColors.textPrimary),
+                icon: Icon(Icons.menu, color: AdminColors.textPrimary),
                 onPressed: () => Scaffold.of(context).openEndDrawer(),
               ),
             ],
@@ -86,6 +89,8 @@ class AdminScreenView extends GetView<AdminScreenController> {
         return AdminApprovalsPage(controller: controller);
       case AdminSection.analytics:
         return AdminAnalyticsPage(controller: controller);
+      case AdminSection.settings:
+        return AdminSettingsPage(controller: controller);
     }
   }
 }

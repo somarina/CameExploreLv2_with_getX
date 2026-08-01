@@ -7,7 +7,12 @@ from pymongo import ReturnDocument
 
 from app.db.daatabase import db
 from app.models.models import PlaceCreate, PlaceUpdate
-from app.utils.auth_dependency import require_admin
+from app.utils.auth_dependency import (
+    get_current_user_or_admin_optional,
+    require_admin,
+    require_company_or_admin,
+    is_admin,
+)
 
 router = APIRouter(prefix="/places", tags=["Places"])
 
@@ -68,12 +73,13 @@ def serialize_place(place: dict, lang: Optional[str] = None) -> dict:
         "rating_histogram": place.get("rating_histogram"),
         "search_count": place.get("search_count", 0),
         "status": place.get("status", "approved"),
+        "review_note": place.get("review_note"),
+        "owner_id": place.get("owner_id"),
+        "owner_name": place.get("owner_name"),
         "created_at": place.get("created_at"),
         "updated_at": place.get("updated_at"),
-        "rating": place.get("rating", 0),
         "phoneNum": place.get("phoneNum"),
         "rating_star": place.get("rating_star", 0),
-        "phoneNum": place.get("phoneNum")
     }
 
     if lang in ("en", "km"):
@@ -85,24 +91,34 @@ def serialize_place(place: dict, lang: Optional[str] = None) -> dict:
     return data
 
 
-# ── PUBLIC ──────────────────────────────────────────────────────────────
+# ── PUBLIC / MIXED ──────────────────────────────────────────────────────────
 
 @router.get("/")
 async def get_places(
     lang: Optional[str] = Query(None, description="'en' or 'km' to localize name/description"),
     province: Optional[str] = Query(None),
     category: Optional[str] = Query(None),
+    status: Optional[str] = Query(None, description="admin only: pending | approved | rejected"),
     limit: int = Query(50, ge=1, le=200),
     skip: int = Query(0, ge=0),
+    current_user: Optional[dict] = Depends(get_current_user_or_admin_optional),
 ):
-    query = {"status": "approved"}
+    query = {}
+    if current_user and is_admin(current_user):
+        if status:
+            query["status"] = status
+    else:
+        query["status"] = "approved"
+
     if province:
         query["province"] = {"$regex": f"^{province}$", "$options": "i"}
     if category:
         query["category"] = {"$regex": f"^{category}$", "$options": "i"}
 
     total = await places_collection.count_documents(query)
-    cursor = places_collection.find(query).skip(skip).limit(limit)
+    # Newest first — otherwise a fresh pending submission can fall past the
+    # default page size and never surface in the admin approvals queue.
+    cursor = places_collection.find(query).sort("created_at", -1).skip(skip).limit(limit)
     places = [serialize_place(p, lang) async for p in cursor]
 
     return ok("Places fetched successfully", {
@@ -113,9 +129,43 @@ async def get_places(
     })
 
 
+@router.get("/mine")
+async def get_my_places(
+    lang: Optional[str] = Query(None),
+    status: Optional[str] = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+    skip: int = Query(0, ge=0),
+    current_user: dict = Depends(require_company_or_admin),
+):
+    query = {"owner_id": str(current_user["_id"])}
+    if status:
+        query["status"] = status
+
+    total = await places_collection.count_documents(query)
+    cursor = places_collection.find(query).sort("created_at", -1).skip(skip).limit(limit)
+    places = [serialize_place(p, lang) async for p in cursor]
+
+    return ok("Your places fetched successfully", {
+        "items": places, "total": total, "limit": limit, "skip": skip,
+    })
+
+
 @router.get("/{place_id}")
-async def get_place(place_id: str, lang: Optional[str] = Query(None)):
+async def get_place(
+    place_id: str,
+    lang: Optional[str] = Query(None),
+    current_user: Optional[dict] = Depends(get_current_user_or_admin_optional),
+):
     oid = get_object_id(place_id)
+
+    place = await places_collection.find_one({"_id": oid})
+    if not place:
+        err("Place not found", 404)
+
+    if place.get("status") != "approved":
+        is_owner = current_user and place.get("owner_id") == str(current_user["_id"])
+        if not (is_owner or (current_user and is_admin(current_user))):
+            err("Place not found", 404)
 
     # Every detail view counts toward this place's popularity — this is what
     # 'Most search' / 'Popular places' rank by (via /api/search/popular).
@@ -125,32 +175,41 @@ async def get_place(place_id: str, lang: Optional[str] = Query(None)):
         return_document=ReturnDocument.AFTER,
     )
 
-    if not place:
-        err("Place not found", 404)
-
     return ok("Place fetched successfully", serialize_place(place, lang))
 
 
-# ── ADMIN ONLY ──────────────────────────────────────────────────────────────
-# Places (temples, provinces, general tourism spots) are reference data —
-# no organization "owns" a temple, so there's no submit-for-review flow here.
-# Only Hotels and Packages use that, since real businesses submit those.
+# ── ORGANIZATION (company) + ADMIN: submit a place listing ─────────────────
+# Companies submit places the same way they submit hotels/packages — the
+# listing goes in as "pending" and only becomes visible to the public once
+# an admin approves it. Admins creating a place directly skip the queue.
 
 @router.post("/")
 async def create_place(
     payload: PlaceCreate,
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(require_company_or_admin),
 ):
     now = datetime.utcnow()
     doc = payload.model_dump()
+
+    # Khmer fields fall back to the English ones when the submitter only
+    # filled in English — keeps the (English-only) Add Place form working.
+    doc["name_km"] = doc.get("name_km") or doc["name_en"]
+    doc["description_km"] = doc.get("description_km") or doc["description_en"]
+    doc["phoneNum"] = doc.get("phoneNum") or current_user.get("phone")
 
     # Keep legacy flat fields in sync — search.py / discover.py / favorites.py
     # read place["name"] / place["description"] directly from Mongo.
     doc["name"] = doc["name_en"]
     doc["description"] = doc["description_en"]
 
+    if not is_admin(current_user):
+        doc["status"] = "pending"
+        doc["review_note"] = None
+
     doc["rating"] = 0
     doc["search_count"] = 0
+    doc["owner_id"] = str(current_user["_id"])
+    doc["owner_name"] = current_user.get("name")
     doc["created_by"] = str(current_user["_id"])
     doc["created_at"] = now
     doc["updated_at"] = now
@@ -158,18 +217,34 @@ async def create_place(
     result = await places_collection.insert_one(doc)
     new_place = await places_collection.find_one({"_id": result.inserted_id})
 
-    return ok("Place created successfully", serialize_place(new_place))
+    message = (
+        "Place created successfully" if is_admin(current_user)
+        else "Place submitted — pending admin review"
+    )
+    return ok(message, serialize_place(new_place))
 
 
 @router.put("/{place_id}")
 async def update_place(
     place_id: str,
     payload: PlaceUpdate,
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(require_company_or_admin),
 ):
     oid = get_object_id(place_id)
+    place = await places_collection.find_one({"_id": oid})
+    if not place:
+        err("Place not found", 404)
 
     update_data = {k: v for k, v in payload.model_dump().items() if v is not None}
+
+    if not is_admin(current_user):
+        if place.get("owner_id") != str(current_user["_id"]):
+            err("You can only edit your own place submissions", 403)
+        if place.get("status") != "pending":
+            err("This place has already been reviewed and can no longer be edited. Contact an admin.", 403)
+        update_data.pop("status", None)
+        update_data.pop("review_note", None)
+
     if not update_data:
         err("No fields provided to update", 400)
 
@@ -187,6 +262,8 @@ async def update_place(
     updated_place = await places_collection.find_one({"_id": oid})
     return ok("Place updated successfully", serialize_place(updated_place))
 
+
+# ── ADMIN ONLY ──────────────────────────────────────────────────────────────
 
 @router.delete("/{place_id}")
 async def delete_place(

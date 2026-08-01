@@ -111,3 +111,21 @@ class ChangePasswordSchema(BaseModel):
     current_password: str
     new_password: str = Field(min_length=6)
     confirm_password: str = Field(min_length=6)
+
+# ====================== ADMIN DASHBOARD PASSWORD RESET ======================
+
+class AdminForgotPasswordSchema(BaseModel):
+    email: EmailStr
+
+
+class AdminVerifyOtpSchema(BaseModel):
+    email: EmailStr
+    otp: str = Field(min_length=6, max_length=6)
+
+
+class AdminResetPasswordSchema(BaseModel):
+    email: EmailStr
+    otp: str = Field(min_length=6, max_length=6)
+
+    new_password: str = Field(min_length=8, max_length=72)
+    confirm_password: str = Field(min_length=8, max_length=72)

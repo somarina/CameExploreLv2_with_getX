@@ -72,7 +72,16 @@ class LoginScreenController extends GetxController {
     box.write("dashboard_active_role", data["active_role"] ?? "");
     box.write("dashboard_email", data["email"] ?? "");
 
-    Get.offAllNamed(Routes.ADMIN_SCREEN);
+    final activeRole = (data["active_role"] ?? "").toString().toLowerCase();
+
+    // TODO: Routes.COMPANY_SCREEN must exist in app_pages.dart pointing at
+    // CompanyScreenView (with CompanyScreenBinding). Adjust the exact role
+    // string check ("company") to match whatever your backend actually sends.
+    if (activeRole == "company") {
+      Get.offAllNamed(Routes.COMPANY_SCREEN);
+    } else {
+      Get.offAllNamed(Routes.ADMIN_SCREEN);
+    }
   }
 
   void continueWithGoogle() {
@@ -86,11 +95,6 @@ class LoginScreenController extends GetxController {
   }
 
   void continueWithTelegram() {
-    // TODO: wire up Telegram Login Widget here. Telegram's web login
-    // flow normally embeds https://oauth.telegram.org/auth?bot_id=...
-    // (or the widget script from telegram.org/js/telegram-widget.js)
-    // inside a webview/iframe — this needs your bot's id + domain
-    // registered with @BotFather first.
     Get.snackbar(
       "Telegram",
       "Continue with Telegram tapped",

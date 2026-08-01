@@ -1,21 +1,23 @@
-import 'package:dashboard/app/core/api/services/base_api_service.dart';
+import 'base_api_service.dart';
 
 class DashboardAuthService {
   final BaseApiService baseApi = BaseApiService();
 
-  // ── Login (admin or company account) ────────────────────────────────────
+  // Login
   Future<dynamic> loginService({
     required String emailOrPhone,
     required String password,
   }) async {
-    var response = await baseApi.post(
+    return await baseApi.post(
       endpoint: "/api/dashboard/auth/login",
-      data: {"email_or_phone": emailOrPhone, "password": password},
+      data: {
+        "email_or_phone": emailOrPhone,
+        "password": password,
+      },
     );
-    return response;
   }
 
-  // ── Register personal account ───────────────────────────────────────────
+  // Register Personal
   Future<dynamic> registerPersonalService({
     required String name,
     required String gender,
@@ -24,7 +26,7 @@ class DashboardAuthService {
     required String password,
     required String confirmPassword,
   }) async {
-    var response = await baseApi.post(
+    return await baseApi.post(
       endpoint: "/api/dashboard/auth/register/personal",
       data: {
         "name": name,
@@ -35,35 +37,100 @@ class DashboardAuthService {
         "confirm_password": confirmPassword,
       },
     );
-    return response;
   }
 
-  // ── Register company account ────────────────────────────────────────────
+  // Register Company
+  // NOTE: matches the backend's RegisterCompanySchema exactly — there is
+  // no "gender" field for company accounts, but there IS business_type
+  // and address, both required.
   Future<dynamic> registerCompanyService({
     required String name,
-    required String gender,
     required String email,
     required String phone,
+    required String businessType,
+    required String address,
     required String password,
     required String confirmPassword,
   }) async {
-    var response = await baseApi.post(
+    return await baseApi.post(
       endpoint: "/api/dashboard/auth/register/company",
       data: {
         "name": name,
-        "gender": gender,
         "email": email,
         "phone": phone,
+        "business_type": businessType,
+        "address": address,
         "password": password,
         "confirm_password": confirmPassword,
       },
     );
-    return response;
   }
 
-  // ── Logout ───────────────────────────────────────────────────────────────
+  // Logout
   Future<dynamic> logoutService() async {
-    var response = await baseApi.delete(endpoint: "/api/dashboard/auth/logout");
-    return response;
+    return await baseApi.delete(
+      endpoint: "/api/dashboard/auth/logout",
+    );
+  }
+
+  // ✅ Change Password
+  Future<dynamic> changePasswordService({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    return await baseApi.put(
+      endpoint: "/api/dashboard/auth/change-password",
+      data: {
+        "current_password": currentPassword,
+        "new_password": newPassword,
+        "confirm_password": confirmPassword,
+      },
+    );
+  }
+
+  // ✅ Forgot Password — sends (or resends, same endpoint) the OTP code.
+  // Admin-only: backend looks this email up in the admins collection.
+  Future<dynamic> forgotPasswordService({
+    required String email,
+  }) async {
+    return await baseApi.post(
+      endpoint: "/api/dashboard/auth/forgot-password",
+      data: {
+        "email": email,
+      },
+    );
+  }
+
+  // ✅ Verify OTP
+  Future<dynamic> verifyOtpService({
+    required String email,
+    required String otp,
+  }) async {
+    return await baseApi.post(
+      endpoint: "/api/dashboard/auth/verify-otp",
+      data: {
+        "email": email,
+        "otp": otp,
+      },
+    );
+  }
+
+  // ✅ Reset Password — requires the OTP to have been verified first.
+  Future<dynamic> resetPasswordService({
+    required String email,
+    required String otp,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    return await baseApi.post(
+      endpoint: "/api/dashboard/auth/reset-password",
+      data: {
+        "email": email,
+        "otp": otp,
+        "new_password": newPassword,
+        "confirm_password": confirmPassword,
+      },
+    );
   }
 }

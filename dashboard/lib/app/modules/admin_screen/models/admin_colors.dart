@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../controllers/theme_controller.dart';
 
 /// Shared style constants for the Admin Dashboard UI.
 /// Kept in one place so the whole dashboard stays visually consistent.
+///
+/// Structural colors (background/surface/border/text) switch with
+/// [ThemeController.isDarkMode]. Brand/status colors stay the same in
+/// both modes.
 class AdminColors {
   AdminColors._();
 
+  static bool get _isDark {
+    try {
+      return Get.find<ThemeController>().isDarkMode.value;
+    } catch (_) {
+      return true;
+    }
+  }
+
   // Primary colors
-  static const primary = Color(0xFF2F6FED);
-  static const primaryLight = Color(0xFFEAF2FF);
-  static const primaryDark = Color(0xFF1E3F8E);
+  static const primary = Color(0xFF00C17C);
+  static const primaryLight = Color(0xFFDFF7EC);
+  static const primaryDark = Color(0xFF00915C);
 
   // Status colors
   static const green = Color(0xFF10B981);
@@ -30,16 +45,24 @@ class AdminColors {
   static const teal = Color(0xFF14B8A6);
   static const tealDark = Color(0xFF1F3A36);
 
-  // Dark theme palette
-  static const textPrimary = Color(0xFFE8E8E8);
-  static const textSecondary = Color(0xFF9CA3AF);
-  static const textTertiary = Color(0xFF6B7280);
+  // ── Structural palette (theme-aware) ──
+  static Color get textPrimary =>
+      _isDark ? const Color(0xFFE8E8E8) : const Color(0xFF111827);
+  static Color get textSecondary =>
+      _isDark ? const Color(0xFF9CA3AF) : const Color(0xFF64748B);
+  static Color get textTertiary =>
+      _isDark ? const Color(0xFF6B7280) : const Color(0xFF94A3B8);
 
-  static const border = Color(0xFF374151);
-  static const surface = Color(0xFF1F2937);
-  static const surfaceLight = Color(0xFF2D3748);
-  static const background = Color(0xFF111827);
-  static const cardBackground = Color(0xFF1A222F);
+  static Color get border =>
+      _isDark ? const Color(0xFF374151) : const Color(0xFFE2E8F0);
+  static Color get surface =>
+      _isDark ? const Color(0xFF1F2937) : const Color(0xFFFFFFFF);
+  static Color get surfaceLight =>
+      _isDark ? const Color(0xFF2D3748) : const Color(0xFFF1F5F9);
+  static Color get background =>
+      _isDark ? const Color(0xFF111827) : const Color(0xFFF7F9FC);
+  static Color get cardBackground =>
+      _isDark ? const Color(0xFF1A222F) : const Color(0xFFFFFFFF);
 }
 
 class AdminRadii {

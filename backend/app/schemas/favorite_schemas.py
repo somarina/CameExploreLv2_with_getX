@@ -6,5 +6,8 @@ class CreateListSchema(BaseModel):
 class RenameListSchema(BaseModel):
     name: str
 
+# class AddFavoriteItemSchema(BaseModel):
+#     place_id: str
 class AddFavoriteItemSchema(BaseModel):
-    place_id: str
+    item_id: str
+    item_type: str   # place, hotel, package

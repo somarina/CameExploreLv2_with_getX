@@ -96,39 +96,135 @@ class ForgetPasswordView extends GetView<ForgetPasswordController> {
                                   ),
                                 ],
                               ),
-                              // SizedBox(height: 5),
-                              Center(child: Text("Forget Password",style: GoogleFonts.spaceGrotesk(fontSize: 25),)),
-                              Center(child: Text("Enter your email and we'll send you instructions to reset your password.",textAlign: .center,style: GoogleFonts.spaceGrotesk(fontSize: 10),)),
-                              SizedBox(height: 10,),
+                              SizedBox(height: 8),
                               Center(
                                 child: Container(
-                                  width: double.infinity,
-                                  height: 100,
+                                  width: 64,
+                                  height: 64,
                                   decoration: BoxDecoration(
-                                    color: Colors.amber
-                                  )
+                                    color: isDark
+                                        ? Colors.white.withOpacity(.10)
+                                        : Colors.black.withOpacity(.06),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Icon(
+                                    Icons.mail_outline,
+                                    size: 30,
+                                    color: isDark ? Colors.white70 : Colors.black54,
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 10,),
-                              Text("Email Address"),
+                              SizedBox(height: 16),
                               Center(
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    color: Colors.amber
-                                  )
+                                child: Text(
+                                  "forget_password_title".tr,
+                                  style: _font(
+                                    "forget_password_title".tr,
+                                    color: titleColor,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 10,),
-                              ElevatedButton(
-                                onPressed: (){},
-                                child: Row(
-                                  children: [
-                                    Text('Send Reset Link'),
-                                  ],
-                                )
+                              SizedBox(height: 6),
+                              Center(
+                                child: Text(
+                                  "forget_password_subtitlee".tr,
+                                  textAlign: TextAlign.center,
+                                  style: _font(
+                                    "forget_password_subtitlee".tr,
+                                    color: subtitleColor,
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ),
+                              SizedBox(height: 18),
+                              Text(
+                                "email_address".tr,
+                                style: _font(
+                                  "email_address".tr,
+                                  color: titleColor,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              TextField(
+                                controller: controller.emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                style: _font(
+                                  "email_address".tr,
+                                  color: titleColor,
+                                  fontSize: 14,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: "enter_your_email".tr,
+                                  hintStyle: _font(
+                                    "enter_your_email".tr,
+                                    color: subtitleColor,
+                                    fontSize: 14,
+                                  ),
+                                  filled: true,
+                                  fillColor: isDark
+                                      ? Colors.white.withOpacity(.06)
+                                      : Colors.black.withOpacity(.04),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 18),
+                              Obx(
+                                () => ElevatedButton(
+                                  onPressed: controller.isLoading.value
+                                      ? null
+                                      : controller.sendOtpCode,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: primaryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: controller.isLoading.value
+                                      ? SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.mail_outline, size: 18),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'send_otp_code'.tr,
+                                              style: _font(
+                                                'send_otp_code'.tr,
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                              SizedBox(height: 14),
+                              
                             ],
                           ),
                         ),

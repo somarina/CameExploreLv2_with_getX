@@ -25,8 +25,8 @@ class AdminAnalyticsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AdminTopBar(
-              title: 'Analytics',
-              subtitle: 'Insights into Cambodia tourism place submissions',
+              title: 'analytics'.tr,
+              subtitle: 'analytics_subtitle'.tr,
               controller: controller,
             ),
             const SizedBox(height: 24),
@@ -37,7 +37,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                   icon: Icons.place_outlined,
                   iconColor: AdminColors.primary,
                   iconBg: AdminColors.primaryLight,
-                  label: 'Total Submissions',
+                  label: 'total_submissions'.tr,
                   value: '32',
                   badgeText: '+18%',
                   badgeColor: AdminColors.primary,
@@ -47,7 +47,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                   icon: Icons.check_circle_outline,
                   iconColor: AdminColors.green,
                   iconBg: AdminColors.greenLight,
-                  label: 'Approval Rate',
+                  label: 'approval_rate'.tr,
                   value: '$approvalRate%',
                   badgeText: '+4%',
                   badgeColor: AdminColors.green,
@@ -57,9 +57,9 @@ class AdminAnalyticsPage extends StatelessWidget {
                   icon: Icons.access_time_rounded,
                   iconColor: AdminColors.amber,
                   iconBg: AdminColors.amberLight,
-                  label: 'Pending',
+                  label: 'pending'.tr,
                   value: '${controller.pendingCount}',
-                  badgeText: 'Active',
+                  badgeText: 'active'.tr,
                   badgeColor: AdminColors.amber,
                   badgeBg: AdminColors.amberLight,
                 ),
@@ -67,7 +67,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                   icon: Icons.trending_up_rounded,
                   iconColor: AdminColors.purple,
                   iconBg: AdminColors.purpleLight,
-                  label: 'Avg / Month',
+                  label: 'avg_per_month'.tr,
                   value: '14',
                   badgeText: '+12%',
                   badgeColor: AdminColors.purple,
@@ -130,7 +130,7 @@ class _MonthlyTrendChart extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AdminSectionHeader(title: 'Monthly Trend', subtitle: 'Submissions, approvals & rejections over time'),
+        AdminSectionHeader(title: 'monthly_trend'.tr, subtitle: 'monthly_trend_subtitle'.tr),
         const SizedBox(height: 20),
         SizedBox(
           height: 260,
@@ -183,9 +183,9 @@ class _MonthlyTrendChart extends StatelessWidget {
         Row(children: [
           _legendDot(AdminColors.primary, 'Submissions'),
           const SizedBox(width: 20),
-          _legendDot(AdminColors.green, 'Approved'),
+          _legendDot(AdminColors.green, 'approved'.tr),
           const SizedBox(width: 20),
-          _legendDot(AdminColors.red, 'Rejected'),
+          _legendDot(AdminColors.red, 'rejected'.tr),
         ]),
       ],
     );
@@ -221,7 +221,7 @@ class _TopProvincesBarChart extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AdminSectionHeader(title: 'Top Provinces', subtitle: 'Place distribution by province'),
+        AdminSectionHeader(title: 'top_provinces'.tr, subtitle: 'top_provinces_subtitle'.tr),
         const SizedBox(height: 20),
         SizedBox(
           height: 220,
@@ -289,7 +289,7 @@ class _CategoryBreakdown extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AdminSectionHeader(title: 'Category Breakdown', subtitle: 'Percentage by place type'),
+        AdminSectionHeader(title: 'category_breakdown'.tr, subtitle: 'category_breakdown_subtitle'.tr),
         const SizedBox(height: 20),
         SizedBox(
           height: 200,
@@ -369,15 +369,15 @@ class _ApprovalSummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Approval Summary', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: AdminColors.textPrimary)),
+        Text('approval_summary'.tr, style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w700, color: AdminColors.textPrimary)),
         const SizedBox(height: 20),
         Row(
           children: [
-            box('Approved', Icons.check_circle_outline, 18, 72, AdminColors.green, AdminColors.greenLight),
+            box('approved'.tr, Icons.check_circle_outline, 18, 72, AdminColors.green, AdminColors.greenLight),
             const SizedBox(width: 16),
-            box('Pending', Icons.access_time_rounded, 6, 18, AdminColors.amber, AdminColors.amberLight),
+            box('pending'.tr, Icons.access_time_rounded, 6, 18, AdminColors.amber, AdminColors.amberLight),
             const SizedBox(width: 16),
-            box('Rejected', Icons.cancel_outlined, 4, 10, AdminColors.red, AdminColors.redLight),
+            box('rejected'.tr, Icons.cancel_outlined, 4, 10, AdminColors.red, AdminColors.redLight),
           ],
         ),
       ],
@@ -397,16 +397,16 @@ class _ProvincePerformanceTable extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AdminSectionHeader(title: 'Province Performance', subtitle: 'Place submission stats by province'),
+        AdminSectionHeader(title: 'province_performance'.tr, subtitle: 'province_performance_subtitle'.tr),
         const SizedBox(height: 20),
         Row(children: [
           SizedBox(width: 36, child: Text('#', style: headerStyle)),
-          Expanded(flex: 3, child: Text('PROVINCE', style: headerStyle)),
-          Expanded(flex: 2, child: Text('PLACES', style: headerStyle)),
-          Expanded(flex: 3, child: Text('SHARE', style: headerStyle)),
-          Expanded(flex: 2, child: Text('GROWTH', style: headerStyle)),
+          Expanded(flex: 3, child: Text('col_province'.tr, style: headerStyle)),
+          Expanded(flex: 2, child: Text('col_places'.tr, style: headerStyle)),
+          Expanded(flex: 3, child: Text('col_share'.tr, style: headerStyle)),
+          Expanded(flex: 2, child: Text('col_growth'.tr, style: headerStyle)),
         ]),
-        const Divider(height: 24, color: AdminColors.border),
+        Divider(height: 24, color: AdminColors.border),
         for (int i = 0; i < data.length; i++)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -416,7 +416,7 @@ class _ProvincePerformanceTable extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: Row(children: [
-                    const Icon(Icons.location_on_outlined, size: 15, color: AdminColors.textSecondary),
+                    Icon(Icons.location_on_outlined, size: 15, color: AdminColors.textSecondary),
                     const SizedBox(width: 6),
                     Text(data[i].province, style: GoogleFonts.inter(fontSize: 13.5, color: AdminColors.textPrimary)),
                   ]),

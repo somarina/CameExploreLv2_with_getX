@@ -15,6 +15,7 @@ class PackageReviewCreate(BaseModel):
 
 
 class HotelReviewCreate(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
     cleanliness: int = Field(..., ge=1, le=10)
     location: int = Field(..., ge=1, le=10)
     staff: int = Field(..., ge=1, le=10)

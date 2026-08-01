@@ -39,6 +39,10 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# Local secrets — real API keys live here, never commit this file.
+# Copy env.json.example to env.json and fill in your real key.
+env.json
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
