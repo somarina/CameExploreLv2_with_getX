@@ -15,6 +15,49 @@ class GuestInfoScreenViewController extends GetxController {
   var isLoading = false.obs;
   var isLoadingUser = true.obs;
 
+  // --- Timer & Invoice Upload State ---
+  RxInt remainingSeconds = 180.obs; // 3 minutes = 180 seconds
+  Timer? _timer;
+  Rx<XFile?> uploadedInvoice = Rx<XFile?>(null);
+  final ImagePicker _picker = ImagePicker();
+
+  void startPaymentTimer() {
+    remainingSeconds.value = 180;
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSeconds.value > 0) {
+        remainingSeconds.value--;
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void stopPaymentTimer() {
+    _timer?.cancel();
+  }
+
+  String get formattedTimer {
+    int minutes = remainingSeconds.value ~/ 60;
+    int seconds = remainingSeconds.value % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> pickInvoiceImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      uploadedInvoice.value = image;
+      Get.snackbar(
+        "success".tr,
+        "Invoice uploaded successfully!",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
+  // ------------------------------------
+
   // Hotel & Room Type Data
   Map<String, dynamic> hotel = {};
   Map<String, dynamic> roomType = {};
@@ -68,7 +111,6 @@ class GuestInfoScreenViewController extends GetxController {
     return true;
   }
 
-  // Room price per night (defaults to 0 if not available)
   double get pricePerNight {
     final price = roomType["price_per_night"];
     if (price == null) return 0.0;
@@ -77,17 +119,14 @@ class GuestInfoScreenViewController extends GetxController {
         : double.tryParse(price.toString()) ?? 0.0;
   }
 
-  // Total price calculated based on number of nights (multiplies by rooms booked)
   double get calculatedTotalPrice {
     final countNights = nights > 0 ? nights : 1;
     return pricePerNight * countNights * roomsCount;
   }
 
-  // Hotel name for the price breakdown title
   String get hotelName =>
       hotel["name_en"] ?? hotel["name_kh"] ?? hotel["name"] ?? "Hotel Booking";
 
-  // Room type name
   String get roomTypeName =>
       roomType["name_en"] ?? roomType["name_kh"] ?? roomType["name"] ?? "Room";
 
@@ -119,6 +158,11 @@ class GuestInfoScreenViewController extends GetxController {
   }
 
   Future<String?> createBooking() async {
+    if (uploadedInvoice.value == null) {
+      _showErrorSnackBar("Please upload your payment invoice before proceeding.");
+      return null;
+    }
+
     try {
       isLoading.value = true;
 
@@ -145,9 +189,9 @@ class GuestInfoScreenViewController extends GetxController {
         "check_in": formattedCheckIn,
         "check_out": formattedCheckOut,
         "rooms_booked": roomsCount,
-        "number_of_people": totalGuests, // <--- Sends total guests to API
-        "adults": adultsCount, // <--- Sends explicit adults count
-        "children": childrenCount, // <--- Sends explicit children count
+        "number_of_people": totalGuests,
+        "adults": adultsCount,
+        "children": childrenCount,
         "total_price": calculatedTotalPrice,
         "guest_note": noteCtrl.text.trim(),
       };
@@ -208,6 +252,7 @@ class GuestInfoScreenViewController extends GetxController {
 
   @override
   void onClose() {
+    _timer?.cancel();
     firstNameCtrl.dispose();
     lastNameCtrl.dispose();
     emailCtrl.dispose();

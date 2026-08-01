@@ -585,4 +585,17 @@ Map<String, String> kmKH = {
   "max_people": "ចំនួនមនុស្ស",
   "no_reviews_yet": "មិនទាន់មានការវាយតម្លៃ",
   "hello": "សួស្តី",
+  "food": "ម្ហូបអាហារ",
+  "no_place_found": "មិនមានទីតាំងទេ!",
+  "no_hotel_found": "មិនមានសណ្ឋាគារទេ!",
+  "no_nearby_places_found": "មិនមានកន្លែងនៅក្បែរនោះទេ!",
+  "no_recommended_food_found": "មិនមានអាហារដែលបានណែនាំទេ!",
+  "recommended_food": "អាហារដែលបានណែនាំ",
+  "no_packages_found": "មិនមានកញ្ចប់ដំណើរ!",
+  "package": "កញ្ចប់ដំណើរ",
+  "date": "កាលបរិច្ឆេទ",
+  "Travel-Package": "កញ្ចប់ដំណើរកម្សាន្ត",
+
+  "no_restaurant_found": "មិនមានភោជនីយដ្ឋានទេ!",
+  "Restaurant":"ភោជនីយដ្ឋាន"
 };

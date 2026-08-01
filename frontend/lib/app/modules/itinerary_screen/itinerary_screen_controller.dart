@@ -27,4 +27,8 @@ class ItineraryScreenViewController extends GetxController {
   String get noteKey {
     return Get.locale?.languageCode == "km" ? "note_km" : "note_en";
   }
+
+  String get titleKey {
+    return Get.locale?.languageCode == "km" ? "title_km" : "title_en";
+  }
 }

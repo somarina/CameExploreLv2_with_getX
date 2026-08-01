@@ -23,9 +23,15 @@ class BookingModel {
   final String hotelId;
   final String? packageId;
   final String? packageName;
-  final String hotelName;
-  final String location;
-  final String roomType;
+
+  // Stored bilingual values for real-time reactivity
+  final String nameKm;
+  final String nameEn;
+  final String locationKm;
+  final String locationEn;
+  final String roomTypeNameKm;
+  final String roomTypeNameEn;
+
   final double price;
   final int nights;
   final String startDate;
@@ -50,9 +56,12 @@ class BookingModel {
     required this.hotelId,
     this.packageId,
     this.packageName,
-    required this.hotelName,
-    required this.location,
-    required this.roomType,
+    required this.nameKm,
+    required this.nameEn,
+    required this.locationKm,
+    required this.locationEn,
+    required this.roomTypeNameKm,
+    required this.roomTypeNameEn,
     required this.price,
     required this.nights,
     required this.startDate,
@@ -74,18 +83,49 @@ class BookingModel {
 
   bool get isPackage => bookingType == 'package';
 
-  // Room Type display matching ConfirmedBookingView
+  // Check language dynamically whenever getter is accessed
+  bool get _isKhmer {
+    final code = Get.locale?.languageCode ?? '';
+    final fullLocale = Get.locale?.toString() ?? '';
+    return code == 'km' || code == 'kh' || fullLocale.contains('kmKH');
+  }
+
+  String get hotelName {
+    if (_isKhmer) {
+      return nameKm.isNotEmpty ? nameKm : nameEn;
+    }
+    return nameEn.isNotEmpty ? nameEn : nameKm;
+  }
+
+  String get location {
+    if (_isKhmer) {
+      return locationKm.isNotEmpty ? locationKm : locationEn;
+    }
+    return locationEn.isNotEmpty ? locationEn : locationKm;
+  }
+
+  String get roomType {
+    if (isPackage) {
+      return _isKhmer ? 'កញ្ចប់ទេសចរណ៍' : 'Tour Package';
+    }
+    if (_isKhmer) {
+      return roomTypeNameKm.isNotEmpty ? roomTypeNameKm : roomTypeNameEn;
+    }
+    return roomTypeNameEn.isNotEmpty ? roomTypeNameEn : roomTypeNameKm;
+  }
+
   String get roomTypeWithRooms {
     if (isPackage) {
-      return "Tour Package";
+      return _isKhmer ? "កញ្ចប់ទេសចរណ៍" : "Tour Package";
     }
     if (roomsBooked > 1) {
-      return "$roomType, $roomsBooked Rooms(s)";
+      return _isKhmer
+          ? "$roomType, $roomsBooked បន្ទប់"
+          : "$roomType, $roomsBooked Room(s)";
     }
     return roomType;
   }
 
-  // Guests display matching ConfirmedBookingView
   String get guestsSummary {
     if (adults > 0 || children > 0) {
       List<String> parts = [];
@@ -121,14 +161,12 @@ class BookingModel {
         ? DateFormat("MMM dd, yyyy").format(checkOut)
         : (json['check_out'] ?? json['end_date'] ?? '');
 
-    // --- TRANSACTION DATE IN UTC+7 ---
     String formattedTransactionDate = '';
     final createdAtRaw =
         json['created_at'] ?? json['createdAt'] ?? json['transaction_date'];
 
     if (createdAtRaw != null) {
       String dateStr = createdAtRaw.toString().trim();
-
       if (!dateStr.endsWith('Z') && !dateStr.contains('+')) {
         dateStr = '${dateStr.replaceAll(' ', 'T')}Z';
       }
@@ -148,10 +186,8 @@ class BookingModel {
       parsedImages = [json['image_url'].toString()];
     }
 
-    // --- AUTOMATIC COMPLETED STATUS CALCULATION ---
     BookingStatus parseStatus(String? statusStr) {
       final now = DateTime.now();
-
       final DateTime? deadlineDate = checkOut ?? checkIn;
 
       if (deadlineDate != null) {
@@ -159,7 +195,7 @@ class BookingModel {
           deadlineDate.year,
           deadlineDate.month,
           deadlineDate.day,
-          12, // 12:00 PM
+          12,
           0,
         );
 
@@ -189,6 +225,53 @@ class BookingModel {
 
     if (parsedGuests <= 0) parsedGuests = 1;
 
+    String nameKm =
+        json['name_km']?.toString() ??
+        json['hotel_name']?.toString() ??
+        json['name']?.toString() ??
+        '';
+
+    String nameEn =
+        json['name_en']?.toString() ??
+        json['hotel_name']?.toString() ??
+        json['name']?.toString() ??
+        '';
+
+    String addressKm =
+        json['address_km']?.toString() ??
+        json['province_km']?.toString() ??
+        json['location']?.toString() ??
+        '';
+
+    String addressEn =
+        json['address_en']?.toString() ??
+        json['province']?.toString() ??
+        json['location']?.toString() ??
+        '';
+
+    String packageName =
+        json['package_name']?.toString() ??
+        json['name_en']?.toString() ??
+        json['name_km']?.toString() ??
+        '';
+
+    String roomTypeNameKm =
+        json['room_type_name_km']?.toString() ??
+        json['room_type_name']?.toString() ??
+        'បន្ទប់ស្តង់ដារ';
+
+    String roomTypeNameEn =
+        json['room_type_name_en']?.toString() ??
+        json['room_type_name']?.toString() ??
+        'Standard Room';
+
+    final String note =
+        json['note'] ??
+        json['special_request'] ??
+        json['specialRequest'] ??
+        json['remarks'] ??
+        '';
+
     return BookingModel(
       id: json['id'] ?? json['_id'] ?? '',
       bookingType: parsedBookingType,
@@ -201,16 +284,13 @@ class BookingModel {
           json['package_id'] ??
           json['package']?['_id'] ??
           json['package']?['id'],
-      packageName: json['package_name'] ?? json['name_en'] ?? json['name_km'],
-      hotelName:
-          json['hotel_name'] ??
-          json['package_name'] ??
-          json['name'] ??
-          (parsedBookingType == 'package' ? 'Tour Package' : 'Hotel'),
-      location: json['address_en'] ?? json['location'] ?? 'Siem Reap, Cambodia',
-      roomType: parsedBookingType == 'package'
-          ? 'Tour Package'
-          : (json['room_type_name'] ?? 'Standard Room'),
+      packageName: packageName,
+      nameKm: nameKm,
+      nameEn: nameEn,
+      locationKm: addressKm,
+      locationEn: addressEn,
+      roomTypeNameKm: roomTypeNameKm,
+      roomTypeNameEn: roomTypeNameEn,
       price: (json['total_price'] as num?)?.toDouble() ?? 0.0,
       nights: calculatedNights,
       startDate: formattedCheckIn,
@@ -218,7 +298,7 @@ class BookingModel {
       guests: parsedGuests,
       adults: parsedAdults,
       children: parsedChildren,
-      roomsBooked: json['rooms_booked'] ?? 1,
+      roomsBooked: (json['rooms_booked'] as num?)?.toInt() ?? 1,
       status: parseStatus(json['status']),
       imageUrl: json['image_url'] ?? '',
       images: parsedImages,
@@ -226,12 +306,7 @@ class BookingModel {
       guestEmail: json['guest_email'] ?? '',
       guestPhone: json['guest_phone'] ?? '',
       transactionDate: formattedTransactionDate,
-      note:
-          json['note'] ??
-          json['special_request'] ??
-          json['specialRequest'] ??
-          json['remarks'] ??
-          '',
+      note: note,
     );
   }
 }
@@ -241,8 +316,7 @@ class BookingModel {
 class BookingScreenController extends GetxController {
   final BookingServices _bookingServices = BookingServices();
   final HotelServices _hotelServices = HotelServices();
-  final TravelPackageServices _packageServices =
-      TravelPackageServices(); // Package services added
+  final TravelPackageServices _packageServices = TravelPackageServices();
 
   var selectedStatus = BookingStatus.all.obs;
   var isLoading = false.obs;
@@ -251,7 +325,6 @@ class BookingScreenController extends GetxController {
   final GlobalKey screenshotKey = GlobalKey();
 
   late UserProfileScreenViewController userPfCtrl;
-
   late Map<String, dynamic> bookingData;
 
   String get hotel => bookingData["hotel"] ?? "";
@@ -317,6 +390,10 @@ class BookingScreenController extends GetxController {
     } else {
       userPfCtrl = Get.put(UserProfileScreenViewController());
     }
+
+    // Automatically refresh reactive lists when locale changes
+    ever(allBookings, (_) {});
+
     fetchMyBookings();
     bookingData = Get.arguments ?? {};
   }
@@ -336,17 +413,12 @@ class BookingScreenController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Ensure user profile details are fetched first
       await loadUserInfo();
 
       final response = await _bookingServices.fetchMyBookings();
 
       if (response != null && response['result'] == true) {
         final List<dynamic> items = response['data']['items'] ?? [];
-
-        bool isKhmer =
-            Get.locale?.languageCode == 'km' ||
-            Get.locale?.languageCode == 'kh';
 
         final List<BookingModel> loadedBookings = await Future.wait(
           items.map((item) async {
@@ -359,7 +431,7 @@ class BookingScreenController extends GetxController {
                 bookingData['package']?['id'];
             final String? roomTypeId = bookingData['room_type_id'];
 
-            // --- USER INFO INJECTION FOR GUEST DETAILS ---
+            // --- USER INFO INJECTION ---
             final user = userPfCtrl.user;
             if (bookingData['guest_name'] == null ||
                 bookingData['guest_name'].toString().isEmpty) {
@@ -374,8 +446,7 @@ class BookingScreenController extends GetxController {
               bookingData['guest_phone'] = user.phone;
             }
 
-            // --- PACKAGE BOOKING DETAILS EXTRACTION ---
-            // --- PACKAGE BOOKING DETAILS EXTRACTION ---
+            // --- PACKAGE DETAILS ---
             if (bookingType == 'package' &&
                 packageId != null &&
                 packageId.isNotEmpty) {
@@ -388,14 +459,13 @@ class BookingScreenController extends GetxController {
                         packageResponse['data'] != null)) {
                   final pkgData = packageResponse['data'] ?? packageResponse;
 
-                  String? pkgName = isKhmer
-                      ? (pkgData['name_km'] ?? pkgData['name_en'])
-                      : (pkgData['name_en'] ?? pkgData['name_km']);
-                  pkgName ??= pkgData['name'] ?? pkgData['title'];
-                  bookingData['hotel_name'] = pkgName;
-                  bookingData['package_name'] = pkgName;
+                  bookingData['name_km'] = pkgData['name_km'];
+                  bookingData['name_en'] = pkgData['name_en'];
+                  bookingData['address_km'] =
+                      pkgData['address_km'] ?? pkgData['province_km'];
+                  bookingData['address_en'] =
+                      pkgData['address_en'] ?? pkgData['province'];
 
-                  // Extract images list
                   if (pkgData['images'] is List &&
                       (pkgData['images'] as List).isNotEmpty) {
                     bookingData['images'] = List<String>.from(
@@ -412,7 +482,7 @@ class BookingScreenController extends GetxController {
               }
             }
 
-            // --- HOTEL BOOKING DETAILS EXTRACTION ---
+            // --- HOTEL DETAILS ---
             if (bookingType != 'package' &&
                 hotelId != null &&
                 hotelId.isNotEmpty) {
@@ -424,20 +494,15 @@ class BookingScreenController extends GetxController {
                 if (hotelResponse != null && hotelResponse['result'] == true) {
                   final hotelData = hotelResponse['data'];
 
-                  // 1. Hotel Name (name_km / name_en)
-                  String? hotelName;
-                  if (isKhmer) {
-                    hotelName = hotelData['name_km'] ?? hotelData['name_en'];
-                  } else {
-                    hotelName = hotelData['name_en'] ?? hotelData['name_km'];
-                  }
-                  hotelName ??= hotelData['name'] ?? hotelData['title'];
-                  bookingData['hotel_name'] = hotelName;
+                  bookingData['name_km'] = hotelData['name_km'];
+                  bookingData['name_en'] = hotelData['name_en'];
+                  bookingData['address_km'] =
+                      hotelData['address_km'] ?? hotelData['province_km'];
+                  bookingData['address_en'] =
+                      hotelData['address_en'] ?? hotelData['province'];
 
-                  // 2. Room Type Name (name_km / name_en)
                   if (hotelData['room_types'] is List) {
                     final List<dynamic> roomTypes = hotelData['room_types'];
-
                     final matchedRoom = roomTypes.firstWhere(
                       (r) =>
                           r['_id'] == roomTypeId ||
@@ -447,27 +512,15 @@ class BookingScreenController extends GetxController {
                     );
 
                     if (matchedRoom != null) {
-                      String? roomName;
-                      if (isKhmer) {
-                        roomName =
-                            matchedRoom['name_km'] ?? matchedRoom['name_en'];
-                      } else {
-                        roomName =
-                            matchedRoom['name_en'] ?? matchedRoom['name_km'];
-                      }
-
-                      if (roomName != null && roomName.isNotEmpty) {
-                        bookingData['room_type_name'] = roomName;
-                      }
+                      bookingData['room_type_name_km'] = matchedRoom['name_km'];
+                      bookingData['room_type_name_en'] = matchedRoom['name_en'];
                     } else if (roomTypes.isNotEmpty) {
                       final firstRoom = roomTypes.first;
-                      bookingData['room_type_name'] = isKhmer
-                          ? (firstRoom['name_km'] ?? firstRoom['name_en'])
-                          : (firstRoom['name_en'] ?? firstRoom['name_km']);
+                      bookingData['room_type_name_km'] = firstRoom['name_km'];
+                      bookingData['room_type_name_en'] = firstRoom['name_en'];
                     }
                   }
 
-                  // 3. Image (image_url or cover_image)
                   if (hotelData['image_url'] != null) {
                     bookingData['image_url'] = hotelData['image_url'];
                   } else if (hotelData['cover_image'] != null) {
@@ -476,26 +529,6 @@ class BookingScreenController extends GetxController {
                       (hotelData['images'] as List).isNotEmpty) {
                     bookingData['image_url'] = hotelData['images'][0]
                         .toString();
-                  }
-
-                  // 4. Location Extraction (address_km, address_en, province_km, province)
-                  String? locationName;
-                  if (isKhmer) {
-                    locationName =
-                        hotelData['address_km'] ??
-                        hotelData['province_km'] ??
-                        hotelData['address_en'] ??
-                        hotelData['province'];
-                  } else {
-                    locationName =
-                        hotelData['address_en'] ??
-                        hotelData['province'] ??
-                        hotelData['address_km'] ??
-                        hotelData['province_km'];
-                  }
-
-                  if (locationName != null && locationName.isNotEmpty) {
-                    bookingData['location'] = locationName;
                   }
                 }
               } catch (e) {
@@ -605,179 +638,201 @@ class BookingScreenController extends GetxController {
     BookingModel booking,
   ) {
     Get.bottomSheet(
-      WidgetShotPlus(
-        key: screenshotKey,
-        child: Container(
-          padding: const EdgeInsets.all(24.0),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'booking_details'.tr,
-                      style: GoogleFonts.googleSans(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
+      Container(
+        // Outer bottom sheet container without heavy padding so inner content can flush properly
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // --- CAPTURED AREA (Padded cleanly inside) ---
+              WidgetShotPlus(
+                key: screenshotKey,
+                child: Container(
+                  padding: const EdgeInsets.all(24.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(32),
                     ),
-                    IconButton(
-                      onPressed: () => Get.back(),
-                      icon: Icon(
-                        Icons.close,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Booking Ref
-                _buildDetailRow(context, 'booking_ref'.tr, booking.id),
-
-                // Name (Package Name or Hotel)
-                _buildDetailRow(
-                  context,
-                  booking.isPackage ? 'Package'.tr : 'hotel'.tr,
-                  booking.hotelName,
-                ),
-
-                // Room Type (or Package)
-                if (!booking.isPackage)
-                  _buildDetailRow(
-                    context,
-                    'room_type'.tr,
-                    booking.roomTypeWithRooms,
                   ),
-
-                // Start Date / Check-in
-                _buildDetailRow(
-                  context,
-                  booking.isPackage ? 'Date'.tr : 'check_in'.tr,
-                  booking.startDate,
-                ),
-
-                // End Date / Check-out (Only shown for hotel bookings when endDate is present and different)
-                if (!booking.isPackage &&
-                    booking.endDate.isNotEmpty &&
-                    booking.endDate != booking.startDate)
-                  _buildDetailRow(context, 'check_out'.tr, booking.endDate),
-                // Guests
-                _buildDetailRow(context, 'guests'.tr, booking.guestsSummary),
-
-                // Guest Name
-                _buildDetailRow(
-                  context,
-                  'guest_name'.tr,
-                  booking.guestName.isNotEmpty
-                      ? booking.guestName
-                      : userPfCtrl.user.name,
-                ),
-
-                // Guest Phone
-                _buildDetailRow(
-                  context,
-                  'guest_number'.tr,
-                  booking.guestPhone.isNotEmpty
-                      ? (booking.guestPhone.startsWith("+")
-                            ? booking.guestPhone
-                            : "+855 ${booking.guestPhone}")
-                      : "+855 ${userPfCtrl.user.phone}",
-                ),
-
-                // Guest Email
-                _buildDetailRow(
-                  context,
-                  'guest_email'.tr,
-                  booking.guestEmail.isNotEmpty
-                      ? booking.guestEmail
-                      : userPfCtrl.user.email,
-                ),
-                if (booking.note.isNotEmpty)
-                  _buildDetailRow(context, 'note'.tr, booking.note),
-
-                // Payment
-                _buildDetailRow(context, 'payment'.tr, 'KHQR'),
-
-                // Transaction Date
-                _buildDetailRow(
-                  context,
-                  'transaction_date'.tr,
-                  booking.transactionDate,
-                ),
-
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Divider(thickness: 1.2),
-                ),
-
-                // Total Price
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'total_price'.tr,
-                      style: GoogleFonts.googleSans(
-                        fontSize: 18,
-                        color: Theme.of(context).textTheme.titleSmall!.color,
-                      ),
-                    ),
-                    Text(
-                      '\$${booking.price.toStringAsFixed(0)}',
-                      style: GoogleFonts.googleSans(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF008C2A),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Download Receipt Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: Bounceable(
-                    onTap: downloadReceipt,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(Icons.download, color: Colors.white),
-                          const SizedBox(width: 8),
                           Text(
-                            'download_receipt'.tr,
+                            'booking_details'.tr,
                             style: GoogleFonts.googleSans(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          // IconButton(
+                          //   onPressed: () => Get.back(),
+                          //   icon: Icon(
+                          //     Icons.close,
+                          //     color: Theme.of(context).colorScheme.secondary,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      _buildDetailRow(context, 'booking_ref'.tr, booking.id),
+
+                      _buildDetailRow(
+                        context,
+                        booking.isPackage ? 'package'.tr : 'hotel'.tr,
+                        booking.hotelName,
+                      ),
+
+                      if (!booking.isPackage)
+                        _buildDetailRow(
+                          context,
+                          'room_type'.tr,
+                          booking.roomTypeWithRooms,
+                        ),
+
+                      _buildDetailRow(
+                        context,
+                        booking.isPackage ? 'date'.tr : 'check_in'.tr,
+                        booking.startDate,
+                      ),
+
+                      if (!booking.isPackage &&
+                          booking.endDate.isNotEmpty &&
+                          booking.endDate != booking.startDate)
+                        _buildDetailRow(
+                          context,
+                          'check_out'.tr,
+                          booking.endDate,
+                        ),
+
+                      _buildDetailRow(
+                        context,
+                        'guests'.tr,
+                        booking.guestsSummary,
+                      ),
+
+                      _buildDetailRow(
+                        context,
+                        'guest_name'.tr,
+                        booking.guestName.isNotEmpty
+                            ? booking.guestName
+                            : userPfCtrl.user.name,
+                      ),
+
+                      _buildDetailRow(
+                        context,
+                        'guest_number'.tr,
+                        booking.guestPhone.isNotEmpty
+                            ? (booking.guestPhone.startsWith("+")
+                                  ? booking.guestPhone
+                                  : "+855 ${booking.guestPhone}")
+                            : "+855 ${userPfCtrl.user.phone}",
+                      ),
+
+                      _buildDetailRow(
+                        context,
+                        'guest_email'.tr,
+                        booking.guestEmail.isNotEmpty
+                            ? booking.guestEmail
+                            : userPfCtrl.user.email,
+                      ),
+                      if (booking.note.isNotEmpty)
+                        _buildDetailRow(context, 'note'.tr, booking.note),
+
+                      _buildDetailRow(context, 'payment'.tr, 'KHQR'),
+
+                      _buildDetailRow(
+                        context,
+                        'transaction_date'.tr,
+                        booking.transactionDate,
+                      ),
+
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Divider(thickness: 1.2),
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'total_price'.tr,
+                            style: GoogleFonts.googleSans(
+                              fontSize: 18,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.titleSmall!.color,
+                            ),
+                          ),
+                          Text(
+                            '\$${booking.price.toStringAsFixed(0)}',
+                            style: GoogleFonts.googleSans(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF008C2A),
                             ),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 12),
-              ],
-            ),
+              ),
+
+              // --- BUTTON AREA (Padded horizontally) ---
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: Bounceable(
+                        onTap: downloadReceipt,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.download, color: Colors.white),
+                              const SizedBox(width: 8),
+                              Text(
+                                'download_receipt'.tr,
+                                style: GoogleFonts.googleSans(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

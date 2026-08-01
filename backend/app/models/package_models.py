@@ -53,6 +53,11 @@ class PackageCreate(BaseModel):
     price_per_person: float = Field(..., gt=0)
     max_people: Optional[int] = Field(None, gt=0, description="Group size cap per booking, if any")
 
+    start_time: List[str] = Field(
+        default_factory=lambda: ["", ""],
+        description="Start time range or departure times, e.g., ['08:00 AM', '05:00 PM']"
+    )
+
     image_url: Optional[str] = None
     images: Optional[List[str]] = []
     tags: Optional[List[str]] = []
@@ -72,6 +77,8 @@ class PackageUpdate(BaseModel):
     duration_days: Optional[int] = Field(None, gt=0)
     price_per_person: Optional[float] = Field(None, gt=0)
     max_people: Optional[int] = Field(None, gt=0)
+
+    start_time: Optional[List[str]] = Field(None, description="Updated start time range")
 
     image_url: Optional[str] = None
     images: Optional[List[str]] = None

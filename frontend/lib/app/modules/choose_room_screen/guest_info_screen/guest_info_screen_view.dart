@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/booking_services.dart';
 import 'package:frontend/app/modules/booking_screen/controllers/booking_screen_controller.dart';
@@ -7,6 +8,7 @@ import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 part 'guest_info_screen_binding.dart';
@@ -200,7 +202,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                SizedBox(width: 6),
+                const SizedBox(width: 6),
                 Text(
                   "(Optional)",
                   style: GoogleFonts.googleSans(
@@ -211,7 +213,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: controller.noteCtrl,
               maxLines: 5,
@@ -223,13 +225,8 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 ),
                 filled: true,
                 fillColor: controller.themeCtrl.getDark()
-                    ? Color(0xFF1a1a1a)
-                    : Color(0xffF3F4F6),
-
-                // border: OutlineInputBorder(
-                //   borderRadius: BorderRadius.circular(24),
-                //   borderSide: BorderSide.none,
-                // ),
+                    ? const Color(0xFF1a1a1a)
+                    : const Color(0xffF3F4F6),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide(
@@ -247,7 +244,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 counterText: "",
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,
               child: Obx(
@@ -260,7 +257,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             Obx(
               () => SizedBox(
@@ -276,128 +273,240 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
                   onPressed: controller.isLoading.value
                       ? null
                       : () async {
-                          controller.isLoading.value = true;
+                          if (!controller.validateGuestInfo()) return;
 
-                          try {
-                            final now = DateTime.now();
+                          final now = DateTime.now();
+                          controller.transactionDate.value = DateFormat(
+                            'dd MMM yyyy, hh:mm a',
+                          ).format(now);
 
-                            controller.transactionDate.value = DateFormat(
-                              'dd MMM yyyy, hh:mm a',
-                            ).format(now);
+                          // Start 3-minute timer on open
+                          controller.startPaymentTimer();
 
-                            if (!controller.validateGuestInfo()) {
-                              return;
-                            }
-
-                            await showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.primaryContainer,
-                              isScrollControlled: true,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(24),
-                                ),
+                          await showModalBottomSheet(
+                            context: context,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(24),
                               ),
-                              builder: (context) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(24),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        width: 50,
-                                        height: 5,
+                            ),
+                            builder: (context) {
+                              return Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 50,
+                                      height: 5,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // Countdown Timer Badge
+                                    Obx(() {
+                                      final isExpired = controller.remainingSeconds.value == 0;
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                         decoration: BoxDecoration(
-                                          color: Colors.grey.shade300,
-                                          borderRadius: BorderRadius.circular(
-                                            10,
+                                          color: isExpired ? Colors.red.shade50 : Colors.amber.shade50,
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: isExpired ? Colors.red : Colors.amber.shade700,
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Text(
-                                        "scan_to_pay".tr,
-                                        style: GoogleFonts.googleSans(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.timer_outlined,
+                                              color: isExpired ? Colors.red : Colors.amber.shade900,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              isExpired
+                                                  ? "QR Expired"
+                                                  : "Pay within ${controller.formattedTimer}",
+                                              style: GoogleFonts.googleSans(
+                                                fontWeight: FontWeight.bold,
+                                                color: isExpired ? Colors.red : Colors.amber.shade900,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
                                         ),
+                                      );
+                                    }),
+
+                                    const SizedBox(height: 16),
+
+                                    Text(
+                                      "scan_to_pay".tr,
+                                      style: GoogleFonts.googleSans(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(height: 20),
-                                      Image.asset(
-                                        "assets/svg/qrr.png",
-                                        height: 260,
-                                        width: 320,
-                                        fit: BoxFit.cover,
+                                    ),
+
+                                    const SizedBox(height: 16),
+
+                                    // QR Display with Expired Overlay
+                                    Obx(() {
+                                      final isExpired = controller.remainingSeconds.value == 0;
+                                      return Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(16),
+                                            child: Image.asset(
+                                              "assets/svg/qrr.png",
+                                              height: 240,
+                                              width: 280,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          if (isExpired)
+                                            Container(
+                                              height: 240,
+                                              width: 280,
+                                              decoration: BoxDecoration(
+                                                color: Colors.black.withOpacity(0.75),
+                                                borderRadius: BorderRadius.circular(16),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  const Icon(Icons.refresh, color: Colors.white, size: 40),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    "QR Code Expired",
+                                                    style: GoogleFonts.googleSans(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () => controller.startPaymentTimer(),
+                                                    child: const Text("Refresh QR"),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    }),
+
+                                    const SizedBox(height: 16),
+
+                                    Text(
+                                      "scan_instruction".tr,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.googleSans(
+                                        fontSize: 14,
+                                        color: Colors.grey,
                                       ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        "scan_instruction".tr,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.googleSans(
-                                          fontSize: 14,
-                                          color: Colors.grey,
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    // Upload Invoice Button
+                                    Obx(() {
+                                      final file = controller.uploadedInvoice.value;
+                                      return OutlinedButton.icon(
+                                        style: OutlinedButton.styleFrom(
+                                          minimumSize: const Size(double.infinity, 50),
+                                          side: BorderSide(
+                                            color: file != null ? Colors.green : Colors.grey,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 24),
-                                      CustomButton(
+                                        onPressed: () => controller.pickInvoiceImage(),
+                                        icon: Icon(
+                                          file != null ? Icons.check_circle : Icons.upload_file,
+                                          color: file != null ? Colors.green : Theme.of(context).colorScheme.secondary,
+                                        ),
+                                        label: Text(
+                                          file != null ? "Invoice Uploaded" : "Upload Invoice / Receipt",
+                                          style: GoogleFonts.googleSans(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: file != null ? Colors.green : Theme.of(context).colorScheme.secondary,
+                                          ),
+                                        ),
+                                      );
+                                    }),
+
+                                    const SizedBox(height: 20),
+
+                                    // Action / Done Button
+                                    Obx(() {
+                                      final isExpired = controller.remainingSeconds.value == 0;
+                                      return CustomButton(
                                         title: "done".tr,
                                         margin: EdgeInsets.zero,
-                                        onTap: () async {
-                                          Get.back();
+                                        onTap: isExpired
+                                            ? () {
+                                                Get.snackbar(
+                                                  "error".tr,
+                                                  "QR Code expired. Please refresh.",
+                                                  backgroundColor: Colors.red,
+                                                  colorText: Colors.white,
+                                                );
+                                              }
+                                            : () async {
+                                                Get.back();
 
-                                          String? createdBookingId =
-                                              await controller.createBooking();
+                                                String? createdBookingId =
+                                                    await controller.createBooking();
 
-                                          if (createdBookingId != null) {
-                                            final int count =
-                                                controller.roomsCount;
-                                            final String roomsText = count > 1
-                                                ? "$count Rooms"
-                                                : "$count Room";
+                                                if (createdBookingId != null) {
+                                                  controller.stopPaymentTimer();
+                                                  final int count = controller.roomsCount;
+                                                  final String roomsText = count > 1
+                                                      ? "$count Rooms"
+                                                      : "$count Room";
 
-                                            Get.offAllNamed(
-                                              Routes.CONFIRM_BOOKING,
-                                              arguments: {
-                                                "bookingRef": createdBookingId,
-                                                "firstName": controller
-                                                    .firstNameCtrl
-                                                    .text,
-                                                "lastName": controller
-                                                    .lastNameCtrl
-                                                    .text,
-                                                "email":
-                                                    controller.emailCtrl.text,
-                                                "phone":
-                                                    controller.phoneCtrl.text,
-                                                "checkIn": controller.checkIn,
-                                                "checkOut": controller.checkOut,
-                                                "roomType":
-                                                    controller.roomTypeName,
-                                                "hotel": controller.hotelName,
-                                                "guests":
-                                                    "${controller.adultsCount} Adults, ${controller.childrenCount} Children",
-                                                "rooms": roomsText,
-                                                "totalPrice":
-                                                    "\$${controller.calculatedTotalPrice.toStringAsFixed(0)}",
-                                                "transactionDate": DateFormat(
-                                                  'MMM dd, yyyy hh:mm a',
-                                                ).format(DateTime.now()),
+                                                  Get.offAllNamed(
+                                                    Routes.CONFIRM_BOOKING,
+                                                    arguments: {
+                                                      "bookingRef": createdBookingId,
+                                                      "firstName": controller.firstNameCtrl.text,
+                                                      "lastName": controller.lastNameCtrl.text,
+                                                      "email": controller.emailCtrl.text,
+                                                      "phone": controller.phoneCtrl.text,
+                                                      "checkIn": controller.checkIn,
+                                                      "checkOut": controller.checkOut,
+                                                      "roomType": controller.roomTypeName,
+                                                      "hotel": controller.hotelName,
+                                                      "guests": "${controller.adultsCount} Adults, ${controller.childrenCount} Children",
+                                                      "rooms": roomsText,
+                                                      "totalPrice": "\$${controller.calculatedTotalPrice.toStringAsFixed(0)}",
+                                                      "transactionDate": DateFormat('MMM dd, yyyy hh:mm a').format(DateTime.now()),
+                                                    },
+                                                  );
+                                                }
                                               },
-                                            );
-                                          }
-                                        },
-                                      ),
-                                      SizedBox(height: 20),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          } finally {
-                            controller.isLoading.value = false;
-                          }
+                                      );
+                                    }),
+                                    const SizedBox(height: 20),
+                                  ],
+                                ),
+                              );
+                            },
+                          ).then((_) {
+                            // Stop the timer if sheet is dismissed
+                            controller.stopPaymentTimer();
+                          });
                         },
 
                   child: controller.isLoading.value
@@ -423,7 +532,7 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
               ),
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
           ],
         ),
       ),
@@ -545,7 +654,6 @@ class GuestInfoScreenView extends GetView<GuestInfoScreenViewController> {
   }
 
   Widget _bookingCard(BuildContext context) {
-    // Dynamic values from roomType map
     final String roomName =
         controller.roomType["name_en"] ??
         controller.roomType["name_kh"] ??

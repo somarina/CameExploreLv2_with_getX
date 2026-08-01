@@ -295,6 +295,16 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
   }
 
   Widget _buildNearby(BuildContext context) {
+    final String category = controller
+        .getCategory(controller.place)
+        .toLowerCase();
+
+    final bool isFoodCategory = category == 'food' || category == 'ម្ហូប';
+
+    final String sectionTitle = isFoodCategory
+        ? "recommended_food".tr
+        : "near_places".tr;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Column(
@@ -303,7 +313,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
           Row(
             children: [
               Text(
-                "near_places".tr,
+                sectionTitle,
                 style: GoogleFonts.googleSans(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -324,9 +334,19 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
             }
 
             if (controller.nearbyPlaces.isEmpty) {
-              return const SizedBox(
+              return SizedBox(
                 height: 270,
-                child: Center(child: Text("No nearby places found")),
+                child: Center(
+                  child: Text(
+                    isFoodCategory
+                        ? "no_recommended_food_found".tr
+                        : "no_nearby_places_found".tr,
+                    style: GoogleFonts.googleSans(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
               );
             }
 
@@ -337,7 +357,10 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.nearbyPlaces.length,
                 itemBuilder: (context, index) {
-                  final nearbyPlace = controller.nearbyPlaces[index];
+                  final rawPlace = controller.nearbyPlaces[index];
+                  if (rawPlace is! Map) return const SizedBox.shrink();
+
+                  final nearbyPlace = Map<String, dynamic>.from(rawPlace);
 
                   return Obx(
                     () => Padding(
@@ -353,8 +376,8 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                                   nearbyPlace['image_url']
                                       .toString()
                                       .startsWith('http'))
-                              ? nearbyPlace['image_url']
-                              : "",
+                              ? nearbyPlace['image_url'].toString()
+                              : (nearbyPlace['image'] ?? ""),
                           category: controller.getCategory(nearbyPlace),
                           title: controller.getPlaceName(nearbyPlace),
                           location: controller.getAddress(nearbyPlace),
@@ -367,6 +390,10 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                           review_count: nearbyPlace['review_count'] ?? 0,
                           distance:
                               "${controller.calculateDistance(controller.place["latitude"], controller.place["longitude"], nearbyPlace["latitude"], nearbyPlace["longitude"]).toStringAsFixed(2)} km",
+                          isFavorite: index < controller.favorites.length
+                              ? controller.favorites[index]
+                              : false,
+                          onFavorite: () => controller.toggleFavorite(index),
                           // isFavorite: controller.favorites[index],
                           // onFavorite: () => controller.toggleFavorite(index),
                           isFavorite: controller.favCtrl.isFavorite(
@@ -395,9 +422,17 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
   }
 
   Widget _buildLocation(BuildContext context) {
-    return Obx(
-      () => Column(
-        crossAxisAlignment: .start,
+    return Obx(() {
+      final String address = controller.homeCtrl.getAddress(controller.place);
+      final String category = controller
+          .getCategory(controller.place)
+          .toLowerCase();
+
+      // Check if the place belongs to the Food category
+      final bool isFoodCategory = category == 'food' || category == 'ម្ហូប';
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "location".tr,
@@ -407,161 +442,190 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
               color: Theme.of(context).colorScheme.secondary,
             ),
           ),
-          SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
+          const SizedBox(height: 10),
+
+          if (isFoodCategory) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// MAP CARD
-                  Container(
-                    width: double.infinity,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Color(0xffE8EEF3),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/location_icon.gif',
-                          width: 70,
-                          height: 70,
-                        ),
-
-                        Positioned(
-                          bottom: 18,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(100),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 6,
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              controller.homeCtrl.getPlaceName(
-                                controller.place,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.googleSans(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  Icon(
+                    Icons.location_on,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-
-                  SizedBox(height: 15),
-
-                  /// ADDRESS
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 8,
-                          child: Text(
-                            controller.homeCtrl.getAddress(controller.place),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.googleSans(
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Icon(
-                          Icons.navigation,
-                          size: 16,
-                          color: Colors.grey[700],
-                        ),
-                        Text(
-                          "${controller.homeCtrl.calculateDistance(controller.place["latitude"], controller.place["longitude"]).toStringAsFixed(2)} km",
-
-                          style: GoogleFonts.googleSans(
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 18),
-
-                  /// BUTTON
-                  Container(
-                    width: double.infinity,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(30),
-                        onTap: () => controller.openGoogleMaps(),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.navigation, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text(
-                              "get_direction".tr,
-                              style: GoogleFonts.googleSans(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      address.isNotEmpty ? address : "N/A",
+                      style: GoogleFonts.googleSans(
+                        fontSize: 14,
+                        height: 1.5,
+                        color: Theme.of(context).textTheme.titleSmall!.color,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
+          ] else ...[
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// MAP CARD
+                    Container(
+                      width: double.infinity,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffE8EEF3),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/location_icon.gif',
+                            width: 70,
+                            height: 70,
+                          ),
+                          Positioned(
+                            bottom: 18,
+                            left: 16,
+                            right: 16,
+                            child: Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 6,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  controller.homeCtrl.getPlaceName(
+                                    controller.place,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.googleSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+
+                    /// ADDRESS
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 8,
+                            child: Text(
+                              address,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.googleSans(
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.navigation,
+                            size: 16,
+                            color: Colors.grey[700],
+                          ),
+                          Text(
+                            "${controller.homeCtrl.calculateDistance(controller.place["latitude"], controller.place["longitude"]).toStringAsFixed(2)} km",
+                            style: GoogleFonts.googleSans(
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+
+                    /// BUTTON
+                    Container(
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(30),
+                          onTap: () => controller.openGoogleMaps(),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.navigation, color: Colors.white),
+                              const SizedBox(width: 8),
+                              Text(
+                                "get_direction".tr,
+                                style: GoogleFonts.googleSans(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ],
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildContact(BuildContext context) {
@@ -905,7 +969,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                 child: Text(
                   controller.homeCtrl.getPlaceName(controller.place),
                   style: GoogleFonts.googleSans(
-                    fontSize: 24,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
@@ -940,7 +1004,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
   Widget _buildThreeIcons(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -954,12 +1018,23 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
               children: [
                 Bounceable(
                   onTap: () {
+                    final data = controller.place;
+
+                    final String nameEn = data['name_en'] ?? '';
+                    final String nameKm = data['name_km'] ?? '';
+                    final String imageUrl = data['image_url'] ?? '';
+
                     SharePlus.instance.share(
-                      ShareParams(text: "Check out this amazing place!"),
+                      ShareParams(
+                        title: nameEn,
+                        text: "$nameEn\n$nameKm\n\n$imageUrl",
+                      ),
                     );
                   },
                   child: _circleButton("assets/svg/normalShare.svg", context),
                 ),
+                const SizedBox(width: 16),
+                _circleButton("assets/svg/normalFav.svg", context),
                 SizedBox(width: 16),
                 // _circleButton("assets/svg/normalFav.svg", context),
                 Obx(() {

@@ -70,7 +70,7 @@ class PackageDetailScreenView
 
             _buildItinerary(context),
             const SizedBox(height: 20),
-            _buildImportantInfo(context),
+            // _buildImportantInfo(context),
             const SizedBox(height: 30),
 
             _buildReview(context),
@@ -499,22 +499,53 @@ class PackageDetailScreenView
             ),
           ),
           const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Text(
-              "4:30 AM",
-              style: GoogleFonts.googleSans(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: 60),
+
+          // --- DYNAMIC START TIME SELECTION CHIPS ---
+          Obx(() {
+            final times = controller.startTimes;
+            if (times.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: times.map((time) {
+                final isSelected = controller.selectedStartTime.value == time;
+                return GestureDetector(
+                  onTap: () => controller.selectedStartTime.value = time,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    child: Text(
+                      time,
+                      style: GoogleFonts.googleSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isSelected
+                            ? Colors.white
+                            : Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          }),
+
+          const SizedBox(height: 40),
           Obx(
             () => Text(
               "\$${(controller.price * controller.adultCount.value).toStringAsFixed(2)}",
@@ -538,7 +569,7 @@ class PackageDetailScreenView
                       ? controller.image
                       : "assets/images/homescreen/slider1.png",
                   "language": "English",
-                  "startTime": "04:30 AM",
+                  "startTime": controller.selectedStartTime.value,
                   "date": controller.selectedDate.value,
                   "adultCount": controller.adultCount.value,
                   "price": controller.price,
@@ -801,12 +832,12 @@ class PackageDetailScreenView
           "sub_reserve_info".tr,
           context,
         ),
-        _infoItem(
-          Icons.access_time_outlined,
-          "title_duration_range".tr,
-          "${controller.duration} ${'days'.tr}",
-          context,
-        ),
+        // _infoItem(
+        //   Icons.access_time_outlined,
+        //   "title_duration_range".tr,
+        //   "${controller.duration} ${'days'.tr}",
+        //   context,
+        // ),
         _infoItem(
           Icons.groups_outlined,
           "title_live_guide".tr,
@@ -825,13 +856,13 @@ class PackageDetailScreenView
           "sub_pickup_info".tr,
           context,
         ),
-        _infoItem(
-          Icons.group_add_outlined,
-          "title_private_group".tr,
-          // "max_people_count".trArgs([controller.maxPeople.toString()]),
-          "",
-          context,
-        ),
+        // _infoItem(
+        //   Icons.group_add_outlined,
+        //   "title_private_group".tr,
+        //   // "max_people_count".trArgs([controller.maxPeople.toString()]),
+        //   "",
+        //   context,
+        // ),
       ],
     );
   }
@@ -926,13 +957,18 @@ class PackageDetailScreenView
               size: 26,
             ),
             const SizedBox(width: 6),
-            Text(
-              "siem_reap_cambodia".tr,
-              style: GoogleFonts.googleSans(
-                color: Theme.of(context).textTheme.titleSmall!.color,
-                fontSize: 14,
+
+            // --- DYNAMIC LOCATION DISPLAY ---
+            Obx(
+              () => Text(
+                controller.packageLocation,
+                style: GoogleFonts.googleSans(
+                  color: Theme.of(context).textTheme.titleSmall!.color,
+                  fontSize: 14,
+                ),
               ),
             ),
+
             const Spacer(),
             Container(
               width: 5,

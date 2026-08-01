@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/booking_package_services.dart';
-import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
 import 'package:frontend/app/modules/profile_screen/userProfile_screen/user_profile_screen_view.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 part 'package_checkout_screen_binding.dart';
@@ -400,20 +402,24 @@ class PackageCheckoutScreenView
                 ),
                 onPressed: () {
                   if (!controller.validateGuestInfo()) return;
+
+                  // Start the 3-minute timer when opening the sheet
+                  controller.startPaymentTimer();
+
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: Theme.of(
                       context,
                     ).colorScheme.primaryContainer,
                     isScrollControlled: true,
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(24),
                       ),
                     ),
                     builder: (context) {
                       return Padding(
-                        padding: EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(24),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -425,8 +431,57 @@ class PackageCheckoutScreenView
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
+                            const SizedBox(height: 16),
 
-                            SizedBox(height: 20),
+                            // Countdown Timer Header
+                            Obx(() {
+                              final isExpired =
+                                  controller.remainingSeconds.value == 0;
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isExpired
+                                      ? Colors.red.shade50
+                                      : Colors.amber.shade50,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isExpired
+                                        ? Colors.red
+                                        : Colors.amber.shade700,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.timer_outlined,
+                                      color: isExpired
+                                          ? Colors.red
+                                          : Colors.amber.shade900,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      isExpired
+                                          ? "QR Expired"
+                                          : "Pay within ${controller.formattedTimer}",
+                                      style: GoogleFonts.googleSans(
+                                        fontWeight: FontWeight.bold,
+                                        color: isExpired
+                                            ? Colors.red
+                                            : Colors.amber.shade900,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+
+                            const SizedBox(height: 16),
 
                             Text(
                               "Scan KHQR to Pay",
@@ -436,80 +491,173 @@ class PackageCheckoutScreenView
                               ),
                             ),
 
-                            SizedBox(height: 20),
+                            const SizedBox(height: 16),
 
-                            Container(
-                              padding: EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Image.asset(
-                                "assets/svg/qrr.png",
-                                height: 260,
-                                width: 320,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                            // QR Image Container with Expired Overlay
+                            Obx(() {
+                              final isExpired =
+                                  controller.remainingSeconds.value == 0;
+                              return Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Image.asset(
+                                      "assets/svg/qrr.png",
+                                      height: 240,
+                                      width: 280,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  if (isExpired)
+                                    Container(
+                                      height: 240,
+                                      width: 280,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.75),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.refresh,
+                                            color: Colors.white,
+                                            size: 40,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            "QR Code Expired",
+                                            style: GoogleFonts.googleSans(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                controller.startPaymentTimer(),
+                                            child: const Text("Refresh QR"),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              );
+                            }),
 
-                            SizedBox(height: 16),
+                            const SizedBox(height: 20),
 
-                            Text(
-                              "Open your banking app and scan this QR code.",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.googleSans(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
+                            // Upload Invoice Button
+                            Obx(() {
+                              final file = controller.uploadedInvoice.value;
+                              return OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 50),
+                                  side: BorderSide(
+                                    color: file != null
+                                        ? Colors.green
+                                        : Colors.grey,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                onPressed: () => controller.pickInvoiceImage(),
+                                icon: Icon(
+                                  file != null
+                                      ? Icons.check_circle
+                                      : Icons.upload_file,
+                                  color: file != null
+                                      ? Colors.green
+                                      : Theme.of(context).colorScheme.secondary,
+                                ),
+                                label: Text(
+                                  file != null
+                                      ? "Invoice Uploaded"
+                                      : "Upload Invoice / Receipt",
+                                  style: GoogleFonts.googleSans(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: file != null
+                                        ? Colors.green
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                  ),
+                                ),
+                              );
+                            }),
 
-                            SizedBox(height: 24),
-                            Obx(
-                              () => controller.isBookingLoading.value
+                            const SizedBox(height: 20),
+
+                            // Action / Submit Button
+                            Obx(() {
+                              final isExpired =
+                                  controller.remainingSeconds.value == 0;
+                              return controller.isBookingLoading.value
                                   ? const Center(
                                       child: CircularProgressIndicator(),
                                     )
                                   : CustomButton(
                                       title: "Done",
-                                      margin: EdgeInsets.all(0),
-                                      onTap: () async {
-                                        final isSuccess = await controller
-                                            .createBooking();
-
-                                        if (isSuccess) {
-                                          Get.offAllNamed(
-                                            Routes.PACKAGE_CF_BOOKING,
-                                            arguments: {
-                                              ...controller.bookingData,
-                                              "total": controller.total,
-                                              "firstName": controller
-                                                  .firstNameCtrl
-                                                  .text
-                                                  .trim(),
-                                              "lastName": controller
-                                                  .lastNameCtrl
-                                                  .text
-                                                  .trim(),
-                                              "email": controller.emailCtrl.text
-                                                  .trim(),
-                                              "phone": controller.phoneCtrl.text
-                                                  .trim(),
-                                              "payment": controller
-                                                  .selectedPayment
-                                                  .value,
-                                              "transactionDate": DateTime.now()
-                                                  .toIso8601String(),
+                                      margin: EdgeInsets.zero,
+                                      onTap: isExpired
+                                          ? () {
+                                              Get.snackbar(
+                                                "Error",
+                                                "QR Code expired. Please refresh.",
+                                                backgroundColor: Colors.red,
+                                                colorText: Colors.white,
+                                              );
+                                            }
+                                          : () async {
+                                              final isSuccess = await controller
+                                                  .createBooking();
+                                              if (isSuccess) {
+                                                controller.stopPaymentTimer();
+                                                Get.offAllNamed(
+                                                  Routes.PACKAGE_CF_BOOKING,
+                                                  arguments: {
+                                                    ...controller.bookingData,
+                                                    "total": controller.total,
+                                                    "firstName": controller
+                                                        .firstNameCtrl
+                                                        .text
+                                                        .trim(),
+                                                    "lastName": controller
+                                                        .lastNameCtrl
+                                                        .text
+                                                        .trim(),
+                                                    "email": controller
+                                                        .emailCtrl
+                                                        .text
+                                                        .trim(),
+                                                    "phone": controller
+                                                        .phoneCtrl
+                                                        .text
+                                                        .trim(),
+                                                    "payment": controller
+                                                        .selectedPayment
+                                                        .value,
+                                                    "transactionDate":
+                                                        DateTime.now()
+                                                            .toIso8601String(),
+                                                  },
+                                                );
+                                              }
                                             },
-                                          );
-                                        }
-                                      },
-                                    ),
-                            ),
-                            SizedBox(height: 20),
+                                    );
+                            }),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       );
                     },
-                  );
+                  ).then((_) {
+          
+                    controller.stopPaymentTimer();
+                  });
                 },
                 child: Text(
                   "Pay via KHQR",

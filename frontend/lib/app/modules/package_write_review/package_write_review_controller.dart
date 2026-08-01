@@ -24,7 +24,9 @@ class PackageWriteReviewViewController extends GetxController {
     final args = Get.arguments;
     if (args is Map) {
       targetId = args['id']?.toString() ?? "";
-      reviewType = args['type'] is ReviewType ? args['type'] : ReviewType.package;
+      reviewType = args['type'] is ReviewType
+          ? args['type']
+          : ReviewType.package;
     } else {
       targetId = args as String? ?? "";
       reviewType = ReviewType.package;
@@ -76,19 +78,37 @@ class PackageWriteReviewViewController extends GetxController {
     try {
       isLoading.value = true;
 
+      List<String> imageUrls = [];
+
+      // 1. Upload images first if selected
+      if (selectedImages.isNotEmpty) {
+        imageUrls = await _reviewService.uploadImages(
+          files: selectedImages,
+          targetId: targetId,
+          type: reviewType,
+        );
+
+        debugPrint("Image URLs received from upload: $imageUrls");
+      }
+
+      // 2. Attach uploaded URLs into data payload
       final Map<String, dynamic> data = {
         "rating": rating.value,
         "comment": reviewController.text.trim(),
+        "images": imageUrls, // <--- Sent to create review endpoint
       };
 
+      debugPrint("Final Create Review Payload: $data");
+
+      // 3. Create review
       final response = await _reviewService.createReview(
         data: data,
         id: targetId,
         type: reviewType,
       );
 
-      if (response != null && response['result'] == true) {
-
+      if (response != null) {
+        // Refresh active controllers
         if (Get.isRegistered<PackageDetailScreenViewController>()) {
           Get.find<PackageDetailScreenViewController>().fetchReviews();
         }
@@ -102,15 +122,7 @@ class PackageWriteReviewViewController extends GetxController {
         }
 
         Get.back(result: true);
-        Get.snackbar(
-          "Success",
-          response['message'] ?? "Review submitted successfully!",
-        );
-      } else {
-        Get.snackbar(
-          "Error",
-          response?['message'] ?? "Failed to submit review.",
-        );
+        Get.snackbar("Success", "Review submitted successfully!");
       }
     } catch (e) {
       debugPrint("Error submitting review: $e");
