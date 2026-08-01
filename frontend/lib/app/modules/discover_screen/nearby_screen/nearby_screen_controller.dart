@@ -12,8 +12,6 @@ class NearbyScreenController extends GetxController {
 
   final favoriteController = Get.find<FavoriteScreenController>();
 
-  final TextEditingController searchController = TextEditingController();
-
   RxBool isLoading = true.obs;
 
   RxList categories = [].obs;
@@ -167,4 +165,5 @@ class NearbyScreenController extends GetxController {
       isLoading.value = false;
     }
   }
+
 }

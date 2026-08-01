@@ -2,7 +2,8 @@ class PlaceModel {
   final String id;
   final String nameEn;
   final String nameKm;
-  final String description;
+  final String descriptionEn;
+  final String descriptionKm;
   final String province;
   final String provinceKm;
   final String category;
@@ -18,7 +19,8 @@ class PlaceModel {
     required this.id,
     required this.nameEn,
     required this.nameKm,
-    required this.description,
+    required this.descriptionEn,
+    required this.descriptionKm,
     required this.province,
     required this.provinceKm,
     required this.category,
@@ -35,7 +37,8 @@ class PlaceModel {
     id: json["id"]?.toString() ?? "",
     nameEn: json["name_en"]?.toString() ?? "",
     nameKm: json["name_km"]?.toString() ?? "",
-    description: json["description_en"]?.toString() ?? "",
+    descriptionEn: json["description_en"]?.toString() ?? "",
+    descriptionKm: json["description_km"]?.toString() ?? "",
     province: json["province"]?.toString() ?? "",
     provinceKm: json["province_km"]?.toString() ?? "",
     category: json["category"]?.toString() ?? "",
@@ -51,7 +54,8 @@ class PlaceModel {
     "id": id,
     "name_en": nameEn,
     "name_km": nameKm,
-    "description_en": description,
+    "description_en": descriptionEn,
+    "description_km": descriptionKm,
     "province": province,
     "province_km": provinceKm,
     "category": category,

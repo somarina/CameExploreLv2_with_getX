@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/button_navbar/controllers/button_navbar_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/cardPlace/card_place.dart';
 import 'package:get/get.dart';
@@ -491,8 +492,18 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           review_count: place['review_count'] ?? 0,
                           distance:
                               "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favorites[index],
-                          onFavorite: () => controller.toggleFavorite(index),
+                          // Check status
+                          isFavorite: controller.favoriteController.isFavorite(
+                            place["id"].toString(),
+                            FavoriteItemType.place,
+                          ),
+
+                          onFavorite: () =>
+                              controller.favoriteController.toggleFavorite(
+                                place["id"].toString(),
+                                FavoriteItemType.place,
+                                context,
+                              ),
                         ),
                       ),
                     ),
@@ -901,8 +912,18 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           review_count: place['review_count'] ?? 0,
                           distance:
                               "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favorites[index],
-                          onFavorite: () => controller.toggleFavorite(index),
+                          // Check status
+                          isFavorite: controller.favoriteController.isFavorite(
+                            place["id"].toString(),
+                            FavoriteItemType.place,
+                          ),
+
+                          onFavorite: () =>
+                              controller.favoriteController.toggleFavorite(
+                                place["id"].toString(),
+                                FavoriteItemType.place,
+                                context,
+                              ),
                         ),
                       ),
                     ),
@@ -1032,8 +1053,18 @@ class HomeScreenView extends GetView<HomeScreenController> {
                               0,
                           distance:
                               "${controller.calculateDistance(hotel["latitude"], hotel["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favorites[index],
-                          onFavorite: () => controller.toggleFavorite(index),
+                          // Check status
+                          isFavorite: controller.favoriteController.isFavorite(
+                            hotel["id"].toString(),
+                            FavoriteItemType.hotel,
+                          ),
+
+                          onFavorite: () =>
+                              controller.favoriteController.toggleFavorite(
+                                hotel["id"].toString(),
+                                FavoriteItemType.hotel,
+                                context,
+                              ),
                         ),
                       ),
                     ),
@@ -1159,6 +1190,19 @@ class HomeScreenView extends GetView<HomeScreenController> {
                             "\$${package["price_per_person"] ?? 0}/person",
                         isFavorite: isFav,
                         onFavorite: () => controller.toggleFavorite(index),
+                        distance: "\$${package["price_per_person"]}/person",
+                        // Check status
+                        isFavorite: controller.favoriteController.isFavorite(
+                          package["id"].toString(),
+                          FavoriteItemType.package,
+                        ),
+
+                        onFavorite: () =>
+                            controller.favoriteController.toggleFavorite(
+                              package["id"].toString(),
+                              FavoriteItemType.package,
+                              context,
+                            ),
                         showNavigationIcon: false,
                       ),
                     ),

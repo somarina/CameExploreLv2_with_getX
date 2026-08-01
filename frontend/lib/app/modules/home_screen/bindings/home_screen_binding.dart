@@ -16,6 +16,5 @@ class HomeScreenBinding extends Bindings {
     Get.lazyPut<FavoriteScreenController>(
       () => FavoriteScreenController(),
     );
-
   }
 }

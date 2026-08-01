@@ -2,6 +2,7 @@ part of 'detail_places_screen_view.dart';
 
 class DetailPlacesScreenViewController extends GetxController {
   final HomeScreenController homeCtrl = Get.find<HomeScreenController>();
+  final FavoriteScreenController favCtrl = Get.find<FavoriteScreenController>();
   final PlaceReviewService _reviewService = PlaceReviewService();
   final ScrollController scrollController = ScrollController();
 
@@ -36,6 +37,15 @@ class DetailPlacesScreenViewController extends GetxController {
           place.assignAll(Map<String, dynamic>.from(firstItem));
         }
       }
+
+    if (Get.arguments != null && Get.arguments is Map<String, dynamic>) {
+      place.assignAll(Get.arguments);
+
+      print("IMAGE:");
+      print(place["image_url"]);
+
+      print("DESCRIPTION:");
+      print(place["description_en"]);
 
       filterPlaces();
       fetchReviews();
@@ -313,6 +323,23 @@ class DetailPlacesScreenViewController extends GetxController {
     }
     return [];
   }
+  // Reactive Getters reading directly from place
+  List<String> get tags => List<String>.from(place["tags"] ?? []);
+
+  // List<String> get images => List<String>.from(place["images"] ?? []);
+  
+  List<String> get images {
+  if (place["images"] != null) {
+    return List<String>.from(place["images"]);
+  }
+
+  if (place["image_url"] != null &&
+      place["image_url"].toString().isNotEmpty) {
+    return [place["image_url"].toString()];
+  }
+
+  return [];
+}
 
   void changeIndex(int index) {
     currentIndex.value = index;

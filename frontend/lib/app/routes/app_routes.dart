@@ -16,7 +16,7 @@ abstract class Routes {
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
   static const LOGIN_SCREEN = _Paths.LOGIN_SCREEN;
   static const FAV_SCREEN_2 = _Paths.FAV_SCREEN_2;
-  static const EXPLORE_SCREEN = _Paths.EXPLORE_SCREEN;
+  static const SEARCH_RESULT_SCREEN = _Paths.SEARCH_RESULT_SCREEN;
   static const NEARBY_SCREEN = _Paths.NEARBY_SCREEN;
   static const HOME_SEEALL = _Paths.HOME_SEEALL;
   static const DETAIL_PLACES = _Paths.DETAIL_SCREEN;
@@ -65,7 +65,7 @@ abstract class _Paths {
   static const SPLASH_SCREEN = '/splash-screen';
   static const LOGIN_SCREEN = '/login-screen';
   static const FAV_SCREEN_2 = '/fav-screen-2';
-  static const EXPLORE_SCREEN = '/explore-screen';
+  static const SEARCH_RESULT_SCREEN = '/search-result-screen';
   static const NEARBY_SCREEN = '/nearby-screen';
   static const FORGET_PASSWORD = '/forget-password';
   static const REGISTER_SCREEN = '/register-screen';
