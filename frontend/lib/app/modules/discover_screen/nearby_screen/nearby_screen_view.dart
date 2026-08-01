@@ -4,6 +4,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/discover_screen/nearby_screen/nearby_screen_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,9 +26,14 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
             child: SvgPicture.asset("assets/svg/arrow_back.svg"),
           ),
         ),
-        title: BuildTextfield(
-          controller: controller.searchController,
-          onChanged: controller.searchPlaces,
+        title: SizedBox(
+          height: 50,
+          child: BuildTextfield(
+            readOnly: true,
+            onTap: () {
+              Get.toNamed(Routes.SEARCH_RESULT_SCREEN);
+            },
+          ),
         ),
       ),
 
@@ -128,10 +134,9 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                                         imageUrl: item["icon_url"] ?? "",
                                         width: 32,
                                         height: 32,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.black87,
                                         fit: BoxFit.contain,
+
+                                        // Shows while the image is loading
                                         placeholder: (context, url) =>
                                             const SizedBox(
                                               width: 16,
@@ -140,6 +145,8 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                                                 strokeWidth: 2,
                                               ),
                                             ),
+
+                                        // Shows if the image fails
                                         errorWidget: (context, url, error) =>
                                             const Icon(
                                               Icons.category,
@@ -151,7 +158,9 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  item["name"] ?? "",
+                                  Get.locale?.languageCode == "kmKH"
+                                      ? item["name_km"] ?? ""
+                                      : item["name"] ?? "",
                                   style: GoogleFonts.googleSans(
                                     fontSize: 12,
                                     fontWeight: isSelected
@@ -314,12 +323,14 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                     child: Obx(() {
                       final isFav = controller.favoriteController.isFavorite(
                         place.id,
+                        FavoriteItemType.place,
                       );
 
                       return GestureDetector(
                         onTap: () {
                           controller.favoriteController.toggleFavorite(
                             place.id,
+                            FavoriteItemType.place,
                             context,
                           );
                         },
@@ -427,7 +438,7 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                           height: 6,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.grey[500],
+                            color: Theme.of(context).dividerColor,
                           ),
                         ),
 

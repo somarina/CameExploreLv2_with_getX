@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/rendering.dart';
 
@@ -100,4 +102,36 @@ class BaseApiService {
       debugPrint("Error ${e.toString()}");
     }
   }
+
+
+Future<dynamic> postFormDataFiles2({
+    required String endpoint,
+    required Map<String, File> files,
+  }) async {
+    try {
+      final Map<String, dynamic> formMap = {};
+
+      // Convert File objects into Dio MultipartFile entries
+      for (var entry in files.entries) {
+        formMap[entry.key] = await MultipartFile.fromFile(
+          entry.value.path,
+          filename: entry.value.path.split('/').last,
+        );
+      }
+
+      final formData = FormData.fromMap(formMap);
+
+      var response = await apiConfig.dio.post(
+        endpoint,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+
+      return response.data;
+    } on DioException catch (e) {
+      debugPrint("Error in postFormDataFiles: ${e.toString()}");
+      return null;
+    }
+  }
+
 }

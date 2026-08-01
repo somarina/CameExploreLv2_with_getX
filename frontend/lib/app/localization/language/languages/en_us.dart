@@ -214,6 +214,19 @@ Map<String, String> enUS = {
   "Enter new list name": "Enter new list name",
   "delete_list_confirm":
       "Are you sure you want to delete your @listName list? All the activities you've saved will be lost.",
+  "No favorite lists yet": "No favorite lists yet",
+  "Login Required": "Login Required",
+  "Please log in or create an account to save items to your favorites.": "Please log in or create an account to save items to your favorites.",
+
+  "saved": "Saved",
+  "day": "day",
+  "days": "days",
+  "hour": "hour",
+  "hours": "hours",
+  "minute": "minute",
+  "minutes": "minutes",
+  "ago": "ago",
+  "saved_just_now": "Saved just now",
 
   // Search Screen
   "Most search": "Most search",
@@ -576,11 +589,25 @@ Map<String, String> enUS = {
   "foreign_adult": "Foreign Adult",
   "foreign_child": "Foreign Child (<12)",
   "cambodian_citizen": "Cambodian Citizen",
-  "free": "ឥតគិតថ្លៃ",
+  "free": "Free",
 
   "hotel_category": "Hotel",
 
   "max_people": "Max people",
   "no_reviews_yet": "No reviews yet",
   "hello": "Hello",
+
+  "food": "Food",
+
+  "no_place_found": "No place found!",
+  "no_hotel_found": "No hotel found!",
+  "no_packages_found": "No package found!",
+  "no_nearby_places_found": "No nearby places found!",
+  "no_recommended_food_found": "No recommended food found!",
+  "recommended_food": "Recommended food",
+  "package": "Package",
+  "date": "Date",
+  "Travel-Package": "Travel-Package",
+  "no_restaurant_found":"No restaurant found!",
+  "Restaurant":"Restaurant"
 };

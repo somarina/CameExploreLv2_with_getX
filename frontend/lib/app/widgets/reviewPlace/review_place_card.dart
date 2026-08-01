@@ -35,13 +35,11 @@ class ReviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// User Info
+          /// User Info Header
           Row(
             children: [
               _buildAvatar(),
-
               const SizedBox(width: 16),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,9 +63,11 @@ class ReviewCard extends StatelessWidget {
                   ],
                 ),
               ),
-
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
                   borderRadius: const BorderRadius.only(
@@ -88,32 +88,30 @@ class ReviewCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
-
-          /// Review Text
-          Text(
-            review,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.googleSans(
-              fontSize: 14,
-              height: 1.5,
-              color: Theme.of(context).textTheme.titleSmall!.color,
+          /// Review Text (only renders if non-empty)
+          if (review.trim().isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              review,
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.googleSans(
+                fontSize: 14,
+                height: 1.5,
+                color: Theme.of(context).textTheme.titleSmall!.color,
+              ),
             ),
-          ),
+          ],
 
-          const SizedBox(height: 10),
-
-          /// Images
-          if (images.isNotEmpty)
+          /// Review Images Gallery Horizontal List
+          if (images.isNotEmpty) ...[
+            const SizedBox(height: 14),
             SizedBox(
-              height: 100,
+              height: 90,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: images.length,
-                separatorBuilder: (context, index) {
-                  return const SizedBox(width: 10);
-                },
+                separatorBuilder: (context, index) => const SizedBox(width: 10),
                 itemBuilder: (context, index) {
                   return Bounceable(
                     onTap: () {
@@ -124,50 +122,63 @@ class ReviewCard extends StatelessWidget {
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        images[index],
-                        width: 100,
-                        height: 100,
+                      child: CachedNetworkImage(
+                        imageUrl: images[index],
+                        width: 90,
+                        height: 90,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 100,
-                            height: 100,
-                            color: Colors.grey.shade300,
-                            child: const Icon(Icons.broken_image),
-                          );
-                        },
+                        placeholder: (context, url) => Container(
+                          width: 90,
+                          height: 90,
+                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          child: const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: 90,
+                          height: 90,
+                          color: Colors.grey.shade300,
+                          child: const Icon(
+                            Icons.broken_image_rounded,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
                     ),
                   );
                 },
               ),
             ),
+          ],
         ],
       ),
     );
   }
 
   Widget _buildAvatar() {
-    final bool hasValidUrl = avatar.trim().isNotEmpty && avatar.startsWith("http");
+    final bool hasValidUrl =
+        avatar.trim().isNotEmpty && avatar.startsWith("http");
 
     if (hasValidUrl) {
       return CircleAvatar(
-        radius: 26,
+        radius: 24,
         backgroundColor: Colors.grey.shade300,
         backgroundImage: CachedNetworkImageProvider(avatar),
       );
     }
 
-    final String initial = userName.trim().isNotEmpty ? userName.trim()[0].toUpperCase() : "?";
+    final String initial = userName.trim().isNotEmpty
+        ? userName.trim()[0].toUpperCase()
+        : "?";
 
     return CircleAvatar(
-      radius: 26,
+      radius: 24,
       backgroundColor: Get.theme.colorScheme.primary.withOpacity(0.2),
       child: Text(
         initial,
         style: GoogleFonts.googleSans(
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: FontWeight.bold,
           color: Get.theme.colorScheme.primary,
         ),

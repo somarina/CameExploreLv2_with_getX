@@ -80,7 +80,7 @@ class SearchScreenView extends GetView<SearchScreenController> {
           final place = controller.popularPlaces[index];
           return Bounceable(
             onTap: () {
-              Get.toNamed(Routes.DETAIL_PLACES, arguments: place.toJson(),);
+              Get.toNamed(Routes.DETAIL_PLACES, arguments: place.toJson());
             },
             child: Container(
               width: Get.width,
@@ -151,6 +151,7 @@ class SearchScreenView extends GetView<SearchScreenController> {
                           Row(
                             children: [
                               Icon(Icons.star, size: 14, color: Colors.amber),
+
                               Text(
                                 place.rating.toString(),
                                 style: GoogleFonts.googleSans(
@@ -160,14 +161,21 @@ class SearchScreenView extends GetView<SearchScreenController> {
                                   ).textTheme.titleSmall!.color,
                                 ),
                               ),
-                              SizedBox(width: 10),
-                              Text(
-                                "${place.searchCount} ${"people searched this".tr}",
-                                style: GoogleFonts.googleSans(
-                                  fontSize: 14,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.titleSmall!.color,
+
+                              const SizedBox(width: 10),
+
+                              SizedBox(
+                                width: 180,
+                                child: Text(
+                                  "${place.searchCount} ${"people searched this".tr}",
+                                  style: GoogleFonts.googleSans(
+                                    fontSize: 14,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.titleSmall!.color,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -267,7 +275,12 @@ class SearchScreenView extends GetView<SearchScreenController> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 10, bottom: 10, top: 5, right: 10),
+                    padding: EdgeInsets.only(
+                      left: 10,
+                      bottom: 10,
+                      top: 5,
+                      right: 10,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -280,6 +293,8 @@ class SearchScreenView extends GetView<SearchScreenController> {
                             color: Theme.of(context).colorScheme.secondary,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(height: 3),
                         Row(

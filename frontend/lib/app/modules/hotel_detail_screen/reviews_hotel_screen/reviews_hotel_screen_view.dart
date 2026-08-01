@@ -71,11 +71,7 @@ class ReviewsHotelScreenView extends GetView<ReviewsHotelScreenViewController> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: controller.overallScore.value > 0
-                                      ? controller.overallScore.value
-                                            .toStringAsFixed(1)
-                                      : (controller.hotel["star_rating"] ?? 0.0)
-                                            .toString(),
+                                  text: controller.overallScore.value.toStringAsFixed(1),
                                   style: GoogleFonts.googleSans(
                                     color: const Color(0xFF078C2E),
                                     fontSize: 34,

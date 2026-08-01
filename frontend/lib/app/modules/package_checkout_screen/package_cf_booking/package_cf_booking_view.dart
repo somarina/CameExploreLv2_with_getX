@@ -175,7 +175,7 @@ class PackageCfBookingView extends GetView<PackageCfBookingViewController> {
                   /// Back Home Button
                   Bounceable(
                     onTap: () {
-                      Get.offAllNamed(Routes.HOME_SCREEN);
+                      Get.offAllNamed(Routes.BUTTON_NAVBAR);
                     },
                     child: Container(
                       width: double.infinity,

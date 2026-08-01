@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/base_api_service.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 
 class FavoriteService {
   final BaseApiService baseApi = BaseApiService();
@@ -33,13 +35,27 @@ class FavoriteService {
   }
 
   // Add item to a favorite list
+  // Future<dynamic> addFavoriteItem({
+  //   required String listId,
+  //   required String placeId,
+  // }) async {
+  //   return await baseApi.post(
+  //     endpoint: '/api/favorites/lists/$listId/items',
+  //     data: {"place_id": placeId},
+  //   );
+  // }
   Future<dynamic> addFavoriteItem({
     required String listId,
-    required String placeId,
-  }) async {
-    return await baseApi.post(
+    required String itemId,
+    required FavoriteItemType type,
+  }) {
+    final body = {"item_id": itemId, "item_type": type.name};
+
+    print("Add favorite body: $body");
+
+    return baseApi.post(
       endpoint: '/api/favorites/lists/$listId/items',
-      data: {"place_id": placeId},
+      data: body,
     );
   }
 
@@ -48,15 +64,41 @@ class FavoriteService {
     return await baseApi.get(endpoint: '/api/favorites/lists/$listId/items');
   }
 
-  // Delete an item from a favorite list
+  // Future<dynamic> deleteFavoriteItem({
+  //   required String listId,
+  //   required String itemId,
+  //   required FavoriteItemType type,
+  // }) async {
+  //   final endpoint =
+  //       '/api/favorites/lists/$listId/items/$itemId?item_type=${type.name}';
+
+  //   print("DELETE Endpoint: $endpoint");
+
+  //   return await baseApi.delete(endpoint: endpoint);
+  // }
   Future<dynamic> deleteFavoriteItem({
     required String listId,
-    required String placeId,
+    required String itemId,
   }) async {
-    final endpoint = '/api/favorites/lists/$listId/items/$placeId';
+    final endpoint = '/api/favorites/lists/$listId/items/$itemId';
 
     print("DELETE Endpoint: $endpoint");
 
     return await baseApi.delete(endpoint: endpoint);
+  }
+
+  Future<Map<String, dynamic>?> getPlaceById(String id) async {
+    try {
+      final response = await baseApi.get(endpoint: "/places/$id");
+
+      if (response["result"] == true) {
+        return response["data"];
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint("Get place error: $e");
+      return null;
+    }
   }
 }

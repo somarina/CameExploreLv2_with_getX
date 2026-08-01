@@ -57,13 +57,20 @@ class HotelDetailScreenViewController extends GetxController {
 
   List get rooms => hotel["room_types"] ?? [];
 
+  String? get phoneNum => hotel["phoneNum"]?.toString();
+  String? get email => hotel["email"]?.toString();
+
+  bool get hasContactInfo =>
+      (phoneNum != null && phoneNum!.trim().isNotEmpty) ||
+      (email != null && email!.trim().isNotEmpty);
+
   @override
   void onInit() {
     super.onInit();
 
     hotel = Get.arguments ?? {};
     overallScore.value =
-        double.tryParse((hotel["star_rating"] ?? 0.0).toString()) ?? 0.0;
+        double.tryParse((hotel["rating"] ?? 0.0).toString()) ?? 0.0;
     reviewCount.value =
         int.tryParse((hotel["review_count"] ?? 0).toString()) ?? 0;
 
@@ -162,16 +169,16 @@ class HotelDetailScreenViewController extends GetxController {
           processedPlaces.where((p) {
             final rating =
                 double.tryParse(
-                  (p['rating_star'] ?? p['rating'] ?? 0).toString(),
+                  (p['rating'] ?? p['rating'] ?? 0).toString(),
                 ) ??
                 0.0;
             final distanceKm = p['distance_km'] as double;
             return rating >= 4.0 && distanceKm <= 25.0;
           }).toList()..sort((a, b) {
             final r1 =
-                double.tryParse((a['rating_star'] ?? 0).toString()) ?? 0.0;
+                double.tryParse((a['rating'] ?? 0).toString()) ?? 0.0;
             final r2 =
-                double.tryParse((b['rating_star'] ?? 0).toString()) ?? 0.0;
+                double.tryParse((b['rating'] ?? 0).toString()) ?? 0.0;
             return r2.compareTo(r1);
           });
 

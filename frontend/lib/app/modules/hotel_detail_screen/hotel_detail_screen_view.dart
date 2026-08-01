@@ -129,9 +129,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: controller.overallScore.value > 0
-                          ? controller.overallScore.value.toStringAsFixed(1)
-                          : (controller.hotel["star_rating"] ?? 0.0).toString(),
+                      text: controller.overallScore.value.toStringAsFixed(1),
                       style: GoogleFonts.googleSans(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 30,
@@ -677,6 +675,14 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
   }
 
   Widget _buildContact(BuildContext context) {
+    // Hide the entire contact section if both phone and email are missing/null
+    if (!controller.hasContactInfo) {
+      return const SizedBox.shrink();
+    }
+
+    final phone = controller.phoneNum;
+    final email = controller.email;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -688,43 +694,54 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
             color: Theme.of(context).colorScheme.secondary,
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
 
-        Row(
-          children: [
-            Icon(
-              Icons.phone,
-              color: Theme.of(context).colorScheme.primary,
-              size: 20,
-            ),
-            SizedBox(width: 12),
-            Text(
-              "+855 70 665 766",
-              style: GoogleFonts.googleSans(
-                fontSize: 14,
-                color: Theme.of(context).textTheme.titleSmall!.color,
+        // Phone Row
+        if (phone != null && phone.trim().isNotEmpty) ...[
+          Row(
+            children: [
+              Icon(
+                Icons.phone,
+                color: Theme.of(context).colorScheme.primary,
+                size: 20,
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 10),
-        Row(
-          children: [
-            Icon(
-              Icons.email,
-              color: Theme.of(context).colorScheme.primary,
-              size: 20,
-            ),
-            SizedBox(width: 12),
-            Text(
-              "kampotbamboo@gmail.com",
-              style: GoogleFonts.googleSans(
-                fontSize: 14,
-                color: Theme.of(context).textTheme.titleSmall!.color,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  "(+855) $phone",
+                  style: GoogleFonts.googleSans(
+                    fontSize: 14,
+                    color: Theme.of(context).textTheme.titleSmall?.color,
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(height: 10),
+        ],
+
+        // Email Row
+        if (email != null && email.trim().isNotEmpty) ...[
+          Row(
+            children: [
+              Icon(
+                Icons.email,
+                color: Theme.of(context).colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  email,
+                  style: GoogleFonts.googleSans(
+                    fontSize: 14,
+                    color: Theme.of(context).textTheme.titleSmall?.color,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
@@ -1305,7 +1322,7 @@ class HotelDetailScreenView extends GetView<HotelDetailScreenViewController> {
                         }
 
                         return Text(
-                          "${controller.overallScore.value > 0 ? controller.overallScore.value.toStringAsFixed(1) : (controller.hotel["star_rating"] ?? 0.0).toString()} / 5.0",
+                          "${controller.overallScore.value.toStringAsFixed(1)} / 5.0",
                           style: GoogleFonts.googleSans(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
