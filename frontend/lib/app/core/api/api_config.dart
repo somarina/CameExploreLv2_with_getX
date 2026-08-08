@@ -5,9 +5,9 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../routes/app_pages.dart';
 
-const String kBaseUrl = 'http://10.0.2.2:8000/';
+// const String kBaseUrl = 'http://10.0.2.2:8000/';
 // const String kBaseUrl = 'https://camexplore-api.onrender.com/';
-// const String kBaseUrl = 'https://cam-explore-v2-backend-v2.vercel.app/';
+const String kBaseUrl = 'https://cam-explore-v2-backend-v2.vercel.app/';
 
 const String kTelegramBotId = '8720092780';
 
