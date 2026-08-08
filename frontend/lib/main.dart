@@ -152,6 +152,7 @@ class MainApp extends StatelessWidget {
       // routes
       initialRoute: Routes.SPLASH_SCREEN,
       // initialRoute: Routes.AI_SCREEN,
+      // initialRoute: Routes.LOGIN_SCREEN,
       getPages: AppPages.routes,
     );
   }

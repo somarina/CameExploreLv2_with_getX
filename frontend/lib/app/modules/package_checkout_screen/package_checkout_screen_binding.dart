@@ -4,6 +4,6 @@ class PackageCheckoutScreenViewBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => PackageCheckoutScreenViewController());
-   
+    Get.lazyPut(() => UserProfileScreenViewController());
   }
 }

@@ -2,6 +2,7 @@ part of 'detail_places_screen_view.dart';
 
 class DetailPlacesScreenViewController extends GetxController {
   final HomeScreenController homeCtrl = Get.find<HomeScreenController>();
+  final FavoriteScreenController favCtrl = Get.find<FavoriteScreenController>();
   final PlaceReviewService _reviewService = PlaceReviewService();
   final ScrollController scrollController = ScrollController();
 

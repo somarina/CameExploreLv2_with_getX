@@ -7,6 +7,7 @@ import 'package:frontend/app/core/api/services/places_services.dart';
 import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/core/api/services/review_hotel_services.dart';
 import 'package:frontend/app/core/api/services/travel_package_services.dart';
+import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_screen_view.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -593,8 +594,9 @@ class HomeScreenController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onInit(){
     super.onInit();
+    favoriteController.loadFavoriteStatus();
     getCurrentLocation();
     getProfile();
     getCategories();

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/button_navbar/controllers/button_navbar_controller.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/cardPlace/card_place.dart';
 import 'package:get/get.dart';
@@ -491,8 +492,17 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           review_count: place['review_count'] ?? 0,
                           distance:
                               "${controller.calculateDistance(place["latitude"], place["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favorites[index],
-                          onFavorite: () => controller.toggleFavorite(index),
+                          isFavorite: controller.favoriteController.isFavorite(
+                            place["id"].toString(),
+                            FavoriteItemType.place,
+                          ),
+
+                          onFavorite: () =>
+                              controller.favoriteController.toggleFavorite(
+                                place["id"].toString(),
+                                FavoriteItemType.place,
+                                context,
+                              ),
                         ),
                       ),
                     ),
@@ -580,11 +590,16 @@ class HomeScreenView extends GetView<HomeScreenController> {
               itemCount: controller.nearbyPlaces.length,
               itemBuilder: (context, index) {
                 final place = controller.nearbyPlaces[index];
+                final placeId = place["id"].toString();
 
                 // Safe favorite state check
-                final isFav = index < controller.favorites.length
-                    ? controller.favorites[index]
-                    : false;
+                // final isFav = index < controller.favorites.length
+                //     ? controller.favorites[index]
+                //     : false;
+                // final isFav = controller.favoriteController.isFavorite(
+                //   placeId,
+                //   FavoriteItemType.place,
+                // );
 
                 return Bounceable(
                   onTap: () {
@@ -645,29 +660,44 @@ class HomeScreenView extends GetView<HomeScreenController> {
                             Positioned(
                               top: 6,
                               right: 6,
-                              child: GestureDetector(
-                                onTap: () => controller.toggleFavorite(index),
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primaryContainer,
-                                    shape: BoxShape.circle,
+                              child: Obx(() {
+                                final isFav = controller.favoriteController
+                                    .isFavorite(
+                                      placeId,
+                                      FavoriteItemType.place,
+                                    );
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    controller.favoriteController
+                                        .toggleFavorite(
+                                          placeId,
+                                          FavoriteItemType.place,
+                                          context,
+                                        );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      isFav
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: isFav
+                                          ? Colors.red
+                                          : Theme.of(
+                                              context,
+                                            ).textTheme.titleSmall!.color,
+                                      size: 18,
+                                    ),
                                   ),
-                                  child: Icon(
-                                    isFav
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color: isFav
-                                        ? Colors.red
-                                        : Theme.of(
-                                            context,
-                                          ).textTheme.titleSmall!.color,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
+                                );
+                              }),
                             ),
                           ],
                         ),
@@ -1020,8 +1050,11 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                     hotel["address_km"] ??
                                     ""),
 
-                          rating: (hotel["rating"] ?? 0).toDouble(),
-
+                          rating:
+                              (double.tryParse(
+                                (hotel["rating"] ?? 0.0).toString(),
+                              ) ??
+                              0.0),
                           review_count:
                               int.tryParse(
                                 (hotel["review_count"] ??
@@ -1032,8 +1065,17 @@ class HomeScreenView extends GetView<HomeScreenController> {
                               0,
                           distance:
                               "${controller.calculateDistance(hotel["latitude"], hotel["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: controller.favorites[index],
-                          onFavorite: () => controller.toggleFavorite(index),
+                          isFavorite: controller.favoriteController.isFavorite(
+                            hotel["id"].toString(),
+                            FavoriteItemType.hotel,
+                          ),
+
+                          onFavorite: () =>
+                              controller.favoriteController.toggleFavorite(
+                                hotel["id"].toString(),
+                                FavoriteItemType.hotel,
+                                context,
+                              ),
                         ),
                       ),
                     ),
@@ -1157,8 +1199,17 @@ class HomeScreenView extends GetView<HomeScreenController> {
                         review_count: package["review_count"] ?? 0,
                         distance:
                             "\$${package["price_per_person"] ?? 0}/person",
-                        isFavorite: isFav,
-                        onFavorite: () => controller.toggleFavorite(index),
+                        isFavorite: controller.favoriteController.isFavorite(
+                          package["id"].toString(),
+                          FavoriteItemType.package,
+                        ),
+
+                        onFavorite: () =>
+                            controller.favoriteController.toggleFavorite(
+                              package["id"].toString(),
+                              FavoriteItemType.package,
+                              context,
+                            ),
                         showNavigationIcon: false,
                       ),
                     ),
@@ -1266,8 +1317,17 @@ class HomeScreenView extends GetView<HomeScreenController> {
                         distance: "",
                         rating: (place["rating"] ?? 0).toDouble(),
                         review_count: place['review_count'] ?? 0,
-                        isFavorite: isFav,
-                        onFavorite: () => controller.toggleFavorite(index),
+                        isFavorite: controller.favoriteController.isFavorite(
+                          place["id"].toString(),
+                          FavoriteItemType.place,
+                        ),
+
+                        onFavorite: () =>
+                            controller.favoriteController.toggleFavorite(
+                              place["id"].toString(),
+                              FavoriteItemType.place,
+                              context,
+                            ),
                       ),
                     ),
                   );
@@ -1378,10 +1438,17 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           place["latitude"],
                           place["longitude"],
                         ),
-                        isFavorite: controller.favorites.length > index
-                            ? controller.favorites[index]
-                            : false,
-                        onFavorite: () => controller.toggleFavorite(index),
+                        isFavorite: controller.favoriteController.isFavorite(
+                          place["id"].toString(),
+                          FavoriteItemType.place,
+                        ),
+
+                        onFavorite: () =>
+                            controller.favoriteController.toggleFavorite(
+                              place["id"].toString(),
+                              FavoriteItemType.place,
+                              context,
+                            ),
                       ),
                     ),
                   );

@@ -114,7 +114,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
               Row(
                 children: [
                   // SvgPicture.asset(AppImage.teamImage, width: 40,height: 40,)
-                  Image.asset("assets/images/team.png"),
+                  // Image.asset("assets/images/team.png"),
                   SizedBox(width: 10),
                   Text(
                     "developer_title".tr,
@@ -126,7 +126,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),

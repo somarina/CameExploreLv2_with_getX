@@ -114,16 +114,19 @@ class SearchScreenView extends GetView<SearchScreenController> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            Get.locale?.languageCode == "kmKH"
-                                ? place.nameKm
-                                : place.nameEn,
-
-                            maxLines: 1,
-                            style: AppFonts.fontsSubTitlew500.copyWith(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.secondary,
-                              overflow: TextOverflow.ellipsis,
+                          SizedBox(
+                            width: 200,
+                            child: Text(
+                              Get.locale?.languageCode == "kmKH"
+                                  ? place.nameKm
+                                  : place.nameEn,
+                            
+                              maxLines: 1,
+                              style: AppFonts.fontsSubTitlew500.copyWith(
+                                fontSize: 16,
+                                color: Theme.of(context).colorScheme.secondary,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                           SizedBox(height: 10),

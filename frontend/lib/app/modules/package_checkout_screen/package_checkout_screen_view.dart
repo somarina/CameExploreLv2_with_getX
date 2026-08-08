@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/booking_package_services.dart';
 import 'package:frontend/app/modules/profile_screen/theme_mode/theme_mode_view.dart';
@@ -655,7 +656,6 @@ class PackageCheckoutScreenView
                       );
                     },
                   ).then((_) {
-          
                     controller.stopPaymentTimer();
                   });
                 },
@@ -678,7 +678,7 @@ class PackageCheckoutScreenView
 
   Widget _bookingCard(BuildContext context) {
     final DateTime? selectedDate = controller.bookingData["date"] as DateTime?;
-
+    final String imageUrl = controller.bookingData["image"] ?? "";
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -693,12 +693,31 @@ class PackageCheckoutScreenView
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  "https://images.unsplash.com/photo-1563492065599-3520f775eeed",
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
+                child: imageUrl.isNotEmpty
+                    ? Image.network(
+                        imageUrl,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: 100,
+                          height: 100,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                        ),
+                      ),
               ),
 
               const SizedBox(width: 12),
@@ -732,8 +751,6 @@ class PackageCheckoutScreenView
                   ],
                 ),
               ),
-
-              const Icon(Icons.delete_outline, color: Colors.red),
             ],
           ),
 
