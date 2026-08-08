@@ -23,80 +23,70 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            // await controller.getFavoriteItems();
-            // controller.isLoading.value = true;
-
-            await controller.getFavoriteItems();
-
-            controller.isLoading.value = false;
-          },
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      _circleButton(
-                        theme,
-                        child: SvgPicture.asset(
-                          "assets/svg/normalBack.svg",
-                          width: 26,
-                          height: 26,
-                          color: theme.colorScheme.primary,
-                        ),
-                        onTap: () => Get.back(),
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+        
+                Row(
+                  children: [
+                    _circleButton(
+                      theme,
+                      child: SvgPicture.asset(
+                        "assets/svg/normalBack.svg",
+                        width: 26,
+                        height: 26,
+                        color: theme.colorScheme.primary,
                       ),
-
-                      Spacer(),
-
-                      Obx(
-                        () => Text(
-                          controller.listName.value,
-                          style: AppFonts.fontsGeneral.copyWith(
-                            fontSize: 18,
-                            color: theme.colorScheme.secondary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      onTap: () => Get.back(),
+                    ),
+        
+                    Spacer(),
+        
+                    Obx(
+                      () => Text(
+                        controller.listName.value,
+                        style: AppFonts.fontsGeneral.copyWith(
+                          fontSize: 18,
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-
-                      Spacer(),
-
-                      _circleButton(
-                        theme,
-                        child: Icon(
-                          Icons.share,
-                          color: theme.colorScheme.primary,
-                        ),
-                        onTap: () {
-                          SharePlus.instance.share(
-                            ShareParams(text: controller.listName.value),
-                          );
-                        },
+                    ),
+        
+                    Spacer(),
+        
+                    _circleButton(
+                      theme,
+                      child: Icon(
+                        Icons.share,
+                        color: theme.colorScheme.primary,
                       ),
-
-                      SizedBox(width: 10),
-
-                      _circleButton(
-                        theme,
-                        child: Icon(
-                          Icons.more_vert,
-                          color: theme.colorScheme.primary,
-                        ),
-                        onTap: _showOptionsBottomSheet,
+                      onTap: () {
+                        SharePlus.instance.share(
+                          ShareParams(text: controller.listName.value),
+                        );
+                      },
+                    ),
+        
+                    SizedBox(width: 10),
+        
+                    _circleButton(
+                      theme,
+                      child: Icon(
+                        Icons.more_vert,
+                        color: theme.colorScheme.primary,
                       ),
-                    ],
-                  ),
-
-                  _buildEmptyList(context),
-                ],
-              ),
+                      onTap: _showOptionsBottomSheet,
+                    ),
+                  ],
+                ),
+        
+                _buildEmptyList(context),
+              ],
             ),
           ),
         ),
@@ -423,15 +413,22 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                                   color: Color(0xffCEDFCE),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Text(
-                                  Get.locale?.languageCode == "kmKH"
-                                      ? (item["category_km"] ?? "")
-                                      : (item["category"] ?? ""),
-
-                                  style: GoogleFonts.googleSans(
-                                    fontSize: 14,
-                                    color: Theme.of(context).primaryColor,
-                                    fontWeight: FontWeight.bold,
+                                child: SizedBox(
+                                  width: 70,
+                                  child: Center(
+                                    child: Text(
+                                      Get.locale?.languageCode == "kmKH"
+                                          ? (item["category_km"] ?? "កញ្ចប់ដំណើរ")
+                                          : (item["category"] ?? "Travel Package"),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                    
+                                      style: GoogleFonts.googleSans(
+                                        fontSize: 14,
+                                        color: Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -520,7 +517,9 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
               "delete_list_confirm".trParams({
                 'listName': controller.listName.value,
               }),
-              style: AppFonts.fontDescriptionsmall,
+              style: AppFonts.fontDescriptionsmall.copyWith(
+                color: Get.theme.colorScheme.secondary,
+              ),
             ),
             actions: [
               TextButton(
