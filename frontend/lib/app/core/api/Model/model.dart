@@ -1,6 +1,7 @@
 class DeveloperModel {
   final String name;
   final String role;
+  final String image;
   final String description;
   final String description2;
   final String description3;
@@ -13,6 +14,7 @@ class DeveloperModel {
   DeveloperModel({
     required this.name,
     required this.role,
+    required this.image,
     required this.description,
     required this.description2,
     required this.description3,

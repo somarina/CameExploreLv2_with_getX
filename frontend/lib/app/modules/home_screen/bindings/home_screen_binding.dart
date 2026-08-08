@@ -8,15 +8,11 @@ import '../controllers/home_screen_controller.dart';
 class HomeScreenBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HomeScreenController>(
-      () => HomeScreenController(), 
-    );
+    Get.lazyPut<HomeScreenController>(() => HomeScreenController());
     Get.lazyPut<SearchResultScreenController>(
       () => SearchResultScreenController(),
     );
-    Get.lazyPut<FavoriteScreenController>(
-      () => FavoriteScreenController(),
-    );
-
+    Get.lazyPut<FavoriteScreenController>(() => FavoriteScreenController());
+    // Get.lazyPut(() => UserProfileScreenViewController());
   }
 }

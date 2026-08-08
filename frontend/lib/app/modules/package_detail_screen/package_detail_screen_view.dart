@@ -567,7 +567,7 @@ class PackageDetailScreenView
                   "title": controller.packageName,
                   "image": controller.image.isNotEmpty
                       ? controller.image
-                      : "assets/images/homescreen/slider1.png",
+                      : "",
                   "language": "English",
                   "startTime": controller.selectedStartTime.value,
                   "date": controller.selectedDate.value,

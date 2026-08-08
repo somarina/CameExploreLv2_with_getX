@@ -35,8 +35,8 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const CircleAvatar(radius: 60),
-            const SizedBox(height: 10),
+            CircleAvatar(radius: 60, backgroundImage: AssetImage(dev.image)),
+            SizedBox(height: 10),
             Text(
               dev.name,
               style: TextStyle(
@@ -68,24 +68,18 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
                     mainAxisAlignment: .center,
                     crossAxisAlignment: .start,
                     children: [
-                      Image.asset("assets/svg/phone-call copy.png", width: 30),
-                      SizedBox(width: 10),
-                      SvgPicture.asset(
-                        "assets/svg/github-svgrepo-com copy.svg",
-                        color: Theme.of(context).colorScheme.secondary,
+                      Image.asset("assets/icons/call.png", width: 30),
+                      SizedBox(width: 20),
+                      Image.asset(
+                        "assets/icons/github.png",
+                        // color: Theme.of(context).colorScheme.secondary,
                         width: 30,
                       ),
-                      SizedBox(width: 10),
-                      SvgPicture.asset(
-                        "assets/svg/google-icon-logo-svgrepo-com copy.svg",
-                        width: 30,
-                      ),
+                      SizedBox(width: 20),
+                      Image.asset("assets/icons/google.png", width: 30),
 
-                      SizedBox(width: 10),
-                      SvgPicture.asset(
-                        "assets/svg/telegram-svgrepo-com (1) copy.svg",
-                        width: 30,
-                      ),
+                      SizedBox(width: 20),
+                      Image.asset("assets/icons/telegram.png", width: 30),
                     ],
                   ),
                 ],
