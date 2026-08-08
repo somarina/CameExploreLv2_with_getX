@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/api/api_config.dart';
 import '../../../../core/api/services/auth_services.dart';
+import '../../../../core/widget/failure_dialog.dart';
 import '../../../../routes/app_pages.dart';
 
 class LoginScreenController extends GetxController
@@ -38,7 +39,6 @@ class LoginScreenController extends GetxController
   static const double shakeDistance = 10;
 
   final isEnglish = Get.locale?.languageCode == "enUS";
-
 
   @override
   void onInit() {
@@ -184,19 +184,17 @@ class LoginScreenController extends GetxController
       if (response["result"] == true) {
         _saveUser(response["data"]);
         Get.offAllNamed(Routes.BUTTON_NAVBAR);
-//         Get.offAllNamed(Routes.BUTTON_NAVBAR);
+        //         Get.offAllNamed(Routes.BUTTON_NAVBAR);
       } else {
-        Get.snackbar(
-          'Login Failed',
-          response["message"] ?? 'Something went wrong',
-          snackPosition: SnackPosition.BOTTOM,
+        FailureDialog.show(
+          title: "Login Failed".tr,
+          message: response["message"] ?? "Wrong username or password".tr,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Login Failed',
-        'Something went wrong',
-        snackPosition: SnackPosition.BOTTOM,
+      FailureDialog.show(
+        title: "Login Failed".tr,
+        message: "Wrong username or password".tr,
       );
     } finally {
       isLoading.value = false;
@@ -309,34 +307,36 @@ class LoginScreenController extends GetxController
   // }
 
   Future<void> loginWithTelegram() async {
-  if (isLoading.value) return;
+    if (isLoading.value) return;
 
-  try {
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
 
-    final returnTo = Uri.encodeComponent('$kBaseUrl/api/auth/telegram-callback');
+      final returnTo = Uri.encodeComponent(
+        '$kBaseUrl/api/auth/telegram-callback',
+      );
 
-    final url = Uri.parse(
-      'https://oauth.telegram.org/auth'
-      '?bot_id=$kTelegramBotId'
-      '&origin=$kBaseUrl'
-      '&return_to=$returnTo'   // points to YOUR backend, not camexplore://
-      '&request_access=write',
-    );
+      final url = Uri.parse(
+        'https://oauth.telegram.org/auth'
+        '?bot_id=$kTelegramBotId'
+        '&origin=$kBaseUrl'
+        '&return_to=$returnTo' // points to YOUR backend, not camexplore://
+        '&request_access=write',
+      );
 
-    debugPrint('Telegram URL: $url');
-    await launchUrl(url, mode: LaunchMode.externalApplication);
-  } catch (e) {
-    debugPrint('TELEGRAM ERROR: $e');
-    Get.snackbar(
-      'Telegram Login Failed',
-      e.toString(),
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  } finally {
-    isLoading.value = false;
+      debugPrint('Telegram URL: $url');
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('TELEGRAM ERROR: $e');
+      Get.snackbar(
+        'Telegram Login Failed',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
   // ── Guest ─────────────────────────────────────────────────────────────────
 
   Future<void> continueAsGuest() async {

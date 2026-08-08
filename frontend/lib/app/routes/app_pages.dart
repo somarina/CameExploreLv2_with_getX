@@ -34,8 +34,6 @@ import 'package:get/get.dart';
 
 import '../modules/ai_screen/bindings/ai_screen_binding.dart';
 import '../modules/ai_screen/views/ai_screen_view.dart';
-import '../modules/ar_screen/bindings/ar_screen_binding.dart';
-import '../modules/ar_screen/views/ar_screen_view.dart';
 import '../modules/auth/forget_password/bindings/forget_password_binding.dart';
 import '../modules/auth/forget_password/views/forget_password_view.dart';
 import '../modules/auth/login_screen/bindings/login_screen_binding.dart';
@@ -79,20 +77,10 @@ class AppPages {
       binding: AiScreenBinding(),
     ),
     GetPage(
-      name: _Paths.AR_SCREEN,
-      page: () => const ArScreenView(),
-      binding: ArScreenBinding(),
-    ),
-    GetPage(
       name: _Paths.BUTTON_NAVBAR,
       page: () => const ButtonNavbarView(),
       binding: ButtonNavbarBinding(),
     ),
-    // GetPage(
-    //   name: _Paths.DETAIL_SCREEN,
-    //   page: () => const DetailScreenView(),
-    //   binding: DetailScreenBinding(),
-    // ),
     GetPage(
       name: _Paths.SEARCH_SCREEN,
       page: () => const SearchScreenView(),

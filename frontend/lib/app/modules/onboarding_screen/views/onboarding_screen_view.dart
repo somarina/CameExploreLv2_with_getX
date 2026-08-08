@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,27 +34,43 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
   }
 
   Widget _buildPageOne() {
-    return _buildPageLayout(topWidget: _buildPageOneImages());
+    return _buildPageLayout(
+      topWidget: _buildPageOneImages(),
+      title: _buildTitleOne(),
+      description: _buildDescriptionOne(),
+    );
   }
 
   Widget _buildPageTwo() {
-    return _buildPageLayout(topWidget: _buildRelaxDesign());
+    return _buildPageLayout(
+      topWidget: _buildRelaxDesign(),
+      title: _buildTitleTwo(),
+      description: _buildDescriptionTwo(),
+    );
   }
 
   Widget _buildPageThree() {
-    return _buildPageLayout(topWidget: _buildTravelCards());
+    return _buildPageLayout(
+      topWidget: _buildTravelCards(),
+      title: _buildTitleThree(),
+      description: _buildDescriptionThree(),
+    );
   }
 
-  Widget _buildPageLayout({required Widget topWidget}) {
+  Widget _buildPageLayout({
+    required Widget topWidget,
+    required Widget title,
+    required Widget description,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 70), // ← space below skip button
         topWidget,
         const SizedBox(height: 8),
-        _buildTitle(),
+        title,
         const SizedBox(height: 12),
-        _buildDescription(),
+        description,
         const SizedBox(height: 34),
         _buildIndicators(),
         const SizedBox(height: 40), // ← space above bottom button
@@ -172,147 +190,104 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
-        height: 360,
-        child: Stack(
-          children: [
-            // Background card
-            Positioned.fill(
-              child: Container(
+        height: 375, // ← matches page 1 & 2 so title/description sit at the same height
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Full-bleed hero image
+              Image.asset(
+                "assets/images/sunset04.png",
+                fit: BoxFit.cover,
+              ),
+
+              // Dark gradient so the glow + chips stay readable over the photo
+              Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8ECEF),
-                  borderRadius: BorderRadius.circular(32),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.black.withOpacity(0.55),
+                      Colors.black.withOpacity(0.15),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Decorative dots
-            Positioned(
-              top: 14,
-              left: 14,
-              child: Container(
-                width: 12,
-                height: 12,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF4A90E2),
+              // Blurred color glow bleeding off the top edge
+              Positioned(
+                top: -30,
+                left: -20,
+                child: ImageFiltered(
+                  imageFilter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFFFF5722).withOpacity(0.7),
+                    ),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 10,
-              right: 20,
-              child: Container(
-                width: 10,
-                height: 10,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF7FD956),
+              Positioned(
+                top: -20,
+                right: -10,
+                child: ImageFiltered(
+                  imageFilter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFF7FD956).withOpacity(0.7),
+                    ),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 34,
-              left: 24,
-              child: Container(
-                width: 12,
-                height: 12,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFFFF5722),
+
+              // Naihuoy card
+              Positioned(
+                left: 24,
+                top: 70,
+                child: _TapScale(
+                  child: _buildReviewCard(
+                    name: "Naihuoy",
+                    rating: "4/5",
+                    imageUrl:
+                        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 14,
-              right: 14,
-              child: Container(
-                width: 10,
-                height: 10,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF00BCD4),
+
+              // Monxaa card
+              Positioned(
+                left: 20,
+                bottom: 38,
+                child: _TapScale(
+                  child: _buildReviewCard(
+                    name: "Monxaa",
+                    rating: "3.6/5",
+                    imageUrl:
+                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+                  ),
                 ),
               ),
-            ),
-
-            // Blue accent bar in the middle
-            Positioned(
-              left: 100,
-              top: 155,
-              width: 200,
-              height: 50,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4A7FD9).withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ),
-
-            // Left tall image (night sky)
-            Positioned(
-              left: 14,
-              top: 18,
-              bottom: 18,
-              child: _buildImageCard(
-                "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a",
-                width: 140,
-                height: 324,
-              ),
-            ),
-
-            // Top right image (ocean/beach)
-            Positioned(
-              right: 14,
-              top: 18,
-              child: _buildImageCard(
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-                width: 160,
-                height: 161,
-              ),
-            ),
-
-            // Bottom right image (ruins)
-            Positioned(
-              right: 14,
-              bottom: 18,
-              child: _buildImageCard(
-                "https://images.unsplash.com/photo-1524492412937-b28074a5d7da",
-                width: 160,
-                height: 161,
-              ),
-            ),
-
-            // Naihuoy card - centered between left and right
-            Positioned(
-              left: 108,
-              top: 68,
-              child: _buildReviewCard(
-                name: "Naihuoy",
-                rating: "4/5",
-                imageUrl:
-                    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-              ),
-            ),
-
-            // Monxaa card - bottom left
-            Positioned(
-              left: 20,
-              bottom: 38,
-              child: _buildReviewCard(
-                name: "Monxaa",
-                rating: "3.6/5",
-                imageUrl:
-                    "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTitle() {
+  // ── Shared title layout: two-line headline + slanted highlighted word ──
+  Widget _buildTitleWithHighlight({
+    required String beforeHighlight,
+    required String highlight,
+    required String afterHighlight,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: RichText(
@@ -324,7 +299,7 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
             color: Colors.black,
           ),
           children: [
-            TextSpan(text: "ស្វែងរកទី\nកន្លែង "),
+            TextSpan(text: beforeHighlight),
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
               child: ClipPath(
@@ -338,7 +313,7 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
                   ),
                   color: Color(0xFF28C98B),
                   child: Text(
-                    "ប្រវត្តិសាស្រ្ត",
+                    highlight,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 32,
@@ -349,20 +324,65 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
                 ),
               ),
             ),
-            TextSpan(text: "\nដ៏អស្ចារ្យ !"),
+            TextSpan(text: afterHighlight),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDescription() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24),
+  Widget _buildDescriptionText(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Text(
-        "We believe that traveling around the\nworld shouldn’t be hard.",
-        style: TextStyle(color: Colors.grey, fontSize: 16, height: 1.5),
+        text,
+        style: const TextStyle(color: Colors.grey, fontSize: 16, height: 1.5),
       ),
+    );
+  }
+
+  // ── Page 1: explore/history ──
+  Widget _buildTitleOne() {
+    return _buildTitleWithHighlight(
+      beforeHighlight: "ស្វែងរកទី\nកន្លែង ",
+      highlight: "ប្រវត្តិសាស្រ្ត",
+      afterHighlight: "\nដ៏អស្ចារ្យ !",
+    );
+  }
+
+  Widget _buildDescriptionOne() {
+    return _buildDescriptionText(
+      "We believe that traveling around the\nworld shouldn't be hard.",
+    );
+  }
+
+  // ── Page 2: style/vibe ──
+  Widget _buildTitleTwo() {
+    return _buildTitleWithHighlight(
+      beforeHighlight: "ជ្រើសរើសទី\nកន្លែង ",
+      highlight: "ដែល Relax",
+      afterHighlight: "\nនិងគួអោយចង់ទៅ !",
+    );
+  }
+
+  Widget _buildDescriptionTwo() {
+    return _buildDescriptionText(
+      "Choose the style you love and we'll\nfind the perfect spot for you.",
+    );
+  }
+
+  // ── Page 3: reviews ──
+  Widget _buildTitleThree() {
+    return _buildTitleWithHighlight(
+      beforeHighlight: "ស្វែងរក\nទីកន្លែង",
+      highlight: "ដែលមានទេសភាព",
+      afterHighlight: "\nដ៏ស្រស់ស្អាត !",
+    );
+  }
+
+  Widget _buildDescriptionThree() {
+    return _buildDescriptionText(
+      "Real travelers, real reviews —\nplan with confidence.",
     );
   }
 
@@ -480,7 +500,12 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
             offset: const Offset(0, 2),
           ),
         ],
-        image: DecorationImage(image: AssetImage(imageUrl), fit: BoxFit.cover),
+        image: DecorationImage(
+          image: imageUrl.startsWith('http')
+              ? NetworkImage(imageUrl) as ImageProvider
+              : AssetImage(imageUrl),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -594,4 +619,36 @@ class SlantedLabelClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+class _TapScale extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+
+  const _TapScale({required this.child, this.onTap});
+
+  @override
+  State<_TapScale> createState() => _TapScaleState();
+}
+
+class _TapScaleState extends State<_TapScale> {
+  double _scale = 1.0;
+
+  void _setScale(double value) => setState(() => _scale = value);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (_) => _setScale(0.95),
+      onTapUp: (_) => _setScale(1.0),
+      onTapCancel: () => _setScale(1.0),
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        child: widget.child,
+      ),
+    );
+  }
 }
