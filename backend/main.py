@@ -12,6 +12,7 @@ from app.routes import hotels
 from app.routes import packages
 from app.routes import bookings
 from app.routes import listing_reviews
+from app.routes import ai_assistant
 from app.config.cloudinary_config import *
 import cloudinary.uploader
 
@@ -83,6 +84,7 @@ app.include_router(profile.router)
 app.include_router(favorites.router)
 app.include_router(search.router)
 app.include_router(discover.router)
+app.include_router(ai_assistant.router)
 
 @app.get("/")
 async def root():

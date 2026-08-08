@@ -19,49 +19,64 @@ class LoginScreenView extends GetView<LoginScreenController> {
       // backgroundColor: AppColors.lightBackgroundColor,
       backgroundColor: Get.theme.scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: AnimatedPadding(
-            duration: Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            padding: EdgeInsets.only(top: topPad),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                controller: controller.scrollController,
-                physics: BouncingScrollPhysics(),
-                padding: EdgeInsets.only(bottom: keyboard + 16),
-                child: Obx(
-                  () => Form(
-                    key: controller.formKey,
-                    autovalidateMode: controller.submitted.value
-                        ? AutovalidateMode.onUserInteraction
-                        : AutovalidateMode.disabled,
-                    child: Column(
-                      children: [
-                        _buildTopImage(context, keyboardOpen),
-                        SizedBox(height: 15),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            children: [
-                              _buildTitle(),
-                              SizedBox(height: 14),
-                              _buildSwitchBox(),
-                              SizedBox(height: 8),
-                              _buildFormContent(),
-                            ],
-                          ),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: AnimatedPadding(
+                duration: Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                padding: EdgeInsets.only(top: topPad),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    controller: controller.scrollController,
+                    physics: BouncingScrollPhysics(),
+                    padding: EdgeInsets.only(bottom: keyboard + 16),
+                    child: Obx(
+                      () => Form(
+                        key: controller.formKey,
+                        autovalidateMode: controller.submitted.value
+                            ? AutovalidateMode.onUserInteraction
+                            : AutovalidateMode.disabled,
+                        child: Column(
+                          children: [
+                            _buildTopImage(context, keyboardOpen),
+                            SizedBox(height: 15),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                children: [
+                                  _buildTitle(),
+                                  SizedBox(height: 14),
+                                  _buildSwitchBox(),
+                                  SizedBox(height: 8),
+                                  _buildFormContent(),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
+          // ── Loading Overlay ──
+          Obx(
+            () => controller.isLoading.value
+                ? Container(
+                    color: Colors.black.withOpacity(0.4),
+                    child: const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+        ],
       ),
     );
   }
@@ -81,7 +96,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
     return Text(
       "Login".tr,
       style: controller.isEnglish
-          ? GoogleFonts.spaceGrotesk( 
+          ? GoogleFonts.spaceGrotesk(
               fontSize: 30,
               fontWeight: FontWeight.bold,
               // color: Colors.black,
@@ -405,20 +420,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
           ),
           elevation: 0,
         ),
-        child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),
-          child: controller.isLoading.value
-              ? SizedBox(
-                  key: ValueKey('loading'),
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : Text(key: ValueKey('text'), "Log in".tr, style: _buttonStyle()),
-        ),
+        child: Text("Log in".tr, style: _buttonStyle()),
       ),
     );
   }

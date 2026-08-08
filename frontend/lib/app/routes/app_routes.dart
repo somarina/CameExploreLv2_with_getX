@@ -6,7 +6,6 @@ part of 'app_pages.dart';
 abstract class Routes {
   static const HOME_SCREEN = _Paths.HOME_SCREEN;
   static const AI_SCREEN = _Paths.AI_SCREEN;
-  static const AR_SCREEN = _Paths.AR_SCREEN;
   static const AUTH_SCREEN = _Paths.AUTH_SCREEN;
   static const BUTTON_NAVBAR = _Paths.BUTTON_NAVBAR;
   // static const DETAIL_SCREEN = _Paths.DETAIL_SCREEN;
@@ -55,7 +54,6 @@ abstract class Routes {
 abstract class _Paths {
   static const HOME_SCREEN = '/home-screen';
   static const AI_SCREEN = '/ai-screen';
-  static const AR_SCREEN = '/ar-screen';
   static const AUTH_SCREEN = '/auth-screen';
   static const BUTTON_NAVBAR = '/button-navbar';
   // static const DETAIL_SCREEN = '/detail-screen';
