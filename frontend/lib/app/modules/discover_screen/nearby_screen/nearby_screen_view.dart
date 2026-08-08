@@ -386,6 +386,7 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                         Expanded(
                           child: Row(
                             children: [
+                              
                               Text(
                                 Get.locale?.languageCode == "kmKH"
                                     ? place.provinceKm
@@ -399,6 +400,12 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                                 ),
                               ),
                               SizedBox(width: 10),
+                              Icon(
+                                Icons.near_me_outlined,
+                                size: 18,
+                                color: Color(0xFFADB5BD),
+                              ),
+                              SizedBox(width: 5),
                               Text(
                                 "${place.distance.toStringAsFixed(1)} km",
                                 style: GoogleFonts.googleSans(

@@ -390,10 +390,16 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                           review_count: nearbyPlace['review_count'] ?? 0,
                           distance:
                               "${controller.calculateDistance(controller.place["latitude"], controller.place["longitude"], nearbyPlace["latitude"], nearbyPlace["longitude"]).toStringAsFixed(2)} km",
-                          isFavorite: index < controller.favorites.length
-                              ? controller.favorites[index]
-                              : false,
-                          onFavorite: () => controller.toggleFavorite(index),
+                          isFavorite: controller.favCtrl.isFavorite(
+                            nearbyPlace["id"].toString(),
+                            FavoriteItemType.place,
+                          ),
+
+                          onFavorite: () => controller.favCtrl.toggleFavorite(
+                            nearbyPlace["id"].toString(),
+                            FavoriteItemType.place,
+                            context,
+                          ),
                         ),
                       ),
                     ),
@@ -1020,6 +1026,7 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
                   child: _circleButton("assets/svg/normalShare.svg", context),
                 ),
                 const SizedBox(width: 16),
+                // _circleButton("assets/svg/normalFav.svg", context),
                 Obx(() {
                   final isFav = controller.favCtrl.isFavorite(
                     controller.place["id"].toString(),

@@ -503,7 +503,6 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                 FavoriteItemType.place,
                                 context,
                               ),
-                          // onFavorite: () => controller.toggleFavorite(index),
                         ),
                       ),
                     ),
@@ -591,11 +590,16 @@ class HomeScreenView extends GetView<HomeScreenController> {
               itemCount: controller.nearbyPlaces.length,
               itemBuilder: (context, index) {
                 final place = controller.nearbyPlaces[index];
+                final placeId = place["id"].toString();
 
                 // Safe favorite state check
-                final isFav = index < controller.favorites.length
-                    ? controller.favorites[index]
-                    : false;
+                // final isFav = index < controller.favorites.length
+                //     ? controller.favorites[index]
+                //     : false;
+                // final isFav = controller.favoriteController.isFavorite(
+                //   placeId,
+                //   FavoriteItemType.place,
+                // );
 
                 return Bounceable(
                   onTap: () {
@@ -656,29 +660,44 @@ class HomeScreenView extends GetView<HomeScreenController> {
                             Positioned(
                               top: 6,
                               right: 6,
-                              child: GestureDetector(
-                                onTap: () => controller.toggleFavorite(index),
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primaryContainer,
-                                    shape: BoxShape.circle,
+                              child: Obx(() {
+                                final isFav = controller.favoriteController
+                                    .isFavorite(
+                                      placeId,
+                                      FavoriteItemType.place,
+                                    );
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    controller.favoriteController
+                                        .toggleFavorite(
+                                          placeId,
+                                          FavoriteItemType.place,
+                                          context,
+                                        );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      isFav
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: isFav
+                                          ? Colors.red
+                                          : Theme.of(
+                                              context,
+                                            ).textTheme.titleSmall!.color,
+                                      size: 18,
+                                    ),
                                   ),
-                                  child: Icon(
-                                    isFav
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color: isFav
-                                        ? Colors.red
-                                        : Theme.of(
-                                            context,
-                                          ).textTheme.titleSmall!.color,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
+                                );
+                              }),
                             ),
                           ],
                         ),
@@ -1057,7 +1076,6 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                 FavoriteItemType.hotel,
                                 context,
                               ),
-                          // onFavorite: () => controller.toggleFavorite(index),
                         ),
                       ),
                     ),
@@ -1192,7 +1210,6 @@ class HomeScreenView extends GetView<HomeScreenController> {
                               FavoriteItemType.package,
                               context,
                             ),
-                        // onFavorite: () => controller.toggleFavorite(index),
                         showNavigationIcon: false,
                       ),
                     ),
@@ -1300,8 +1317,17 @@ class HomeScreenView extends GetView<HomeScreenController> {
                         distance: "",
                         rating: (place["rating"] ?? 0).toDouble(),
                         review_count: place['review_count'] ?? 0,
-                        isFavorite: isFav,
-                        onFavorite: () => controller.toggleFavorite(index),
+                        isFavorite: controller.favoriteController.isFavorite(
+                          place["id"].toString(),
+                          FavoriteItemType.place,
+                        ),
+
+                        onFavorite: () =>
+                            controller.favoriteController.toggleFavorite(
+                              place["id"].toString(),
+                              FavoriteItemType.place,
+                              context,
+                            ),
                       ),
                     ),
                   );
@@ -1412,10 +1438,17 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           place["latitude"],
                           place["longitude"],
                         ),
-                        isFavorite: controller.favorites.length > index
-                            ? controller.favorites[index]
-                            : false,
-                        onFavorite: () => controller.toggleFavorite(index),
+                        isFavorite: controller.favoriteController.isFavorite(
+                          place["id"].toString(),
+                          FavoriteItemType.place,
+                        ),
+
+                        onFavorite: () =>
+                            controller.favoriteController.toggleFavorite(
+                              place["id"].toString(),
+                              FavoriteItemType.place,
+                              context,
+                            ),
                       ),
                     ),
                   );

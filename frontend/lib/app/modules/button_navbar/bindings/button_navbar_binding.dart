@@ -19,13 +19,11 @@ class ButtonNavbarBinding extends Bindings {
 
     Get.lazyPut<BookingScreenController>(() => BookingScreenController());
 
-    Get.lazyPut<FavoriteScreenController>(() => FavoriteScreenController());
-
     Get.lazyPut<UserProfileScreenViewController>(
       () => UserProfileScreenViewController(),
     );
     Get.lazyPut<SearchScreenController>(() => SearchScreenController());
-    Get.lazyPut<FavoriteScreenController>(() => FavoriteScreenController());
+
     Get.lazyPut<BookingScreenController>(() => BookingScreenController());
     Get.lazyPut<HomeScreenController>(() => HomeScreenController());
     Get.lazyPut<FavoriteScreenController>(() => FavoriteScreenController());

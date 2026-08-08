@@ -594,8 +594,9 @@ class HomeScreenController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onInit(){
     super.onInit();
+    favoriteController.loadFavoriteStatus();
     getCurrentLocation();
     getProfile();
     getCategories();

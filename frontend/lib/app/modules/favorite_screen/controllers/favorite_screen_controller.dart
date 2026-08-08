@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/favorite_service.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
@@ -22,6 +20,10 @@ class FavoriteScreenController extends GetxController {
   RxMap<String, int> activityCounts = <String, int>{}.obs;
   RxMap<String, String> listImages = <String, String>{}.obs;
 
+  String? pendingItemId;
+  FavoriteItemType? pendingItemType;
+  BuildContext? pendingContext;
+
   final TextEditingController createListCtrl = TextEditingController();
 
   final FocusNode createListFocusNode = FocusNode();
@@ -37,86 +39,46 @@ class FavoriteScreenController extends GetxController {
       canCreateList.value = createListCtrl.text.trim().isNotEmpty;
     });
 
-    // getFavoriteLists();
     loadFavoriteStatus();
-  }
-
-  @override
-  void onReady() async {
-    super.onReady();
-    loadFavoriteStatus();
-
-    await getFavoriteLists();
   }
 
   /// GET FAVORITE LISTS
-  // Future<void> getFavoriteLists() async {
-  //   try {
-  //     isLoading.value = true;
-
-  //     final response = await favoriteService.getFavoriteLists();
-
-  //     favoriteLists.value = response ?? [];
-
-  //     // activityCounts.clear();
-  //     // listImages.clear();
-
-  //     for (final list in favoriteLists) {
-  //       final listId = list["id"].toString();
-
-  //       final items = await favoriteService.getFavoriteItems(listId);
-
-  //       activityCounts[listId] = items.length;
-
-  //       if (items.isNotEmpty) {
-  //         // Pick a random image
-  //         final random = Random();
-
-  //         list["cover_image"] =
-  //             items[random.nextInt(items.length)]["image_url"];
-  //       } else {
-  //         list["cover_image"] = null;
-  //       }
-  //     }
-
-  //     activityCounts.refresh();
-  //     listImages.refresh();
-  //   } catch (e) {
-  //     debugPrint("Get Favorite Error: $e");
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
   Future<void> getFavoriteLists() async {
     try {
       isLoading.value = true;
 
       final response = await favoriteService.getFavoriteLists();
 
-      favoriteLists.value = response ?? [];
+      // favoriteLists.value = response ?? [];
+      favoriteLists.value = List<Map<String, dynamic>>.from(response ?? []);
 
-      activityCounts.clear();
+      // Remove counts for deleted lists
+      final validIds = favoriteLists
+          .map((list) => list["id"].toString())
+          .toSet();
 
-      for (final list in favoriteLists) {
+      activityCounts.removeWhere((key, value) => !validIds.contains(key));
+
+      for (var i = 0; i < favoriteLists.length; i++) {
+        final list = favoriteLists[i];
+
         final listId = list["id"].toString();
 
-        final response = await favoriteService.getFavoriteItems(listId);
+        final itemResponse = await favoriteService.getFavoriteItems(listId);
 
-        final items = response["data"] ?? [];
+        final items = itemResponse["data"] ?? [];
 
-        if (items.isNotEmpty) {
-          final random = Random();
-
-          list["cover_image"] =
-              items[random.nextInt(items.length)]["image_url"];
-        } else {
-          list["cover_image"] = null;
-        }
+        favoriteLists[i]["cover_image"] = items.isNotEmpty
+            ? items.first["image_url"]
+            : null;
 
         activityCounts[listId] = items.length;
       }
-
+      // Notify GetX about changes
+      favoriteLists.refresh();
       activityCounts.refresh();
+
+      print("Final activityCounts: $activityCounts");
     } catch (e) {
       debugPrint("Get Favorite Error: $e");
     } finally {
@@ -140,27 +102,58 @@ class FavoriteScreenController extends GetxController {
 
       isLoading.value = true;
 
-      final response = await favoriteService.createFavoriteList(
-        capitalizeFirst(createListCtrl.text.trim()),
-      );
+      final newListName = capitalizeFirst(createListCtrl.text.trim());
+
+      final response = await favoriteService.createFavoriteList(newListName);
 
       print("Create Response: $response");
 
-      createListCtrl.clear();
-
       await getFavoriteLists();
 
+      if (pendingItemId != null && pendingItemType != null) {
+        // Find the newly created list
+        final newList = favoriteLists.firstWhere(
+          (list) => list["name"].toString() == newListName,
+          orElse: () => favoriteLists.last,
+        );
+
+        await favoriteService.addFavoriteItem(
+          listId: newList["id"].toString(),
+          itemId: pendingItemId!,
+          type: pendingItemType!,
+        );
+
+        activityCounts[newList["id"].toString()] =
+            (activityCounts[newList["id"].toString()] ?? 0) + 1;
+
+        activityCounts.refresh();
+
+        favoriteItemsMap["${pendingItemType!.name}_$pendingItemId"] =
+            newList["id"].toString();
+
+        favoriteItemsMap.refresh();
+
+        final savedItemId = pendingItemId;
+        final savedItemType = pendingItemType;
+        final savedContext = pendingContext;
+
+        final listName = newList["name"].toString();
+
+        if (savedItemId != null &&
+            savedItemType != null &&
+            savedContext != null) {
+          showSavedSnackbar(savedItemId, savedItemType, savedContext, listName);
+        }
+
+        pendingItemId = null;
+        pendingItemType = null;
+        pendingContext = null;
+      }
+
+      // Clear AFTER everything finishes
+      createListCtrl.clear();
+
       print("Favorite Lists: $favoriteLists");
-
-      Get.back();
-
-      Get.snackbar(
-        "Success",
-        "Favorite list created successfully",
-        snackPosition: SnackPosition.BOTTOM,
-        colorText: Colors.white,
-        backgroundColor: Colors.green,
-      );
     } catch (e) {
       debugPrint("Create Favorite Error: $e");
 
@@ -186,6 +179,7 @@ class FavoriteScreenController extends GetxController {
 
   bool isFavorite(String itemId, FavoriteItemType itemType) {
     final key = "${itemType.name}_$itemId";
+    favoriteItemsMap[key];
     return favoriteItemsMap.containsKey(key);
   }
 
@@ -203,9 +197,11 @@ class FavoriteScreenController extends GetxController {
         onPressed: () {
           Get.closeCurrentSnackbar();
 
-          showSelectListBottomSheet(itemId, itemType, context);
+          Future.delayed(const Duration(milliseconds: 100), () {
+            showSelectListBottomSheet(itemId, itemType, Get.context!);
+          });
         },
-        child: Text("Change"),
+        child: const Text("Change"),
       ),
     );
   }
@@ -215,11 +211,16 @@ class FavoriteScreenController extends GetxController {
     FavoriteItemType itemType,
     BuildContext context,
   ) {
+    pendingItemId = itemId;
+    pendingItemType = itemType;
+    pendingContext = context;
+
     final key = "${itemType.name}_$itemId";
 
     final currentListId = favoriteItemsMap[key];
 
-    final List<Map<String, dynamic>> sortedLists = [...favoriteLists];
+    // final List<Map<String, dynamic>> sortedLists = [...favoriteLists];
+    final sortedLists = [...favoriteLists];
 
     if (currentListId != null) {
       sortedLists.sort((a, b) {
@@ -271,17 +272,32 @@ class FavoriteScreenController extends GetxController {
                       //   return;
                       // }
                       if (isGuest) {
-                        _showLoginDialog(
-                          context,
-                        ); // _showLoginDialog(context)
+                        showLoginDialog(context); // _showLoginDialog(context)
                         return;
                       }
+                      final savedItemId = pendingItemId;
+                      final savedItemType = pendingItemType;
+                      final savedContext = pendingContext;
+
                       Get.back();
 
-                      Future.delayed(const Duration(milliseconds: 200), () {
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        pendingItemId = savedItemId;
+                        pendingItemType = savedItemType;
+                        pendingContext = savedContext;
+
                         AppBottomSheets.showBottomSheet(
                           title: "Create a new list".tr,
-                          label: "list name".tr,
+                          label: "List name".tr,
+                          controller: createListCtrl,
+                          focusNode: createListFocusNode,
+                          onDone: () async {
+                            if (isLoading.value) return;
+
+                            await createFavoriteList();
+
+                            Get.back();
+                          },
                         );
                       });
                     },
@@ -297,135 +313,160 @@ class FavoriteScreenController extends GetxController {
 
             const Divider(),
 
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(20),
-                itemCount: sortedLists.length + 1,
-                separatorBuilder: (_, __) => const Divider(),
+            Obx(() {
+              final sortedLists = [...favoriteLists];
+              return Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(20),
+                  itemCount: sortedLists.length + 1,
+                  separatorBuilder: (_, __) => const Divider(),
 
-                itemBuilder: (context, index) {
-                  // Create new list button
-                  if (index == sortedLists.length) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                          ),
-                          onPressed: () {
-                            Get.back();
+                  itemBuilder: (context, index) {
+                    // Create new list button
+                    if (index == sortedLists.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Center(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              Get.back();
 
-                            Future.delayed(
-                              const Duration(milliseconds: 200),
-                              () {
-                                AppBottomSheets.showBottomSheet(
-                                  title: "Create a new list".tr,
-                                  label: "list name".tr,
-                                );
-                              },
-                            );
-                          },
-                          child: Text(
-                            "Create a new list".tr,
-                            style: GoogleFonts.googleSans(
-                              color: Colors.white,
-                              fontSize: 16,
+                              // Future.delayed(Duration(milliseconds: 100), () {
+                              //   AppBottomSheets.showBottomSheet(
+                              //     title: "Create a new list".tr,
+                              //     label: "list name".tr,
+                              //     controller: createListCtrl,
+                              //     focusNode: createListFocusNode,
+                              //     onDone: () async {
+                              //       await createFavoriteList();
+                              //     },
+                              //   );
+                              // });
+                              Future.delayed(
+                                const Duration(milliseconds: 100),
+                                () {
+                                  AppBottomSheets.showBottomSheet(
+                                    title: "Create a list".tr,
+                                    controller: createListCtrl,
+                                    focusNode: createListFocusNode,
+                                    label: "List name".tr,
+                                    onDone: () async {
+                                      if (isLoading.value) return;
+                                      Get.back();
+                                      await createFavoriteList();
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                            child: Text(
+                              "Create a new list".tr,
+                              style: GoogleFonts.googleSans(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }
+                      );
+                    }
 
-                  final list = sortedLists[index];
+                    final list = sortedLists[index];
 
-                  return Obx(() {
-                    final isSelected =
-                        favoriteItemsMap[key] == list["id"].toString();
-                    final theme = Theme.of(context);
+                    return Obx(() {
+                      final isSelected =
+                          favoriteItemsMap[key] == list["id"].toString();
+                      final theme = Theme.of(context);
 
-                    return InkWell(
-                      borderRadius: BorderRadius.circular(16),
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(16),
 
-                      onTap: () {
-                        moveItemToList(
-                          itemId,
-                          itemType,
-                          list["id"].toString(),
-                          list["name"].toString(),
-                          context,
-                        );
-                      },
+                        onTap: () async {
+                          moveItemToList(
+                            itemId,
+                            itemType,
+                            list["id"].toString(),
+                            list["name"].toString(),
+                            context,
+                          );
+                        },
 
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: list["cover_image"] == null
-                                  ? const Icon(Icons.image_outlined)
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(5),
-                                      child: Image.network(
-                                        list["cover_image"],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                            ),
-
-                            SizedBox(width: 16),
-
-                            Expanded(
-                              child: Obx(() {
-                                final listId = list["id"]?.toString() ?? "";
-                                final count = activityCounts[listId] ?? 0;
-
-                                return ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  title: SizedBox(
-                                    width: 200,
-                                    child: Text(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      list["name"]?.toString() ?? "",
-                                      style: AppFonts.fontsGeneral.copyWith(
-                                        color: theme.colorScheme.secondary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    "$count ${count == 1 ? 'activity' : 'activities'}",
-                                    style: AppFonts.fontDescriptionsmall
-                                        .copyWith(
-                                          color:
-                                              theme.textTheme.titleSmall?.color,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: list["cover_image"] == null
+                                    ? const Icon(Icons.image_outlined)
+                                    : ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Image.network(
+                                          list["cover_image"],
+                                          fit: BoxFit.cover,
                                         ),
-                                  ),
-                                );
-                              }),
-                            ),
-
-                            if (isSelected)
-                              Icon(
-                                Icons.check,
-                                color: Theme.of(context).primaryColor,
+                                      ),
                               ),
-                          ],
+
+                              SizedBox(width: 16),
+
+                              Expanded(
+                                child: Obx(() {
+                                  final listId = list["id"]?.toString() ?? "";
+                                  print("UI listId: $listId");
+                                  print("UI count: ${activityCounts[listId]}");
+                                  final count = activityCounts[listId] ?? 0;
+
+                                  return ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: SizedBox(
+                                      width: 200,
+                                      child: Text(
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        list["name"]?.toString() ?? "",
+                                        style: AppFonts.fontsGeneral.copyWith(
+                                          color: theme.colorScheme.secondary,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      "$count ${count == 1 ? 'activity' : 'activities'}",
+                                      style: AppFonts.fontDescriptionsmall
+                                          .copyWith(
+                                            color: theme
+                                                .textTheme
+                                                .titleSmall
+                                                ?.color,
+                                          ),
+                                    ),
+                                  );
+                                }),
+                              ),
+
+                              if (isSelected)
+                                Icon(
+                                  Icons.check,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  });
-                },
-              ),
-            ),
+                      );
+                    });
+                  },
+                ),
+              );
+            }),
 
             const SizedBox(height: 30),
           ],
@@ -435,7 +476,7 @@ class FavoriteScreenController extends GetxController {
     );
   }
 
-  void _showLoginDialog(BuildContext context) {
+  void showLoginDialog(BuildContext context) {
     final theme = Theme.of(context);
 
     showDialog(
@@ -483,49 +524,6 @@ class FavoriteScreenController extends GetxController {
     );
   }
 
-  // Future<void> moveItemToList(
-  //   String itemId,
-  //   FavoriteItemType itemType,
-  //   String listId,
-  //   String listName,
-  //   BuildContext context,
-  // ) async {
-  //   final key = "${itemType.name}_$itemId";
-
-  //   try {
-  //     await favoriteService.addFavoriteItem(
-  //       listId: listId,
-  //       itemId: itemId,
-  //       type: itemType,
-  //     );
-
-  //     // await getFavoriteLists();
-
-  //     // favoriteItemsMap[key] = listId;
-  //     // favoriteItemsMap.refresh();
-  //     await favoriteService.addFavoriteItem(
-  //       listId: listId,
-  //       itemId: itemId,
-  //       type: itemType,
-  //     );
-
-  //     // update count immediately
-  //     activityCounts[listId] = (activityCounts[listId] ?? 0) + 1;
-
-  //     activityCounts.refresh();
-
-  //     favoriteItemsMap[key] = listId;
-  //     favoriteItemsMap.refresh();
-
-  //     await getFavoriteLists();
-
-  //     Get.back();
-
-  //     showSavedSnackbar(itemId, itemType, context, listName);
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
   Future<void> moveItemToList(
     String itemId,
     FavoriteItemType itemType,
@@ -535,29 +533,71 @@ class FavoriteScreenController extends GetxController {
   ) async {
     final key = "${itemType.name}_$itemId";
 
-    print("ADDING FAVORITE KEY: $key");
-
     try {
+      // Current list of this item
+      final oldListId = favoriteItemsMap[key];
+
+      // If selecting the same list, just close
+      if (oldListId == listId) {
+        Get.back();
+        return;
+      }
+
+      // Remove from old list first
+      if (oldListId != null) {
+        await favoriteService.deleteFavoriteItem(
+          listId: oldListId.toString(),
+          itemId: itemId,
+        );
+      }
+
+      // Update old list because its count/image changed
+      await updateSingleFavoriteList(oldListId.toString());
+
+      // Add to new list
       await favoriteService.addFavoriteItem(
         listId: listId,
         itemId: itemId,
         type: itemType,
       );
 
+      // Update only the new selected list
+      await updateSingleFavoriteList(listId);
+
+      // Update local map
       favoriteItemsMap[key] = listId;
-
       favoriteItemsMap.refresh();
-
-      print("UPDATED MAP:");
-      print(favoriteItemsMap);
-
-      await getFavoriteLists();
 
       Get.back();
 
       showSavedSnackbar(itemId, itemType, context, listName);
     } catch (e) {
-      print(e);
+      print("Move item error: $e");
+    }
+  }
+
+  Future<void> updateSingleFavoriteList(String listId) async {
+    try {
+      final itemResponse = await favoriteService.getFavoriteItems(listId);
+
+      final items = itemResponse["data"] ?? [];
+
+      final index = favoriteLists.indexWhere(
+        (list) => list["id"].toString() == listId,
+      );
+
+      if (index != -1) {
+        favoriteLists[index]["cover_image"] = items.isNotEmpty
+            ? items.first["image_url"]
+            : null;
+
+        activityCounts[listId] = items.length;
+
+        favoriteLists.refresh();
+        activityCounts.refresh();
+      }
+    } catch (e) {
+      print("Update single list error: $e");
     }
   }
 
@@ -567,26 +607,45 @@ class FavoriteScreenController extends GetxController {
     BuildContext context,
   ) async {
     if (isGuest) {
-      _showLoginDialog(context);
+      showLoginDialog(context);
       return;
     }
     final key = "${itemType.name}_$itemId";
 
+    // if (isFavorite(itemId, itemType)) {
+    //   final listId = favoriteItemsMap[key];
+
+    //   if (listId == null) return;
+
+    //   favoriteItemsMap.remove(key);
+    //   favoriteItemsMap.refresh();
+
+    //   await deleteFavorite(listId: listId, itemId: itemId);
+
+    //   Get.snackbar(
+    //     "Removed",
+    //     "Removed from favorites",
+    //     snackPosition: SnackPosition.BOTTOM,
+    //   );
+    // }
     if (isFavorite(itemId, itemType)) {
       final listId = favoriteItemsMap[key];
 
       if (listId == null) return;
 
+      // Update UI immediately
       favoriteItemsMap.remove(key);
       favoriteItemsMap.refresh();
 
-      await deleteFavorite(listId: listId, itemId: itemId);
-
+      // Show feedback immediately
       Get.snackbar(
         "Removed",
         "Removed from favorites",
         snackPosition: SnackPosition.BOTTOM,
       );
+
+      // Delete in background
+      deleteFavorite(listId: listId, itemId: itemId);
     } else {
       showSelectListBottomSheet(itemId, itemType, context);
     }
@@ -602,26 +661,20 @@ class FavoriteScreenController extends GetxController {
         final data = response["data"];
 
         if (data is List) {
-          favoriteItems.assignAll(List<Map<String, dynamic>>.from(data));
+          final items = List<Map<String, dynamic>>.from(data);
 
-          // Update favorite status map
-          favoriteItemsMap.clear();
-
-          for (var item in favoriteItems) {
+          for (var item in items) {
             final itemId = item["id"]?.toString();
             final itemType = item["item_type"]?.toString();
 
             if (itemId != null && itemType != null) {
-              final key = "${itemType}_$itemId";
-
-              favoriteItemsMap[key] = listId;
+              favoriteItemsMap["${itemType}_$itemId"] = listId;
             }
           }
 
           favoriteItemsMap.refresh();
 
-          // Update activity count for this list
-          activityCounts[listId] = favoriteItems.length;
+          activityCounts[listId] = items.length;
           activityCounts.refresh();
         } else {
           favoriteItems.clear();
@@ -664,49 +717,42 @@ class FavoriteScreenController extends GetxController {
     }
   }
 
-  // Future<void> loadFavoriteStatus() async {
-  //   favoriteItemsMap.clear();
-
-  //   await getFavoriteLists();
-
-  //   for (final list in favoriteLists) {
-  //     final items = await favoriteService.getFavoriteItems(
-  //       list["id"].toString(),
-  //     );
-
-  //     for (final item in items) {
-  //       favoriteItemsMap["place_${item["place_id"]}"] = list["id"].toString();
-  //     }
-  //   }
-  // }
-
   Future<void> loadFavoriteStatus() async {
-    favoriteItemsMap.clear();
+    try {
+      favoriteItemsMap.clear();
 
-    await getFavoriteLists();
+      await getFavoriteLists();
 
-    for (final list in favoriteLists) {
-      final response = await favoriteService.getFavoriteItems(
-        list["id"].toString(),
-      );
+      final futures = favoriteLists.map((list) {
+        return favoriteService.getFavoriteItems(list["id"].toString());
+      }).toList();
 
-      if (response["result"] == true) {
-        final items = response["data"] ?? [];
+      final responses = await Future.wait(futures);
 
-        for (final item in items) {
-          final id = item["id"]?.toString();
-          final type = item["item_type"]?.toString();
+      for (int i = 0; i < responses.length; i++) {
+        final response = responses[i];
+        final list = favoriteLists[i];
 
-          if (id != null && type != null) {
-            favoriteItemsMap["${type}_$id"] = list["id"].toString();
+        if (response["result"] == true) {
+          final items = response["data"] ?? [];
+
+          for (final item in items) {
+            final id = item["id"]?.toString();
+            final type = item["item_type"]?.toString();
+
+            if (id != null && type != null) {
+              favoriteItemsMap["${type}_$id"] = list["id"].toString();
+            }
           }
         }
       }
+
+      favoriteItemsMap.refresh();
+
+      print("Favorite map: $favoriteItemsMap");
+    } catch (e) {
+      print("Load favorite status error: $e");
     }
-
-    favoriteItemsMap.refresh();
-
-    print("Favorite map: $favoriteItemsMap");
   }
 
   @override

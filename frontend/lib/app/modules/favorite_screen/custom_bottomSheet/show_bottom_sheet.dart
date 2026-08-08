@@ -17,18 +17,16 @@ class AppBottomSheets {
     return Get.bottomSheet(
       Container(
         height: Get.height * 0.5,
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
           color: theme.colorScheme.primaryContainer,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
                   GestureDetector(
@@ -41,7 +39,7 @@ class AppBottomSheets {
                     ),
                   ),
 
-                  const Spacer(),
+                  Spacer(),
 
                   Text(
                     title,
@@ -51,9 +49,12 @@ class AppBottomSheets {
                     ),
                   ),
 
-                  const Spacer(),
+                  Spacer(),
 
                   Obx(() {
+                    final controller = Get.find<FavoriteScreenController>();
+
+                    print("Button sees: ${controller.canCreateList.value}");
                     bool canCreate =
                         Get.isRegistered<FavoriteScreenController>()
                         ? Get.find<FavoriteScreenController>()
@@ -63,9 +64,7 @@ class AppBottomSheets {
 
                     bool canRename =
                         Get.isRegistered<FavScreen2ViewController>()
-                        ? Get.find<FavScreen2ViewController>()
-                              .canRename
-                              .value
+                        ? Get.find<FavScreen2ViewController>().canRename.value
                         : false;
 
                     bool canSubmit = canCreate || canRename;
@@ -118,10 +117,7 @@ class AppBottomSheets {
 
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: theme.dividerColor,
-                      width: 1,
-                    ),
+                    borderSide: BorderSide(color: theme.dividerColor, width: 1),
                   ),
 
                   focusedBorder: OutlineInputBorder(

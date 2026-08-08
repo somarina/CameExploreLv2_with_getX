@@ -30,6 +30,11 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
         actions: [
           Bounceable(
             onTap: () {
+              if (controller.isGuest) {
+                controller.showLoginDialog(context);
+                return;
+              }
+
               AppBottomSheets.showBottomSheet(
                 title: "Create a list".tr,
                 controller: controller.createListCtrl,
