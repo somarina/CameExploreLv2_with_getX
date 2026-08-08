@@ -17,27 +17,6 @@ class SearchResultScreenController extends GetxController {
   final RxString selectedCategory = "".obs;
   String currentKeyword = "";
 
-  // void searchPlaces(String keyword) {
-  //   if (keyword.trim().isEmpty) {
-  //     searchResults.clear();
-  //     return;
-  //   }
-
-  //   final query = keyword.toLowerCase().trim();
-
-  //   searchResults.value = nearbyController.nearbyPlaces.where((place) {
-  //     final nameEn = place.nameEn.toLowerCase();
-  //     final nameKm = place.nameKm.toLowerCase();
-  //     final provinceEn = place.province.toLowerCase();
-  //     final provinceKm = place.provinceKm.toLowerCase();
-
-  //     return nameEn.contains(query) ||
-  //         nameKm.contains(query) ||
-  //         provinceEn.contains(query) ||
-  //         provinceKm.contains(query);
-  //   }).toList();
-  // }
-
   Future<void> searchPlaces(String keyword) async {
     currentKeyword = keyword;
 
