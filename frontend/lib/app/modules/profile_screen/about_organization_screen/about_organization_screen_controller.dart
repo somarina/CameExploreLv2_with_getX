@@ -9,6 +9,7 @@ class AboutOrganizationController extends GetxController {
     DeveloperModel(
       name: "dev_1".tr,
       role: "Flutter Developer",
+      image: "assets/dev_image/marina.jpeg",
       description: "Developed CamExplore tourism mobile application",
       description2: "UX/UI Desisn",
       description3: "Built explore and detail screens",
@@ -22,6 +23,7 @@ class AboutOrganizationController extends GetxController {
     DeveloperModel(
       name: "dev_2".tr,
       role: "Flutter Developer",
+      image: "assets/dev_image/naihuoy.jpeg",
       description: "Developed CamExplore tourism mobile application",
       description2: "UX/UI Desisn",
       description3: "Built explore and detail screens",
@@ -33,6 +35,7 @@ class AboutOrganizationController extends GetxController {
     ),
     DeveloperModel(
       name: "dev_3".tr,
+      image: "assets/dev_image/songheng.jpeg",
       role: "Flutter Developer",
       description: "Developed CamExplore tourism mobile application",
       description2: "UX/UI Desisn",
@@ -44,6 +47,7 @@ class AboutOrganizationController extends GetxController {
       skills: ["Flutter", "GetX", "Firebase", "Figma"],
     ),
     DeveloperModel(
+      image: "assets/dev_image/vouchly.jpeg",
       name: "dev_4".tr,
       role: "Flutter Developer",
       description: "Developed CamExplore tourism mobile application",

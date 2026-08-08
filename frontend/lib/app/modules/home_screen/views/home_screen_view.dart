@@ -1050,8 +1050,11 @@ class HomeScreenView extends GetView<HomeScreenController> {
                                     hotel["address_km"] ??
                                     ""),
 
-                          rating: (hotel["rating"] ?? 0).toDouble(),
-
+                          rating:
+                              (double.tryParse(
+                                (hotel["rating"] ?? 0.0).toString(),
+                              ) ??
+                              0.0),
                           review_count:
                               int.tryParse(
                                 (hotel["review_count"] ??

@@ -119,6 +119,7 @@ class PackageWriteReviewViewController extends GetxController {
           final homeCtrl = Get.find<HomeScreenController>();
           homeCtrl.getPlaces();
           homeCtrl.getPackages();
+
         }
 
         Get.back(result: true);
