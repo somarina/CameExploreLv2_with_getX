@@ -60,7 +60,7 @@ class UserProfileScreenViewController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-
+    selectedLanguage.value = box.read("language") ?? "kmKH";
     getProfile();
   }
 
@@ -96,16 +96,17 @@ class UserProfileScreenViewController extends GetxController {
     }
   }
 
+  bool isActive = true;
+  final RxString selectedLanguage = 'kmKH'.obs;
   void updateLocale(String value) async {
+    selectedLanguage.value = value;
+
     await box.write("language", value);
+
     if (value == "kmKH") {
-      Get.updateLocale(Locale("kmKH"));
-      // fonts
-      // Get.changeTheme(
-      //   ThemeData(textTheme: GoogleFonts.googleSansCodeTextTheme()),
-      // );
+      Get.updateLocale(const Locale("kmKH"));
     } else {
-      Get.updateLocale(Locale("enUS"));
+      Get.updateLocale(const Locale("enUS"));
     }
   }
 
