@@ -57,10 +57,7 @@ class ApiConfig {
                     box.erase();
                     if (Get.currentRoute != Routes.LOGIN_SCREEN) {
                       Get.offAllNamed(Routes.LOGIN_SCREEN);
-                      Get.snackbar(
-                        "Session expired",
-                        "Please log in again.",
-                      );
+                      Get.snackbar("Session expired", "Please log in again.");
                     }
                   }
                 }
