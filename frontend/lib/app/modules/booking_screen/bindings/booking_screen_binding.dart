@@ -6,5 +6,6 @@ class BookingScreenBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<BookingScreenController>(() => BookingScreenController());
+   
   }
 }

@@ -4,10 +4,9 @@ import 'package:frontend/app/core/api/services/auth_services.dart';
 import 'package:frontend/app/core/api/services/category_service.dart';
 import 'package:frontend/app/core/api/services/hotels_services.dart';
 import 'package:frontend/app/core/api/services/places_services.dart';
-import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/core/api/services/review_hotel_services.dart';
 import 'package:frontend/app/core/api/services/travel_package_services.dart';
-import 'package:frontend/app/modules/hotel_detail_screen/hotel_detail_screen_view.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -63,9 +62,9 @@ class HomeScreenController extends GetxController {
   RxBool isLoadingLocation = false.obs;
 
   List<String> imgList = [
-    'assets/images/homescreen/slider1.png',
-    'assets/images/homescreen/slider2.png',
-    'assets/images/homescreen/slider3.png',
+    'assets/images/slider1.png',
+    'assets/images/slider2.png',
+    'assets/images/slider3.png',
   ];
 
   void changeIndex(int index) {

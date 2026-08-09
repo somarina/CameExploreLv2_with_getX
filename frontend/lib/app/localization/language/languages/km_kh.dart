@@ -208,7 +208,7 @@ Map<String, String> kmKH = {
   "Enter new list name": "បញ្ចូលឈ្មោះបញ្ជីថ្មី",
   "delete_list_confirm":
       "តើអ្នកបានយល់ព្រមទេថា​អ្នកចង់លុបបញ្ជី @listName នេះ? សកម្មភាពទាំងអស់ដែលអ្នកបានរក្សាទុកនឹងត្រូវបាត់បង់",
-  "No favorite lists yet": "មិនទាន់មានបញ្ជីចំណូលចិត្តទេ", 
+  "No favorite lists yet": "មិនទាន់មានបញ្ជីចំណូលចិត្តទេ",
   "saved": "បានរក្សាទុក",
   "day": "ថ្ងៃ",
   "days": "ថ្ងៃ",
@@ -219,7 +219,8 @@ Map<String, String> kmKH = {
   "ago": "មុន",
   "saved_just_now": "បានរក្សាទុកមុននេះបន្តិច",
   "Login Required": "ត្រូវការចូលគណនីជាមុនសិន",
-  "Please log in or create an account to save items to your favorites.": "សូមចូលគណនី ឬបង្កើតគណនីថ្មី ដើម្បីរក្សាទុកទៅក្នុងចំណូលចិត្តរបស់អ្នក",
+  "Please log in or create an account to save items to your favorites.":
+      "សូមចូលគណនី ឬបង្កើតគណនីថ្មី ដើម្បីរក្សាទុកទៅក្នុងចំណូលចិត្តរបស់អ្នក",
 
   // Search Screen
   "Most search": "ការស្វែងរកច្រើនបំផុត",
@@ -597,5 +598,13 @@ Map<String, String> kmKH = {
   "Travel-Package": "កញ្ចប់ដំណើរកម្សាន្ត",
 
   "no_restaurant_found": "មិនមានភោជនីយដ្ឋានទេ!",
-  "Restaurant":"ភោជនីយដ្ឋាន"
+  "Restaurant": "ភោជនីយដ្ឋាន",
+  "foreigner": "ជនបរទេស",
+
+  "cambodian": "ជនជាតិខ្មែរ",
+  "student": "សិស្ស / និស្សិត",
+  "resident_adult": "មនុស្សពេញវ័យស្នាក់នៅ",
+  "non_resident_adult": "មនុស្សពេញវ័យមិនស្នាក់នៅ",
+  "standard_rate": "តម្លៃទូទៅ",
+    "pay_via_card":"ទូទាត់តាមកាត",
 };

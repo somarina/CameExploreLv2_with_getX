@@ -1,6 +1,5 @@
 part of 'package_checkout_screen_view.dart';
 
-
 class PackageCheckoutScreenViewController extends GetxController {
   // Existing controllers & variables ...
   var themeCtrl = Get.find<ThemeModeViewController>();
@@ -9,6 +8,11 @@ class PackageCheckoutScreenViewController extends GetxController {
   final emailCtrl = TextEditingController();
   final phoneCtrl = TextEditingController();
   final noteCtrl = TextEditingController();
+
+  final cardHolderCtrl = TextEditingController();
+  final cardNumberCtrl = TextEditingController();
+  final cardExpiryCtrl = TextEditingController();
+  final cardCvvCtrl = TextEditingController();
   final noteLength = 0.obs;
   double price = 0;
   int adultCount = 1;
@@ -55,7 +59,7 @@ class PackageCheckoutScreenViewController extends GetxController {
     if (image != null) {
       uploadedInvoice.value = image;
       Get.snackbar(
-        "Success", 
+        "Success",
         "Invoice uploaded successfully!",
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -86,7 +90,7 @@ class PackageCheckoutScreenViewController extends GetxController {
       Get.snackbar(
         "Invoice Required",
         "Please upload your payment invoice before finishing.",
-        backgroundColor: Colors.orange,
+        // backgroundColor: Colors.orange,
         colorText: Colors.white,
       );
       return false;
@@ -118,19 +122,41 @@ class PackageCheckoutScreenViewController extends GetxController {
 
   bool validateGuestInfo() {
     if (firstNameCtrl.text.trim().isEmpty) {
-      Get.snackbar("Error", "Please enter first name", backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Error",
+        "Please enter first name",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
     if (lastNameCtrl.text.trim().isEmpty) {
-      Get.snackbar("Error", "Please enter last name", backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Error",
+        "Please enter last name",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
-    if (emailCtrl.text.trim().isEmpty || !GetUtils.isEmail(emailCtrl.text.trim())) {
-      Get.snackbar("Error", "Please enter a valid email", backgroundColor: Colors.red, colorText: Colors.white);
+    if (emailCtrl.text.trim().isEmpty ||
+        !GetUtils.isEmail(emailCtrl.text.trim())) {
+      Get.snackbar(
+        "Error",
+        "Please enter a valid email",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
-    if (phoneCtrl.text.trim().isEmpty || !RegExp(r'^(0|855)?[1-9][0-9]{7,8}$').hasMatch(phoneCtrl.text.trim())) {
-      Get.snackbar("Error", "Please enter a valid mobile number", backgroundColor: Colors.red, colorText: Colors.white);
+    if (phoneCtrl.text.trim().isEmpty ||
+        !RegExp(r'^(0|855)?[1-9][0-9]{7,8}$').hasMatch(phoneCtrl.text.trim())) {
+      Get.snackbar(
+        "Error",
+        "Please enter a valid mobile number",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
     return true;

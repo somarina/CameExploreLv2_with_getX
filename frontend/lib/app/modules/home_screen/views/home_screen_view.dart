@@ -161,14 +161,14 @@ class HomeScreenView extends GetView<HomeScreenController> {
 
                         const SizedBox(width: 10),
 
-                        Bounceable(
-                          onTap: () {},
-                          child: const Icon(
-                            Icons.notifications_outlined,
-                            color: Color(0xffEAEAEA),
-                            size: 30,
-                          ),
-                        ),
+                        // Bounceable(
+                        //   onTap: () {},
+                        //   child: const Icon(
+                        //     Icons.notifications_outlined,
+                        //     color: Color(0xffEAEAEA),
+                        //     size: 30,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ],

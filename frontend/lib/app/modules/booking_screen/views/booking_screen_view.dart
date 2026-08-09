@@ -258,24 +258,26 @@ class BookingScreenView extends GetView<BookingScreenController> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.location_on,
-                          color: Colors.white70,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          booking.location,
-                          style: GoogleFonts.googleSans(
+                    if (!isPackage && booking.location.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
                             color: Colors.white70,
-                            fontSize: 14,
+                            size: 16,
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(width: 4),
+                          Text(
+                            booking.location,
+                            style: GoogleFonts.googleSans(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -485,13 +487,15 @@ class BookingScreenView extends GetView<BookingScreenController> {
                                 Routes.PACKAGE_DETAIL,
                                 arguments: {
                                   "id": booking.packageId ?? booking.id,
-                                  "name_en": booking.hotelName,
-                                  "name_km": booking.hotelName,
+                                  "package_id": booking.packageId ?? booking.id,
+                                  "name_en": booking.nameEn,
+                                  "name_km": booking.nameKm,
                                   "price_per_person": booking.price,
                                   "duration_days": booking.nights,
                                   "description_en": booking.note,
                                   "image_url": booking.imageUrl,
                                   "images": booking.images,
+                                  "itinerary": booking.itinerary,
                                 },
                               );
                             } else {
@@ -500,7 +504,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                                 arguments: {
                                   'id': booking.hotelId,
                                   'hotel_id': booking.hotelId,
-                                  'name_en': booking.hotelName,
+                                  'name_en': booking.nameEn,
                                   'image_url': booking.imageUrl,
                                   'location': booking.location,
                                 },
@@ -527,6 +531,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                           ),
                         ),
                       ),
+                  
                     ],
                   ),
                 ],
