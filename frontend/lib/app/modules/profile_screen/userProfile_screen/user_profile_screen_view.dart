@@ -38,7 +38,6 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
               Obx(
                 () => controller.isLogin.value ? _login(context) : _guestUser(),
               ),
-              SizedBox(height: 50),
             ],
           ),
         ),
@@ -325,6 +324,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                       Get.context!,
                       text: "khmer".tr,
                       image: AppImage.khmerImage,
+                      languageCode: "kmKH",
                       onTap: () {
                         controller.updateLocale("kmKH");
                         Get.back();
@@ -335,6 +335,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                       Get.context!,
                       text: "english".tr,
                       image: AppImage.englishImage,
+                      languageCode: "enUS",
                       onTap: () {
                         controller.updateLocale("enUS");
                         Get.back();
@@ -359,41 +360,47 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     required String text,
     required String image,
     required VoidCallback onTap,
-    bool isActive = true,
+    required String languageCode,
   }) {
-    return Bounceable(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          // border: Border.all(
-          //   color: Theme.of(context).colorScheme.primary,
-          //   width: 2,
-          // ),
-          border: Border.all(
-            color: isActive ? Get.theme.colorScheme.primary : Colors.grey,
-            width: isActive ? 2 : 1,
+    return Obx(() {
+      final isActive = controller.selectedLanguage.value == languageCode;
+
+      return Bounceable(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isActive
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.grey,
+              width: isActive ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Text(
+                text,
+                style: GoogleFonts.spaceGrotesk(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 16,
+                ),
+              ),
+
+              const SizedBox(width: 5),
+
+              Image.asset(image),
+
+              const Spacer(),
+
+              if (isActive)
+                SvgPicture.asset(AppImage.doneIcon, width: 20, height: 20),
+            ],
           ),
         ),
-        child: Row(
-          children: [
-            Text(
-              text,
-              style: GoogleFonts.spaceGrotesk(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 16,
-              ),
-            ),
-            SizedBox(width: 5),
-            Image.asset(image),
-            // SvgPicture.asset(AppImage.khmerIcon)
-            Spacer(),
-            SvgPicture.asset(AppImage.doneIcon),
-          ],
-        ),
-      ),
-    );
+      );
+    });
   }
 
   Future<T?> showCustomPopupMenu<T>({
@@ -492,7 +499,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
   Widget _login(BuildContext context) {
     return Obx(
       () => controller.isLoading.value
-          ? const CircularProgressIndicator(color: Colors.white)
+          ?profileShimmer()
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -642,22 +649,195 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
     );
   }
 
-  Widget buildShimmer(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey.withValues(alpha: 0.8),
-        highlightColor: Colors.grey.shade100,
-        child: Container(
-          height: 45,
-          decoration: BoxDecoration(
-            color: Colors.grey.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(25),
+
+
+Widget profileShimmer() {
+  return Shimmer.fromColors(
+    baseColor: const Color(0xFFBDBDBD).withValues(alpha: 0.5),
+    highlightColor: const Color(0xFFE8E8E8).withValues(alpha: 0.8),
+    period: const Duration(milliseconds: 1200),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // =========================
+        // AVATAR - same as your UI
+        // =========================
+        DottedBorder(
+          options: const CircularDottedBorderOptions(
+            dashPattern: [80, 15],
+            strokeWidth: 3,
+            padding: EdgeInsets.all(5),
+            color: Color(0xFFBDBDBD),
+          ),
+          child: const CircleAvatar(
+            radius: 45,
+            backgroundColor: Color(0xFFBDBDBD),
           ),
         ),
+
+        const SizedBox(height: 10),
+
+        // =========================
+        // NAME
+        // =========================
+        Container(
+          width: 90,
+          height: 26,
+          decoration: BoxDecoration(
+            color: const Color(0xFFBDBDBD),
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+
+        const SizedBox(height: 8),
+
+        // =========================
+        // EMAIL
+        // =========================
+        Container(
+          width: 180,
+          height: 20,
+          decoration: BoxDecoration(
+            color: const Color(0xFFBDBDBD),
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        // =========================
+        // SAME CONTAINER
+        // =========================
+        _shimmerContainer(
+          children: [
+            _shimmerMenuItem(),
+            _shimmerMenuItem(),
+            _shimmerMenuItem(),
+            _shimmerMenuItem(),
+            _shimmerMenuItem(),
+            _shimmerMenuItem(),
+            _shimmerMenuItem(),
+            _shimmerMenuItem(),
+            _shimmerLogout(),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _shimmerContainer({
+  required List<Widget> children,
+}) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: const Color(0xFFBDBDBD),
+      borderRadius: const BorderRadius.vertical(
+        top: Radius.circular(30),
       ),
-    );
-  }
+    ),
+    child: Column(
+      children: children,
+    ),
+  );
+}
+
+Widget _shimmerMenuItem() {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    height: 50,
+    decoration: BoxDecoration(
+      color: const Color(0xFFBDBDBD),
+      border: Border.all(
+        color: const Color(0xFFBDBDBD),
+        width: 1.5,
+      ),
+      borderRadius: BorderRadius.circular(25),
+    ),
+    child: Row(
+      children: [
+        // Icon
+        Container(
+          width: 24,
+          height: 24,
+          decoration: const BoxDecoration(
+            color: Color(0xFFBDBDBD),
+            shape: BoxShape.circle,
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        // Title
+        Expanded(
+          child: Container(
+            height: 17,
+            decoration: BoxDecoration(
+              color: const Color(0xFFBDBDBD),
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        // Arrow
+        Container(
+          width: 30,
+          height: 30,
+          decoration: const BoxDecoration(
+            color: Color(0xFFBDBDBD),
+            shape: BoxShape.circle,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _shimmerLogout() {
+  return Column(
+    children: [
+      const SizedBox(height: 8),
+
+      Container(
+        width: double.infinity,
+        height: 45,
+        decoration: BoxDecoration(
+          color: const Color(0xFFBDBDBD),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: const BoxDecoration(
+                color: Color(0xFFBDBDBD),
+                shape: BoxShape.circle,
+              ),
+            ),
+
+            const SizedBox(width: 10),
+
+            Container(
+              width: 65,
+              height: 18,
+              decoration: BoxDecoration(
+                color: const Color(0xFFBDBDBD),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
 
   Widget btn(BuildContext context) {
     return Column(
@@ -690,7 +870,6 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             ],
           ),
         ),
-        SizedBox(height: 80),
       ],
     );
   }
