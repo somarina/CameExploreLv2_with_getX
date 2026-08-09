@@ -395,36 +395,36 @@ class LoginScreenView extends GetView<LoginScreenController> {
     );
   }
 
-  Widget _socialCircleButton({
-    required String imagePath,
-    required bool isDark,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(26),
-      child: Container(
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isDark ? Colors.white.withOpacity(.08) : Colors.white,
-          border: Border.all(
-            color: isDark ? Colors.white12 : Colors.grey.shade300,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(.06),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(10),
-        child: Image.asset(imagePath, fit: BoxFit.contain),
-      ),
-    );
-  } 
+  // Widget _socialCircleButton({
+  //   required String imagePath,
+  //   required bool isDark,
+  //   required VoidCallback onTap,
+  // }) {
+  //   return InkWell(
+  //     onTap: onTap,
+  //     borderRadius: BorderRadius.circular(26),
+  //     child: Container(
+  //       width: 52,
+  //       height: 52,
+  //       decoration: BoxDecoration(
+  //         shape: BoxShape.circle,
+  //         color: isDark ? Colors.white.withOpacity(.08) : Colors.white,
+  //         border: Border.all(
+  //           color: isDark ? Colors.white12 : Colors.grey.shade300,
+  //         ),
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: Colors.black.withOpacity(.06),
+  //             blurRadius: 8,
+  //             offset: const Offset(0, 3),
+  //           ),
+  //         ],
+  //       ),
+  //       padding: const EdgeInsets.all(10),
+  //       child: Image.asset(imagePath, fit: BoxFit.contain),
+  //     ),
+  //   );
+  // } 
 
   Widget _imageSidePanel() {
     return Padding(

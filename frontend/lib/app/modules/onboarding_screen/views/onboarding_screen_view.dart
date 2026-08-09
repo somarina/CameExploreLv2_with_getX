@@ -1,9 +1,7 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../controllers/onboarding_screen_controller.dart';
 
 class OnboardingScreenView extends GetView<OnboardingScreenController> {
@@ -190,17 +188,15 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
-        height: 375, // ← matches page 1 & 2 so title/description sit at the same height
+        height:
+            375, // ← matches page 1 & 2 so title/description sit at the same height
         child: ClipRRect(
           borderRadius: BorderRadius.circular(32),
           child: Stack(
             fit: StackFit.expand,
             children: [
               // Full-bleed hero image
-              Image.asset(
-                "assets/images/sunset04.png",
-                fit: BoxFit.cover,
-              ),
+              Image.asset("assets/images/sunset04.png", fit: BoxFit.cover),
 
               // Dark gradient so the glow + chips stay readable over the photo
               Container(
@@ -609,10 +605,10 @@ class SlantedLabelClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-    path.moveTo(16, 0);                        // top-left — slant starts here
-    path.lineTo(size.width, 0);                // top-right
+    path.moveTo(16, 0); // top-left — slant starts here
+    path.lineTo(size.width, 0); // top-right
     path.lineTo(size.width - 16, size.height); // bottom-right slant
-    path.lineTo(0, size.height);               // bottom-left straight
+    path.lineTo(0, size.height); // bottom-left straight
     path.close();
     return path;
   }
@@ -623,9 +619,8 @@ class SlantedLabelClipper extends CustomClipper<Path> {
 
 class _TapScale extends StatefulWidget {
   final Widget child;
-  final VoidCallback? onTap;
 
-  const _TapScale({required this.child, this.onTap});
+  const _TapScale({required this.child});
 
   @override
   State<_TapScale> createState() => _TapScaleState();
@@ -639,7 +634,6 @@ class _TapScaleState extends State<_TapScale> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
       onTapDown: (_) => _setScale(0.95),
       onTapUp: (_) => _setScale(1.0),
       onTapCancel: () => _setScale(1.0),

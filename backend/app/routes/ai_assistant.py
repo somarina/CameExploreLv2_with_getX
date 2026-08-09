@@ -175,7 +175,15 @@ async def ai_chat(payload: AiChatSchema, user: Optional[dict] = Depends(get_curr
     body = {
         "system_instruction": {"parts": [{"text": system_text}]},
         "contents": build_gemini_contents(payload),
-        "generationConfig": {"temperature": 0.7, "maxOutputTokens": 512},
+        # gemini-3.x models use thinkingLevel (not thinkingBudget, which is
+        # the Gemini 2.5-era param and causes a 400 INVALID_ARGUMENT here).
+        # Gemini 3 Flash can't fully disable thinking, so "low" is the
+        # minimum setting available.
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 1024,
+            "thinkingConfig": {"thinkingLevel": "low"},
+        },
     }
 
     try:
@@ -291,7 +299,18 @@ async def ai_identify_image(
     body = {
         "system_instruction": {"parts": [{"text": IMAGE_SYSTEM_INSTRUCTION}]},
         "contents": contents,
-        "generationConfig": {"temperature": 0.4, "maxOutputTokens": 512},
+        # gemini-3.x models use thinkingLevel (not thinkingBudget, which is
+        # the Gemini 2.5-era param and causes a 400 INVALID_ARGUMENT here).
+        # Gemini 3 Flash can't fully disable thinking, so "low" is the
+        # minimum setting available. responseMimeType forces Gemini's
+        # native JSON mode as a second safeguard on top of the prompt
+        # instructions.
+        "generationConfig": {
+            "temperature": 0.4,
+            "maxOutputTokens": 1024,
+            "thinkingConfig": {"thinkingLevel": "low"},
+            "responseMimeType": "application/json",
+        },
     }
 
     try:
@@ -315,7 +334,21 @@ async def ai_identify_image(
     try:
         raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
     except (KeyError, IndexError):
+        finish_reason = (data.get("candidates") or [{}])[0].get("finishReason")
+        usage = data.get("usageMetadata", {})
+        print(
+            f"[ai_identify_image] empty response - finishReason={finish_reason} "
+            f"usage={usage}"
+        )
         err("AI service returned an empty response", 502)
+
+    finish_reason = data["candidates"][0].get("finishReason")
+    if finish_reason == "MAX_TOKENS":
+        usage = data.get("usageMetadata", {})
+        print(
+            f"[ai_identify_image] response truncated by MAX_TOKENS - usage={usage} "
+            f"raw_text={raw_text!r}"
+        )
 
     parsed = parse_gemini_json(raw_text)
     if parsed is None:
