@@ -487,13 +487,15 @@ class BookingScreenView extends GetView<BookingScreenController> {
                                 Routes.PACKAGE_DETAIL,
                                 arguments: {
                                   "id": booking.packageId ?? booking.id,
-                                  "name_en": booking.hotelName,
-                                  "name_km": booking.hotelName,
+                                  "package_id": booking.packageId ?? booking.id,
+                                  "name_en": booking.nameEn,
+                                  "name_km": booking.nameKm,
                                   "price_per_person": booking.price,
                                   "duration_days": booking.nights,
                                   "description_en": booking.note,
                                   "image_url": booking.imageUrl,
                                   "images": booking.images,
+                                  "itinerary": booking.itinerary,
                                 },
                               );
                             } else {
@@ -502,7 +504,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                                 arguments: {
                                   'id': booking.hotelId,
                                   'hotel_id': booking.hotelId,
-                                  'name_en': booking.hotelName,
+                                  'name_en': booking.nameEn,
                                   'image_url': booking.imageUrl,
                                   'location': booking.location,
                                 },
@@ -529,6 +531,7 @@ class BookingScreenView extends GetView<BookingScreenController> {
                           ),
                         ),
                       ),
+                  
                     ],
                   ),
                 ],

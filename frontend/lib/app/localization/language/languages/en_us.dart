@@ -617,4 +617,5 @@ Map<String, String> enUS = {
   "resident_adult": "Resident Adult",
   "non_resident_adult": "Non-Resident Adult",
   "standard_rate": "Standard Rate",
+  "pay_via_card":"Pay via Card",
 };

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/app/core/api/services/review_place.dart';
+import 'package:frontend/app/core/api/services/travel_package_services.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/detail_places_screen/Gallery/gallery_view.dart';
 import 'package:frontend/app/modules/detail_places_screen/Gallery_seeall/gallery_seeall_view.dart';
@@ -611,7 +612,7 @@ class PackageDetailScreenView
       onTap: () {
         Get.toNamed(
           Routes.ITINERARY,
-          arguments: {"package": controller.package},
+        arguments: {"package": Map<String, dynamic>.from(controller.package)},
         );
       },
       child: Column(
@@ -948,46 +949,47 @@ class PackageDetailScreenView
             ],
           ),
         ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            const Icon(
-              Icons.location_on_outlined,
-              color: Colors.green,
-              size: 26,
-            ),
-            const SizedBox(width: 6),
+        // const SizedBox(height: 12),
+        // Row(
+        //   children: [
+        //     const Icon(
+        //       Icons.location_on_outlined,
+        //       color: Colors.green,
+        //       size: 26,
+        //     ),
+        //     const SizedBox(width: 6),
 
-            // --- DYNAMIC LOCATION DISPLAY ---
-            Obx(
-              () => Text(
-                controller.packageLocation,
-                style: GoogleFonts.googleSans(
-                  color: Theme.of(context).textTheme.titleSmall!.color,
-                  fontSize: 14,
-                ),
-              ),
-            ),
+        //     // --- DYNAMIC LOCATION DISPLAY ---
+        //     Obx(
+        //       () => Text(
+        //         controller.packageLocation,
+        //         style: GoogleFonts.googleSans(
+        //           color: Theme.of(context).textTheme.titleSmall!.color,
+        //           fontSize: 14,
+        //         ),
+        //       ),
+        //     ),
 
-            const Spacer(),
-            Container(
-              width: 5,
-              height: 5,
-              decoration: const BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              "km_away_text".tr,
-              style: GoogleFonts.googleSans(
-                color: Theme.of(context).textTheme.titleSmall!.color,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
+        //     const Spacer(),
+        //     Container(
+        //       width: 5,
+        //       height: 5,
+        //       decoration: const BoxDecoration(
+        //         color: Colors.green,
+        //         shape: BoxShape.circle,
+        //       ),
+        //     ),
+        //     const SizedBox(width: 4),
+        //     Text(
+        //       "km_away_text".tr,
+        //       style: GoogleFonts.googleSans(
+        //         color: Theme.of(context).textTheme.titleSmall!.color,
+        //         fontSize: 14,
+        //       ),
+        //     ),
+        //   ],
+        // ),
+     
       ],
     );
   }

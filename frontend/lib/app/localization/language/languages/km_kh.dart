@@ -606,4 +606,5 @@ Map<String, String> kmKH = {
   "resident_adult": "មនុស្សពេញវ័យស្នាក់នៅ",
   "non_resident_adult": "មនុស្សពេញវ័យមិនស្នាក់នៅ",
   "standard_rate": "តម្លៃទូទៅ",
+    "pay_via_card":"ទូទាត់តាមកាត",
 };

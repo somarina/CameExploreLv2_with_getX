@@ -111,103 +111,279 @@ class PackageCheckoutScreenView
 
             SizedBox(height: 28),
 
-            Text(
-              "Payment Method",
-              style: GoogleFonts.googleSans(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-
-            SizedBox(height: 16),
-
-            Obx(
-              () => Container(
-                padding: EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Row(
-                  children: [
-                    Radio<String>(
-                      value: "KHQR",
-                      groupValue: controller.selectedPayment.value,
-                      activeColor: Colors.green,
-                      onChanged: (value) {
-                        controller.selectedPayment.value = value ?? "KHQR";
-                      },
-                    ),
-
-                    Icon(Icons.qr_code_2, color: Colors.green, size: 30),
-
-                    SizedBox(width: 8),
-
-                    Text(
-                      "KHQR",
-                      style: GoogleFonts.googleSans(
-                        color: Colors.green,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18,
-                      ),
-                    ),
-
-                    SizedBox(width: 12),
-
-                    Expanded(
-                      child: Text(
-                        "pay_via_khqr".tr,
-                        style: GoogleFonts.googleSans(
-                          fontSize: 14,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        "Popular",
-                        style: GoogleFonts.googleSans(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: 16),
-
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(Icons.qr_code, color: Colors.green),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      "Scan with ABA, ACLEDA, Wing, or any KHQR-supported app to complete payment instantly.",
-                      style: GoogleFonts.googleSans(color: Colors.green),
-                    ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "payment_method".tr,
+                  style: GoogleFonts.googleSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                ],
-              ),
+                ),
+
+                SizedBox(height: 16),
+
+                // --- 1. KHQR Payment Method ---
+                Obx(() {
+                  final isSelected = controller.selectedPayment.value == "KHQR";
+                  return GestureDetector(
+                    onTap: () => controller.selectedPayment.value = "KHQR",
+                    child: Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.green
+                              : Colors.grey.shade300,
+                          width: isSelected ? 2 : 1,
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Row(
+                        children: [
+                          Radio<String>(
+                            value: "KHQR",
+                            groupValue: controller.selectedPayment.value,
+                            activeColor: Colors.green,
+                            onChanged: (value) {
+                              controller.selectedPayment.value =
+                                  value ?? "KHQR";
+                            },
+                          ),
+                          Icon(Icons.qr_code_2, color: Colors.green, size: 30),
+                          SizedBox(width: 8),
+                          Text(
+                            "KHQR",
+                            style: GoogleFonts.googleSans(
+                              color: Colors.green,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              "pay_via_khqr".tr,
+                              style: GoogleFonts.googleSans(
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              "Popular",
+                              style: GoogleFonts.googleSans(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+
+                SizedBox(height: 16),
+
+                // --- 2. Visa Card Payment Method ---
+                Obx(() {
+                  final isSelected = controller.selectedPayment.value == "VISA";
+                  return GestureDetector(
+                    onTap: () => controller.selectedPayment.value = "VISA",
+                    child: Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.green
+                              : Colors.grey.shade300,
+                          width: isSelected ? 2 : 1,
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Row(
+                        children: [
+                          Radio<String>(
+                            value: "VISA",
+                            groupValue: controller.selectedPayment.value,
+                            activeColor: Colors.green,
+                            onChanged: (value) {
+                              controller.selectedPayment.value =
+                                  value ?? "VISA";
+                            },
+                          ),
+                          Icon(
+                            Icons.credit_card,
+                            color: Colors.green,
+                            size: 30,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            "Visa / Card",
+                            style: GoogleFonts.googleSans(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              "pay_via_card".tr,
+                              style: GoogleFonts.googleSans(
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+
+                SizedBox(height: 16),
+
+                // --- 3. Pay at Place Payment Method ---
+                // Obx(
+                //   () {
+                //     final isSelected = controller.selectedPayment.value == "PAY_AT_PLACE";
+                //     return GestureDetector(
+                //       onTap: () => controller.selectedPayment.value = "PAY_AT_PLACE",
+                //       child: Container(
+                //         padding: EdgeInsets.all(6),
+                //         decoration: BoxDecoration(
+                //           border: Border.all(
+                //             color: isSelected ? Colors.green : Colors.grey.shade300,
+                //             width: isSelected ? 2 : 1,
+                //           ),
+                //           borderRadius: BorderRadius.circular(18),
+                //         ),
+                //         child: Row(
+                //           children: [
+                //             Radio<String>(
+                //               value: "PAY_AT_PLACE",
+                //               groupValue: controller.selectedPayment.value,
+                //               activeColor: Colors.green,
+                //               onChanged: (value) {
+                //                 controller.selectedPayment.value = value ?? "PAY_AT_PLACE";
+                //               },
+                //             ),
+                //             Icon(Icons.storefront, color: Colors.orange, size: 30),
+                //             SizedBox(width: 8),
+                //             Text(
+                //               "pay_at_place".tr,
+                //               style: GoogleFonts.googleSans(
+                //                 color: Theme.of(context).colorScheme.secondary,
+                //                 fontWeight: FontWeight.w700,
+                //                 fontSize: 18,
+                //               ),
+                //             ),
+                //             SizedBox(width: 12),
+                //             Expanded(
+                //               child: Text(
+                //                 "pay_upon_arrival".tr,
+                //                 style: GoogleFonts.googleSans(
+                //                   fontSize: 14,
+                //                   color: Theme.of(context).colorScheme.secondary,
+                //                 ),
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     );
+                //   },
+                // ),
+                SizedBox(height: 16),
+
+                // --- Dynamic Description Card ---
+                Obx(() {
+                  final selected = controller.selectedPayment.value;
+                  if (selected == "KHQR") {
+                    return Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.qr_code, color: Colors.green),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              "Scan with ABA, ACLEDA, Wing, or any KHQR-supported app to complete payment instantly.",
+                              style: GoogleFonts.googleSans(
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (selected == "VISA") {
+                    return Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.security, color: Colors.green.shade700),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              "Pay securely using your Visa, Mastercard, or JCB debit/credit card.",
+                              style: GoogleFonts.googleSans(
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.info_outline, color: Colors.orange),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              "You can pay with cash or card directly when you arrive at the location.",
+                              style: GoogleFonts.googleSans(
+                                color: Colors.orange.shade800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                }),
+              ],
             ),
 
             SizedBox(height: 24),
@@ -318,6 +494,7 @@ class PackageCheckoutScreenView
               ),
             ),
             SizedBox(height: 30),
+
             Row(
               children: [
                 Text(
@@ -340,6 +517,7 @@ class PackageCheckoutScreenView
               ],
             ),
             SizedBox(height: 10),
+
             TextField(
               controller: controller.noteCtrl,
               maxLines: 5,
@@ -357,7 +535,6 @@ class PackageCheckoutScreenView
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
                 ),
-
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide(
@@ -365,7 +542,6 @@ class PackageCheckoutScreenView
                     width: 1,
                   ),
                 ),
-
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide(
@@ -377,6 +553,7 @@ class PackageCheckoutScreenView
               ),
             ),
             SizedBox(height: 10),
+
             Align(
               alignment: Alignment.centerRight,
               child: Obx(
@@ -391,6 +568,7 @@ class PackageCheckoutScreenView
             ),
             SizedBox(height: 30),
 
+            // --- Action Submit Button ---
             SizedBox(
               width: double.infinity,
               height: 58,
@@ -401,272 +579,586 @@ class PackageCheckoutScreenView
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (!controller.validateGuestInfo()) return;
 
-                  // Start the 3-minute timer when opening the sheet
-                  controller.startPaymentTimer();
+                  final selectedMethod = controller.selectedPayment.value;
 
-                  showModalBottomSheet(
-                    context: context,
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24),
+                  if (selectedMethod == "KHQR") {
+                    controller.startPaymentTimer();
+
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(24),
+                        ),
                       ),
-                    ),
-                    builder: (context) {
-                      return Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 5,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Countdown Timer Header
-                            Obx(() {
-                              final isExpired =
-                                  controller.remainingSeconds.value == 0;
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
+                      builder: (context) {
+                        return Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 5,
                                 decoration: BoxDecoration(
-                                  color: isExpired
-                                      ? Colors.red.shade50
-                                      : Colors.amber.shade50,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: isExpired
-                                        ? Colors.red
-                                        : Colors.amber.shade700,
-                                  ),
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.timer_outlined,
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Countdown Timer Header
+                              Obx(() {
+                                final isExpired =
+                                    controller.remainingSeconds.value == 0;
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isExpired
+                                        ? Colors.red.shade50
+                                        : Colors.amber.shade50,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
                                       color: isExpired
                                           ? Colors.red
-                                          : Colors.amber.shade900,
-                                      size: 20,
+                                          : Colors.amber.shade700,
                                     ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      isExpired
-                                          ? "QR Expired"
-                                          : "Pay within ${controller.formattedTimer}",
-                                      style: GoogleFonts.googleSans(
-                                        fontWeight: FontWeight.bold,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.timer_outlined,
                                         color: isExpired
                                             ? Colors.red
                                             : Colors.amber.shade900,
-                                        fontSize: 14,
+                                        size: 20,
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        isExpired
+                                            ? "QR Expired"
+                                            : "Pay within ${controller.formattedTimer}",
+                                        style: GoogleFonts.googleSans(
+                                          fontWeight: FontWeight.bold,
+                                          color: isExpired
+                                              ? Colors.red
+                                              : Colors.amber.shade900,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+
+                              const SizedBox(height: 16),
+
+                              Text(
+                                "Scan KHQR to Pay",
+                                style: GoogleFonts.googleSans(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              );
-                            }),
-
-                            const SizedBox(height: 16),
-
-                            Text(
-                              "Scan KHQR to Pay",
-                              style: GoogleFonts.googleSans(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
                               ),
-                            ),
 
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            // QR Image Container with Expired Overlay
-                            Obx(() {
-                              final isExpired =
-                                  controller.remainingSeconds.value == 0;
-                              return Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Image.asset(
-                                      "assets/svg/qrr.png",
-                                      height: 240,
-                                      width: 280,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  if (isExpired)
-                                    Container(
-                                      height: 240,
-                                      width: 280,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.75),
-                                        borderRadius: BorderRadius.circular(16),
+                              // QR Image Container with Expired Overlay
+                              Obx(() {
+                                final isExpired =
+                                    controller.remainingSeconds.value == 0;
+                                return Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Image.asset(
+                                        "assets/svg/qrr.png",
+                                        height: 240,
+                                        width: 280,
+                                        fit: BoxFit.cover,
                                       ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.refresh,
-                                            color: Colors.white,
-                                            size: 40,
+                                    ),
+                                    if (isExpired)
+                                      Container(
+                                        height: 240,
+                                        width: 280,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.75),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
                                           ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            "QR Code Expired",
-                                            style: GoogleFonts.googleSans(
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.refresh,
                                               color: Colors.white,
-                                              fontWeight: FontWeight.bold,
+                                              size: 40,
                                             ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () =>
-                                                controller.startPaymentTimer(),
-                                            child: const Text("Refresh QR"),
-                                          ),
-                                        ],
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              "QR Code Expired",
+                                              style: GoogleFonts.googleSans(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () => controller
+                                                  .startPaymentTimer(),
+                                              child: const Text("Refresh QR"),
+                                            ),
+                                          ],
+                                        ),
                                       ),
+                                  ],
+                                );
+                              }),
+
+                              const SizedBox(height: 20),
+
+                              // Upload Invoice Button
+                              Obx(() {
+                                final file = controller.uploadedInvoice.value;
+                                return OutlinedButton.icon(
+                                  style: OutlinedButton.styleFrom(
+                                    minimumSize: const Size(
+                                      double.infinity,
+                                      50,
                                     ),
-                                ],
-                              );
-                            }),
-
-                            const SizedBox(height: 20),
-
-                            // Upload Invoice Button
-                            Obx(() {
-                              final file = controller.uploadedInvoice.value;
-                              return OutlinedButton.icon(
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: const Size(double.infinity, 50),
-                                  side: BorderSide(
-                                    color: file != null
-                                        ? Colors.green
-                                        : Colors.grey,
+                                    side: BorderSide(
+                                      color: file != null
+                                          ? Colors.green
+                                          : Colors.grey,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                onPressed: () => controller.pickInvoiceImage(),
-                                icon: Icon(
-                                  file != null
-                                      ? Icons.check_circle
-                                      : Icons.upload_file,
-                                  color: file != null
-                                      ? Colors.green
-                                      : Theme.of(context).colorScheme.secondary,
-                                ),
-                                label: Text(
-                                  file != null
-                                      ? "Invoice Uploaded"
-                                      : "Upload Invoice / Receipt",
-                                  style: GoogleFonts.googleSans(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                  onPressed: () =>
+                                      controller.pickInvoiceImage(),
+                                  icon: Icon(
+                                    file != null
+                                        ? Icons.check_circle
+                                        : Icons.upload_file,
                                     color: file != null
                                         ? Colors.green
                                         : Theme.of(
                                             context,
                                           ).colorScheme.secondary,
                                   ),
-                                ),
-                              );
-                            }),
+                                  label: Text(
+                                    file != null
+                                        ? "Invoice Uploaded"
+                                        : "Upload Invoice / Receipt",
+                                    style: GoogleFonts.googleSans(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: file != null
+                                          ? Colors.green
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.secondary,
+                                    ),
+                                  ),
+                                );
+                              }),
 
-                            const SizedBox(height: 20),
+                              const SizedBox(height: 20),
 
-                            // Action / Submit Button
-                            Obx(() {
-                              final isExpired =
-                                  controller.remainingSeconds.value == 0;
-                              return controller.isBookingLoading.value
-                                  ? const Center(
-                                      child: CircularProgressIndicator(),
-                                    )
-                                  : CustomButton(
-                                      title: "Done",
-                                      margin: EdgeInsets.zero,
-                                      onTap: isExpired
-                                          ? () {
-                                              Get.snackbar(
-                                                "Error",
-                                                "QR Code expired. Please refresh.",
-                                                backgroundColor: Colors.red,
-                                                colorText: Colors.white,
-                                              );
-                                            }
-                                          : () async {
-                                              final isSuccess = await controller
-                                                  .createBooking();
-                                              if (isSuccess) {
-                                                controller.stopPaymentTimer();
-                                                Get.offAllNamed(
-                                                  Routes.PACKAGE_CF_BOOKING,
-                                                  arguments: {
-                                                    ...controller.bookingData,
-                                                    "total": controller.total,
-                                                    "firstName": controller
-                                                        .firstNameCtrl
-                                                        .text
-                                                        .trim(),
-                                                    "lastName": controller
-                                                        .lastNameCtrl
-                                                        .text
-                                                        .trim(),
-                                                    "email": controller
-                                                        .emailCtrl
-                                                        .text
-                                                        .trim(),
-                                                    "phone": controller
-                                                        .phoneCtrl
-                                                        .text
-                                                        .trim(),
-                                                    "payment": controller
-                                                        .selectedPayment
-                                                        .value,
-                                                    "transactionDate":
-                                                        DateTime.now()
-                                                            .toIso8601String(),
-                                                  },
+                              // Done Button for KHQR
+                              Obx(() {
+                                final isExpired =
+                                    controller.remainingSeconds.value == 0;
+                                return controller.isBookingLoading.value
+                                    ? const Center(
+                                        child: CircularProgressIndicator(),
+                                      )
+                                    : CustomButton(
+                                        title: "Done",
+                                        margin: EdgeInsets.zero,
+                                        onTap: isExpired
+                                            ? () {
+                                                Get.snackbar(
+                                                  "Error",
+                                                  "QR Code expired. Please refresh.",
+                                                  backgroundColor: Colors.red,
+                                                  colorText: Colors.white,
                                                 );
                                               }
-                                            },
-                                    );
-                            }),
-                            const SizedBox(height: 20),
-                          ],
+                                            : () async {
+                                                final isSuccess =
+                                                    await controller
+                                                        .createBooking();
+                                                if (isSuccess) {
+                                                  controller.stopPaymentTimer();
+                                                  Get.offAllNamed(
+                                                    Routes.PACKAGE_CF_BOOKING,
+                                                    arguments: {
+                                                      ...controller.bookingData,
+                                                      "total": controller.total,
+                                                      "firstName": controller
+                                                          .firstNameCtrl
+                                                          .text
+                                                          .trim(),
+                                                      "lastName": controller
+                                                          .lastNameCtrl
+                                                          .text
+                                                          .trim(),
+                                                      "email": controller
+                                                          .emailCtrl
+                                                          .text
+                                                          .trim(),
+                                                      "phone": controller
+                                                          .phoneCtrl
+                                                          .text
+                                                          .trim(),
+                                                      "payment": controller
+                                                          .selectedPayment
+                                                          .value,
+                                                      "transactionDate":
+                                                          DateTime.now()
+                                                              .toIso8601String(),
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                      );
+                              }),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        );
+                      },
+                    ).then((_) {
+                      controller.stopPaymentTimer();
+                    });
+                  } else if (selectedMethod == "VISA") {
+                    // --- Open Visa Details Bottom Sheet ---
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(24),
                         ),
+                      ),
+                      builder: (context) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            left: 24,
+                            right: 24,
+                            top: 24,
+                            bottom:
+                                MediaQuery.of(context).viewInsets.bottom + 24,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Container(
+                                  width: 50,
+                                  height: 5,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.credit_card,
+                                    color: Colors.green.shade700,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    "Card Details",
+                                    style: GoogleFonts.googleSans(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Name on Card Field
+                              Text(
+                                "Name on Card",
+                                style: GoogleFonts.googleSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              TextField(
+                                controller: controller.cardHolderCtrl,
+                                decoration: InputDecoration(
+                                  hintText: "John Doe",
+                                  hintStyle: GoogleFonts.googleSans(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                  ),
+                                  filled: true,
+                                  fillColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              // Card Number Field
+                              Text(
+                                "Card Number",
+                                style: GoogleFonts.googleSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              TextField(
+                                controller: controller.cardNumberCtrl,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  hintText: "4111 2222 3333 4444",
+                                  hintStyle: GoogleFonts.googleSans(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.credit_card,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                  ),
+                                  filled: true,
+                                  fillColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
+                                  border: OutlineInputBorder(
+                                    
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              // Expiry Date & CVV Row
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Expiry Date",
+                                          style: GoogleFonts.googleSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        TextField(
+                                          controller: controller.cardExpiryCtrl,
+                                          keyboardType: TextInputType.datetime,
+                                          decoration: InputDecoration(
+                                            hintText: "MM/YY",
+                                            hintStyle: GoogleFonts.googleSans(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.secondary,
+                                            ),
+                                            filled: true,
+                                            fillColor: Theme.of(
+                                              context,
+                                            ).colorScheme.primaryContainer,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "CVV",
+                                          style: GoogleFonts.googleSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        TextField(
+                                          controller: controller.cardCvvCtrl,
+                                          obscureText: true,
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            hintText: "123",
+                                            hintStyle: GoogleFonts.googleSans(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.secondary,
+                                            ),
+                                            filled: true,
+                                            fillColor: Theme.of(
+                                              context,
+                                            ).colorScheme.primaryContainer,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 24),
+
+                              // Pay Now Button
+                              Obx(
+                                () => controller.isBookingLoading.value
+                                    ? const Center(
+                                        child: CircularProgressIndicator(),
+                                      )
+                                    : SizedBox(
+                                        width: double.infinity,
+                                        height: 50,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.green.shade700,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            final isSuccess = await controller
+                                                .createBooking();
+                                            if (isSuccess) {
+                                              Get.offAllNamed(
+                                                Routes.PACKAGE_CF_BOOKING,
+                                                arguments: {
+                                                  ...controller.bookingData,
+                                                  "total": controller.total,
+                                                  "firstName": controller
+                                                      .firstNameCtrl
+                                                      .text
+                                                      .trim(),
+                                                  "lastName": controller
+                                                      .lastNameCtrl
+                                                      .text
+                                                      .trim(),
+                                                  "email": controller
+                                                      .emailCtrl
+                                                      .text
+                                                      .trim(),
+                                                  "phone": controller
+                                                      .phoneCtrl
+                                                      .text
+                                                      .trim(),
+                                                  "payment": controller
+                                                      .selectedPayment
+                                                      .value,
+                                                  "transactionDate":
+                                                      DateTime.now()
+                                                          .toIso8601String(),
+                                                },
+                                              );
+                                            }
+                                          },
+                                          child: Text(
+                                            "Pay \$${controller.total.toStringAsFixed(2)}",
+                                            style: GoogleFonts.googleSans(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    // --- Pay at Place Direct Confirmation ---
+                    final isSuccess = await controller.createBooking();
+                    if (isSuccess) {
+                      Get.offAllNamed(
+                        Routes.PACKAGE_CF_BOOKING,
+                        arguments: {
+                          ...controller.bookingData,
+                          "total": controller.total,
+                          "firstName": controller.firstNameCtrl.text.trim(),
+                          "lastName": controller.lastNameCtrl.text.trim(),
+                          "email": controller.emailCtrl.text.trim(),
+                          "phone": controller.phoneCtrl.text.trim(),
+                          "payment": controller.selectedPayment.value,
+                          "transactionDate": DateTime.now().toIso8601String(),
+                        },
                       );
-                    },
-                  ).then((_) {
-                    controller.stopPaymentTimer();
-                  });
+                    }
+                  }
                 },
-                child: Text(
-                  "Pay via KHQR",
-                  style: GoogleFonts.googleSans(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                child: Obx(() {
+                  final paymentType = controller.selectedPayment.value;
+                  String btnText = "Confirm Booking";
+                  if (paymentType == "KHQR") {
+                    btnText = "Pay via KHQR";
+                  } else if (paymentType == "VISA") {
+                    btnText = "Pay via Card";
+                  }
+                  return Text(
+                    btnText,
+                    style: GoogleFonts.googleSans(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  );
+                }),
               ),
             ),
             SizedBox(height: 30),

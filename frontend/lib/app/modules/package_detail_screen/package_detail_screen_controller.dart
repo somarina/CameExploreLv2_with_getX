@@ -19,8 +19,11 @@ class PackageDetailScreenViewController extends GetxController {
   final RxMap<String, dynamic> package = <String, dynamic>{}.obs;
   var reviewsList = <dynamic>[].obs;
   var isLoadingReviews = false.obs;
+  var isLoading = false.obs; // Added missing reactive loading variable
   var reviewSummary = <String, dynamic>{}.obs;
+  
   final PlaceReviewService _reviewService = PlaceReviewService();
+  final TravelPackageServices _packageServices = TravelPackageServices(); // Added service dependency
 
   bool get isKhmer => Get.locale?.languageCode.startsWith("km") ?? false;
 
@@ -54,12 +57,15 @@ class PackageDetailScreenViewController extends GetxController {
 
   final selectedStartTime = "".obs;
   List<String> get startTimes => List<String>.from(package["start_time"] ?? []);
+
   @override
   void onInit() {
     super.onInit();
 
     if (Get.arguments != null) {
-      package.assignAll(Map<String, dynamic>.from(Get.arguments));
+      if (Get.arguments is Map<String, dynamic>) {
+        package.assignAll(Map<String, dynamic>.from(Get.arguments));
+      }
     }
 
     if (startTimes.isNotEmpty) {
@@ -70,6 +76,14 @@ class PackageDetailScreenViewController extends GetxController {
       adultCount.value = maxPeople;
     }
 
+    // Check if itinerary is empty and fetch package details from API
+    final String packageId =
+        (package["package_id"] ?? package["id"] ?? "").toString();
+
+    if (itinerary.isEmpty && packageId.isNotEmpty) {
+      fetchPackageDetails(packageId);
+    }
+
     fetchReviews();
   }
 
@@ -77,8 +91,24 @@ class PackageDetailScreenViewController extends GetxController {
     currentIndex.value = index;
   }
 
+  Future<void> fetchPackageDetails(String id) async {
+    try {
+      isLoading.value = true;
+      final response = await _packageServices.fetchTravelPackageById(id);
+      if (response != null) {
+  
+        if (response is Map<String, dynamic>) {
+          package.assignAll(response);
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching package details: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   String get packageLocation {
-    // Extract province/location dynamic field
     final String province = isKhmer
         ? (package["province_km"] ??
               package["province"] ??
@@ -91,7 +121,6 @@ class PackageDetailScreenViewController extends GetxController {
               package["address_en"] ??
               "");
 
-   
     String locationName = province.trim();
 
     if (locationName.isEmpty) {
@@ -101,10 +130,9 @@ class PackageDetailScreenViewController extends GetxController {
       } else if (title.contains("-")) {
         locationName = title.split("-").first.trim();
       } else {
-        locationName = ""; 
+        locationName = "";
       }
     }
-
 
     if (locationName.toLowerCase().contains("cambodia")) {
       return locationName;

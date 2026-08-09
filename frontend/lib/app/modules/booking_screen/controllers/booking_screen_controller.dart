@@ -49,6 +49,7 @@ class BookingModel {
   final String guestPhone;
   final String transactionDate;
   final String note;
+  final List<dynamic> itinerary;
 
   BookingModel({
     required this.id,
@@ -79,6 +80,7 @@ class BookingModel {
     required this.guestPhone,
     required this.transactionDate,
     this.note = '',
+    this.itinerary = const [],
   });
 
   bool get isPackage => bookingType == 'package';
@@ -272,6 +274,11 @@ class BookingModel {
         json['remarks'] ??
         '';
 
+    List<dynamic> parsedItinerary = [];
+    if (json['itinerary'] is List) {
+      parsedItinerary = List<dynamic>.from(json['itinerary']);
+    }
+
     return BookingModel(
       id: json['id'] ?? json['_id'] ?? '',
       bookingType: parsedBookingType,
@@ -307,6 +314,7 @@ class BookingModel {
       guestPhone: json['guest_phone'] ?? '',
       transactionDate: formattedTransactionDate,
       note: note,
+      itinerary: parsedItinerary,
     );
   }
 }
@@ -322,6 +330,10 @@ class BookingScreenController extends GetxController {
   var isLoading = false.obs;
   var isLoadingUser = false.obs;
   var allBookings = <BookingModel>[].obs;
+
+  // Reactive map for full package payload if needed locally
+  final RxMap<String, dynamic> package = <String, dynamic>{}.obs;
+
   final GlobalKey screenshotKey = GlobalKey();
 
   late UserProfileScreenViewController userPfCtrl;
@@ -382,6 +394,27 @@ class BookingScreenController extends GetxController {
       bookingData["special_request"] ??
       "";
 
+  Future<void> fetchPackageDetails(String id) async {
+    try {
+      isLoading.value = true;
+      final response = await _packageServices.fetchTravelPackageById(id);
+      if (response != null) {
+        final Map<String, dynamic>? data =
+            (response is Map<String, dynamic> && response['data'] != null)
+            ? Map<String, dynamic>.from(response['data'])
+            : (response is Map<String, dynamic> ? response : null);
+
+        if (data != null) {
+          package.assignAll(data);
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching package details: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -391,7 +424,6 @@ class BookingScreenController extends GetxController {
       userPfCtrl = Get.put(UserProfileScreenViewController());
     }
 
-    // Automatically refresh reactive lists when locale changes
     ever(allBookings, (_) {});
 
     fetchMyBookings();
@@ -454,10 +486,12 @@ class BookingScreenController extends GetxController {
                 final packageResponse = await _packageServices
                     .fetchTravelPackageById(packageId);
 
-                if (packageResponse != null &&
-                    (packageResponse['result'] == true ||
-                        packageResponse['data'] != null)) {
-                  final pkgData = packageResponse['data'] ?? packageResponse;
+                if (packageResponse != null) {
+                  final pkgData =
+                      (packageResponse is Map<String, dynamic> &&
+                          packageResponse['data'] != null)
+                      ? packageResponse['data']
+                      : packageResponse;
 
                   bookingData['name_km'] = pkgData['name_km'];
                   bookingData['name_en'] = pkgData['name_en'];
@@ -465,6 +499,11 @@ class BookingScreenController extends GetxController {
                       pkgData['address_km'] ?? pkgData['province_km'];
                   bookingData['address_en'] =
                       pkgData['address_en'] ?? pkgData['province'];
+
+                  // Preserve itinerary array
+                  if (pkgData['itinerary'] != null) {
+                    bookingData['itinerary'] = pkgData['itinerary'];
+                  }
 
                   if (pkgData['images'] is List &&
                       (pkgData['images'] as List).isNotEmpty) {
@@ -639,7 +678,6 @@ class BookingScreenController extends GetxController {
   ) {
     Get.bottomSheet(
       Container(
-        // Outer bottom sheet container without heavy padding so inner content can flush properly
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -649,7 +687,6 @@ class BookingScreenController extends GetxController {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- CAPTURED AREA (Padded cleanly inside) ---
               WidgetShotPlus(
                 key: screenshotKey,
                 child: Container(
@@ -675,13 +712,6 @@ class BookingScreenController extends GetxController {
                               color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
-                          // IconButton(
-                          //   onPressed: () => Get.back(),
-                          //   icon: Icon(
-                          //     Icons.close,
-                          //     color: Theme.of(context).colorScheme.secondary,
-                          //   ),
-                          // ),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -790,7 +820,6 @@ class BookingScreenController extends GetxController {
                 ),
               ),
 
-              // --- BUTTON AREA (Padded horizontally) ---
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(

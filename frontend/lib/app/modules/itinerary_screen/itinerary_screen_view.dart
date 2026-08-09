@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/core/api/services/travel_package_services.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -131,41 +132,73 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
               const SizedBox(height: 30),
 
               /// TIMELINE LIST
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: controller.itinerary.length,
-                itemBuilder: (context, index) {
-                  final item = controller.itinerary[index];
-                  final isLast = index == controller.itinerary.length - 1;
-                  final String stopType = item["stop_type"] ?? "other";
-                  final bool isMain = stopType == "main";
-
-                  final String title = item[controller.titleKey] ?? item["title_en"] ?? "";
-                  final String subtitle = item[controller.noteKey] ?? item["note_en"] ?? "";
-                  final int transportMinutes = item["transport_duration_minutes"] ?? 0;
-                  final String transportMode = item["transport_mode"] ?? "Van";
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Stop Node
-                      _timelineItem(
-                        isMainStop: isMain,
-                        title: title,
-                        subtitle: subtitle,
-                        isLast: isLast,
-                        context: context,
+              GetBuilder<ItineraryScreenViewController>(
+                builder: (controller) {
+                  if (controller.isLoading) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: CircularProgressIndicator(),
                       ),
+                    );
+                  }
 
-                      // Intermediary Transport Section (Rendered only between items)
-                      if (!isLast)
-                        _transportItem(
-                          context: context,
-                          mode: transportMode,
-                          durationMinutes: transportMinutes,
+                  if (controller.itinerary.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 40),
+                        child: Text(
+                          "no_itinerary_available".tr,
+                          style: GoogleFonts.googleSans(
+                            color: Theme.of(
+                              context,
+                            ).textTheme.titleSmall!.color,
+                          ),
                         ),
-                    ],
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: controller.itinerary.length,
+                    itemBuilder: (context, index) {
+                      final item = controller.itinerary[index];
+                      final isLast = index == controller.itinerary.length - 1;
+                      final String stopType = item["stop_type"] ?? "other";
+                      final bool isMain = stopType == "main";
+
+                      final String title =
+                          item[controller.titleKey] ?? item["title_en"] ?? "";
+                      final String subtitle =
+                          item[controller.noteKey] ?? item["note_en"] ?? "";
+                      final int transportMinutes =
+                          item["transport_duration_minutes"] ?? 0;
+                      final String transportMode =
+                          item["transport_mode"] ?? "Van";
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Stop Node
+                          _timelineItem(
+                            isMainStop: isMain,
+                            title: title,
+                            subtitle: subtitle,
+                            isLast: isLast,
+                            context: context,
+                          ),
+
+                          // Intermediary Transport Section (Rendered only between items)
+                          if (!isLast)
+                            _transportItem(
+                              context: context,
+                              mode: transportMode,
+                              durationMinutes: transportMinutes,
+                            ),
+                        ],
+                      );
+                    },
                   );
                 },
               ),
@@ -214,9 +247,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                 ),
                 // Only render vertical connector line if NOT the last item
                 if (!isLast)
-                  Expanded(
-                    child: Container(width: 2, color: brandGreen),
-                  ),
+                  Expanded(child: Container(width: 2, color: brandGreen)),
               ],
             ),
           ),
@@ -300,9 +331,7 @@ class ItineraryScreenView extends GetView<ItineraryScreenViewController> {
                     size: 16,
                   ),
                 ),
-                Expanded(
-                  child: Container(width: 2, color: brandGreen),
-                ),
+                Expanded(child: Container(width: 2, color: brandGreen)),
               ],
             ),
           ),
