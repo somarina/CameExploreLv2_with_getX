@@ -136,12 +136,16 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
 
   Widget _buildEntryFee(BuildContext context) {
     return Obx(() {
-      final entryFee = controller.place['entry_fee']?.toString().trim() ?? '';
+      final rawEntryFee =
+          controller.place['entry_fee']?.toString().trim() ?? '';
 
-      // Hide widget if entry_fee is empty
-      if (entryFee.isEmpty) {
+      if (rawEntryFee.isEmpty) {
         return const SizedBox.shrink();
       }
+
+      final List<String> feeTiers = rawEntryFee.contains('|')
+          ? rawEntryFee.split('|').map((e) => e.trim()).toList()
+          : [rawEntryFee];
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,95 +158,94 @@ class DetailPlacesScreenView extends GetView<DetailPlacesScreenViewController> {
               color: Theme.of(context).colorScheme.secondary,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.all(18),
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
-                  offset: const Offset(0, 5),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: Column(
-              children: [
-                _feeRow(Icons.public, "foreign_adult".tr, entryFee, context),
-                const SizedBox(height: 10),
-                _feeRow(
-                  Icons.child_care,
-                  "foreign_child".tr,
-                  "free".tr,
-                  context,
-                ),
-                const SizedBox(height: 10),
-                _feeRow(Icons.flag, "cambodian_citizen".tr, "free".tr, context),
-              ],
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: feeTiers.map((tier) {
+                final parts = tier.split(':');
+                final hasLabel = parts.length > 1;
+
+                final rawLabel = hasLabel ? parts[0].trim() : "standard_rate";
+
+                final labelKey = rawLabel.toLowerCase().replaceAll(' ', '_');
+                final translatedLabel = labelKey.tr != labelKey
+                    ? labelKey.tr
+                    : rawLabel;
+
+                final rawPrice = hasLabel
+                    ? parts.sublist(1).join(':').trim()
+                    : tier;
+
+                // Extract and translate price if it matches "free" or has a translation key
+                final priceKey = rawPrice.toLowerCase().replaceAll(' ', '_');
+                final translatedPrice = priceKey.tr != priceKey
+                    ? priceKey.tr
+                    : rawPrice;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.confirmation_number_outlined,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          translatedLabel,
+                          style: GoogleFonts.googleSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withAlpha(20),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          translatedPrice,
+                          style: GoogleFonts.googleSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
       );
     });
-  }
-
-  Widget _feeRow(
-    IconData icon,
-    String title,
-    String price,
-    BuildContext context,
-  ) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: Icon(
-            icon,
-            size: 22,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const SizedBox(width: 12),
-
-        Text(
-          title,
-          style: GoogleFonts.googleSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-        ),
-        const SizedBox(width: 8),
-
-        Expanded(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withAlpha(20),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Text(
-                price,
-                textAlign: TextAlign.right,
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.googleSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  height: 1.3,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildTags(BuildContext context) {

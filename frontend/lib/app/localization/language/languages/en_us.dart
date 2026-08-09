@@ -216,7 +216,8 @@ Map<String, String> enUS = {
       "Are you sure you want to delete your @listName list? All the activities you've saved will be lost.",
   "No favorite lists yet": "No favorite lists yet",
   "Login Required": "Login Required",
-  "Please log in or create an account to save items to your favorites.": "Please log in or create an account to save items to your favorites.",
+  "Please log in or create an account to save items to your favorites.":
+      "Please log in or create an account to save items to your favorites.",
 
   "saved": "Saved",
   "day": "day",
@@ -608,6 +609,12 @@ Map<String, String> enUS = {
   "package": "Package",
   "date": "Date",
   "Travel-Package": "Travel-Package",
-  "no_restaurant_found":"No restaurant found!",
-  "Restaurant":"Restaurant"
+  "no_restaurant_found": "No restaurant found!",
+  "Restaurant": "Restaurant",
+  "foreigner": "Foreigner",
+  "cambodian": "Cambodian",
+  "student": "Student",
+  "resident_adult": "Resident Adult",
+  "non_resident_adult": "Non-Resident Adult",
+  "standard_rate": "Standard Rate",
 };
