@@ -46,52 +46,6 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
               children: [
                 SizedBox(height: 20),
 
-                // Obx(
-                //   () => Padding(
-                //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                //     child: SizedBox(
-                //       height: 100,
-                //       child: ListView.separated(
-                //         scrollDirection: Axis.horizontal,
-                //         itemCount: controller.categories.length,
-                //         separatorBuilder: (_, __) => SizedBox(width: 20),
-                //         itemBuilder: (context, index) {
-                //           final item = controller.categories[index];
-
-                //           return Column(
-                //             children: [
-                //               GestureDetector(
-                //                 onTap: () {},
-                //                 child: Container(
-                //                   width: 60,
-                //                   height: 60,
-                //                   decoration: BoxDecoration(
-                //                     shape: BoxShape.circle,
-                //                     // color: Color(0xff009A3F),
-                //                   ),
-                //                   child: Center(
-                //                     child: Image.network(
-                //                       item["icon_url"] ?? "",
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //               SizedBox(height: 10),
-                //               Text(
-                //                 Get.locale?.languageCode == 'kmKH'
-                //                     ? (item["name_km"] ?? item["name"] ?? "")
-                //                     : (item["name"] ?? ""),
-                //                 style: GoogleFonts.googleSans(),
-                //               ),
-                //             ],
-                //           );
-                //         },
-                //       ),
-                //     ),
-                //   ),
-                // ),
-
-                // REPLACE YOUR EXISTING CATEGORY LIST Obx BLOCK WITH THIS:
                 Obx(
                   () => Padding(
                     padding: const EdgeInsets.symmetric(
@@ -297,12 +251,23 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
               Stack(
                 children: [
                   Bounceable(
-                    onTap: () {
-                      print(place.toJson());
-                      Get.toNamed(
-                        Routes.DETAIL_PLACES,
-                        arguments: place.toJson(),
-                      );
+                    // onTap: () {
+                    //   print(place.toJson());
+                    //   Get.toNamed(
+                    //     Routes.DETAIL_PLACES,
+                    //     arguments: place.toJson(),
+                    //   );
+                    // },
+                    onTap: () async {
+                      final placeData = await controller.service
+                          .fetchPlaceDetail(id: place.id);
+
+                      if (placeData["data"] != null) {
+                        Get.toNamed(
+                          Routes.DETAIL_PLACES,
+                          arguments: placeData["data"],
+                        );
+                      }
                     },
                     child: Container(
                       width: 110,
@@ -386,7 +351,6 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                         Expanded(
                           child: Row(
                             children: [
-                              
                               Text(
                                 Get.locale?.languageCode == "kmKH"
                                     ? place.provinceKm

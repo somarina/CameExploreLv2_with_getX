@@ -61,34 +61,22 @@ class ExploreView extends GetView<SearchResultScreenController> {
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (controller.searchResults.isEmpty) {
-                  return Center(
-                    child: Text(
-                      "No places found",
-                      style: GoogleFonts.googleSans(fontSize: 16),
-                    ),
-                  );
+                  return const Center(child: Text("No results found"));
                 }
 
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    await controller.refreshSearchResults();
+                return ListView.separated(
+                  itemCount: controller.searchResults.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final result = controller.searchResults[index];
+
+                    return _buildSearchResult(result, context);
                   },
-                  child: ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: controller.searchResults.length,
-                    separatorBuilder: (_, __) => SizedBox(height: 15),
-
-                    itemBuilder: (context, index) {
-                      final place = controller.searchResults[index];
-
-                      return _buildPlaceCard(place, context);
-                    },
-                  ),
                 );
               }),
             ),
@@ -176,17 +164,37 @@ class ExploreView extends GetView<SearchResultScreenController> {
     );
   }
 
-  Widget _buildPlaceCard(place, BuildContext context) {
-    return Bounceable(
-      onTap: () async {
-        final placeData = await controller.placesService.fetchPlaceDetail(
-          id: place.id.toString(),
-        );
-        print("DETAIL DATA: $placeData");
+  Widget _buildPlaceCard(Map<String, dynamic> place, BuildContext context) {
+    final imageUrl = place["image_url"]?.toString() ?? "";
+    final nameEn = place["name_en"]?.toString() ?? "";
+    final nameKm = place["name_km"]?.toString() ?? "";
+    final province = place["province"]?.toString() ?? "";
+    final provinceKm = place["province_km"]?.toString() ?? "";
+    final category = place["category"]?.toString() ?? "";
+    final categoryKm = place["category_km"]?.toString() ?? "";
+    final rating = place["rating"] ?? 0;
 
-        if (placeData["data"] != null) {
-          Get.toNamed(Routes.DETAIL_PLACES, arguments: placeData["data"]);
-        }
+    return Bounceable(
+      // onTap: () async {
+      //   final placeId = place["id"]?.toString();
+
+      //   if (placeId == null || placeId.isEmpty) {
+      //     print("PLACE ID IS NULL");
+      //     return;
+      //   }
+
+      //   final placeData = await controller.placeServices.fetchPlaceDetail(
+      //     id: placeId,
+      //   );
+
+      //   print("DETAIL DATA: $placeData");
+
+      //   if (placeData["data"] != null) {
+      //     Get.toNamed(Routes.DETAIL_PLACES, arguments: place);
+      //   }
+      // },
+      onTap: () async {
+        Get.toNamed(Routes.DETAIL_PLACES, arguments: place);
       },
 
       child: Container(
@@ -199,35 +207,31 @@ class ExploreView extends GetView<SearchResultScreenController> {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 bottomLeft: Radius.circular(16),
               ),
               child: CachedNetworkImage(
-                imageUrl: place.imageUrl,
+                imageUrl: imageUrl,
                 width: 110,
                 height: 110,
                 fit: BoxFit.cover,
               ),
             ),
 
-            SizedBox(width: 15),
+            const SizedBox(width: 15),
 
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-
                   mainAxisAlignment: MainAxisAlignment.center,
-
                   children: [
                     SizedBox(
                       width: 200,
                       child: Text(
-                        Get.locale?.languageCode == "kmKH"
-                            ? place.nameKm
-                            : place.nameEn,
+                        Get.locale?.languageCode == "kmKH" ? nameKm : nameEn,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppFonts.fontsSubTitlew500.copyWith(
@@ -237,7 +241,7 @@ class ExploreView extends GetView<SearchResultScreenController> {
                       ),
                     ),
 
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
 
                     Row(
                       children: [
@@ -246,34 +250,38 @@ class ExploreView extends GetView<SearchResultScreenController> {
                           size: 16,
                           color: Theme.of(context).primaryColor,
                         ),
-                        SizedBox(width: 5),
-                        Text(
-                          Get.locale?.languageCode == "kmKH"
-                              ? place.provinceKm
-                              : place.province,
 
-                          style: GoogleFonts.googleSans(
-                            fontSize: 14,
-                            color: Theme.of(
-                              context,
-                            ).textTheme.titleSmall?.color,
+                        const SizedBox(width: 5),
+
+                        Flexible(
+                          child: Text(
+                            Get.locale?.languageCode == "kmKH"
+                                ? provinceKm
+                                : province,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.googleSans(
+                              fontSize: 14,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.color,
+                            ),
                           ),
                         ),
-                        SizedBox(width: 15),
-                        Text("${place.distance.toStringAsFixed(1)} km"),
                       ],
                     ),
 
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
 
                     Row(
                       children: [
-                        Icon(Icons.star, size: 16, color: Colors.orange),
-                        SizedBox(width: 5),
+                        const Icon(Icons.star, size: 16, color: Colors.orange),
 
-                        Text(place.rating.toString()),
+                        const SizedBox(width: 5),
 
-                        SizedBox(width: 15),
+                        Text(rating.toString()),
+
+                        const SizedBox(width: 15),
 
                         Container(
                           width: 6,
@@ -284,22 +292,21 @@ class ExploreView extends GetView<SearchResultScreenController> {
                           ),
                         ),
 
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
 
                         Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xffCEDFCE),
+                            color: const Color(0xffCEDFCE),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             Get.locale?.languageCode == "kmKH"
-                                ? place.categoryKm
-                                : place.category,
-
+                                ? categoryKm
+                                : category,
                             style: GoogleFonts.googleSans(
                               fontSize: 12,
                               color: Theme.of(context).primaryColor,
@@ -317,5 +324,349 @@ class ExploreView extends GetView<SearchResultScreenController> {
         ),
       ),
     );
+  }
+
+  Widget _buildPackageCard(Map<String, dynamic> package, BuildContext context) {
+    final imageUrl = package["image_url"]?.toString() ?? "";
+    final nameEn = package["name_en"]?.toString() ?? "";
+    final nameKm = package["name_km"]?.toString() ?? "";
+    final rating = package["rating"] ?? 0;
+    final duration = package["duration_days"] ?? 0;
+    final price = package["price_per_person"] ?? 0;
+
+    return Bounceable(
+      onTap: () async {
+        // final packageId = package["id"]?.toString();
+
+        // if (packageId == null || packageId.isEmpty) {
+        //   print("PACKAGE ID IS NULL");
+        //   return;
+        // }
+
+        // // Use your existing package service
+        // final packageData = await controller.travelPackageService
+        //     .fetchTravelPackageById(packageId);
+
+        // print("PACKAGE DETAIL DATA: $packageData");
+
+        // if (packageData["data"] != null) {
+        //   Get.toNamed(Routes.PACKAGE_DETAIL, arguments: packageData["data"]);
+        // }
+        Get.toNamed(Routes.PACKAGE_DETAIL, arguments: package);
+      },
+
+      child: Container(
+        height: 110,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(16),
+        ),
+
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                width: 110,
+                height: 110,
+                fit: BoxFit.cover,
+              ),
+            ),
+
+            const SizedBox(width: 15),
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: Text(
+                        Get.locale?.languageCode == "kmKH" ? nameKm : nameEn,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppFonts.fontsSubTitlew500.copyWith(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.schedule,
+                          size: 16,
+                          color: Theme.of(context).primaryColor,
+                        ),
+
+                        const SizedBox(width: 5),
+
+                        Text(
+                          "$duration ${duration == 1 ? "day" : "days"}",
+                          style: GoogleFonts.googleSans(
+                            fontSize: 14,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.titleSmall?.color,
+                          ),
+                        ),
+
+                        const SizedBox(width: 15),
+
+                        Icon(
+                          Icons.person,
+                          size: 16,
+                          color: Theme.of(context).primaryColor,
+                        ),
+
+                        const SizedBox(width: 5),
+
+                        Text(
+                          "\$$price/person",
+                          style: GoogleFonts.googleSans(
+                            fontSize: 14,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.titleSmall?.color,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Row(
+                      children: [
+                        const Icon(Icons.star, size: 16, color: Colors.orange),
+
+                        const SizedBox(width: 5),
+
+                        Text(rating.toString()),
+
+                        const SizedBox(width: 15),
+
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                        ),
+
+                        const SizedBox(width: 10),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffCEDFCE),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "Package",
+                            style: GoogleFonts.googleSans(
+                              fontSize: 12,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHotelCard(Map<String, dynamic> hotel, BuildContext context) {
+    final imageUrl = hotel["image_url"]?.toString() ?? "";
+    final nameEn = hotel["name_en"]?.toString() ?? "";
+    final nameKm = hotel["name_km"]?.toString() ?? "";
+    final province = hotel["province"]?.toString() ?? "";
+    final provinceKm = hotel["province_km"]?.toString() ?? "";
+
+    final starRating = hotel["star_rating"] ?? 0;
+
+    return Bounceable(
+      onTap: () async {
+        // final hotelId = hotel["id"]?.toString();
+
+        // if (hotelId == null || hotelId.isEmpty) {
+        //   print("HOTEL ID IS NULL");
+        //   return;
+        // }
+
+        // final hotelData = await controller.hotelService.fetchHotelById(hotelId);
+
+        // print("HOTEL DETAIL DATA: $hotelData");
+
+        // if (hotelData["data"] != null) {
+        //   Get.toNamed(Routes.HOTEL_DETAIL, arguments: hotelData["data"]);
+        // }
+        Get.toNamed(Routes.HOTEL_DETAIL, arguments: hotel);
+      },
+
+      child: Container(
+        height: 110,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(16),
+        ),
+
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                width: 110,
+                height: 110,
+                fit: BoxFit.cover,
+              ),
+            ),
+
+            const SizedBox(width: 15),
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: Text(
+                        Get.locale?.languageCode == "kmKH" ? nameKm : nameEn,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppFonts.fontsSubTitlew500.copyWith(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: Theme.of(context).primaryColor,
+                        ),
+
+                        const SizedBox(width: 5),
+
+                        Flexible(
+                          child: Text(
+                            Get.locale?.languageCode == "kmKH"
+                                ? provinceKm
+                                : province,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.googleSans(
+                              fontSize: 14,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.color,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Row(
+                      children: [
+                        const Icon(Icons.star, size: 16, color: Colors.orange),
+
+                        const SizedBox(width: 5),
+
+                        Text(starRating.toString()),
+
+                        const SizedBox(width: 15),
+
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                        ),
+
+                        const SizedBox(width: 10),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffCEDFCE),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "Hotel",
+                            style: GoogleFonts.googleSans(
+                              fontSize: 12,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResult(Map<String, dynamic> result, BuildContext context) {
+    final type = result["type"];
+    final data = result["data"] as Map<String, dynamic>;
+
+    switch (type) {
+      case "place":
+        return _buildPlaceCard(data, context);
+
+      case "hotel":
+        return _buildHotelCard(data, context);
+
+      case "package":
+        return _buildPackageCard(data, context);
+
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }

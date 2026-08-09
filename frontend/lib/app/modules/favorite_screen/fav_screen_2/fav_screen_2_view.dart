@@ -30,7 +30,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
             child: Column(
               children: [
                 SizedBox(height: 20),
-        
+
                 Row(
                   children: [
                     _circleButton(
@@ -43,9 +43,9 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       ),
                       onTap: () => Get.back(),
                     ),
-        
+
                     Spacer(),
-        
+
                     Obx(
                       () => Text(
                         controller.listName.value,
@@ -56,9 +56,9 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                         ),
                       ),
                     ),
-        
+
                     Spacer(),
-        
+
                     _circleButton(
                       theme,
                       child: Icon(
@@ -71,9 +71,9 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                         );
                       },
                     ),
-        
+
                     SizedBox(width: 10),
-        
+
                     _circleButton(
                       theme,
                       child: Icon(
@@ -84,7 +84,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                     ),
                   ],
                 ),
-        
+
                 _buildEmptyList(context),
               ],
             ),
@@ -155,6 +155,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                   label: "Enter new list name".tr,
                   controller: controller.renameCtrl,
                   focusNode: controller.renameFocusNode,
+                  mode: BottomSheetMode.rename,
                   onDone: () async {
                     await controller.renameFavoriteList();
                   },
@@ -254,26 +255,26 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
   }
 
   Widget _buildFavList(BuildContext context) {
-    final theme = Theme.of(context);
-    String timeAgo(String savedAt) {
-      final savedDate = DateTime.parse("${savedAt}Z").toUtc();
-      final now = DateTime.now().toUtc();
+    // final theme = Theme.of(context);
+    // String timeAgo(String savedAt) {
+    //   final savedDate = DateTime.parse("${savedAt}Z").toUtc();
+    //   final now = DateTime.now().toUtc();
 
-      final difference = now.difference(savedDate);
+    //   final difference = now.difference(savedDate);
 
-      if (difference.inDays > 0) {
-        final days = difference.inDays;
-        return "${"saved".tr} $days ${days > 1 ? "days".tr : "day".tr} ${"ago".tr}";
-      } else if (difference.inHours > 0) {
-        final hours = difference.inHours;
-        return "${"saved".tr} $hours ${hours > 1 ? "hours".tr : "hour".tr} ${"ago".tr}";
-      } else if (difference.inMinutes > 0) {
-        final minutes = difference.inMinutes;
-        return "${"saved".tr} $minutes ${minutes > 1 ? "minutes".tr : "minute".tr} ${"ago".tr}";
-      } else {
-        return "saved_just_now".tr;
-      }
-    }
+    //   if (difference.inDays > 0) {
+    //     final days = difference.inDays;
+    //     return "${"saved".tr} $days ${days > 1 ? "days".tr : "day".tr} ${"ago".tr}";
+    //   } else if (difference.inHours > 0) {
+    //     final hours = difference.inHours;
+    //     return "${"saved".tr} $hours ${hours > 1 ? "hours".tr : "hour".tr} ${"ago".tr}";
+    //   } else if (difference.inMinutes > 0) {
+    //     final minutes = difference.inMinutes;
+    //     return "${"saved".tr} $minutes ${minutes > 1 ? "minutes".tr : "minute".tr} ${"ago".tr}";
+    //   } else {
+    //     return "saved_just_now".tr;
+    //   }
+    // }
 
     return Obx(
       () => ListView.separated(
@@ -287,11 +288,6 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
           debugPrint(item.toString());
 
           return Bounceable(
-            // onTap: () {
-            //   if (item["item_type"] == "place") {
-            //     Get.toNamed(Routes.DETAIL_PLACES, arguments: item);
-            //   }
-            // },
             onTap: () async {
               final type = FavoriteItemType.values.firstWhere(
                 (e) => e.name == item["item_type"],
@@ -299,206 +295,416 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
 
               switch (type) {
                 case FavoriteItemType.place:
-                  Get.toNamed(Routes.DETAIL_PLACES, arguments: item);
+                  final placeId = item["id"]?.toString();
 
+                  if (placeId == null || placeId.isEmpty) return;
+
+                  final placeData = await controller.placesService
+                      .fetchPlaceDetail(id: placeId);
+
+                  if (placeData["data"] != null) {
+                    Get.toNamed(
+                      Routes.DETAIL_PLACES,
+                      arguments: placeData["data"],
+                    );
+                  }
                   break;
 
                 case FavoriteItemType.hotel:
-                  Get.toNamed(Routes.HOTEL_DETAIL, arguments: item);
+                  final hotelId = item["id"]?.toString();
 
+                  if (hotelId == null || hotelId.isEmpty) return;
+
+                  final hotelData = await controller.hotelService
+                      .fetchHotelById(hotelId);
+
+                  if (hotelData["data"] != null) {
+                    Get.toNamed(
+                      Routes.HOTEL_DETAIL,
+                      arguments: hotelData["data"],
+                    );
+                  }
                   break;
 
                 case FavoriteItemType.package:
-                  Get.toNamed(Routes.PACKAGE_DETAIL, arguments: item);
+                  final packageId = item["id"]?.toString();
 
+                  if (packageId == null || packageId.isEmpty) return;
+
+                  final packageData = await controller.travelPackagesSservice
+                      .fetchTravelPackageById(packageId);
+
+                  if (packageData["data"] != null) {
+                    Get.toNamed(
+                      Routes.PACKAGE_DETAIL,
+                      arguments: packageData["data"],
+                    );
+                  }
                   break;
               }
             },
-            child: Card(
-              color: theme.colorScheme.primaryContainer,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image
-                    Container(
-                      width: 112,
-                      height: 112,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        image:
-                            (item["image_url"] != null &&
-                                item["image_url"].toString().isNotEmpty)
-                            ? DecorationImage(
-                                image: NetworkImage(
-                                  item["image_url"].toString(),
-                                ),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-
-                    SizedBox(width: 16),
-
-                    // Text
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            Get.locale?.languageCode == "kmKH"
-                                ? (item["name_km"] ?? "")
-                                : (item["name_en"] ?? ""),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppFonts.fontsGeneral.copyWith(
-                              color: theme.colorScheme.secondary,
-                            ),
-                          ),
-
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                size: 18,
-                                color: theme.primaryColor,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                Get.locale?.languageCode == "kmKH"
-                                    ? (item["province_km"] ?? "")
-                                    : (item["province"] ?? ""),
-                                style: GoogleFonts.googleSans(
-                                  fontSize: 15,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.titleSmall?.color,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(Icons.star, size: 20, color: Colors.amber),
-                              SizedBox(width: 5),
-                              Text(item["rating"]?.toString() ?? "0.0"),
-                              SizedBox(width: 10),
-
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
-
-                              SizedBox(width: 20),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Color(0xffCEDFCE),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: SizedBox(
-                                  width: 70,
-                                  child: Center(
-                                    child: Text(
-                                      Get.locale?.languageCode == "kmKH"
-                                          ? (item["category_km"] ?? "កញ្ចប់ដំណើរ")
-                                          : (item["category"] ?? "Travel Package"),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                    
-                                      style: GoogleFonts.googleSans(
-                                        fontSize: 14,
-                                        color: Theme.of(context).primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.calendar_month,
-                                size: 20,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(width: 5),
-
-                              Text(
-                                timeAgo(item["saved_at"]),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.googleSans(
-                                  fontSize: 14,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.titleSmall?.color,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Favorite Icon
-                    Bounceable(
-                      // onTap: () async {
-                      //   final type = FavoriteItemType.values.firstWhere(
-                      //     (e) => e.name == item["item_type"],
-                      //     orElse: () => FavoriteItemType.place,
-                      //   );
-
-                      //   await controller.deleteFavorite(
-                      //     item["id"].toString(),
-                      //     type,
-                      //   );
-                      // },
-                      onTap: () async {
-                        final itemType = item["item_type"]?.toString();
-
-                        if (itemType == null) return;
-
-                        final type = FavoriteItemType.values.firstWhere(
-                          (e) => e.name == itemType,
-                          orElse: () => FavoriteItemType.place,
-                        );
-
-                        await controller.deleteFavorite(
-                          item["id"].toString(),
-                          type,
-                        );
-                      },
-                      child: Icon(Icons.favorite, color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            child: _buildFavoriteCard(context, item),
           );
         },
       ),
     );
+  }
+
+  Widget _buildPlaceCard(BuildContext context, Map<String, dynamic> item) {
+    final theme = Theme.of(context);
+
+    return Card(
+      color: theme.colorScheme.primaryContainer,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _favoriteImage(item),
+
+            const SizedBox(width: 16),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _favoriteName(context, item),
+
+                  const SizedBox(height: 8),
+
+                  _locationRow(context, item["province"], item["province_km"]),
+
+                  const SizedBox(height: 8),
+
+                  Row(
+                    children: [
+                      const Icon(Icons.star, size: 20, color: Colors.amber),
+                      const SizedBox(width: 5),
+                      Text(item["rating"]?.toString() ?? "0.0"),
+                      const SizedBox(width: 10),
+
+                      _categoryChip(
+                        context,
+                        item["category"],
+                        item["category_km"],
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  _savedTime(item),
+                ],
+              ),
+            ),
+
+            _favoriteDeleteButton(context, item),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHotelCard(BuildContext context, Map<String, dynamic> item) {
+    final theme = Theme.of(context);
+
+    return Card(
+      color: theme.colorScheme.primaryContainer,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _favoriteImage(item),
+
+            const SizedBox(width: 16),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _favoriteName(context, item),
+
+                  const SizedBox(height: 8),
+
+                  _locationRow(
+                    context,
+                    item["province"] ?? item["location"],
+                    item["province_km"],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Row(
+                    children: [
+                      const Icon(Icons.star, size: 20, color: Colors.amber),
+                      const SizedBox(width: 5),
+                      Text(item["rating"]?.toString() ?? "0.0"),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  _savedTime(item),
+                ],
+              ),
+            ),
+
+            _favoriteDeleteButton(context, item),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPackageCard(BuildContext context, Map<String, dynamic> item) {
+    final theme = Theme.of(context);
+
+    return Card(
+      color: theme.colorScheme.primaryContainer,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _favoriteImage(item),
+
+            const SizedBox(width: 16),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _favoriteName(context, item),
+
+                  const SizedBox(height: 8),
+
+                  if (item["province"] != null || item["location"] != null)
+                    _locationRow(
+                      context,
+                      item["province"] ?? item["location"],
+                      item["province_km"],
+                    ),
+
+                  const SizedBox(height: 8),
+
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.luggage,
+                        size: 19,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 6),
+
+                      Text(
+                        Get.locale?.languageCode == "kmKH"
+                            ? "កញ្ចប់ដំណើរ"
+                            : "Travel Package",
+                        style: GoogleFonts.googleSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  _savedTime(item),
+                ],
+              ),
+            ),
+
+            _favoriteDeleteButton(context, item),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _favoriteImage(Map<String, dynamic> item) {
+    final imageUrl = item["image_url"]?.toString() ?? "";
+
+    return Container(
+      width: 112,
+      height: 112,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: Colors.grey.shade300,
+        image: imageUrl.isNotEmpty
+            ? DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.cover)
+            : null,
+      ),
+      child: imageUrl.isEmpty
+          ? const Icon(Icons.image_not_supported, color: Colors.grey)
+          : null,
+    );
+  }
+
+  Widget _favoriteName(BuildContext context, Map<String, dynamic> item) {
+    final theme = Theme.of(context);
+
+    final name = Get.locale?.languageCode == "kmKH"
+        ? item["name_km"]
+        : item["name_en"];
+
+    return Text(
+      name?.toString() ?? "",
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: AppFonts.fontsGeneral.copyWith(color: theme.colorScheme.secondary),
+    );
+  }
+
+  Widget _locationRow(
+    BuildContext context,
+    dynamic province,
+    dynamic provinceKm,
+  ) {
+    final theme = Theme.of(context);
+
+    final location = Get.locale?.languageCode == "kmKH"
+        ? provinceKm ?? province
+        : province ?? provinceKm;
+
+    return Row(
+      children: [
+        Icon(Icons.location_on, size: 18, color: theme.primaryColor),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            location?.toString() ?? "",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.googleSans(
+              fontSize: 15,
+              color: theme.textTheme.titleSmall?.color,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _categoryChip(
+    BuildContext context,
+    dynamic category,
+    dynamic categoryKm,
+  ) {
+    final theme = Theme.of(context);
+
+    final text = Get.locale?.languageCode == "kmKH"
+        ? categoryKm ?? category
+        : category ?? categoryKm;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: const Color(0xffCEDFCE),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text?.toString() ?? "",
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.googleSans(
+          fontSize: 14,
+          color: theme.primaryColor,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _savedTime(Map<String, dynamic> item) {
+    final savedAt = item["saved_at"]?.toString();
+
+    if (savedAt == null || savedAt.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final savedDate = DateTime.parse("${savedAt}Z").toUtc();
+    final now = DateTime.now().toUtc();
+    final difference = now.difference(savedDate);
+
+    String text;
+
+    if (difference.inDays > 0) {
+      final days = difference.inDays;
+      text =
+          "${"saved".tr} $days ${days > 1 ? "days".tr : "day".tr} ${"ago".tr}";
+    } else if (difference.inHours > 0) {
+      final hours = difference.inHours;
+      text =
+          "${"saved".tr} $hours ${hours > 1 ? "hours".tr : "hour".tr} ${"ago".tr}";
+    } else if (difference.inMinutes > 0) {
+      final minutes = difference.inMinutes;
+      text =
+          "${"saved".tr} $minutes ${minutes > 1 ? "minutes".tr : "minute".tr} ${"ago".tr}";
+    } else {
+      text = "saved_just_now".tr;
+    }
+
+    return Row(
+      children: [
+        const Icon(Icons.calendar_month, size: 20, color: Colors.grey),
+        const SizedBox(width: 5),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.googleSans(
+              fontSize: 14,
+              color: Get.theme.textTheme.titleSmall?.color,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _favoriteDeleteButton(
+    BuildContext context,
+    Map<String, dynamic> item,
+  ) {
+    return Bounceable(
+      onTap: () async {
+        final itemType = item["item_type"]?.toString();
+
+        if (itemType == null) return;
+
+        final type = FavoriteItemType.values.firstWhere(
+          (e) => e.name == itemType,
+          orElse: () => FavoriteItemType.place,
+        );
+
+        await controller.deleteFavorite(item["id"].toString(), type);
+      },
+      child: const Icon(Icons.favorite, color: Colors.red),
+    );
+  }
+
+  Widget _buildFavoriteCard(BuildContext context, Map<String, dynamic> item) {
+    switch (item["item_type"]?.toString()) {
+      case "hotel":
+        return _buildHotelCard(context, item);
+
+      case "package":
+        return _buildPackageCard(context, item);
+
+      case "place":
+      default:
+        return _buildPlaceCard(context, item);
+    }
   }
 
   Widget _deleteWidget() {

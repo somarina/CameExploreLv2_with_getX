@@ -168,7 +168,7 @@ class SearchScreenView extends GetView<SearchScreenController> {
                               const SizedBox(width: 10),
 
                               SizedBox(
-                                width: 180,
+                                width: 160,
                                 child: Text(
                                   "${place.searchCount} ${"people searched this".tr}",
                                   style: GoogleFonts.googleSans(

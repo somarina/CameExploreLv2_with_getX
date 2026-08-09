@@ -1,6 +1,7 @@
 part of 'hotel_detail_screen_view.dart';
 
 class HotelDetailScreenViewController extends GetxController {
+  final favCtrl = Get.find<FavoriteScreenController>();
   final currentIndex = 0.obs;
   final HotelReviewServices _reviewService = HotelReviewServices();
   late Map<String, dynamic> hotel;

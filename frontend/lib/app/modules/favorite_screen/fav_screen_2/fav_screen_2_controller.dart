@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/favorite_service.dart';
+import 'package:frontend/app/core/api/services/hotels_services.dart';
+import 'package:frontend/app/core/api/services/places_services.dart';
+import 'package:frontend/app/core/api/services/travel_package_services.dart';
 import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:get/get.dart';
 
 class FavScreen2ViewController extends GetxController {
   final FavoriteService favoriteService = FavoriteService();
   final favoriteController = Get.find<FavoriteScreenController>();
+  final placesService = PlacesServices();
+  final hotelService = HotelServices();
+  final travelPackagesSservice = TravelPackageServices();
 
   RxString listName = ''.obs;
   RxString listId = ''.obs;
@@ -29,14 +35,36 @@ class FavScreen2ViewController extends GetxController {
 
     print("List ID: ${listId.value}");
 
+    renameCtrl.addListener(() {
+      canRename.value = renameCtrl.text.trim().isNotEmpty;
+
+      print("RENAME TEXT: ${renameCtrl.text}");
+      print("CAN RENAME: ${canRename.value}");
+    });
+
     getFavoriteItems();
+  }
+
+  @override
+  void onClose() {
+    renameCtrl.dispose();
+    renameFocusNode.dispose();
+    super.onClose();
   }
 
   Future<void> getFavoriteItems() async {
     try {
       isLoading.value = true;
+      final stopwatch = Stopwatch()..start();
 
       final response = await favoriteService.getFavoriteItems(listId.value);
+
+      stopwatch.stop();
+
+      print(
+        "🔥 GET FAVORITE ITEMS TOOK: "
+        "${stopwatch.elapsedMilliseconds} ms",
+      );
 
       print("Fav2 response: $response");
 

@@ -39,8 +39,10 @@ class FavoriteScreenView extends GetView<FavoriteScreenController> {
                 title: "Create a list".tr,
                 controller: controller.createListCtrl,
                 focusNode: controller.createListFocusNode,
+                mode: BottomSheetMode.create,
                 label: "List name".tr,
                 onDone: () async {
+                  Get.back();
                   await controller.createFavoriteList();
                 },
               );
