@@ -7,6 +7,7 @@ import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:frontend/app/modules/detail_places_screen/Gallery/gallery_view.dart';
 import 'package:frontend/app/modules/detail_places_screen/Gallery_seeall/gallery_seeall_view.dart';
 import 'package:frontend/app/modules/detail_places_screen/detail_places_screen_view.dart';
+import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen_controller.dart';
 import 'package:frontend/app/modules/home_screen/controllers/home_screen_controller.dart';
 import 'package:frontend/app/routes/app_pages.dart';
 import 'package:frontend/app/widgets/buttons/custome_button.dart';
@@ -1016,7 +1017,40 @@ class PackageDetailScreenView
                   child: _circleButton("assets/svg/normalShare.svg", context),
                 ),
                 SizedBox(width: 16),
-                _circleButton("assets/svg/normalFav.svg", context),
+                Obx(() {
+                  final isFav = controller.favCtrl.isFavorite(
+                    controller.package["id"].toString(),
+                    FavoriteItemType.package,
+                  );
+
+                  return Bounceable(
+                    onTap: () {
+                      controller.favCtrl.toggleFavorite(
+                        controller.package["id"].toString(),
+                        FavoriteItemType.package,
+                        context,
+                      );
+                    },
+                    child: Container(
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          size: 26,
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: isFav
+                              ? Colors.red
+                              : Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              
               ],
             ),
           ],

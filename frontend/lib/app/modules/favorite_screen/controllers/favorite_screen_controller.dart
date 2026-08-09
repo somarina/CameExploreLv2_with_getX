@@ -59,14 +59,35 @@ class FavoriteScreenController extends GetxController {
 
       activityCounts.removeWhere((key, value) => !validIds.contains(key));
 
+      // for (var i = 0; i < favoriteLists.length; i++) {
+      //   final list = favoriteLists[i];
+
+      //   final listId = list["id"].toString();
+
+      //   final itemResponse = await favoriteService.getFavoriteItems(listId);
+
+      //   final items = itemResponse["data"] ?? [];
+
+      //   favoriteLists[i]["cover_image"] = items.isNotEmpty
+      //       ? items.first["image_url"]
+      //       : null;
+
+      //   activityCounts[listId] = items.length;
+      // }
+      // // Notify GetX about changes
+      // favoriteLists.refresh();
+      // activityCounts.refresh();
+
+      // print("Final activityCounts: $activityCounts");
       for (var i = 0; i < favoriteLists.length; i++) {
         final list = favoriteLists[i];
-
         final listId = list["id"].toString();
 
         final itemResponse = await favoriteService.getFavoriteItems(listId);
 
-        final items = itemResponse["data"] ?? [];
+        final items = itemResponse["data"] is List
+            ? itemResponse["data"] as List
+            : [];
 
         favoriteLists[i]["cover_image"] = items.isNotEmpty
             ? items.first["image_url"]
@@ -74,7 +95,7 @@ class FavoriteScreenController extends GetxController {
 
         activityCounts[listId] = items.length;
       }
-      // Notify GetX about changes
+
       favoriteLists.refresh();
       activityCounts.refresh();
 
@@ -87,7 +108,7 @@ class FavoriteScreenController extends GetxController {
   }
 
   /// CREATE FAVORITE LIST
-  Future<void> createFavoriteList() async {
+  Future createFavoriteList() async {
     try {
       if (createListCtrl.text.trim().isEmpty) {
         Get.snackbar(
@@ -104,54 +125,75 @@ class FavoriteScreenController extends GetxController {
 
       final newListName = capitalizeFirst(createListCtrl.text.trim());
 
+      // Create list
       final response = await favoriteService.createFavoriteList(newListName);
 
       print("Create Response: $response");
 
-      await getFavoriteLists();
+      final newListId = response["list_id"]?.toString();
 
+      if (newListId == null || newListId.isEmpty) {
+        throw Exception("New list ID is missing");
+      }
+
+      // Add pending item
       if (pendingItemId != null && pendingItemType != null) {
-        // Find the newly created list
-        final newList = favoriteLists.firstWhere(
-          (list) => list["name"].toString() == newListName,
-          orElse: () => favoriteLists.last,
-        );
-
-        await favoriteService.addFavoriteItem(
-          listId: newList["id"].toString(),
-          itemId: pendingItemId!,
-          type: pendingItemType!,
-        );
-
-        activityCounts[newList["id"].toString()] =
-            (activityCounts[newList["id"].toString()] ?? 0) + 1;
-
-        activityCounts.refresh();
-
-        favoriteItemsMap["${pendingItemType!.name}_$pendingItemId"] =
-            newList["id"].toString();
-
-        favoriteItemsMap.refresh();
-
-        final savedItemId = pendingItemId;
-        final savedItemType = pendingItemType;
+        // Save values before closing anything
+        final savedItemId = pendingItemId!;
+        final savedItemType = pendingItemType!;
         final savedContext = pendingContext;
 
-        final listName = newList["name"].toString();
+        // IMPORTANT: actually add item to new list
+        await favoriteService.addFavoriteItem(
+          listId: newListId,
+          itemId: savedItemId,
+          type: savedItemType,
+        );
 
-        if (savedItemId != null &&
-            savedItemType != null &&
-            savedContext != null) {
-          showSavedSnackbar(savedItemId, savedItemType, savedContext, listName);
-        }
+        // Update local state immediately
+        activityCounts[newListId] = 1;
+        activityCounts.refresh();
 
+        final key = "${savedItemType.name}_$savedItemId";
+
+        favoriteItemsMap[key] = newListId;
+        favoriteItemsMap.refresh();
+
+        // Clear pending values
         pendingItemId = null;
         pendingItemType = null;
         pendingContext = null;
+
+        // Close CREATE LIST bottom sheet
+        // Get.back();
+
+        // Show snackbar after sheet closes
+        if (savedContext != null) {
+          Future.delayed(const Duration(milliseconds: 150), () {
+            showSavedSnackbar(
+              savedItemId,
+              savedItemType,
+              savedContext,
+              newListName,
+            );
+          });
+        }
       }
 
-      // Clear AFTER everything finishes
+      // Clear text
       createListCtrl.clear();
+
+      // Add new list locally
+      favoriteLists.add({
+        "id": newListId,
+        "name": newListName,
+        "cover_image": null,
+      });
+
+      favoriteLists.refresh();
+
+      // Refresh counts/images WITHOUT blocking snackbar
+      getFavoriteLists();
 
       print("Favorite Lists: $favoriteLists");
     } catch (e) {
@@ -291,6 +333,7 @@ class FavoriteScreenController extends GetxController {
                           label: "List name".tr,
                           controller: createListCtrl,
                           focusNode: createListFocusNode,
+                          mode: BottomSheetMode.create,
                           onDone: () async {
                             if (isLoading.value) return;
 
@@ -352,6 +395,7 @@ class FavoriteScreenController extends GetxController {
                                     title: "Create a list".tr,
                                     controller: createListCtrl,
                                     focusNode: createListFocusNode,
+                                    mode: BottomSheetMode.create,
                                     label: "List name".tr,
                                     onDone: () async {
                                       if (isLoading.value) return;
@@ -524,7 +568,7 @@ class FavoriteScreenController extends GetxController {
     );
   }
 
-  Future<void> moveItemToList(
+  Future moveItemToList(
     String itemId,
     FavoriteItemType itemType,
     String listId,
@@ -534,25 +578,21 @@ class FavoriteScreenController extends GetxController {
     final key = "${itemType.name}_$itemId";
 
     try {
-      // Current list of this item
       final oldListId = favoriteItemsMap[key];
 
-      // If selecting the same list, just close
+      // Already in this list
       if (oldListId == listId) {
         Get.back();
         return;
       }
 
-      // Remove from old list first
+      // Remove from old list
       if (oldListId != null) {
         await favoriteService.deleteFavoriteItem(
           listId: oldListId.toString(),
           itemId: itemId,
         );
       }
-
-      // Update old list because its count/image changed
-      await updateSingleFavoriteList(oldListId.toString());
 
       // Add to new list
       await favoriteService.addFavoriteItem(
@@ -561,16 +601,22 @@ class FavoriteScreenController extends GetxController {
         type: itemType,
       );
 
-      // Update only the new selected list
-      await updateSingleFavoriteList(listId);
-
-      // Update local map
+      // Update local state immediately
       favoriteItemsMap[key] = listId;
       favoriteItemsMap.refresh();
 
+      // Close bottom sheet
       Get.back();
 
+      // Show snackbar immediately
       showSavedSnackbar(itemId, itemType, context, listName);
+
+      // Refresh counts/images in background
+      if (oldListId != null) {
+        updateSingleFavoriteList(oldListId.toString());
+      }
+
+      updateSingleFavoriteList(listId);
     } catch (e) {
       print("Move item error: $e");
     }
@@ -700,6 +746,22 @@ class FavoriteScreenController extends GetxController {
     }
   }
 
+  // Future deleteFavorite({
+  //   required String listId,
+  //   required String itemId,
+  // }) async {
+  //   try {
+  //     print("Delete List ID: $listId");
+  //     print("Delete Item ID: $itemId");
+
+  //     await favoriteService.deleteFavoriteItem(listId: listId, itemId: itemId);
+
+  //     // Remove the item locally
+  //     favoriteItems.removeWhere((item) => item["id"]?.toString() == itemId);
+  //   } catch (e) {
+  //     print("Delete favorite error: $e");
+  //   }
+  // }
   Future<void> deleteFavorite({
     required String listId,
     required String itemId,
@@ -710,8 +772,25 @@ class FavoriteScreenController extends GetxController {
 
       await favoriteService.deleteFavoriteItem(listId: listId, itemId: itemId);
 
-      await getFavoriteItems(listId);
-      await getFavoriteLists();
+      // Remove item locally
+      favoriteItems.removeWhere((item) => item["id"]?.toString() == itemId);
+
+      // Update activity count immediately
+      final currentCount = activityCounts[listId] ?? 0;
+
+      if (currentCount > 0) {
+        activityCounts[listId] = currentCount - 1;
+      }
+
+      // If list is now empty, remove its cover image too
+      if ((activityCounts[listId] ?? 0) == 0) {
+        activityCounts.remove(listId);
+        listImages.remove(listId);
+      }
+
+      // Make sure GetX updates listeners
+      activityCounts.refresh();
+      listImages.refresh();
     } catch (e) {
       print("Delete favorite error: $e");
     }

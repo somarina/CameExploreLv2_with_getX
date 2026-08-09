@@ -64,18 +64,6 @@ class FavoriteService {
     return await baseApi.get(endpoint: '/api/favorites/lists/$listId/items');
   }
 
-  // Future<dynamic> deleteFavoriteItem({
-  //   required String listId,
-  //   required String itemId,
-  //   required FavoriteItemType type,
-  // }) async {
-  //   final endpoint =
-  //       '/api/favorites/lists/$listId/items/$itemId?item_type=${type.name}';
-
-  //   print("DELETE Endpoint: $endpoint");
-
-  //   return await baseApi.delete(endpoint: endpoint);
-  // }
   Future<dynamic> deleteFavoriteItem({
     required String listId,
     required String itemId,
@@ -86,13 +74,15 @@ class FavoriteService {
 
     return await baseApi.delete(endpoint: endpoint);
   }
-
+  
   Future<Map<String, dynamic>?> getPlaceById(String id) async {
     try {
-      final response = await baseApi.get(endpoint: "/places/$id");
+      final response = await baseApi.get(endpoint: "/api/places/$id");
+
+      debugPrint("PLACE RESPONSE: $response");
 
       if (response["result"] == true) {
-        return response["data"];
+        return Map<String, dynamic>.from(response["data"]);
       }
 
       return null;

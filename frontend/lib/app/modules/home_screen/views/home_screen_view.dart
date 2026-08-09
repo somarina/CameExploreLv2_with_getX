@@ -1288,9 +1288,9 @@ class HomeScreenView extends GetView<HomeScreenController> {
                 itemBuilder: (context, index) {
                   final place = controller.foodPlaces[index];
 
-                  final isFav = index < controller.favorites.length
-                      ? controller.favorites[index]
-                      : false;
+                  // final isFav = index < controller.favorites.length
+                  //     ? controller.favorites[index]
+                  //     : false;
 
                   // Outer Obx handles updates, no inner Obx needed here
                   return Padding(
@@ -1302,33 +1302,36 @@ class HomeScreenView extends GetView<HomeScreenController> {
                           arguments: controller.foodPlaces[index],
                         );
                       },
-                      child: CardPlace(
-                        width: Get.width * 0.8,
-                        image:
-                            (place['image_url'] != null &&
-                                place['image_url'].toString().startsWith(
-                                  'http',
-                                ))
-                            ? place['image_url']
-                            : "",
-                        category: controller.getCategory(place),
-                        title: controller.getPlaceName(place),
-                        location: controller.getAddress(place),
-                        distance: "",
-                        rating: (place["rating"] ?? 0).toDouble(),
-                        review_count: place['review_count'] ?? 0,
-                        isFavorite: controller.favoriteController.isFavorite(
-                          place["id"].toString(),
-                          FavoriteItemType.place,
-                        ),
+                      child: Obx(() {
+                        final placeId = place["id"].toString();
 
-                        onFavorite: () =>
-                            controller.favoriteController.toggleFavorite(
-                              place["id"].toString(),
-                              FavoriteItemType.place,
-                              context,
-                            ),
-                      ),
+                        final isFavorite = controller.favoriteController
+                            .isFavorite(placeId, FavoriteItemType.place);
+
+                        return CardPlace(
+                          width: Get.width * 0.8,
+                          image:
+                              (place['image_url'] != null &&
+                                  place['image_url'].toString().startsWith(
+                                    'http',
+                                  ))
+                              ? place['image_url']
+                              : "",
+                          category: controller.getCategory(place),
+                          title: controller.getPlaceName(place),
+                          location: controller.getAddress(place),
+                          distance: "",
+                          rating: (place["rating"] ?? 0).toDouble(),
+                          review_count: place['review_count'] ?? 0,
+                          isFavorite: isFavorite,
+                          onFavorite: () =>
+                              controller.favoriteController.toggleFavorite(
+                                placeId,
+                                FavoriteItemType.place,
+                                context,
+                              ),
+                        );
+                      }),
                     ),
                   );
                 },

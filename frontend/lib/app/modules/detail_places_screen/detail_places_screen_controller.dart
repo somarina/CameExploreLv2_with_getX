@@ -7,6 +7,8 @@ class DetailPlacesScreenViewController extends GetxController {
   final ScrollController scrollController = ScrollController();
 
   final RxMap<String, dynamic> place = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> hotel = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> package = <String, dynamic>{}.obs;
 
   // UI State
   var currentIndex = 0.obs;

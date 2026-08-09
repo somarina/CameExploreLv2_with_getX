@@ -4,10 +4,13 @@ import 'package:frontend/app/modules/favorite_screen/controllers/favorite_screen
 import 'package:frontend/app/modules/favorite_screen/fav_screen_2/fav_screen_2_controller.dart';
 import 'package:get/get.dart';
 
+enum BottomSheetMode { create, rename }
+
 class AppBottomSheets {
   static Future<dynamic> showBottomSheet({
     required String title,
     required String label,
+    required BottomSheetMode mode,
     TextEditingController? controller,
     FocusNode? focusNode,
     void Function()? onDone,
@@ -52,22 +55,11 @@ class AppBottomSheets {
                   Spacer(),
 
                   Obx(() {
-                    final controller = Get.find<FavoriteScreenController>();
-
-                    print("Button sees: ${controller.canCreateList.value}");
-                    bool canCreate =
-                        Get.isRegistered<FavoriteScreenController>()
+                    final bool canSubmit = mode == BottomSheetMode.create
                         ? Get.find<FavoriteScreenController>()
                               .canCreateList
                               .value
-                        : false;
-
-                    bool canRename =
-                        Get.isRegistered<FavScreen2ViewController>()
-                        ? Get.find<FavScreen2ViewController>().canRename.value
-                        : false;
-
-                    bool canSubmit = canCreate || canRename;
+                        : Get.find<FavScreen2ViewController>().canRename.value;
 
                     return TextButton(
                       onPressed: canSubmit ? onDone : null,

@@ -1,6 +1,7 @@
 part of 'package_detail_screen_view.dart';
 
 class PackageDetailScreenViewController extends GetxController {
+  final favCtrl = Get.find<FavoriteScreenController>();
   final currentIndex = 0.obs;
   final isImportantExpanded = false.obs;
 
