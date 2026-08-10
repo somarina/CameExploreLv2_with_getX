@@ -449,9 +449,7 @@ class FavoriteScreenController extends GetxController {
                                   color: Colors.grey.shade300,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
-                                child: list["cover_image"] == null
-                                    ? const Icon(Icons.image_outlined)
-                                    : ClipRRect(
+                                child: ClipRRect(
                                         borderRadius: BorderRadius.circular(5),
                                         child: Image.network(
                                           list["cover_image"],
@@ -464,7 +462,7 @@ class FavoriteScreenController extends GetxController {
 
                               Expanded(
                                 child: Obx(() {
-                                  final listId = list["id"]?.toString() ?? "";
+                                  final listId = list["id"].toString() ?? "";
                                   print("UI listId: $listId");
                                   print("UI count: ${activityCounts[listId]}");
                                   final count = activityCounts[listId] ?? 0;
@@ -476,7 +474,7 @@ class FavoriteScreenController extends GetxController {
                                       child: Text(
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        list["name"]?.toString() ?? "",
+                                        list["name"].toString() ?? "",
                                         style: AppFonts.fontsGeneral.copyWith(
                                           color: theme.colorScheme.secondary,
                                           fontWeight: FontWeight.w600,
