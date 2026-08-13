@@ -25,7 +25,7 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
         ),
         title: Text(
           "About Developer".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
@@ -100,7 +100,7 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
                       Expanded(
                         child: Text(
                           dev.description,
-                          style: GoogleFonts.spaceGrotesk(
+                          style: GoogleFonts.googleSans(
                             fontSize: 16,
                             color: Theme.of(context).colorScheme.secondary,
                           ),
@@ -116,7 +116,7 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
                       Expanded(
                         child: Text(
                           dev.description2,
-                          style: GoogleFonts.spaceGrotesk(
+                          style: GoogleFonts.googleSans(
                             fontSize: 16,
                             color: Theme.of(context).colorScheme.secondary,
                           ),
@@ -132,7 +132,7 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
                       Expanded(
                         child: Text(
                           dev.description3,
-                          style: GoogleFonts.spaceGrotesk(
+                          style: GoogleFonts.googleSans(
                             fontSize: 16,
                             color: Theme.of(context).colorScheme.secondary,
                           ),
@@ -162,7 +162,7 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
                             Text(
                               dev.education,
                               textAlign: TextAlign.start,
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.googleSans(
                                 fontSize: 16,
                                 fontWeight: .bold,
                                 color: Theme.of(context).colorScheme.secondary,
@@ -171,7 +171,7 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
                             Text(
                               dev.disEducation,
                               textAlign: TextAlign.start,
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.googleSans(
                                 fontSize: 14,
 
                                 color: Theme.of(context).colorScheme.secondary,
@@ -194,7 +194,7 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
                             Text(
                               dev.education2,
                               textAlign: TextAlign.start,
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.googleSans(
                                 fontSize: 16,
                                 fontWeight: .bold,
                                 color: Theme.of(context).colorScheme.secondary,
@@ -203,7 +203,7 @@ class DetailDeveloperView extends GetView<DetailDeveloperViewController> {
                             Text(
                               dev.disEducation2,
                               textAlign: TextAlign.start,
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.googleSans(
                                 fontSize: 14,
 
                                 color: Theme.of(context).colorScheme.secondary,

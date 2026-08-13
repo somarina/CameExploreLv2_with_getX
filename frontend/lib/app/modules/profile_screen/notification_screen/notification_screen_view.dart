@@ -26,7 +26,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
         ),
         title: Text(
           "notification".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
@@ -42,7 +42,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                 () => SwitchListTile(
                   title: Text(
                     "system".tr,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.googleSans(
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
@@ -76,7 +76,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                           SizedBox(width: 5),
                           Text(
                             "message".tr,
-                            style: GoogleFonts.spaceGrotesk(
+                            style: GoogleFonts.googleSans(
                               fontSize: 16,
                               color: Theme.of(context).colorScheme.secondary,
                             ),
@@ -99,7 +99,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                     () => SwitchListTile(
                       title: Text(
                         "like".tr,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.googleSans(
                           fontSize: 16,
                           color: Get.theme.colorScheme.secondary,
                         ),
@@ -125,7 +125,7 @@ class NotificationScreenView extends GetView<NotificationScreenViewController> {
                 () => SwitchListTile(
                   title: Text(
                     "app_update_notification".tr,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.googleSans(
                       fontSize: 16,
                       color: Get.theme.colorScheme.secondary,
                     ),

@@ -27,7 +27,7 @@ class PrivateSecurityScreenView
         ),
         title: Text(
           "security_".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             fontSize: 24,
             fontWeight: .bold,
             color: Theme.of(context).colorScheme.secondary,
@@ -103,7 +103,7 @@ class PrivateSecurityScreenView
   Text _label(BuildContext context, {required String label}) {
     return Text(
       label,
-      style: GoogleFonts.spaceGrotesk(
+      style: GoogleFonts.googleSans(
         fontSize: 18,
         fontWeight: .bold,
         color: Theme.of(context).colorScheme.secondary,
@@ -182,7 +182,7 @@ class PrivateSecurityScreenView
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
                     fontSize: 18,
                     fontWeight: .bold,
@@ -190,7 +190,7 @@ class PrivateSecurityScreenView
                 ),
                 Text(
                   subtext1,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 16,
                     color: Theme.of(
                       context,
@@ -209,7 +209,7 @@ class PrivateSecurityScreenView
             ),
             child: Text(
               textBtn,
-              style: GoogleFonts.spaceGrotesk(fontSize: 16, color: color),
+              style: GoogleFonts.googleSans(fontSize: 16, color: color),
             ),
           ),
         ],
@@ -258,7 +258,7 @@ class PrivateSecurityScreenView
             children: [
               Text(
                 title,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.googleSans(
                   color: Theme.of(context).colorScheme.secondary,
                   fontSize: 18,
                   fontWeight: .bold,
@@ -266,7 +266,7 @@ class PrivateSecurityScreenView
               ),
               Text(
                 subtext1,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.googleSans(
                   fontSize: 16,
                   color: Theme.of(
                     context,
@@ -305,7 +305,7 @@ class PrivateSecurityScreenView
         children: [
           Text(
             "log&sec".tr,
-            style: GoogleFonts.spaceGrotesk(
+            style: GoogleFonts.googleSans(
               fontSize: 18,
               fontWeight: .bold,
               color: Theme.of(context).colorScheme.secondary,
@@ -347,14 +347,14 @@ class PrivateSecurityScreenView
             children: [
               Text(
                 title,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.googleSans(
                   fontSize: 18,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
               Text(
                 subtype,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.googleSans(
                   fontSize: 16,
 
                   color: Theme.of(
@@ -373,7 +373,7 @@ class PrivateSecurityScreenView
           ),
           child: Text(
             "open".tr,
-            style: GoogleFonts.spaceGrotesk(
+            style: GoogleFonts.googleSans(
               color: Theme.of(context).colorScheme.secondary,
             ),
           ),
@@ -402,7 +402,7 @@ class PrivateSecurityScreenView
               children: [
                 Text(
                   "acc_secure".tr,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 18,
                     fontWeight: .bold,
                     color: Theme.of(context).colorScheme.secondary,
@@ -410,7 +410,7 @@ class PrivateSecurityScreenView
                 ),
                 Text(
                   "acc_secure1".tr,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 16,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
