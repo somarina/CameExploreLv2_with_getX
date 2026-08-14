@@ -1,11 +1,15 @@
+// ignore_for_file: unused_element
+
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:frontend/app/core/constants/app_fonts/app_fonst.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:lottie/lottie.dart';
 
 import '../controllers/ai_screen_controller.dart';
 import '../models/ai_chat_message.dart';
@@ -29,46 +33,171 @@ class AiScreenView extends GetView<AiScreenController> {
         preferredSize: const Size.fromHeight(72),
         child: _AiAppBar(colors: colors),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDark
-                ? [colors.surface, colors.surface]
-                : [colors.primary.withValues(alpha: 0.06), Theme.of(context).scaffoldBackgroundColor],
-            stops: const [0.0, 0.35],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    const _ChatWatermark(),
-                    Obx(
-                      () => ListView.builder(
-                        controller: controller.scrollController,
-                        padding: const EdgeInsets.fromLTRB(14, 16, 14, 8),
-                        itemCount:
-                            controller.messages.length +
-                            (controller.isSending.value ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index >= controller.messages.length) {
-                            return const _TypingRow();
-                          }
-                          final message = controller.messages[index];
-                          return _ChatBubble(message: message, colors: colors);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+      body: Stack(
+        children: [
+          // Rich AI travel background
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? const [
+                        Color(0xFF071C14),
+                        Color(0xFF102B21),
+                        Color(0xFF171B18),
+                      ]
+                    : const [
+                        Color(0xFFE2F7EA),
+                        Color(0xFFF4FBF7),
+                        Color(0xFFFFF5DF),
+                      ],
+                stops: const [0.0, 0.55, 1.0],
               ),
-              _MessageInputBar(controller: controller, colors: colors),
+            ),
+          ),
+
+          Positioned(
+            top: -120,
+            left: -100,
+            child: _GlowOrb(
+              size: 300,
+              color: colors.primary,
+              opacity: isDark ? 0.18 : 0.16,
+            ),
+          ),
+          Positioned(
+            top: 150,
+            right: -120,
+            child: _GlowOrb(
+              size: 290,
+              color: _aiGold,
+              opacity: isDark ? 0.12 : 0.14,
+            ),
+          ),
+          Positioned(
+            bottom: 90,
+            left: -110,
+            child: _GlowOrb(
+              size: 300,
+              color: const Color(0xFF54BFA0),
+              opacity: isDark ? 0.10 : 0.11,
+            ),
+          ),
+
+          const Positioned(
+            top: 95,
+            right: 30,
+            child: _AiDot(size: 13, color: _aiGold),
+          ),
+          const Positioned(
+            top: 145,
+            right: 76,
+            child: _AiDot(size: 7, color: Colors.white),
+          ),
+          const Positioned(
+            top: 300,
+            left: 24,
+            child: _AiDot(size: 9, color: _aiGold),
+          ),
+          const Positioned(
+            bottom: 190,
+            right: 30,
+            child: _AiDot(size: 11, color: Colors.white),
+          ),
+
+          SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      const _ChatWatermark(),
+                      Obx(
+                        () => ListView.builder(
+                          controller: controller.scrollController,
+                          padding: const EdgeInsets.fromLTRB(14, 18, 14, 10),
+                          itemCount:
+                              controller.messages.length +
+                              (controller.isSending.value ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index >= controller.messages.length) {
+                              return const _TypingRow();
+                            }
+                            final message = controller.messages[index];
+                            return _ChatBubble(
+                              message: message,
+                              colors: colors,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _MessageInputBar(controller: controller, colors: colors),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GlowOrb extends StatelessWidget {
+  const _GlowOrb({
+    required this.size,
+    required this.color,
+    required this.opacity,
+  });
+
+  final double size;
+  final Color color;
+  final double opacity;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              color.withValues(alpha: opacity),
+              color.withValues(alpha: 0),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AiDot extends StatelessWidget {
+  const _AiDot({required this.size, required this.color});
+
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color.withValues(alpha: 0.35),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.18),
+              blurRadius: 10,
+              spreadRadius: 3,
+            ),
+          ],
         ),
       ),
     );
@@ -125,30 +254,39 @@ class _AiAppBar extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () => Get.back(),
-                icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               ),
               Container(
-                width: 40,
-                height: 40,
+                width: 52,
+                height: 52,
+                padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: const LinearGradient(
-                    colors: [_aiGold, Color(0xFFF2C572)],
+                    colors: [_aiGold, Color(0xFFFFE6A6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: _aiGold.withValues(alpha: 0.5),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      color: _aiGold.withValues(alpha: 0.55),
+                      blurRadius: 14,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.auto_awesome_rounded,
-                  color: Colors.white,
-                  size: 20,
+                child: ClipOval(
+                  child: Container(
+                    color: Colors.white.withValues(alpha: 0.96),
+                    child: Lottie.asset(
+                      'assets/icons/camexplore_ai_robot.json',
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.contain,
+                      repeat: true,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -165,7 +303,7 @@ class _AiAppBar extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Your Cambodia travel companion',
+                      'AI travel companion • Online',
                       style: AppFonts.fontHeaderSmall.copyWith(
                         color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 12,
@@ -195,18 +333,17 @@ class _ChatBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
-        crossAxisAlignment:
-            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isUser
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment:
-                isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isUser
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (!isUser) ...[
-                const _AiAvatar(),
-                const SizedBox(width: 8),
-              ],
+              if (!isUser) ...[const _AiAvatar(), const SizedBox(width: 8)],
               Flexible(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -269,15 +406,78 @@ class _ChatBubble extends StatelessWidget {
                             ),
                           ),
                         ),
-                      Text(
-                        message.text,
-                        style: AppFonts.fontsGeneral.copyWith(
-                          height: 1.35,
-                          color: isUser
-                              ? Colors.white
-                              : (message.isError
-                                    ? colors.tertiary
-                                    : colors.onSurface),
+                      MarkdownBody(
+                        data: message.text,
+                        selectable: true,
+                        shrinkWrap: true,
+                        styleSheet: MarkdownStyleSheet(
+                          p: AppFonts.fontsGeneral.copyWith(
+                            fontSize: 15,
+                            height: 1.45,
+                            color: isUser
+                                ? Colors.white
+                                : (message.isError
+                                      ? colors.tertiary
+                                      : colors.onSurface),
+                          ),
+                          strong: AppFonts.fontsGeneral.copyWith(
+                            fontSize: 15,
+                            height: 1.45,
+                            fontWeight: FontWeight.w800,
+                            color: isUser
+                                ? Colors.white
+                                : (message.isError
+                                      ? colors.tertiary
+                                      : colors.onSurface),
+                          ),
+                          em: AppFonts.fontsGeneral.copyWith(
+                            fontSize: 15,
+                            height: 1.45,
+                            fontStyle: FontStyle.italic,
+                            color: isUser
+                                ? Colors.white
+                                : (message.isError
+                                      ? colors.tertiary
+                                      : colors.onSurface),
+                          ),
+                          h1: AppFonts.fontsSubTitle.copyWith(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w800,
+                            color: isUser ? Colors.white : colors.onSurface,
+                          ),
+                          h2: AppFonts.fontsSubTitle.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: isUser ? Colors.white : colors.onSurface,
+                          ),
+                          h3: AppFonts.fontsSubTitle.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: isUser ? Colors.white : colors.onSurface,
+                          ),
+                          listBullet: AppFonts.fontsGeneral.copyWith(
+                            fontSize: 15,
+                            color: isUser ? Colors.white : colors.primary,
+                          ),
+                          blockSpacing: 8,
+                          listIndent: 18,
+                          blockquoteDecoration: BoxDecoration(
+                            color: colors.primary.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border(
+                              left: BorderSide(color: colors.primary, width: 3),
+                            ),
+                          ),
+                          blockquotePadding: const EdgeInsets.fromLTRB(
+                            12,
+                            6,
+                            8,
+                            6,
+                          ),
+                          codeblockDecoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                       if (message.googleMapsUrl != null) ...[
@@ -317,20 +517,35 @@ class _AiAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 30,
-      height: 30,
-      decoration: const BoxDecoration(
+      width: 42,
+      height: 42,
+      padding: const EdgeInsets.all(1.5),
+      decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [_aiGold, Color(0xFFF2C572)],
+        gradient: const LinearGradient(
+          colors: [_aiGold, Color(0xFFFFE6A6)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: _aiGold.withValues(alpha: 0.35),
+            blurRadius: 9,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: const Icon(
-        Icons.auto_awesome_rounded,
-        color: Colors.white,
-        size: 15,
+      child: ClipOval(
+        child: Container(
+          color: Colors.white,
+          child: Lottie.asset(
+            'assets/icons/camexplore_ai_robot.json',
+            width: 39,
+            height: 39,
+            fit: BoxFit.contain,
+            repeat: true,
+          ),
+        ),
       ),
     );
   }
@@ -349,10 +564,8 @@ class _MapsChip extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
-        onTap: () => launchUrl(
-          Uri.parse(url),
-          mode: LaunchMode.externalApplication,
-        ),
+        onTap: () =>
+            launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
@@ -434,7 +647,11 @@ class _SuggestedPlaceCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star_rounded, color: _aiGold, size: 12),
+                        const Icon(
+                          Icons.star_rounded,
+                          color: _aiGold,
+                          size: 12,
+                        ),
                         const SizedBox(width: 2),
                         Text(
                           place.rating.toStringAsFixed(1),
@@ -467,8 +684,11 @@ class _SuggestedPlaceCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    Icon(Icons.place_outlined,
-                        size: 11, color: colors.primary.withValues(alpha: 0.8)),
+                    Icon(
+                      Icons.place_outlined,
+                      size: 11,
+                      color: colors.primary.withValues(alpha: 0.8),
+                    ),
                     const SizedBox(width: 2),
                     Expanded(
                       child: Text(
@@ -598,7 +818,8 @@ class _TypingDotsState extends State<_TypingDots>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(3, (i) {
               final t = (_controller.value - (i * 0.2)) % 1.0;
-              final scale = 0.55 + 0.45 * (1 - (2 * t - 1).abs()).clamp(0.0, 1.0);
+              final scale =
+                  0.55 + 0.45 * (1 - (2 * t - 1).abs()).clamp(0.0, 1.0);
               return Transform.scale(
                 scale: scale,
                 child: Container(
@@ -636,7 +857,8 @@ class _MessageInputBar extends StatelessWidget {
             color: Theme.of(context).brightness == Brightness.dark
                 ? colors.primaryContainer
                 : Colors.white,
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: colors.primary.withValues(alpha: 0.08)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.10),
@@ -656,7 +878,10 @@ class _MessageInputBar extends StatelessWidget {
                     customBorder: const CircleBorder(),
                     onTap: controller.isSending.value
                         ? null
-                        : () => _showImageSourceSheet(context, controller),
+                        : () {
+                            FocusScope.of(context).unfocus();
+                            controller.sendMessage();
+                          },
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
@@ -673,7 +898,10 @@ class _MessageInputBar extends StatelessWidget {
                 child: TextField(
                   controller: controller.textController,
                   textInputAction: TextInputAction.send,
-                  onSubmitted: (_) => controller.sendMessage(),
+                  onSubmitted: (_) {
+                    FocusScope.of(context).unfocus();
+                    controller.sendMessage();
+                  },
                   maxLines: 5,
                   minLines: 1,
                   style: AppFonts.fontsGeneral,
@@ -685,9 +913,7 @@ class _MessageInputBar extends StatelessWidget {
                     ),
                     filled: false,
                     isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     border: InputBorder.none,
                   ),
                 ),
@@ -704,7 +930,10 @@ class _MessageInputBar extends StatelessWidget {
                     customBorder: const CircleBorder(),
                     onTap: controller.isSending.value
                         ? null
-                        : controller.sendMessage,
+                        : () {
+                            FocusScope.of(context).unfocus();
+                            controller.sendMessage();
+                          },
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -734,7 +963,10 @@ class _MessageInputBar extends StatelessWidget {
   }
 }
 
-void _showImageSourceSheet(BuildContext context, AiScreenController controller) {
+void _showImageSourceSheet(
+  BuildContext context,
+  AiScreenController controller,
+) {
   final colors = Theme.of(context).colorScheme;
   showModalBottomSheet(
     context: context,

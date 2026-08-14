@@ -209,7 +209,7 @@ class PackageCheckoutScreenView
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: isSelected
-                              ? Colors.green
+                              ? Colors.blue
                               : Colors.grey.shade300,
                           width: isSelected ? 2 : 1,
                         ),
@@ -220,17 +220,13 @@ class PackageCheckoutScreenView
                           Radio<String>(
                             value: "VISA",
                             groupValue: controller.selectedPayment.value,
-                            activeColor: Colors.green,
+                            activeColor: Colors.blue,
                             onChanged: (value) {
                               controller.selectedPayment.value =
                                   value ?? "VISA";
                             },
                           ),
-                          Icon(
-                            Icons.credit_card,
-                            color: Colors.green,
-                            size: 30,
-                          ),
+                          Icon(Icons.credit_card, color: Colors.blue, size: 30),
                           SizedBox(width: 8),
                           Text(
                             "Visa / Card",
@@ -309,7 +305,7 @@ class PackageCheckoutScreenView
                 //     );
                 //   },
                 // ),
-                SizedBox(height: 16),
+                // SizedBox(height: 16),
 
                 // --- Dynamic Description Card ---
                 Obx(() {
@@ -341,19 +337,19 @@ class PackageCheckoutScreenView
                     return Container(
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.security, color: Colors.green.shade700),
+                          Icon(Icons.security, color: Colors.blue.shade700),
                           SizedBox(width: 10),
                           Expanded(
                             child: Text(
                               "Pay securely using your Visa, Mastercard, or JCB debit/credit card.",
                               style: GoogleFonts.googleSans(
-                                color: Colors.green,
+                                color: Colors.blue.shade700,
                               ),
                             ),
                           ),
@@ -683,13 +679,39 @@ class PackageCheckoutScreenView
                                 return Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(16),
-                                      child: Image.asset(
-                                        "assets/svg/qrr.png",
-                                        height: 240,
-                                        width: 280,
-                                        fit: BoxFit.cover,
+                                    GestureDetector(
+                                      onTap: isExpired
+                                          ? null
+                                          : () => _showFullQrImage(context),
+                                      child: Stack(
+                                        alignment: Alignment.bottomRight,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: Image.asset(
+                                              "assets/svg/qrr.png",
+                                              height: 240,
+                                              width: 280,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: const EdgeInsets.all(8),
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black
+                                                  .withOpacity(0.55),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.fullscreen,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     if (isExpired)
@@ -805,7 +827,11 @@ class PackageCheckoutScreenView
                                             : () async {
                                                 final isSuccess =
                                                     await controller
-                                                        .createBooking();
+                                                        .createBooking(
+                                                          paymentMethod: "KHQR",
+                                                          paymentStatus:
+                                                              "pending",
+                                                        );
                                                 if (isSuccess) {
                                                   controller.stopPaymentTimer();
                                                   Get.offAllNamed(
@@ -832,6 +858,8 @@ class PackageCheckoutScreenView
                                                       "payment": controller
                                                           .selectedPayment
                                                           .value,
+                                                      "payment_status":
+                                                          "pending",
                                                       "transactionDate":
                                                           DateTime.now()
                                                               .toIso8601String(),
@@ -965,7 +993,6 @@ class PackageCheckoutScreenView
                                     context,
                                   ).colorScheme.primaryContainer,
                                   border: OutlineInputBorder(
-                                    
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
@@ -1074,8 +1101,13 @@ class PackageCheckoutScreenView
                                             ),
                                           ),
                                           onPressed: () async {
+                                            if (!controller.validateCard())
+                                              return;
                                             final isSuccess = await controller
-                                                .createBooking();
+                                                .createBooking(
+                                                  paymentMethod: "VISA",
+                                                  paymentStatus: "paid",
+                                                );
                                             if (isSuccess) {
                                               Get.offAllNamed(
                                                 Routes.PACKAGE_CF_BOOKING,
@@ -1101,6 +1133,7 @@ class PackageCheckoutScreenView
                                                   "payment": controller
                                                       .selectedPayment
                                                       .value,
+                                                  "payment_status": "paid",
                                                   "transactionDate":
                                                       DateTime.now()
                                                           .toIso8601String(),
@@ -1138,6 +1171,7 @@ class PackageCheckoutScreenView
                           "email": controller.emailCtrl.text.trim(),
                           "phone": controller.phoneCtrl.text.trim(),
                           "payment": controller.selectedPayment.value,
+                          "payment_status": "paid",
                           "transactionDate": DateTime.now().toIso8601String(),
                         },
                       );
@@ -1414,6 +1448,68 @@ class PackageCheckoutScreenView
           ),
         ),
       ),
+    );
+  }
+
+  void _showFullQrImage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 15,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: InteractiveViewer(
+                    maxScale: 4.0,
+                    minScale: 1.0,
+                    child: Image.asset(
+                      "assets/svg/qrr.png",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

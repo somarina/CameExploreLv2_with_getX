@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/modules/booking_screen/views/booking_screen_view.dart';
 import 'package:frontend/app/modules/discover_screen/search_screen/search_screen_view.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../core/constants/app_colors/app_colors.dart';
 import '../../../routes/app_pages.dart';
@@ -46,6 +47,11 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
     AdaptiveNavigationDestination(icon: 'person', label: 'Profile'),
   ];
 
+  List<CurvedNavigationBarItem> get _androidNavItems => [
+    CurvedNavigationBarItem(
+      child: Icon(
+        Icons.home,
+        color: controller.currentIndex.value == 0 ? Colors.white : Colors.black,
   // static final List<CurvedNavigationBarItem> _androidNavItems = [
   //   const CurvedNavigationBarItem(child: Icon(Icons.home), label: 'Home'),
   //   const CurvedNavigationBarItem(child: Icon(Icons.search), label: 'Discover'),
@@ -155,6 +161,7 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
                   : null,
             ),
           ),
+
           // AssistiveTouch-style floating button — draggable anywhere on
           // screen, snaps to the nearest edge on release, opens AI screen.
           const _AssistiveTouchButton(),
@@ -232,7 +239,13 @@ class _AssistiveTouchButtonState extends State<_AssistiveTouchButton>
     _snapAnimation = Tween<Offset>(
       begin: _position,
       end: target,
-    ).animate(CurvedAnimation(parent: _snapController, curve: Curves.easeOut));
+    ).animate(
+      CurvedAnimation(
+        parent: _snapController,
+        curve: Curves.easeOut,
+      ),
+    );
+
     _snapController.forward(from: 0);
     setState(() => _dragging = false);
   }
@@ -263,7 +276,10 @@ class _AssistiveTouchButtonState extends State<_AssistiveTouchButton>
           child: ClipRRect(
             borderRadius: BorderRadius.circular(_size / 2),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              filter: ImageFilter.blur(
+                sigmaX: 12,
+                sigmaY: 12,
+              ),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
                 width: _size,
@@ -295,10 +311,14 @@ class _AssistiveTouchButtonState extends State<_AssistiveTouchButton>
                           ),
                         ],
                 ),
-                child: Icon(
-                  Icons.auto_awesome,
-                  color: active ? Colors.white : Colors.white.withOpacity(0.7),
-                  size: 24,
+
+                // CamExplore AI Robot Lottie
+                child: Lottie.asset(
+                  'assets/icons/camexplore_ai_robot.json',
+                  width: 58,
+                  height: 58,
+                  fit: BoxFit.contain,
+                  repeat: true,
                 ),
               ),
             ),

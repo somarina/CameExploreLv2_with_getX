@@ -112,11 +112,14 @@ class DashboardPlacesService {
   // limit defaults to the API's max page size (200) — the admin queue
   // needs to see everything, not just the first 50 (API default), or
   // newly submitted pending places can end up past the page cutoff.
-  Future<dynamic> getPlaces({String? status, int limit = 200}) async {
+  // `category` lets callers narrow to one category (e.g. "restaurant")
+  // without needing a separate backend resource for it.
+  Future<dynamic> getPlaces({String? status, String? category, int limit = 200}) async {
     return await baseApi.get(
       endpoint: "/places/",
       queryParameters: {
         if (status != null) "status": status,
+        if (category != null) "category": category,
         "limit": limit,
       },
     );
@@ -136,6 +139,13 @@ class DashboardPlacesService {
         if (reviewNote != null) "review_note": reviewNote,
       },
     );
+  }
+
+  // Admin edit — same PUT endpoint as reviewPlace, but for arbitrary
+  // field updates (name/description/category/province/entry fee) instead
+  // of just the approve/reject status.
+  Future<dynamic> updatePlace(String placeId, Map<String, dynamic> data) async {
+    return await baseApi.put(endpoint: "/places/$placeId", data: data);
   }
 
   Future<dynamic> deletePlace(String placeId) async {

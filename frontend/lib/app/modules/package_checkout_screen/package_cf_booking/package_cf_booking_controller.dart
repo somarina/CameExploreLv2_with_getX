@@ -48,7 +48,9 @@ class PackageCfBookingViewController extends GetxController {
 
   String get phone => bookingData["phone"] ?? "";
 
-  String get payment => bookingData["payment"] ?? "ABA Pay";
+  String get payment => bookingData["payment"] ?? bookingData["payment_method"] ?? "KHQR";
+
+  String get paymentStatus => bookingData["payment_status"] ?? "paid";
 
   String get guide => bookingData["guide"] ?? "Live tour guide";
 }

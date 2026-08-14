@@ -11,6 +11,11 @@ import '../../models/admin_models.dart';
 import '../widgets/admin_shared_widgets.dart';
 import '../widgets/admin_top_bar.dart';
 
+String _monthAbbrev(int month) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return months[month - 1];
+}
+
 class AdminManageUsersPage extends StatefulWidget {
   final AdminScreenController controller;
   const AdminManageUsersPage({super.key, required this.controller});
@@ -51,11 +56,16 @@ class _AdminManageUsersPageState extends State<AdminManageUsersPage> {
                 const SizedBox(height: 24),
                 LayoutBuilder(builder: (context, constraints) {
                   final isMobile = constraints.maxWidth < 700;
+                  final activeCount = controller.companies.where((c) => !c.suspended).length;
+                  final thisMonthCount = controller.companies.where((c) {
+                    final now = DateTime.now();
+                    return c.joined.contains(_monthAbbrev(now.month)) && c.joined.contains('${now.year}');
+                  }).length;
                   final cards = [
                     _StatBox(label: 'Total Companies', value: '${controller.totalCompanies}', color: AdminColors.primary, icon: Icons.apartment_rounded),
-                    _StatBox(label: 'Active', value: '${controller.totalCompanies}', color: AdminColors.green, icon: Icons.check_circle_outline_rounded),
+                    _StatBox(label: 'Active', value: '$activeCount', color: AdminColors.green, icon: Icons.check_circle_outline_rounded),
                     _StatBox(label: 'Total Places', value: '$totalPlaces', color: AdminColors.purple, icon: Icons.place_outlined),
-                    _StatBox(label: 'This Month', value: '3', color: AdminColors.amber, icon: Icons.trending_up_rounded),
+                    _StatBox(label: 'This Month', value: '$thisMonthCount', color: AdminColors.amber, icon: Icons.trending_up_rounded),
                   ];
                   return GridView.count(
                     crossAxisCount: isMobile ? 2 : 4,
@@ -317,10 +327,24 @@ class _CompanyRowState extends State<_CompanyRow> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(company.name,
-                            style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w600, color: AdminColors.textPrimary),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(company.name,
+                                  style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w600, color: AdminColors.textPrimary),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                            if (company.suspended) ...[
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(color: AdminColors.amber.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                                child: Text('suspended'.tr, style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w600, color: AdminColors.amber)),
+                              ),
+                            ],
+                          ],
+                        ),
                         Text('ID: ${company.id}', style: GoogleFonts.inter(fontSize: 12, color: AdminColors.textSecondary)),
                       ],
                     ),
@@ -384,8 +408,14 @@ class _CompanyRowState extends State<_CompanyRow> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _ActionIconButton(icon: Icons.visibility_outlined, tooltip: 'view_details'.tr, color: AdminColors.textSecondary, onTap: () {}),
-                    _ActionIconButton(icon: Icons.person_off_outlined, tooltip: 'suspend'.tr, color: AdminColors.amber, onTap: () {}),
+                    _ActionIconButton(icon: Icons.visibility_outlined, tooltip: 'view_details'.tr, color: AdminColors.textSecondary, onTap: () => _viewCompany(context, company, controller)),
+                    _ActionIconButton(icon: Icons.edit_outlined, tooltip: 'edit'.tr, color: AdminColors.primary, onTap: () => _editCompany(context, company, controller)),
+                    _ActionIconButton(
+                      icon: company.suspended ? Icons.person_add_alt_1_outlined : Icons.person_off_outlined,
+                      tooltip: company.suspended ? 'reinstate'.tr : 'suspend'.tr,
+                      color: AdminColors.amber,
+                      onTap: () => _confirmSuspend(context, company, controller),
+                    ),
                     _ActionIconButton(icon: Icons.delete_outline, tooltip: 'remove'.tr, color: AdminColors.red, onTap: () => _confirmDelete(context, company, controller)),
                   ],
                 ),
@@ -398,25 +428,78 @@ class _CompanyRowState extends State<_CompanyRow> {
   }
 
   void _confirmDelete(BuildContext context, AdminCompany company, AdminScreenController controller) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('${'remove_question'.tr} "${company.name}"?', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
-        content: Text('remove_company_message'.tr, style: GoogleFonts.inter()),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('cancel'.tr)),
-          TextButton(
-            onPressed: () {
-              controller.companies.remove(company);
-              Navigator.pop(context);
-            },
-            child: Text('remove'.tr, style: const TextStyle(color: AdminColors.red)),
-          ),
-        ],
-      ),
+    showAdminConfirmDialog(
+      context,
+      title: '${'remove_question'.tr} "${company.name}"?',
+      message: 'remove_company_message'.tr,
+      confirmLabel: 'remove'.tr,
+      confirmColor: AdminColors.red,
+      icon: Icons.person_remove_outlined,
+      onConfirm: (_) async {
+        await controller.deleteCompany(company);
+        Get.snackbar('removed'.tr, company.name);
+      },
     );
   }
+}
+
+// ══════════════════════════ View / edit / suspend dialogs ══════════════
+
+void _viewCompany(BuildContext context, AdminCompany company, AdminScreenController controller) {
+  showAdminDetailDialog(
+    context,
+    title: company.name,
+    subtitle: 'ID: ${company.id}',
+    icon: Icons.apartment_rounded,
+    iconColor: company.color,
+    fields: [
+      MapEntry('field_email'.tr, company.email),
+      MapEntry('field_phone'.tr, company.phone),
+      MapEntry('field_business_type'.tr, company.businessType),
+      MapEntry('field_location'.tr, company.location),
+      MapEntry('col_places'.tr, '${company.places}'),
+      MapEntry('col_joined'.tr, company.joined),
+    ],
+    onEdit: () => _editCompany(context, company, controller),
+  );
+}
+
+void _editCompany(BuildContext context, AdminCompany company, AdminScreenController controller) {
+  showAdminEditDialog(
+    context,
+    title: 'edit_details'.tr,
+    subtitle: company.name,
+    fields: [
+      AdminEditField(key: 'name', label: 'field_name'.tr, initialValue: company.name),
+      AdminEditField(key: 'email', label: 'field_email'.tr, initialValue: company.email),
+      AdminEditField(key: 'phone', label: 'field_phone'.tr, initialValue: company.phone),
+      AdminEditField(key: 'businessType', label: 'field_business_type'.tr, initialValue: company.businessType),
+      AdminEditField(key: 'location', label: 'field_location'.tr, initialValue: company.location),
+    ],
+    onSave: (values) async {
+      await controller.editCompany(company, values);
+      Get.snackbar('changes_saved'.tr, company.name);
+    },
+  );
+}
+
+void _confirmSuspend(BuildContext context, AdminCompany company, AdminScreenController controller) {
+  final isReinstating = company.suspended;
+  showAdminConfirmDialog(
+    context,
+    title: isReinstating ? 'reinstate_question'.tr : 'suspend_question'.tr,
+    message: '${isReinstating ? 'reinstate_confirm_message'.tr : 'suspend_confirm_message'.tr}\n\n"${company.name}"',
+    confirmLabel: isReinstating ? 'reinstate'.tr : 'suspend'.tr,
+    confirmColor: AdminColors.amber,
+    icon: Icons.person_off_outlined,
+    onConfirm: (_) async {
+      await controller.suspendCompany(company);
+      Get.snackbar(
+        isReinstating ? 'reinstated'.tr : 'suspended'.tr,
+        '${isReinstating ? 'company_reinstated_snackbar'.tr : 'company_suspended_snackbar'.tr} ${company.name}',
+      );
+    },
+  );
 }
 
 // ══════════════════════════ Business type badge ══════════════════════════

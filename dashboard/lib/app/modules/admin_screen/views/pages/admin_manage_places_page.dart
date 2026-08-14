@@ -701,19 +701,25 @@ class _PlaceRowState extends State<_PlaceRow> {
                     icon: Icons.visibility_outlined,
                     tooltip: 'view_details'.tr,
                     color: AdminColors.textSecondary,
-                    onTap: () {},
+                    onTap: () => _viewPlace(context, place, controller),
+                  ),
+                  _ActionIconButton(
+                    icon: Icons.edit_outlined,
+                    tooltip: 'edit'.tr,
+                    color: AdminColors.primary,
+                    onTap: () => _editPlace(context, place, controller),
                   ),
                   _ActionIconButton(
                     icon: Icons.check_circle_outline,
                     tooltip: 'approve'.tr,
                     color: AdminColors.green,
-                    onTap: () => controller.approvePlace(place),
+                    onTap: () => _confirmApprovePlace(context, place, controller),
                   ),
                   _ActionIconButton(
                     icon: Icons.cancel_outlined,
                     tooltip: 'reject'.tr,
                     color: AdminColors.red,
-                    onTap: () => controller.rejectPlace(place),
+                    onTap: () => _confirmRejectPlace(context, place, controller),
                   ),
                   _ActionIconButton(
                     icon: Icons.delete_outline,
@@ -753,42 +759,101 @@ class _PlaceRowState extends State<_PlaceRow> {
     }
   }
 
-  void _confirmDelete(
-    BuildContext context,
-    AdminPlace place,
-    AdminScreenController controller,
-  ) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          '${'delete_question'.tr} "${place.name}"?',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w700),
-        ),
-        content: Text(
-          'action_cannot_be_undone'.tr,
-          style: GoogleFonts.inter(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('cancel'.tr),
-          ),
-          TextButton(
-            onPressed: () {
-              controller.deletePlace(place);
-              Navigator.pop(context);
-            },
-            child: Text(
-              'delete'.tr,
-              style: const TextStyle(color: AdminColors.red),
-            ),
-          ),
-        ],
-      ),
-    );
+}
+
+// ══════════════════════════ View / edit / approve / reject / delete ══════
+
+void _confirmDelete(
+  BuildContext context,
+  AdminPlace place,
+  AdminScreenController controller,
+) {
+  showAdminConfirmDialog(
+    context,
+    title: '${'delete_question'.tr} "${place.name}"?',
+    message: 'action_cannot_be_undone'.tr,
+    confirmLabel: 'delete'.tr,
+    confirmColor: AdminColors.red,
+    icon: Icons.delete_outline_rounded,
+    onConfirm: (_) => controller.deletePlace(place),
+  );
+}
+
+void _viewPlace(BuildContext context, AdminPlace place, AdminScreenController controller) {
+  Widget chip;
+  switch (place.status) {
+    case PlaceStatus.approved:
+      chip = AdminStatusChip(text: 'approved'.tr, color: AdminColors.green, bg: AdminColors.greenLight);
+      break;
+    case PlaceStatus.rejected:
+      chip = AdminStatusChip(text: 'rejected'.tr, color: AdminColors.red, bg: AdminColors.redLight);
+      break;
+    case PlaceStatus.pending:
+      chip = AdminStatusChip(text: 'pending'.tr, color: AdminColors.amber, bg: AdminColors.amberLight);
+      break;
   }
+  showAdminDetailDialog(
+    context,
+    title: place.name,
+    subtitle: place.subtitle,
+    icon: Icons.place_outlined,
+    iconColor: place.imageColor,
+    statusChip: chip,
+    fields: [
+      MapEntry('col_company'.tr, place.company),
+      MapEntry('col_category'.tr, place.category),
+      MapEntry('col_province'.tr, place.province),
+      MapEntry('col_fee'.tr, place.fee),
+      MapEntry('col_submitted'.tr, place.submittedDate),
+    ],
+    onEdit: () => _editPlace(context, place, controller),
+  );
+}
+
+void _editPlace(BuildContext context, AdminPlace place, AdminScreenController controller) {
+  showAdminEditDialog(
+    context,
+    title: 'edit_details'.tr,
+    subtitle: place.name,
+    fields: [
+      AdminEditField(key: 'name_en', label: 'field_name'.tr, initialValue: place.name),
+      AdminEditField(key: 'description_en', label: 'field_description'.tr, initialValue: place.subtitle, maxLines: 3),
+      AdminEditField(key: 'category', label: 'field_category'.tr, initialValue: place.category),
+      AdminEditField(key: 'province', label: 'col_province'.tr, initialValue: place.province),
+      AdminEditField(key: 'entry_fee', label: 'field_entry_fee'.tr, initialValue: place.fee),
+    ],
+    onSave: (values) async {
+      await controller.editPlace(place, values);
+      Get.snackbar('changes_saved'.tr, place.name);
+    },
+  );
+}
+
+void _confirmApprovePlace(BuildContext context, AdminPlace place, AdminScreenController controller) {
+  showAdminConfirmDialog(
+    context,
+    title: 'approve_question'.tr,
+    message: '${'approve_confirm_message'.tr}\n\n"${place.name}"',
+    confirmLabel: 'approve'.tr,
+    confirmColor: AdminColors.green,
+    icon: Icons.check_circle_outline_rounded,
+    onConfirm: (_) => controller.approvePlace(place),
+  );
+}
+
+void _confirmRejectPlace(BuildContext context, AdminPlace place, AdminScreenController controller) {
+  showAdminConfirmDialog(
+    context,
+    title: 'reject_question'.tr,
+    message: '${'reject_confirm_message'.tr}\n\n"${place.name}"',
+    confirmLabel: 'reject'.tr,
+    confirmColor: AdminColors.red,
+    icon: Icons.cancel_outlined,
+    withReason: true,
+    reasonLabel: 'reason_optional'.tr,
+    reasonHint: 'reject_reason_hint'.tr,
+    onConfirm: (reason) => controller.rejectPlace(place, note: reason),
+  );
 }
 
 // ══════════════════════════ Action icon button (hover + tooltip) ══════════════════════════
@@ -917,16 +982,77 @@ class _PlaceCard extends StatelessWidget {
                 _infoChip('Date', place.submittedDate),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () =>
-                        _showDeleteDialog(context, place, controller),
+                    onPressed: () => _viewPlace(context, place, controller),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AdminColors.textSecondary,
+                      side: BorderSide(color: AdminColors.border),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    icon: const Icon(Icons.visibility_outlined, size: 14),
+                    label: Text('view_details'.tr, style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _editPlace(context, place, controller),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AdminColors.primary,
+                      side: BorderSide(color: AdminColors.primary.withOpacity(0.5)),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    icon: const Icon(Icons.edit_outlined, size: 14),
+                    label: Text('edit'.tr, style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _confirmRejectPlace(context, place, controller),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AdminColors.red,
                       side: BorderSide(color: AdminColors.red.withOpacity(0.5)),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    icon: const Icon(Icons.close_rounded, size: 14),
+                    label: Text('reject'.tr, style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _confirmApprovePlace(context, place, controller),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AdminColors.green,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    icon: const Icon(Icons.check_rounded, size: 14),
+                    label: Text('approve'.tr, style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () =>
+                        _confirmDelete(context, place, controller),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AdminColors.textSecondary,
+                      side: BorderSide(color: AdminColors.border),
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -1025,42 +1151,5 @@ class _PlaceCard extends StatelessWidget {
           ),
         );
     }
-  }
-
-  void _showDeleteDialog(
-    BuildContext context,
-    AdminPlace place,
-    AdminScreenController controller,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AdminColors.cardBackground,
-        title: Text(
-          '${'delete_question'.tr} ${place.name}?',
-          style: GoogleFonts.inter(color: AdminColors.textPrimary),
-        ),
-        content: Text(
-          'action_cannot_be_undone'.tr,
-          style: GoogleFonts.inter(color: AdminColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('cancel'.tr),
-          ),
-          TextButton(
-            onPressed: () {
-              controller.deletePlace(place);
-              Navigator.pop(context);
-            },
-            child: Text(
-              'delete'.tr,
-              style: const TextStyle(color: AdminColors.red),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

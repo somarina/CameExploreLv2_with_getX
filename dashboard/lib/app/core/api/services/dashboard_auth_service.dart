@@ -90,7 +90,8 @@ class DashboardAuthService {
   }
 
   // ✅ Forgot Password — sends (or resends, same endpoint) the OTP code.
-  // Admin-only: backend looks this email up in the admins collection.
+  // Works for both admin and company accounts: backend checks the
+  // admins collection first, then falls back to company users.
   Future<dynamic> forgotPasswordService({
     required String email,
   }) async {
@@ -131,6 +132,37 @@ class DashboardAuthService {
         "new_password": newPassword,
         "confirm_password": confirmPassword,
       },
+    );
+  }
+
+  // ====================== ADMIN: MANAGE COMPANIES ======================
+  // Real company accounts (users with "company" in their roles), replacing
+  // the dashboard's old hardcoded mock list.
+
+  Future<dynamic> getCompaniesService() async {
+    return await baseApi.get(endpoint: "/api/dashboard/auth/admin/companies");
+  }
+
+  Future<dynamic> updateCompanyService(
+    String companyId,
+    Map<String, dynamic> data,
+  ) async {
+    return await baseApi.put(
+      endpoint: "/api/dashboard/auth/admin/companies/$companyId",
+      data: data,
+    );
+  }
+
+  Future<dynamic> suspendCompanyService(String companyId) async {
+    return await baseApi.put(
+      endpoint: "/api/dashboard/auth/admin/companies/$companyId/suspend",
+      data: const {},
+    );
+  }
+
+  Future<dynamic> deleteCompanyService(String companyId) async {
+    return await baseApi.delete(
+      endpoint: "/api/dashboard/auth/admin/companies/$companyId",
     );
   }
 }

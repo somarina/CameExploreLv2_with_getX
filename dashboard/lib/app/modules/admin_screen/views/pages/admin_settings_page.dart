@@ -967,28 +967,112 @@ class _AppearanceTabState extends State<_AppearanceTab> {
   }
 
   void _pickLanguage() async {
-    final selected = await showModalBottomSheet<String>(
+    final selected = await showDialog<String>(
       context: context,
-      backgroundColor: AdminColors.surfaceLight,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: ['English', 'Khmer'].map((lang) {
-            return ListTile(
-              leading: Icon(Icons.language, color: AdminColors.textSecondary),
-              title: Text(
-                lang,
-                style: GoogleFonts.inter(
-                  color: AdminColors.textPrimary,
-                  fontWeight: FontWeight.w600,
+      barrierColor: Colors.black.withOpacity(0.35),
+      builder: (_) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 320),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+                    decoration: BoxDecoration(
+                      color: AdminColors.surfaceLight.withOpacity(0.65),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: Colors.white.withOpacity(0.15)),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 84,
+                          height: 84,
+                          child: Lottie.asset(
+                            'assets/icons/language_translator_globe.json',
+                            repeat: true,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'select_language'.tr,
+                          style: GoogleFonts.inter(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: AdminColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'select_language_message'.tr,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: AdminColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ...['English', 'Khmer'].map((lang) {
+                          final isSelected = lang == _language;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: TextButton(
+                                onPressed: () => Navigator.pop(context, lang),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: isSelected ? AdminColors.primary : AdminColors.background.withOpacity(0.6),
+                                  padding: const EdgeInsets.symmetric(vertical: 13),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    side: BorderSide(color: isSelected ? AdminColors.primary : Colors.white.withOpacity(0.12)),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.language, size: 16, color: isSelected ? Colors.white : AdminColors.textSecondary),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      lang,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: isSelected ? Colors.white : AdminColors.textPrimary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 8)),
+                          child: Text(
+                            'cancel'.tr,
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AdminColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              onTap: () => Navigator.pop(context, lang),
-            );
-          }).toList(),
+            ),
+          ),
         ),
       ),
     );

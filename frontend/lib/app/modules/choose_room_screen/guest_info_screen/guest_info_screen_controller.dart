@@ -11,6 +11,10 @@ class GuestInfoScreenViewController extends GetxController {
   DateTime? checkOut;
   RxString transactionDate = ''.obs;
   final noteCtrl = TextEditingController();
+  final cardHolderCtrl = TextEditingController();
+  final cardNumberCtrl = TextEditingController();
+  final cardExpiryCtrl = TextEditingController();
+  final cardCvvCtrl = TextEditingController();
   final noteLength = 0.obs;
   var isLoading = false.obs;
   var isLoadingUser = true.obs;
@@ -157,8 +161,26 @@ class GuestInfoScreenViewController extends GetxController {
     }
   }
 
-  Future<String?> createBooking() async {
-    if (uploadedInvoice.value == null) {
+  bool validateCard() {
+    if (cardHolderCtrl.text.trim().isEmpty ||
+        cardNumberCtrl.text.replaceAll(' ', '').length < 12 ||
+        cardExpiryCtrl.text.trim().isEmpty ||
+        cardCvvCtrl.text.trim().length < 3) {
+      _showErrorSnackBar("Please enter valid card details.");
+      return false;
+    }
+    return true;
+  }
+
+  Future<String?> createBooking({
+    String? paymentMethod,
+    String? paymentStatus,
+  }) async {
+    final method = paymentMethod ?? selectedPayment.value;
+    final status = paymentStatus ??
+        (method == "VISA" ? "paid" : method == "PAY_AT_HOTEL" ? "unpaid" : "pending");
+
+    if (method == "KHQR" && uploadedInvoice.value == null) {
       _showErrorSnackBar("Please upload your payment invoice before proceeding.");
       return null;
     }
@@ -194,6 +216,8 @@ class GuestInfoScreenViewController extends GetxController {
         "children": childrenCount,
         "total_price": calculatedTotalPrice,
         "guest_note": noteCtrl.text.trim(),
+        "payment_method": method,
+        "payment_status": status,
       };
 
       final response = await _bookingServices.createHotelBooking(
@@ -258,6 +282,10 @@ class GuestInfoScreenViewController extends GetxController {
     emailCtrl.dispose();
     phoneCtrl.dispose();
     noteCtrl.dispose();
+    cardHolderCtrl.dispose();
+    cardNumberCtrl.dispose();
+    cardExpiryCtrl.dispose();
+    cardCvvCtrl.dispose();
     super.onClose();
   }
 }

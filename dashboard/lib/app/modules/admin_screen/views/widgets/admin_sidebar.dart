@@ -67,100 +67,143 @@ class AdminSidebar extends StatelessWidget {
           ),
           Divider(height: 1, color: AdminColors.border),
 
-          // ---------- Nav items ----------
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-            child: Text(
-              'administration'.tr,
-              style: GoogleFonts.inter(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                color: AdminColors.textSecondary,
-                letterSpacing: 0.6,
+          // ---------- Nav items + bottom actions (all scrollable together —
+          // on short screens the whole sidebar must scroll, not just the
+          // nav list, or Settings/Dark Mode/Logout become unreachable) ----------
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                    child: Text(
+                      'administration'.tr,
+                      style: GoogleFonts.inter(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: AdminColors.textSecondary,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ),
+                  Obx(
+                    () => Column(
+                      children: [
+                        _NavItem(
+                          icon: Icons.grid_view_rounded,
+                          label: 'dashboard'.tr,
+                          selected:
+                              controller.currentSection.value ==
+                              AdminSection.dashboard,
+                          onTap: () => controller.goTo(AdminSection.dashboard),
+                        ),
+                        _NavItem(
+                          icon: Icons.place_outlined,
+                          label: 'manage_places'.tr,
+                          selected:
+                              controller.currentSection.value ==
+                              AdminSection.managePlaces,
+                          onTap: () =>
+                              controller.goTo(AdminSection.managePlaces),
+                        ),
+                        _NavItem(
+                          icon: Icons.hotel_outlined,
+                          label: 'manage_hotels'.tr,
+                          selected:
+                              controller.currentSection.value ==
+                              AdminSection.manageHotels,
+                          onTap: () =>
+                              controller.goTo(AdminSection.manageHotels),
+                        ),
+                        _NavItem(
+                          icon: Icons.card_travel_outlined,
+                          label: 'manage_packages'.tr,
+                          selected:
+                              controller.currentSection.value ==
+                              AdminSection.managePackages,
+                          onTap: () =>
+                              controller.goTo(AdminSection.managePackages),
+                        ),
+                        _NavItem(
+                          icon: Icons.restaurant_outlined,
+                          label: 'manage_restaurants'.tr,
+                          selected:
+                              controller.currentSection.value ==
+                              AdminSection.manageRestaurants,
+                          onTap: () =>
+                              controller.goTo(AdminSection.manageRestaurants),
+                        ),
+                        _NavItem(
+                          icon: Icons.people_outline,
+                          label: 'manage_users'.tr,
+                          selected:
+                              controller.currentSection.value ==
+                              AdminSection.manageUsers,
+                          onTap: () => controller.goTo(AdminSection.manageUsers),
+                        ),
+                        _NavItem(
+                          icon: Icons.description_outlined,
+                          label: 'approvals'.tr,
+                          selected:
+                              controller.currentSection.value ==
+                              AdminSection.approvals,
+                          badgeCount: controller.pendingCount,
+                          onTap: () => controller.goTo(AdminSection.approvals),
+                        ),
+                        _NavItem(
+                          icon: Icons.bar_chart_rounded,
+                          label: 'analytics'.tr,
+                          selected:
+                              controller.currentSection.value ==
+                              AdminSection.analytics,
+                          onTap: () => controller.goTo(AdminSection.analytics),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+                  Divider(height: 1, color: AdminColors.border),
+                  const SizedBox(height: 8),
+
+                  Obx(
+                    () => _NavItem(
+                      icon: Icons.settings_outlined,
+                      label: 'settings'.tr,
+                      selected:
+                          controller.currentSection.value ==
+                          AdminSection.settings,
+                      onTap: () => controller.goTo(AdminSection.settings),
+                    ),
+                  ),
+
+                  Obx(
+                    () => _NavItem(
+                      icon: themeController.isDarkMode.value
+                          ? Icons.dark_mode
+                          : Icons.dark_mode_outlined,
+                      label: 'dark_mode'.tr,
+                      selected: false,
+                      onTap: themeController.toggleTheme,
+                      trailing: Switch.adaptive(
+                        value: themeController.isDarkMode.value,
+                        activeColor: AdminColors.primary,
+                        onChanged: (_) => themeController.toggleTheme(),
+                      ),
+                    ),
+                  ),
+                  _NavItem(
+                    icon: Icons.logout,
+                    label: 'logout'.tr,
+                    selected: false,
+                    onTap: () => _showLogoutDialog(context, controller),
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ),
-          Obx(
-            () => Column(
-              children: [
-                _NavItem(
-                  icon: Icons.grid_view_rounded,
-                  label: 'dashboard'.tr,
-                  selected:
-                      controller.currentSection.value == AdminSection.dashboard,
-                  onTap: () => controller.goTo(AdminSection.dashboard),
-                ),
-                _NavItem(
-                  icon: Icons.place_outlined,
-                  label: 'manage_places'.tr,
-                  selected:
-                      controller.currentSection.value ==
-                      AdminSection.managePlaces,
-                  onTap: () => controller.goTo(AdminSection.managePlaces),
-                ),
-                _NavItem(
-                  icon: Icons.people_outline,
-                  label: 'manage_users'.tr,
-                  selected:
-                      controller.currentSection.value ==
-                      AdminSection.manageUsers,
-                  onTap: () => controller.goTo(AdminSection.manageUsers),
-                ),
-                _NavItem(
-                  icon: Icons.description_outlined,
-                  label: 'approvals'.tr,
-                  selected:
-                      controller.currentSection.value == AdminSection.approvals,
-                  badgeCount: controller.pendingCount,
-                  onTap: () => controller.goTo(AdminSection.approvals),
-                ),
-                _NavItem(
-                  icon: Icons.bar_chart_rounded,
-                  label: 'analytics'.tr,
-                  selected:
-                      controller.currentSection.value == AdminSection.analytics,
-                  onTap: () => controller.goTo(AdminSection.analytics),
-                ),
-              ],
-            ),
-          ),
-
-          const Spacer(),
-          Divider(height: 1, color: AdminColors.border),
-          const SizedBox(height: 8),
-
-          Obx(
-            () => _NavItem(
-              icon: Icons.settings_outlined,
-              label: 'settings'.tr,
-              selected:
-                  controller.currentSection.value == AdminSection.settings,
-              onTap: () => controller.goTo(AdminSection.settings),
-            ),
-          ),
-
-          Obx(
-            () => _NavItem(
-              icon: themeController.isDarkMode.value
-                  ? Icons.dark_mode
-                  : Icons.dark_mode_outlined,
-              label: 'dark_mode'.tr,
-              selected: false,
-              onTap: themeController.toggleTheme,
-              trailing: Switch.adaptive(
-                value: themeController.isDarkMode.value,
-                activeColor: AdminColors.primary,
-                onChanged: (_) => themeController.toggleTheme(),
-              ),
-            ),
-          ),
-          _NavItem(
-            icon: Icons.logout,
-            label: 'logout'.tr,
-            selected: false,
-            onTap: () => _showLogoutDialog(context, controller),
-          ),
-          const SizedBox(height: 16),
         ],
       ),
     );

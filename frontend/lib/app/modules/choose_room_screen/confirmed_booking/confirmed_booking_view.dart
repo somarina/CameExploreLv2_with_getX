@@ -58,7 +58,9 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                   SizedBox(height: 16),
 
                   Text(
-                    "booking_confirmed".tr,
+                    controller.paymentMethod == "PAY_AT_HOTEL"
+                        ? "Booking Reserved"
+                        : "booking_confirmed".tr,
                     style: GoogleFonts.googleSans(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
@@ -70,7 +72,9 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                   SizedBox(height: 16),
 
                   Text(
-                    "booking_success_msg".tr,
+                    controller.paymentMethod == "PAY_AT_HOTEL"
+                        ? "Your room has been reserved. Payment will be collected at the hotel."
+                        : "booking_success_msg".tr,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.googleSans(
                       fontSize: 16,
@@ -141,12 +145,30 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                         ),
                         if (controller.note.isNotEmpty)
                           _detailRow("note".tr, controller.note, context),
-                        _detailRow("payment".tr, "ABA Pay", context),
                         _detailRow(
-                          "transaction_date".tr,
-                          controller.transactionDate,
+                          "payment".tr,
+                          controller.paymentMethod == "PAY_AT_HOTEL"
+                              ? "Pay at Hotel"
+                              : controller.paymentMethod == "VISA"
+                                  ? "Visa / Card"
+                                  : "KHQR",
                           context,
                         ),
+                        _detailRow(
+                          "payment_status".tr,
+                          controller.paymentStatus == "unpaid"
+                              ? "Payment due at hotel"
+                              : controller.paymentStatus == "pending"
+                                  ? "Waiting for payment verification"
+                                  : "Paid",
+                          context,
+                        ),
+                        if (controller.paymentMethod != "PAY_AT_HOTEL")
+                          _detailRow(
+                            "transaction_date".tr,
+                            controller.transactionDate,
+                            context,
+                          ),
 
                         SizedBox(height: 10),
                         Divider(),
@@ -177,6 +199,35 @@ class ConfirmedBookingView extends GetView<ConfirmedBookingViewController> {
                       ],
                     ),
                   ),
+
+                  if (controller.paymentMethod == "PAY_AT_HOTEL")
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(top: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.orange),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.payments_outlined, color: Colors.orange),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              "No online payment was made. Please pay the amount shown above directly at the hotel when you arrive.",
+                              style: GoogleFonts.googleSans(
+                                color: Colors.orange.shade800,
+                                fontSize: 14,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
                   SizedBox(height: 30),
 

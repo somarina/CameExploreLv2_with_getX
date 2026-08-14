@@ -118,3 +118,59 @@ void exportPlacesToExcel(List<AdminPlace> places) {
 
   html.Url.revokeObjectUrl(url);
 }
+
+/// Builds an .xlsx file from AdminListingItem rows (hotels/packages/
+/// restaurants) and triggers a browser download.
+void exportListingToExcel(List<AdminListingItem> items, String sheetName) {
+  final workbook = xls.Excel.createExcel();
+
+  final defaultSheetName = workbook.getDefaultSheet()!;
+  workbook.rename(defaultSheetName, sheetName);
+  final sheet = workbook[sheetName];
+
+  const headers = [
+    'Name',
+    'Description',
+    'Owner',
+    'Type',
+    'Location',
+    'Price',
+    'Submitted',
+    'Status',
+  ];
+  sheet.appendRow(headers.map((h) => xls.TextCellValue(h)).toList());
+
+  for (final i in items) {
+    sheet.appendRow([
+      xls.TextCellValue(i.name),
+      xls.TextCellValue(i.subtitle),
+      xls.TextCellValue(i.owner),
+      xls.TextCellValue(i.typeLabel),
+      xls.TextCellValue(i.location),
+      xls.TextCellValue(i.price),
+      xls.TextCellValue(i.submittedDate),
+      xls.TextCellValue(i.status.name),
+    ]);
+  }
+
+  for (var col = 0; col < headers.length; col++) {
+    final cell = sheet.cell(xls.CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+    cell.cellStyle = xls.CellStyle(bold: true);
+  }
+
+  final bytes = workbook.encode();
+  if (bytes == null) return;
+
+  final blob = html.Blob(
+    [bytes],
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  );
+  final url = html.Url.createObjectUrlFromBlob(blob);
+  final timestamp = DateTime.now().millisecondsSinceEpoch;
+
+  html.AnchorElement(href: url)
+    ..setAttribute('download', '${sheetName.toLowerCase()}_export_$timestamp.xlsx')
+    ..click();
+
+  html.Url.revokeObjectUrl(url);
+}

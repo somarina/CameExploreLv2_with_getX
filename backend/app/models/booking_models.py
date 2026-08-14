@@ -2,6 +2,9 @@ from datetime import date
 from pydantic import BaseModel, Field, model_validator
 from typing import Optional, Literal
 
+PaymentMethod = Literal["KHQR", "VISA", "PAY_AT_HOTEL"]
+PaymentStatus = Literal["pending", "paid", "unpaid"]
+
 BookingStatus = Literal["pending", "confirmed", "cancelled", "completed"]
 
 
@@ -14,6 +17,8 @@ class HotelBookingCreate(BaseModel):
     rooms_booked: int = Field(1, gt=0)
     number_of_people: int = Field(1, gt=0)   # ← new
     guest_note: Optional[str] = None
+    payment_method: PaymentMethod = "KHQR"
+    payment_status: PaymentStatus = "pending"
 
     @model_validator(mode="after")
     def check_dates(self):
@@ -28,6 +33,8 @@ class PackageBookingCreate(BaseModel):
     start_date: date
     number_of_people: int = Field(1, gt=0)
     guest_note: Optional[str] = None
+    payment_method: PaymentMethod = "KHQR"
+    payment_status: PaymentStatus = "pending"
 
 
 class BookingStatusUpdate(BaseModel):

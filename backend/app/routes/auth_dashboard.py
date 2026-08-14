@@ -24,6 +24,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
+from typing import Optional
+from bson import ObjectId
+from bson.errors import InvalidId
 
 from app.db.daatabase import db
 # from app.schemas.auth_schemas import RegisterCompanySchema, RegisterSchema, LoginSchema
@@ -48,6 +52,9 @@ router = APIRouter(
 users_collection = db["users"]
 admins_collection = db["admins"]
 admin_otp_collection = db["dashboard_admin_otp_codes"]
+places_collection = db["places"]
+hotels_collection = db["hotels"]
+packages_collection = db["travel_packages"]
 
 
 def ok(message: str, data: dict = None):
@@ -95,7 +102,7 @@ def make_admin_token(admin: dict):
         "type": "admin",
     })
 
-def send_admin_reset_email(to_email: str, otp: str):
+def send_admin_reset_email(to_email: str, otp: str, account_label: str = "Admin"):
 
     sender = os.getenv("GMAIL_SENDER")
     app_password = os.getenv("GMAIL_APP_PASSWORD")
@@ -105,7 +112,7 @@ def send_admin_reset_email(to_email: str, otp: str):
 
 
     text = f"""
-Hello Admin,
+Hello {account_label},
 
 We received a request to reset your CamExplore Dashboard password.
 
@@ -251,7 +258,7 @@ Dashboard Administration
 
 
 <div class="title">
-Admin Password Reset
+{account_label} Password Reset
 </div>
 
 
@@ -260,11 +267,11 @@ Admin Password Reset
 
 <div class="desc">
 
-Hello Admin,
+Hello {account_label},
 
 <br><br>
 
-We received a request to reset your CamExplore Dashboard administrator password.
+We received a request to reset your CamExplore Dashboard password.
 
 <br><br>
 
@@ -277,7 +284,7 @@ Use the verification code below to continue.
 <div class="otp-box">
 
 <div class="label">
-ADMIN VERIFICATION CODE
+{account_label.upper()} VERIFICATION CODE
 </div>
 
 
@@ -568,6 +575,9 @@ async def login(payload: LoginSchema):
     if not dashboard_roles:
         err("This account has no dashboard access", 403)
 
+    if user.get("suspended", False):
+        err("This company account has been suspended. Contact the administrator.", 403)
+
     active_role = "company"
     token = make_user_token(user, active_role)
 
@@ -593,12 +603,26 @@ async def admin_forgot_password(
         }
     )
 
+    # Not an admin — check company accounts (users collection, "company" role)
+    account_type = "admin"
+    account_label = "Admin"
 
     if not admin:
-        err(
-            "Admin account not found",
-            404
+        company = await users_collection.find_one(
+            {
+                "email": email,
+                "roles": "company"
+            }
         )
+
+        if not company:
+            err(
+                "Account not found",
+                404
+            )
+
+        account_type = "company"
+        account_label = "Company"
 
 
     otp = str(
@@ -618,6 +642,7 @@ async def admin_forgot_password(
             "email": email,
             "otp": otp,
             "verified": False,
+            "account_type": account_type,
             "expires_at": datetime.utcnow()
                 + timedelta(minutes=3),
             "created_at": datetime.utcnow()
@@ -627,7 +652,8 @@ async def admin_forgot_password(
 
     sent = send_admin_reset_email(
         email,
-        otp
+        otp,
+        account_label
     )
 
 
@@ -714,7 +740,14 @@ async def admin_reset_password(
         )
 
 
-    result = await admins_collection.update_one(
+    # Route the password update to whichever collection this OTP was
+    # issued for (set in /forgot-password: "admin" or "company").
+    account_type = otp_data.get("account_type", "admin")
+    target_collection = (
+        admins_collection if account_type == "admin" else users_collection
+    )
+
+    result = await target_collection.update_one(
         {
             "email": payload.email.lower()
         },
@@ -734,7 +767,7 @@ async def admin_reset_password(
 
     if result.matched_count == 0:
         err(
-            "Admin not found",
+            "Account not found",
             404
         )
 
@@ -823,3 +856,129 @@ async def company_dashboard(current_user: dict = Depends(get_current_user)):
 @router.get("/admin")
 async def admin_dashboard(current_admin: dict = Depends(get_current_admin)):
     return ok("Welcome Admin", serialize_user(current_admin, role="admin"))
+
+
+# ====================== ADMIN: MANAGE COMPANIES ======================
+# Real data, replacing the old hardcoded mock list on the dashboard.
+# Company accounts live in "users" with "company" in their roles array.
+
+def _company_object_id(company_id: str) -> ObjectId:
+    try:
+        return ObjectId(company_id)
+    except (InvalidId, TypeError):
+        err("Invalid company id", 400)
+
+
+def serialize_company(doc: dict, place_count: int = 0) -> dict:
+    return {
+        "id": str(doc["_id"]),
+        "name": doc.get("name", ""),
+        "email": doc.get("email", ""),
+        "phone": doc.get("phone", ""),
+        "business_type": doc.get("business_type", ""),
+        "address": doc.get("address", ""),
+        "company_verified": doc.get("company_verified", False),
+        "suspended": doc.get("suspended", False),
+        "places": place_count,
+        "created_at": doc.get("created_at"),
+        "updated_at": doc.get("updated_at"),
+    }
+
+
+@router.get("/admin/companies")
+async def list_companies(current_admin: dict = Depends(get_current_admin)):
+    """All company accounts, newest first, with a real listing count each."""
+    companies = await users_collection.find({"roles": "company"}).sort("created_at", -1).to_list(length=None)
+
+    owner_ids = [str(c["_id"]) for c in companies]
+    counts: dict[str, int] = {oid: 0 for oid in owner_ids}
+
+    for collection in (places_collection, hotels_collection, packages_collection):
+        cursor = collection.find(
+            {"owner_id": {"$in": owner_ids}},
+            {"owner_id": 1},
+        )
+        async for doc in cursor:
+            oid = doc.get("owner_id")
+            if oid in counts:
+                counts[oid] += 1
+
+    data = [serialize_company(c, counts.get(str(c["_id"]), 0)) for c in companies]
+    return ok("Companies fetched successfully", {"items": data, "total": len(data)})
+
+
+class AdminCompanyUpdateSchema(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    business_type: Optional[str] = None
+    address: Optional[str] = None
+
+
+@router.put("/admin/companies/{company_id}")
+async def update_company(
+    company_id: str,
+    payload: AdminCompanyUpdateSchema,
+    current_admin: dict = Depends(get_current_admin),
+):
+    company = await users_collection.find_one({"_id": _company_object_id(company_id), "roles": "company"})
+    if not company:
+        err("Company not found", 404)
+
+    updates = {k: v for k, v in payload.model_dump().items() if v is not None}
+    if not updates:
+        err("Nothing to update")
+
+    if "email" in updates:
+        new_email = updates["email"].lower()
+        existing = await users_collection.find_one({"email": new_email, "_id": {"$ne": company["_id"]}})
+        if existing:
+            err("This email is already in use")
+        updates["email"] = new_email
+
+    updates["updated_at"] = datetime.utcnow()
+
+    await users_collection.update_one({"_id": company["_id"]}, {"$set": updates})
+    updated = await users_collection.find_one({"_id": company["_id"]})
+    return ok("Company updated successfully", serialize_company(updated))
+
+
+@router.put("/admin/companies/{company_id}/suspend")
+async def suspend_company(
+    company_id: str,
+    current_admin: dict = Depends(get_current_admin),
+):
+    company = await users_collection.find_one({"_id": _company_object_id(company_id), "roles": "company"})
+    if not company:
+        err("Company not found", 404)
+
+    new_state = not company.get("suspended", False)
+    await users_collection.update_one(
+        {"_id": company["_id"]},
+        {"$set": {"suspended": new_state, "updated_at": datetime.utcnow()}},
+    )
+    updated = await users_collection.find_one({"_id": company["_id"]})
+    message = "Company suspended successfully" if new_state else "Company reinstated successfully"
+    return ok(message, serialize_company(updated))
+
+
+@router.delete("/admin/companies/{company_id}")
+async def delete_company(
+    company_id: str,
+    current_admin: dict = Depends(get_current_admin),
+):
+    company = await users_collection.find_one({"_id": _company_object_id(company_id), "roles": "company"})
+    if not company:
+        err("Company not found", 404)
+
+    if len(company.get("roles", [])) > 1:
+        # Account also has other roles (e.g. "user") — just drop the
+        # company role instead of deleting the whole account.
+        await users_collection.update_one(
+            {"_id": company["_id"]},
+            {"$pull": {"roles": "company"}, "$set": {"updated_at": datetime.utcnow()}},
+        )
+    else:
+        await users_collection.delete_one({"_id": company["_id"]})
+
+    return ok("Company removed successfully")

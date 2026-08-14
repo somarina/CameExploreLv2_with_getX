@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/api/api_config.dart';
 import '../../../../core/api/services/auth_services.dart';
 import '../../../../routes/app_pages.dart';
 
@@ -318,30 +320,78 @@ class RegisterScreenController extends GetxController
     }
   }
 
-  // ── Telegram Login ────────────────────────────────────────────────────────
+  // ── Telegram Login ───────────────────────────────────────────────────────
+  // Uses flutter_web_auth_2 so iOS shows the native "<App> Wants to Use
+  // telegram.org to Sign In" system prompt (ASWebAuthenticationSession) and
+  // Android uses a Chrome custom tab — same UX as the DCC Mobile reference.
   Future<void> loginWithTelegram() async {
     if (isLoading.value) return;
 
     try {
       isLoading.value = true;
 
-      const botId = '8720092780';
-      const origin = 'https://staleness-antirust-shrapnel.ngrok-free.dev';
-
-      final url = Uri.parse(
-        'https://oauth.telegram.org/auth'
-        '?bot_id=$botId'
-        '&origin=$origin'
-        '&return_to=camexplore://telegram-login'
-        '&request_access=write',
+      final returnTo = Uri.encodeComponent(
+        '${kBaseUrl.replaceAll(RegExp(r'/+$'), '')}/api/auth/telegram-callback',
       );
 
-      print('Telegram URL: $url');
+      final url =
+          'https://oauth.telegram.org/auth'
+          '?bot_id=$kTelegramBotId'
+          '&origin=${Uri.encodeComponent(kBaseUrl.replaceAll(RegExp(r'/+$'), ''))}'
+          '&return_to=$returnTo' // your backend bridges this to the deep link
+          '&request_access=write';
 
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+      debugPrint('Telegram URL: $url');
+
+      final callback = await FlutterWebAuth2.authenticate(
+        url: url,
+        callbackUrlScheme: 'camexplore',
+      );
+
+      final params = Uri.parse(callback).queryParameters;
+
+      if (params['hash'] == null || params['id'] == null) {
+        Get.snackbar(
+          'Telegram Login Failed',
+          'Missing data from Telegram. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      final response = await authServices.telegramLoginService(
+        telegramData: {
+          'id': int.tryParse(params['id'] ?? '0') ?? 0,
+          'first_name': params['first_name'] ?? '',
+          'last_name': params['last_name'] ?? '',
+          'username': params['username'] ?? '',
+          'photo_url': params['photo_url'] ?? '',
+          'auth_date': int.tryParse(params['auth_date'] ?? '0') ?? 0,
+          'hash': params['hash'] ?? '',
+        },
+      );
+
+      if (response != null && response['result'] == true) {
+        _saveUser(response['data']);
+        Get.offAllNamed('/button-navigation');
+      } else {
+        Get.snackbar(
+          'Telegram Login Failed',
+          response?['message'] ?? 'Something went wrong',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } on PlatformException catch (e) {
+      if (e.code != 'CANCELED') {
+        debugPrint('TELEGRAM ERROR: $e');
+        Get.snackbar(
+          'Telegram Login Failed',
+          'Something went wrong. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     } catch (e) {
-      print('TELEGRAM ERROR: $e');
-
+      debugPrint('TELEGRAM ERROR: $e');
       Get.snackbar(
         'Telegram Login Failed',
         e.toString(),
