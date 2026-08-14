@@ -255,26 +255,6 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
   }
 
   Widget _buildFavList(BuildContext context) {
-    // final theme = Theme.of(context);
-    // String timeAgo(String savedAt) {
-    //   final savedDate = DateTime.parse("${savedAt}Z").toUtc();
-    //   final now = DateTime.now().toUtc();
-
-    //   final difference = now.difference(savedDate);
-
-    //   if (difference.inDays > 0) {
-    //     final days = difference.inDays;
-    //     return "${"saved".tr} $days ${days > 1 ? "days".tr : "day".tr} ${"ago".tr}";
-    //   } else if (difference.inHours > 0) {
-    //     final hours = difference.inHours;
-    //     return "${"saved".tr} $hours ${hours > 1 ? "hours".tr : "hour".tr} ${"ago".tr}";
-    //   } else if (difference.inMinutes > 0) {
-    //     final minutes = difference.inMinutes;
-    //     return "${"saved".tr} $minutes ${minutes > 1 ? "minutes".tr : "minute".tr} ${"ago".tr}";
-    //   } else {
-    //     return "saved_just_now".tr;
-    //   }
-    // }
 
     return Obx(
       () => ListView.separated(

@@ -228,6 +228,15 @@ Map<String, String> kmKH = {
   "people searched this": "នាក់បានស្វែងរកទីកន្លែងនេះ",
   "searches": "ស្វែងរក",
   "Find the place you want to go": "ស្វែងរកទីកន្លែងដែលអ្នកចង់ទៅ...",
+  "result found": "លទ្ធផលដែលបានរកឃើញ",
+  "Recent searches": "ស្វែងរកថ្មីៗ",
+  "Clear all": "សម្អាតទាំងអស់",
+  "No recent searches": "មិនទាន់មានការស្វែងរកថ្មីៗទេ",
+  "No results found": "គ្មានលទ្ធផលដែលបានរកឃើញ",
+  "No nearby places found": "គ្មានកន្លែងជិតៗដែលបានរកឃើញ",
+  "Nearby": "កន្លែងជិតៗ",
+  "Activities near your current location": "កន្លែងដែលនៅជិតទីតាំងបច្ចុប្បន្នរបស់អ្នក",
+  "places": "កន្លែង",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///// Home
   "trending": "កំពុងពេញនិយម",

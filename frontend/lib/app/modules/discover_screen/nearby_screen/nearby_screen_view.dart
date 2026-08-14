@@ -141,7 +141,7 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                     Icon(Icons.location_on_outlined, color: Colors.blue),
                     SizedBox(width: 10),
                     Text(
-                      "Nearby",
+                      "Nearby".tr,
                       style: GoogleFonts.googleSans(
                         fontSize: 18,
                         color: Theme.of(context).colorScheme.secondary,
@@ -154,7 +154,7 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                   children: [
                     SizedBox(width: 35),
                     Text(
-                      "Activities near your current location",
+                      "Activities near your current location".tr,
                       style: GoogleFonts.googleSans(
                         fontSize: 12,
                         color: Theme.of(context).textTheme.titleSmall!.color,
@@ -197,7 +197,7 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                       SizedBox(width: 10),
 
                       Text(
-                        "${controller.nearbyPlaces.length} places",
+                        "${controller.nearbyPlaces.length} ${'places'.tr}",
                         style: GoogleFonts.googleSans(
                           fontSize: 12,
                           color: Theme.of(context).textTheme.titleSmall!.color,
@@ -227,7 +227,7 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
       if (controller.nearbyPlaces.isEmpty) {
         return Center(
           child: Text(
-            "No nearby places found",
+            "No nearby places found".tr,
             style: GoogleFonts.googleSans(
               fontSize: 12,
               color: Theme.of(context).textTheme.titleSmall!.color,
@@ -363,7 +363,7 @@ class NearbyScreenView extends GetView<NearbyScreenController> {
                                   ).textTheme.titleSmall?.color,
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              SizedBox(width: 20),
                               Icon(
                                 Icons.near_me_outlined,
                                 size: 18,

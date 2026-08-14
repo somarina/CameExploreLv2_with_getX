@@ -81,7 +81,7 @@ class UserProfileScreenViewController extends GetxController {
       isLoading.value = true;
       // Clear token
       await box.remove("token");
-      await box.erase(); // optional: clear all stored data
+      // await box.erase(); // optional: clear all stored data
 
       isLoading.value = false;
       debugPrint("Success");
