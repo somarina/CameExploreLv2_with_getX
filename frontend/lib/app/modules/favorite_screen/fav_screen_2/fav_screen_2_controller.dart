@@ -127,19 +127,32 @@ class FavScreen2ViewController extends GetxController {
   }
 
   Future<void> deleteFavoriteList() async {
+    if (isLoading.value) return;
+
     try {
-      final response = await favoriteService.deleteFavoriteList(listId.value);
+      isLoading.value = true;
+
+      final id = listId.value;
+
+      final response = await favoriteService.deleteFavoriteList(id);
 
       print("Delete Response: $response");
 
-      // Refresh previous screen
-      Get.find<FavoriteScreenController>().getFavoriteLists();
+      final favoriteController = Get.find<FavoriteScreenController>();
 
-      Get.back(); // Close current screen
+      // Remove locally — no need to reload from API
+      favoriteController.favoriteLists.removeWhere(
+        (list) => list["id"]?.toString() == id,
+      );
 
-      // Get.snackbar("Success", "List deleted successfully", snackPosition: SnackPosition.BOTTOM,
-      //   colorText: Colors.white,
-      //   backgroundColor: Colors.green,);
+      favoriteController.activityCounts.remove(id);
+      favoriteController.listImages.remove(id);
+
+      favoriteController.favoriteLists.refresh();
+      favoriteController.activityCounts.refresh();
+      favoriteController.listImages.refresh();
+
+      Get.back();
     } catch (e) {
       debugPrint("Delete Error: $e");
 
@@ -150,6 +163,8 @@ class FavScreen2ViewController extends GetxController {
         colorText: Colors.white,
         backgroundColor: Colors.red,
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 

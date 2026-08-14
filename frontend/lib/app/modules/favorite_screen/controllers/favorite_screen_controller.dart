@@ -309,10 +309,6 @@ class FavoriteScreenController extends GetxController {
 
                   IconButton(
                     onPressed: () {
-                      // if (isGuest) {
-                      //   _showLoginDialog(context);
-                      //   return;
-                      // }
                       if (isGuest) {
                         showLoginDialog(context); // _showLoginDialog(context)
                         return;
@@ -358,6 +354,9 @@ class FavoriteScreenController extends GetxController {
 
             Obx(() {
               final sortedLists = [...favoriteLists];
+              if (isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
               return Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.all(20),
@@ -578,6 +577,7 @@ class FavoriteScreenController extends GetxController {
     final key = "${itemType.name}_$itemId";
 
     try {
+      isLoading.value = true;
       final oldListId = favoriteItemsMap[key];
 
       // Already in this list
@@ -619,6 +619,8 @@ class FavoriteScreenController extends GetxController {
       updateSingleFavoriteList(listId);
     } catch (e) {
       print("Move item error: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -746,22 +748,6 @@ class FavoriteScreenController extends GetxController {
     }
   }
 
-  // Future deleteFavorite({
-  //   required String listId,
-  //   required String itemId,
-  // }) async {
-  //   try {
-  //     print("Delete List ID: $listId");
-  //     print("Delete Item ID: $itemId");
-
-  //     await favoriteService.deleteFavoriteItem(listId: listId, itemId: itemId);
-
-  //     // Remove the item locally
-  //     favoriteItems.removeWhere((item) => item["id"]?.toString() == itemId);
-  //   } catch (e) {
-  //     print("Delete favorite error: $e");
-  //   }
-  // }
   Future<void> deleteFavorite({
     required String listId,
     required String itemId,

@@ -235,6 +235,15 @@ Map<String, String> enUS = {
   "people searched this": "people searched this",
   "searches": "searches",
   "Find the place you want to go": "Find the place you want to go...",
+  "result found": "Result found",
+  "Recent searches": "Recent searches",
+  "Clear all": "Clear all",
+  "No recent searches": "No recent searches",
+  "No results found": "No results found",
+  "No nearby places found": "No nearby places found",
+  "Nearby": "Nearby",
+  "Activities near your current location": "Activities near your current location",
+  "places": "places",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Home

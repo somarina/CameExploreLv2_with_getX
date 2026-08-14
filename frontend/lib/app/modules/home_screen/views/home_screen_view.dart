@@ -205,7 +205,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
                 decoration: InputDecoration(
                   fillColor: Theme.of(context).colorScheme.primaryContainer,
                   filled: true,
-                  hintText: "ស្វែងរកកន្លែងទេសចរណ៍...",
+                  hintText: "Find the place you want to go".tr,
                   hintStyle: AppFonts.fontBtnSearch.copyWith(
                     color: Theme.of(context).textTheme.titleSmall!.color,
                   ),

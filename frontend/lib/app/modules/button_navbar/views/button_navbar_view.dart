@@ -52,46 +52,87 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
       child: Icon(
         Icons.home,
         color: controller.currentIndex.value == 0 ? Colors.white : Colors.black,
+  // static final List<CurvedNavigationBarItem> _androidNavItems = [
+  //   const CurvedNavigationBarItem(child: Icon(Icons.home), label: 'Home'),
+  //   const CurvedNavigationBarItem(child: Icon(Icons.search), label: 'Discover'),
+  //   const CurvedNavigationBarItem(
+  //     child: Icon(Icons.shopping_bag, color: controller.currentIndex.value == 0
+  //         ? Colors.white
+  //         : Colors.grey,),
+  //     label: 'Booking',
+  //   ),
+  //   const CurvedNavigationBarItem(
+  //     child: Icon(Icons.favorite),
+  //     label: 'Favorites',
+  //   ),
+  //   const CurvedNavigationBarItem(child: Icon(Icons.person), label: 'Profile'),
+  // ];
+
+  List<CurvedNavigationBarItem> _androidNavItems(BuildContext context) {
+    final Color unselectedColor = controller.themeCtrl.getDark()
+        ? Colors.white
+        : Colors.black;
+
+    return [
+      CurvedNavigationBarItem(
+        child: Icon(
+          Icons.home,
+          color: controller.currentIndex.value == 0
+              ? Colors.white
+              : unselectedColor,
+        ),
+        label: 'Home',
       ),
-      label: 'Home',
-    ),
-    CurvedNavigationBarItem(
-      child: Icon(
-        Icons.search,
-        color: controller.currentIndex.value == 1 ? Colors.white : Colors.black,
+
+      CurvedNavigationBarItem(
+        child: Icon(
+          Icons.search,
+          color: controller.currentIndex.value == 1
+              ? Colors.white
+              : unselectedColor,
+        ),
+        label: 'Discover',
       ),
-      label: 'Discover',
-    ),
-    CurvedNavigationBarItem(
-      child: Icon(
-        Icons.shopping_bag,
-        color: controller.currentIndex.value == 2 ? Colors.white : Colors.black,
+
+      CurvedNavigationBarItem(
+        child: Icon(
+          Icons.shopping_bag,
+          color: controller.currentIndex.value == 2
+              ? Colors.white
+              : unselectedColor,
+        ),
+        label: 'Booking',
       ),
-      label: 'Booking',
-    ),
-    CurvedNavigationBarItem(
-      child: Icon(
-        Icons.favorite,
-        color: controller.currentIndex.value == 3 ? Colors.white : Colors.black,
+
+      CurvedNavigationBarItem(
+        child: Icon(
+          Icons.favorite,
+          color: controller.currentIndex.value == 3
+              ? Colors.white
+              : unselectedColor,
+        ),
+        label: 'Favorites',
       ),
-      label: 'Favorites',
-    ),
-    CurvedNavigationBarItem(
-      child: Icon(
-        Icons.person,
-        color: controller.currentIndex.value == 4 ? Colors.white : Colors.black,
+
+      CurvedNavigationBarItem(
+        child: Icon(
+          Icons.person,
+          color: controller.currentIndex.value == 4
+              ? Colors.white
+              : unselectedColor,
+        ),
+        label: 'Profile',
       ),
-      label: 'Profile',
-    ),
-  ];
+    ];
+  }
 
   Widget _androidBottomBar(BuildContext context) {
     return SafeArea(
       bottom: false,
       child: CurvedNavigationBar(
-        items: _androidNavItems,
+        items: _androidNavItems(context),
         index: controller.currentIndex.value,
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.primaryContainer,
         backgroundColor: Colors.transparent,
         buttonBackgroundColor: AppColors.lightPrimaryColor,
         height: 75,
@@ -152,14 +193,15 @@ class _AssistiveTouchButtonState extends State<_AssistiveTouchButton>
   @override
   void initState() {
     super.initState();
-    _snapController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 220),
-    )..addListener(() {
-        if (_snapAnimation != null) {
-          setState(() => _position = _snapAnimation!.value);
-        }
-      });
+    _snapController =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 220),
+        )..addListener(() {
+          if (_snapAnimation != null) {
+            setState(() => _position = _snapAnimation!.value);
+          }
+        });
   }
 
   @override
@@ -256,9 +298,7 @@ class _AssistiveTouchButtonState extends State<_AssistiveTouchButton>
                   boxShadow: active
                       ? [
                           BoxShadow(
-                            color: AppColors.lightPrimaryColor.withOpacity(
-                              0.6,
-                            ),
+                            color: AppColors.lightPrimaryColor.withOpacity(0.6),
                             blurRadius: 16,
                             spreadRadius: 2,
                           ),

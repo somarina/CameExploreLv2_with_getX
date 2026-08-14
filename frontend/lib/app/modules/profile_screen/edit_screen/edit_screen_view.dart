@@ -36,7 +36,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
             ),
             title: Text(
               "editprofile".tr,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.googleSans(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.secondary,
@@ -157,7 +157,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
                     leading: const Icon(Icons.camera_alt),
                     title: Text(
                       "Camera".tr,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.googleSans(
                         fontSize: 16,
                         color: Colors.black,
                       ),
@@ -171,7 +171,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
                     leading: const Icon(Icons.image),
                     title: Text(
                       "Gallery".tr,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.googleSans(
                         fontSize: 16,
                         color: Colors.black,
                       ),
@@ -213,7 +213,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
         child: Center(
           child: Text(
             text,
-            style: GoogleFonts.spaceGrotesk(
+            style: GoogleFonts.googleSans(
               fontSize: 16,
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -244,7 +244,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
           children: [
             Text(
               gender,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.googleSans(
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
@@ -259,7 +259,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
 
   Widget _label(String text, BuildContext context) => Text(
         text,
-        style: GoogleFonts.spaceGrotesk(
+        style: GoogleFonts.googleSans(
           fontSize: 16,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.secondary,
@@ -269,7 +269,7 @@ class EditScreenView extends GetView<EditScreenViewController> {
   Widget _textField(TextEditingController controller, BuildContext context) {
     return TextFormField(
       controller: controller,
-      style: GoogleFonts.spaceGrotesk(
+      style: GoogleFonts.googleSans(
         color: Theme.of(context).colorScheme.secondary,
       ),
       decoration: InputDecoration(

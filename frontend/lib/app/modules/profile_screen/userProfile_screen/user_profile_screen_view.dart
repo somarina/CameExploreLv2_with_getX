@@ -87,7 +87,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
           Expanded(
             child: Text(
               title,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.googleSans(
                 color: Theme.of(context).colorScheme.secondary,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -156,7 +156,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                   ),
                   child: Text(
                     "guest user".tr,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.googleSans(
                       fontSize: 15,
                       color: Color(0xffBB4D00),
                     ),
@@ -180,7 +180,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
               children: [
                 Text(
                   "signup".tr,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 16,
                     color: Color(0xffBB4D00),
                   ),
@@ -288,7 +288,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
           Expanded(
             child: Text(
               "language".tr,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.googleSans(
                 color: Theme.of(context).colorScheme.secondary,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -297,7 +297,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
           ),
           Text(
             "translate".tr,
-            style: GoogleFonts.spaceGrotesk(
+            style: GoogleFonts.googleSans(
               fontSize: 16,
               color: Colors.black45,
             ),
@@ -313,7 +313,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                   children: [
                     Text(
                       "language".tr,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.googleSans(
                         color: Theme.of(context).colorScheme.secondary,
                         fontSize: 16,
                         fontWeight: .bold,
@@ -382,7 +382,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
             children: [
               Text(
                 text,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.googleSans(
                   color: Theme.of(context).colorScheme.secondary,
                   fontSize: 16,
                 ),
@@ -499,7 +499,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
   Widget _login(BuildContext context) {
     return Obx(
       () => controller.isLoading.value
-          ?profileShimmer()
+          ? profileShimmer()
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -533,7 +533,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                 const SizedBox(height: 10),
                 Text(
                   controller.user.name,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -541,7 +541,7 @@ class UserProfileScreenView extends GetView<UserProfileScreenViewController> {
                 ),
                 Text(
                   controller.user.email,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 16,
                     color: Colors.white.withValues(alpha: 0.8),
                   ),
@@ -861,7 +861,7 @@ Widget _shimmerLogout() {
               SizedBox(width: 10),
               Text(
                 "logout".tr,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.googleSans(
                   fontSize: 16,
                   fontWeight: .bold,
                   color: Colors.white,

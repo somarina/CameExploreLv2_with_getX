@@ -23,7 +23,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
         ),
         title: Text(
           "organ_title".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             fontSize: 24,
             fontWeight: .bold,
             color: Theme.of(context).colorScheme.secondary,
@@ -50,7 +50,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                       ),
                       Text(
                         "about_app_title".tr,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.googleSans(
                           fontSize: 20,
                           fontWeight: .bold,
                           color: Theme.of(context).colorScheme.primary,
@@ -59,7 +59,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                       Text(
                         "about_app_desc".tr,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.googleSans(
                           fontSize: 16,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
@@ -84,7 +84,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                         children: [
                           Text(
                             "mission_title".tr,
-                            style: GoogleFonts.spaceGrotesk(
+                            style: GoogleFonts.googleSans(
                               fontSize: 18,
 
                               fontWeight: .bold,
@@ -97,7 +97,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                             child: Text(
                               "mission_desc".tr,
                               textAlign: TextAlign.start, // for text center
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.googleSans(
                                 fontSize: 16,
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
@@ -118,7 +118,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                   SizedBox(width: 10),
                   Text(
                     "developer_title".tr,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.googleSans(
                       fontSize: 18,
                       fontWeight: .bold,
                       color: Theme.of(context).colorScheme.secondary,
@@ -144,7 +144,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                       leading: const CircleAvatar(child: Icon(Icons.person)),
                       title: Text(
                         dev.name,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.googleSans(
                           fontWeight: .bold,
                           fontSize: 18,
                           color: Theme.of(context).colorScheme.secondary,
@@ -152,7 +152,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
                       ),
                       subtitle: Text(
                         dev.role,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.googleSans(
                           fontSize: 16,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
@@ -208,7 +208,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
   //           SizedBox(width: 10),
   //           Text(
   //             "ក្រុមអ្នកអភិវឌ្ឍន៍កម្មវិធី",
-  //             style: GoogleFonts.spaceGrotesk(
+  //             style: GoogleFonts.googleSans(
   //               fontSize: 18,
   //               fontWeight: .bold,
   //               color: Theme.of(context).colorScheme.secondary,
@@ -236,7 +236,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
   //               Spacer(),
   //               Text(
   //                 "Keat Somarina",
-  //                 style: GoogleFonts.spaceGrotesk(
+  //                 style: GoogleFonts.googleSans(
   //                   fontSize: 18,
   //                   color: Colors.black,
   //                   fontWeight: .bold,
@@ -275,7 +275,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
   //               Spacer(),
   //               Text(
   //                 "Taing Naihuoy",
-  //                 style: GoogleFonts.spaceGrotesk(
+  //                 style: GoogleFonts.googleSans(
   //                   fontSize: 18,
   //                   color: Colors.black,
   //                   fontWeight: .bold,
@@ -319,7 +319,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
   //               Spacer(),
   //               Text(
   //                 "Tangoun Songheng",
-  //                 style: GoogleFonts.spaceGrotesk(
+  //                 style: GoogleFonts.googleSans(
   //                   fontSize: 18,
   //                   color: Colors.black,
   //                   fontWeight: .bold,
@@ -358,7 +358,7 @@ class AboutOrganizationScreenView extends GetView<AboutOrganizationController> {
   //               Spacer(),
   //               Text(
   //                 "Aing Vouchly",
-  //                 style: GoogleFonts.spaceGrotesk(
+  //                 style: GoogleFonts.googleSans(
   //                   fontSize: 18,
   //                   color: Colors.black,
   //                   fontWeight: .bold,

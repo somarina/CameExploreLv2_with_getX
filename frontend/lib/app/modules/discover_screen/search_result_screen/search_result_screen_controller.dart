@@ -1,116 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:frontend/app/core/api/services/places_services.dart';
-// import 'package:frontend/app/modules/discover_screen/nearby_screen/nearby_screen_controller.dart';
-// import 'package:frontend/app/modules/discover_screen/nearby_screen/place_model.dart';
-// import 'package:get/get.dart';
-
-// class SearchResultScreenController extends GetxController {
-
-//   final nearbyController = Get.find<NearbyScreenController>();
-
-//   final placesService = PlacesServices();
-
-//   final searchController = TextEditingController();
-
-//   RxList<PlaceModel> searchResults = <PlaceModel>[].obs;
-//   final RxList<PlaceModel> allPlaces = <PlaceModel>[].obs;
-
-//   RxBool isLoading = false.obs;
-//   final RxString selectedCategory = "".obs;
-//   String currentKeyword = "";
-
-//   @override
-// void onInit() {
-//   super.onInit();
-
-//   loadAllPlaces();
-// }
-
-//   Future<void> searchPlaces(String keyword) async {
-//     currentKeyword = keyword;
-
-//     applyFilters();
-//   }
-
-//   void filterByCategory(Map<String, dynamic> item) {
-//     selectedCategory.value = item["name"] ?? "";
-
-//     applyFilters();
-//   }
-
-//   // void applyFilters() {
-//   //   final keyword = currentKeyword.toLowerCase().trim();
-
-//   //   searchResults.value = nearbyController.nearbyPlaces.where((place) {
-//   //     // Search filter
-//   //     final matchSearch =
-//   //         keyword.isEmpty ||
-//   //         place.nameEn.toLowerCase().contains(keyword) ||
-//   //         place.nameKm.toLowerCase().contains(keyword) ||
-//   //         place.province.toLowerCase().contains(keyword) ||
-//   //         place.provinceKm.toLowerCase().contains(keyword);
-
-//   //     // Category filter
-//   //     final matchCategory =
-//   //         selectedCategory.value.isEmpty ||
-//   //         place.category.toLowerCase() == selectedCategory.value.toLowerCase();
-
-//   //     return matchSearch && matchCategory;
-//   //   }).toList();
-//   // }
-//   void applyFilters() {
-//   final keyword = currentKeyword.toLowerCase().trim();
-
-//   searchResults.assignAll(
-//     allPlaces.where((place) {
-//       // Search filter
-//       final matchSearch =
-//           keyword.isEmpty ||
-//           place.nameEn.toLowerCase().contains(keyword) ||
-//           place.nameKm.toLowerCase().contains(keyword) ||
-//           place.province.toLowerCase().contains(keyword) ||
-//           place.provinceKm.toLowerCase().contains(keyword);
-
-//       // Category filter
-//       final matchCategory =
-//           selectedCategory.value.isEmpty ||
-//           place.category.toLowerCase() ==
-//               selectedCategory.value.toLowerCase();
-
-//       return matchSearch && matchCategory;
-//     }),
-//   );
-// }
-
-// Future<void> loadAllPlaces() async {
-//   try {
-//     final response = await placesService.fetchPlaces();
-
-//     final List<dynamic> data = response["data"] ?? response;
-
-//     allPlaces.assignAll(
-//       data.map((json) => PlaceModel.fromJson(json)).toList(),
-//     );
-
-//     applyFilters();
-//   } catch (e) {
-//     print("Error loading all places: $e");
-//   }
-// }
-
-//   Future<void> refreshSearchResults() async {
-//     final keyword = searchController.text.trim();
-
-//     if (keyword.trim().isEmpty) {
-//       currentKeyword = "";
-//       applyFilters();
-//       return;
-//     }
-
-//     await searchPlaces(keyword);
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/api/services/hotels_services.dart';
 import 'package:frontend/app/core/api/services/places_services.dart';
@@ -118,6 +5,7 @@ import 'package:frontend/app/core/api/services/search_service.dart';
 import 'package:frontend/app/core/api/services/travel_package_services.dart';
 import 'package:frontend/app/modules/discover_screen/nearby_screen/nearby_screen_controller.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class SearchResultScreenController extends GetxController {
   final SearchService searchService = SearchService();
@@ -146,6 +34,15 @@ class SearchResultScreenController extends GetxController {
 
   String currentKeyword = "";
 
+  final GetStorage storage = GetStorage();
+
+  final RxList<Map<String, dynamic>> searchHistory =
+      <Map<String, dynamic>>[].obs;
+
+  final RxBool hasSearched = false.obs;
+
+  static const String searchHistoryKey = "search_history";
+
   // ============================================================
   // INIT
   // ============================================================
@@ -153,17 +50,92 @@ class SearchResultScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    loadSearchHistory();
 
-    if (Get.arguments is String) {
-      currentKeyword = Get.arguments.toString();
+    final arguments = Get.arguments;
+
+    print("SEARCH SCREEN ARGUMENTS: $arguments");
+    print("SEARCH SCREEN ARGUMENT TYPE: ${arguments.runtimeType}");
+
+    if (arguments is String) {
+      currentKeyword = arguments.trim();
       searchController.text = currentKeyword;
 
       if (currentKeyword.isNotEmpty) {
+        hasSearched.value = true;
         searchPlaces(currentKeyword);
+      }
+    } else if (arguments is Map) {
+      final keyword = arguments["keyword"]?.toString().trim() ?? "";
+
+      currentKeyword = keyword;
+      searchController.text = keyword;
+
+      if (keyword.isNotEmpty) {
+        hasSearched.value = true;
+        searchPlaces(keyword);
       }
     }
   }
 
+  void loadSearchHistory() {
+    final history = storage.read<List>(searchHistoryKey);
+
+    if (history != null) {
+      searchHistory.assignAll(
+        history.map((e) => Map<String, dynamic>.from(e)).toList(),
+      );
+    }
+  }
+
+  void saveRecentSearch(Map<String, dynamic> result) {
+    final item = {
+      "type": result["type"],
+      "data": Map<String, dynamic>.from(result["data"] ?? {}),
+    };
+
+    searchHistory.removeWhere((existing) {
+      final existingData = Map<String, dynamic>.from(existing["data"] ?? {});
+
+      return existing["type"] == item["type"] &&
+          existingData["id"] == item["data"]["id"];
+    });
+
+    searchHistory.insert(0, item);
+
+    if (searchHistory.length > 20) {
+      searchHistory.removeRange(20, searchHistory.length);
+    }
+
+    storage.write(searchHistoryKey, searchHistory.toList());
+  }
+
+  void removeRecentSearch({required String type, required dynamic itemId}) {
+    searchHistory.removeWhere((item) {
+      final data = item["data"];
+
+      if (data is! Map) return false;
+
+      return item["type"] == type &&
+          data["id"]?.toString() == itemId?.toString();
+    });
+
+    storage.write(searchHistoryKey, searchHistory.toList());
+  }
+
+  void clearSearchHistory() {
+    searchHistory.clear();
+
+    storage.remove(searchHistoryKey);
+  }
+
+  Future<void> searchSubmitted(String keyword) async {
+    final query = keyword.trim();
+
+    if (query.isEmpty) return;
+
+    await searchPlaces(query);
+  }
   // ============================================================
   // SEARCH
   // ============================================================
@@ -171,15 +143,14 @@ class SearchResultScreenController extends GetxController {
   Future<void> searchPlaces(String keyword) async {
     currentKeyword = keyword.trim();
 
-    // if (currentKeyword.isEmpty) {
-    //   searchResults.clear();
-    //   return;
-    // }
     if (currentKeyword.isEmpty) {
-    searchResults.clear();
-    allSearchResults.clear();
-    return;
-  }
+      hasSearched.value = false;
+      searchResults.clear();
+      allSearchResults.clear();
+      return;
+    }
+
+    hasSearched.value = true;
 
     try {
       isLoading.value = true;
@@ -272,89 +243,55 @@ class SearchResultScreenController extends GetxController {
     }
   }
 
-  // void applyCategoryFilter() {
-  //   final category = selectedCategory.value.trim().toLowerCase();
-
-  //   if (category.isEmpty) {
-  //     searchResults.assignAll(allSearchResults);
-  //     return;
-  //   }
-
-  //   final filtered = allSearchResults.where((item) {
-  //     final data = item["data"];
-
-  //     if (data is! Map) {
-  //       return false;
-  //     }
-
-  //     final itemCategory =
-  //         data["category"]?.toString().trim().toLowerCase() ?? "";
-
-  //     final itemCategoryKm =
-  //         data["category_km"]?.toString().trim().toLowerCase() ?? "";
-
-  //     return itemCategory == category || itemCategoryKm == category;
-  //   }).toList();
-
-  //   searchResults.assignAll(filtered);
-
-  //   print("========================================");
-  //   print("CATEGORY FILTER: ${selectedCategory.value}");
-  //   print("RESULTS AFTER FILTER: ${searchResults.length}");
-  //   print("========================================");
-  // }
-
   void applyCategoryFilter() {
-  final keyword = currentKeyword.toLowerCase().trim();
-  final category = selectedCategory.value.toLowerCase().trim();
+    final keyword = currentKeyword.toLowerCase().trim();
+    final category = selectedCategory.value.toLowerCase().trim();
 
-  final filtered = allSearchResults.where((result) {
-    final type = result["type"]?.toString().toLowerCase() ?? "";
-    final data = Map<String, dynamic>.from(result["data"] ?? {});
+    final filtered = allSearchResults.where((result) {
+      final type = result["type"]?.toString().toLowerCase() ?? "";
+      final data = Map<String, dynamic>.from(result["data"] ?? {});
 
-    // -----------------------------
-    // Keyword filter
-    // -----------------------------
-    final nameEn = data["name_en"]?.toString().toLowerCase() ?? "";
-    final nameKm = data["name_km"]?.toString().toLowerCase() ?? "";
-    final province = data["province"]?.toString().toLowerCase() ?? "";
-    final provinceKm = data["province_km"]?.toString().toLowerCase() ?? "";
-    final categoryEn = data["category"]?.toString().toLowerCase() ?? "";
-    final categoryKm = data["category_km"]?.toString().toLowerCase() ?? "";
+      // -----------------------------
+      // Keyword filter
+      // -----------------------------
+      final nameEn = data["name_en"]?.toString().toLowerCase() ?? "";
+      final nameKm = data["name_km"]?.toString().toLowerCase() ?? "";
+      final province = data["province"]?.toString().toLowerCase() ?? "";
+      final provinceKm = data["province_km"]?.toString().toLowerCase() ?? "";
+      final categoryEn = data["category"]?.toString().toLowerCase() ?? "";
+      final categoryKm = data["category_km"]?.toString().toLowerCase() ?? "";
 
-    final matchKeyword =
-        keyword.isEmpty ||
-        nameEn.contains(keyword) ||
-        nameKm.contains(keyword) ||
-        province.contains(keyword) ||
-        provinceKm.contains(keyword) ||
-        categoryEn.contains(keyword) ||
-        categoryKm.contains(keyword);
+      final matchKeyword =
+          keyword.isEmpty ||
+          nameEn.contains(keyword) ||
+          nameKm.contains(keyword) ||
+          province.contains(keyword) ||
+          provinceKm.contains(keyword) ||
+          categoryEn.contains(keyword) ||
+          categoryKm.contains(keyword);
 
-    // -----------------------------
-    // Category filter
-    // -----------------------------
-    bool matchCategory = true;
+      // -----------------------------
+      // Category filter
+      // -----------------------------
+      bool matchCategory = true;
 
-    if (category.isNotEmpty) {
-      if (type == "place") {
-        matchCategory =
-            categoryEn == category ||
-            categoryKm == category;
-      } else if (category == "hotel") {
-        matchCategory = type == "hotel";
-      } else if (category == "package") {
-        matchCategory = type == "package";
-      } else {
-        matchCategory = false;
+      if (category.isNotEmpty) {
+        if (type == "place") {
+          matchCategory = categoryEn == category || categoryKm == category;
+        } else if (category == "hotel") {
+          matchCategory = type == "hotel";
+        } else if (category == "package") {
+          matchCategory = type == "package";
+        } else {
+          matchCategory = false;
+        }
       }
-    }
 
-    return matchKeyword && matchCategory;
-  }).toList();
+      return matchKeyword && matchCategory;
+    }).toList();
 
-  searchResults.assignAll(filtered);
-}
+    searchResults.assignAll(filtered);
+  }
 
   // ============================================================
   // CATEGORY

@@ -8,6 +8,7 @@ class BuildTextfield extends StatelessWidget {
   final VoidCallback? onTap;
   final TextEditingController? controller;
   final Function(String)? onChanged;
+  final Function(String)? onSubmitted;
 
   const BuildTextfield({
     super.key,
@@ -15,6 +16,7 @@ class BuildTextfield extends StatelessWidget {
     this.onTap,
     this.controller,
     this.onChanged,
+    this.onSubmitted,
   });
 
   @override

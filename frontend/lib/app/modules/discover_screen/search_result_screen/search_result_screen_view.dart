@@ -30,6 +30,7 @@ class ExploreView extends GetView<SearchResultScreenController> {
         title: BuildTextfield(
           controller: controller.searchController,
           onChanged: controller.searchPlaces,
+          onSubmitted: controller.searchSubmitted,
         ),
       ),
       body: SafeArea(
@@ -41,15 +42,18 @@ class ExploreView extends GetView<SearchResultScreenController> {
             SizedBox(height: 10),
 
             Obx(() {
+              if (!controller.hasSearched.value) {
+                return const SizedBox.shrink();
+              }
+
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Result found (${controller.searchResults.length})",
+                    "${'result found'.tr} (${controller.searchResults.length})",
                     style: GoogleFonts.googleSans(
                       fontSize: 16,
-                      // fontWeight: FontWeight.bold,
                       color: Theme.of(context).textTheme.titleLarge?.color,
                     ),
                   ),
@@ -64,13 +68,19 @@ class ExploreView extends GetView<SearchResultScreenController> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
+                // User hasn't searched yet
+                if (!controller.hasSearched.value) {
+                  return _buildSearchHistory(context);
+                }
+
+                // User searched but nothing matched
                 if (controller.searchResults.isEmpty) {
-                  return const Center(child: Text("No results found"));
+                  return Center(child: Text('No results found'.tr));
                 }
 
                 return ListView.separated(
                   itemCount: controller.searchResults.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final result = controller.searchResults[index];
@@ -193,7 +203,9 @@ class ExploreView extends GetView<SearchResultScreenController> {
       //     Get.toNamed(Routes.DETAIL_PLACES, arguments: place);
       //   }
       // },
-      onTap: () async {
+      onTap: () {
+        controller.saveRecentSearch({"type": "place", "data": place});
+
         Get.toNamed(Routes.DETAIL_PLACES, arguments: place);
       },
 
@@ -352,6 +364,8 @@ class ExploreView extends GetView<SearchResultScreenController> {
         // if (packageData["data"] != null) {
         //   Get.toNamed(Routes.PACKAGE_DETAIL, arguments: packageData["data"]);
         // }
+        controller.saveRecentSearch({"type": "package", "data": package});
+
         Get.toNamed(Routes.PACKAGE_DETAIL, arguments: package);
       },
 
@@ -521,6 +535,9 @@ class ExploreView extends GetView<SearchResultScreenController> {
         // if (hotelData["data"] != null) {
         //   Get.toNamed(Routes.HOTEL_DETAIL, arguments: hotelData["data"]);
         // }
+        // Get.toNamed(Routes.HOTEL_DETAIL, arguments: hotel);
+        controller.saveRecentSearch({"type": "hotel", "data": hotel});
+
         Get.toNamed(Routes.HOTEL_DETAIL, arguments: hotel);
       },
 
@@ -655,18 +672,229 @@ class ExploreView extends GetView<SearchResultScreenController> {
     final type = result["type"];
     final data = result["data"] as Map<String, dynamic>;
 
+    // switch (type) {
+    //   case "place":
+    //     return _buildPlaceCard(data, context);
+
+    //   case "hotel":
+    //     return _buildHotelCard(data, context);
+
+    //   case "package":
+    //     return _buildPackageCard(data, context);
+
+    //   default:
+    //     return const SizedBox.shrink();
+    // }
     switch (type) {
       case "place":
-        return _buildPlaceCard(data, context);
+        return _buildPlaceCard({
+          ...data,
+          "_searchResultType": "place",
+        }, context);
 
       case "hotel":
-        return _buildHotelCard(data, context);
+        return _buildHotelCard({
+          ...data,
+          "_searchResultType": "hotel",
+        }, context);
 
       case "package":
-        return _buildPackageCard(data, context);
+        return _buildPackageCard({
+          ...data,
+          "_searchResultType": "package",
+        }, context);
 
       default:
         return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildSearchHistory(BuildContext context) {
+    if (controller.searchHistory.isEmpty) {
+      return Center(
+        child: Text(
+          "No recent searches".tr,
+          style: GoogleFonts.googleSans(
+            fontSize: 14,
+            color: Theme.of(context).textTheme.bodySmall?.color,
+          ),
+        ),
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Recent searches".tr,
+              style: GoogleFonts.googleSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            TextButton(
+              onPressed: controller.clearSearchHistory,
+              child: Text(
+                "Clear all".tr,
+                style: GoogleFonts.googleSans(
+                  fontSize: 14,
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 8),
+
+        ...controller.searchHistory.map((result) {
+          final type = result["type"];
+
+          final data = result["data"] is Map
+              ? Map<String, dynamic>.from(result["data"])
+              : <String, dynamic>{};
+
+          final imageUrl = data["image_url"]?.toString() ?? "";
+
+          final nameEn = data["name_en"]?.toString() ?? "";
+
+          final nameKm = data["name_km"]?.toString() ?? "";
+
+          final province = data["province"]?.toString() ?? "";
+
+          final provinceKm = data["province_km"]?.toString() ?? "";
+
+          String title;
+          String subtitle;
+
+          if (type == "place") {
+            title = Get.locale?.languageCode == "kmKH" ? nameKm : nameEn;
+
+            subtitle = Get.locale?.languageCode == "kmKH"
+                ? provinceKm
+                : province;
+          } else if (type == "hotel") {
+            title = Get.locale?.languageCode == "kmKH" ? nameKm : nameEn;
+
+            subtitle = Get.locale?.languageCode == "kmKH"
+                ? provinceKm
+                : province;
+          } else if (type == "package") {
+            title = Get.locale?.languageCode == "kmKH" ? nameKm : nameEn;
+
+            subtitle = "Package";
+          } else {
+            // Ignore old/invalid history entries
+            return const SizedBox.shrink();
+          }
+
+          return Dismissible(
+            key: ValueKey("${type}_${data["id"]}"),
+
+            direction: DismissDirection.endToStart,
+
+            background: Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 20),
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+
+            onDismissed: (direction) {
+              controller.removeRecentSearch(type: type, itemId: data["id"]);
+            },
+
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: imageUrl.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        width: 55,
+                        height: 55,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: 55,
+                        height: 55,
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.image),
+                      ),
+              ),
+
+              title: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.googleSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                ),
+              ),
+
+              subtitle: Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.googleSans(
+                  fontSize: 14,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
+              ),
+
+              trailing: const Icon(Icons.history, size: 20),
+
+              onTap: () {
+                switch (type) {
+                  case "place":
+                    Get.toNamed(Routes.DETAIL_PLACES, arguments: data);
+                    break;
+
+                  case "hotel":
+                    Get.toNamed(Routes.HOTEL_DETAIL, arguments: data);
+                    break;
+
+                  case "package":
+                    Get.toNamed(Routes.PACKAGE_DETAIL, arguments: data);
+                    break;
+                }
+              },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  void openSearchResult(Map<String, dynamic> result) {
+    controller.saveRecentSearch(result);
+
+    final type = result["type"];
+    final data = Map<String, dynamic>.from(result["data"] ?? {});
+
+    switch (type) {
+      case "place":
+        Get.toNamed(Routes.DETAIL_PLACES, arguments: data);
+        break;
+
+      case "hotel":
+        Get.toNamed(Routes.HOTEL_DETAIL, arguments: data);
+        break;
+
+      case "package":
+        Get.toNamed(Routes.PACKAGE_DETAIL, arguments: data);
+        break;
     }
   }
 }

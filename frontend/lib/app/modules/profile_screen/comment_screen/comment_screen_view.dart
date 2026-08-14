@@ -27,7 +27,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
         ),
         title: Text(
           "feedback".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
@@ -67,7 +67,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
               children: [
                 Text(
                   "do_you_like_app".tr,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -75,7 +75,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
                 ),
                 Text(
                   "do_you_like_app_desc".tr,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     color: Theme.of(
                       context,
                     ).colorScheme.secondary.withValues(alpha: 0.8),
@@ -110,7 +110,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
           Center(
             child: Text(
               "review_type".tr,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.googleSans(
                 color: Theme.of(context).colorScheme.secondary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -159,7 +159,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
               ),
               child: Text(
                 "submit_review".tr,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.googleSans(
                   color: Colors.white,
                   fontSize: 16,
                 ),
@@ -184,7 +184,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
         ),
         child: Text(
           text,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             fontSize: 16,
             color: isSelected ? Colors.white : Colors.black,
           ),
@@ -195,7 +195,7 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
 
   Widget _label(String text, BuildContext context) => Text(
     text,
-    style: GoogleFonts.spaceGrotesk(
+    style: GoogleFonts.googleSans(
       fontSize: 16,
       fontWeight: .bold,
       color: Theme.of(context).colorScheme.secondary,
@@ -286,14 +286,14 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
               children: [
                 TextSpan(
                   text: "email".tr,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 16,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
                 TextSpan(
                   text: " : support@example.com",
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 16,
                     color: AppColors.lightPrimaryColor,
                   ),
@@ -306,14 +306,14 @@ class CommentScreenView extends GetView<CommentScreenViewController> {
               children: [
                 TextSpan(
                   text: "phone".tr,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 16,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
                 TextSpan(
                   text: " : +855 12 345 678",
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     fontSize: 16,
                     color: AppColors.lightPrimaryColor,
                   ),
