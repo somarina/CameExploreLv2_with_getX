@@ -35,7 +35,7 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
       case 4:
         return UserProfileScreenView();
       default:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
     }
   }
 
@@ -46,27 +46,6 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
     AdaptiveNavigationDestination(icon: 'heart', label: 'Favorites'),
     AdaptiveNavigationDestination(icon: 'person', label: 'Profile'),
   ];
-
-  List<CurvedNavigationBarItem> get _androidNavItems => [
-    CurvedNavigationBarItem(
-      child: Icon(
-        Icons.home,
-        color: controller.currentIndex.value == 0 ? Colors.white : Colors.black,
-  // static final List<CurvedNavigationBarItem> _androidNavItems = [
-  //   const CurvedNavigationBarItem(child: Icon(Icons.home), label: 'Home'),
-  //   const CurvedNavigationBarItem(child: Icon(Icons.search), label: 'Discover'),
-  //   const CurvedNavigationBarItem(
-  //     child: Icon(Icons.shopping_bag, color: controller.currentIndex.value == 0
-  //         ? Colors.white
-  //         : Colors.grey,),
-  //     label: 'Booking',
-  //   ),
-  //   const CurvedNavigationBarItem(
-  //     child: Icon(Icons.favorite),
-  //     label: 'Favorites',
-  //   ),
-  //   const CurvedNavigationBarItem(child: Icon(Icons.person), label: 'Profile'),
-  // ];
 
   List<CurvedNavigationBarItem> _androidNavItems(BuildContext context) {
     final Color unselectedColor = controller.themeCtrl.getDark()
@@ -83,7 +62,6 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
         ),
         label: 'Home',
       ),
-
       CurvedNavigationBarItem(
         child: Icon(
           Icons.search,
@@ -93,7 +71,6 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
         ),
         label: 'Discover',
       ),
-
       CurvedNavigationBarItem(
         child: Icon(
           Icons.shopping_bag,
@@ -103,7 +80,6 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
         ),
         label: 'Booking',
       ),
-
       CurvedNavigationBarItem(
         child: Icon(
           Icons.favorite,
@@ -113,7 +89,6 @@ class ButtonNavbarView extends GetView<ButtonNavbarController> {
         ),
         label: 'Favorites',
       ),
-
       CurvedNavigationBarItem(
         child: Icon(
           Icons.person,
@@ -193,15 +168,14 @@ class _AssistiveTouchButtonState extends State<_AssistiveTouchButton>
   @override
   void initState() {
     super.initState();
-    _snapController =
-        AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 220),
-        )..addListener(() {
-          if (_snapAnimation != null) {
-            setState(() => _position = _snapAnimation!.value);
-          }
-        });
+    _snapController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 220),
+    )..addListener(() {
+        if (_snapAnimation != null) {
+          setState(() => _position = _snapAnimation!.value);
+        }
+      });
   }
 
   @override
