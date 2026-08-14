@@ -24,7 +24,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
         ),
         title: Text(
           "changePWD".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             fontSize: 24,
             fontWeight: .bold,
             color: Theme.of(context).colorScheme.secondary,
@@ -91,7 +91,8 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
                 buildTitle("cfNewPWD".tr, context),
                 Obx(
                   () => CustomTextField(
-                    hintText: "cfNewPWD".tr,
+                    hintText: "cfNewPWD".tr, 
+                    
                     controller: controller.cfpassCtrl,
                     suffix: GestureDetector(
                       onTap: controller.isConfirmHidden.toggle,
@@ -141,7 +142,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: GoogleFonts.spaceGrotesk(
+        style: GoogleFonts.googleSans(
           color: Theme.of(context).colorScheme.secondary,
           fontSize: 17,
           fontWeight: FontWeight.w500,
@@ -162,7 +163,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
       controller: controller,
       obscureText: obscure,
       validator: validator,
-      style: GoogleFonts.spaceGrotesk(
+      style: GoogleFonts.googleSans(
         color: Theme.of(context).colorScheme.secondary,
       ),
       decoration: InputDecoration(
@@ -226,7 +227,7 @@ class ChangePasswordView extends GetView<ChangePasswordController> {
         child: Center(
           child: Text(
             text,
-            style: GoogleFonts.spaceGrotesk(
+            style: GoogleFonts.googleSans(
               fontSize: 16,
               color: Colors.white,
               fontWeight: .bold,

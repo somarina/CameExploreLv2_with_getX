@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/core/constants/app_colors/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
@@ -32,13 +33,13 @@ class CustomTextField extends StatelessWidget {
         if (text != null) ...[
           Text(
             text!,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style:  GoogleFonts.googleSans(fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ],
         SizedBox(height: 10),
         TextField(
           readOnly: readOnly,
-          style: TextStyle(
+          style: GoogleFonts.googleSans(
             fontWeight: .w500,
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -53,7 +54,7 @@ class CustomTextField extends StatelessWidget {
             suffixIconColor: Theme.of(
               context,
             ).colorScheme.secondary.withValues(alpha: 0.8),
-            hintStyle: TextStyle(
+            hintStyle: GoogleFonts.googleSans(
               color: Theme.of(
                 context,
               ).colorScheme.secondary.withValues(alpha: 0.5),

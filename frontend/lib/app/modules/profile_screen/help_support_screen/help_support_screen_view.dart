@@ -23,7 +23,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
         ),
         title: Text(
           "terms_conditions".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
@@ -56,7 +56,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                           SizedBox(width: 10),
                           Text(
                             "terms_of_use".tr,
-                            style: GoogleFonts.spaceGrotesk(
+                            style: GoogleFonts.googleSans(
                               color: Theme.of(context).colorScheme.secondary,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -72,7 +72,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                             Icon(Icons.calendar_today),
                             Text(
                               "last_updated".tr,
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.googleSans(
                                 fontSize: 16,
                                 color: Theme.of(
                                   context,
@@ -104,7 +104,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_acceptance_title".tr,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.googleSans(
                           color: Theme.of(context).colorScheme.secondary,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -113,7 +113,7 @@ class HelpSupportScreenView extends GetView<HelpSupportScreenViewController> {
                       SizedBox(height: 10),
                       Text(
                         "tc_acceptance_desc".tr,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.googleSans(
                           fontSize: 16,
                           color: Theme.of(
                             context,

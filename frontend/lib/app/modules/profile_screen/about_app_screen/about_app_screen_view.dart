@@ -24,7 +24,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
         ),
         title: Text(
           "about_cam".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w600,
           ),
@@ -215,7 +215,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
                 children: [
                   Text(
                     text1,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.googleSans(
                       color: Theme.of(
                         context,
                       ).colorScheme.secondary.withValues(alpha: 0.8),
@@ -225,7 +225,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
                   ),
                   Text(
                     text2,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.googleSans(
                       fontSize: 16,
                       color: Theme.of(
                         context,
@@ -257,7 +257,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
         child: Center(
           child: Text(
             text,
-            style: GoogleFonts.spaceGrotesk(
+            style: GoogleFonts.googleSans(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.white,
@@ -315,7 +315,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
                 SizedBox(width: 20),
                 Text(
                   title,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.googleSans(
                     color: Theme.of(context).colorScheme.secondary,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -326,7 +326,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
             SizedBox(height: 5),
             Text(
               text,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.googleSans(
                 fontSize: 16,
                 color: Theme.of(
                   context,
@@ -369,7 +369,7 @@ class AboutAppScreenView extends GetView<AboutAppScreenViewController> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               text,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.googleSans(
                 fontSize: 16,
                 color: Theme.of(
                   context,

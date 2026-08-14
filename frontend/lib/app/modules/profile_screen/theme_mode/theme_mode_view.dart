@@ -26,7 +26,7 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
         ),
         title: Text(
           "theme_mode".tr,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.googleSans(
             fontSize: 24,
             fontWeight: .bold,
             color: Get.theme.colorScheme.secondary,
@@ -40,7 +40,7 @@ class ThemeModeView extends GetView<ThemeModeViewController> {
             padding: EdgeInsets.all(12),
             child: Text(
               "theme_mode".tr,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.googleSans(
                 fontSize: 18,
                 color: Theme.of(context).colorScheme.secondary,
               ),
