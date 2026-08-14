@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Needed for the "use my current location" button on the location
+	     picker (geolocator package). -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We use your location to center the map on where you are, to make picking your business address faster.</string>
 </dict>
 </plist>

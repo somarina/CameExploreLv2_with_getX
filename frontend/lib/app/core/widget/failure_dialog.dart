@@ -21,8 +21,8 @@ class FailureDialog {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
-                height: 120,
-                width: 120,
+                height: 150,
+                width: 150,
                 child: Lottie.asset(
                   "assets/icons/OTP_failure.json",
                   repeat: false,

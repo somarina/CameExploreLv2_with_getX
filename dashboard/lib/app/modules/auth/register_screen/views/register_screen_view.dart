@@ -12,7 +12,10 @@ import '../controllers/register_screen_controller.dart';
 class RegisterScreenView extends GetView<RegisterScreenController> {
   const RegisterScreenView({super.key});
 
-  static const primaryColor = Color(0xFF00C17C);
+  // Dark teal for the button / focus states, gold for the headline —
+  // matched to the reference "signup-page.html" design.
+  static const primaryColor = Color(0xFF1F6F5C);
+  static const goldAccent = Color(0xFFD79A3B);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
           : Colors.black.withOpacity(.08);
       final Color fieldText = isDark ? Colors.white : Colors.black87;
       final Color fieldLabel = isDark ? Colors.white60 : Colors.black54;
-      final Color titleColor = isDark ? Colors.white : Colors.black87;
+      final Color titleColor = goldAccent;
       final Color subtitleColor = isDark ? Colors.white70 : Colors.black54;
 
       return Scaffold(
@@ -44,10 +47,10 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 900, maxHeight: 760),
+                  constraints: const BoxConstraints(maxWidth: 960),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final isMobile = constraints.maxWidth < 700;
+                      final isMobile = constraints.maxWidth < 720;
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(24),
                         child: BackdropFilter(
@@ -87,7 +90,18 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: [
+                                        // Photo panel — sharp, flush against the
+                                        // glass form panel, rounded only on its
+                                        // outer (left) edge via the parent clip.
                                         Expanded(
+                                          flex: 4,
+                                          child: Image.asset(
+                                            "assets/images/angkor_wat.png",
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 6,
                                           child: SingleChildScrollView(
                                             child: _formPanel(
                                               isDark: isDark,
@@ -100,10 +114,6 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                                               subtitleColor: subtitleColor,
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 320,
-                                          child: _imageSidePanel(),
                                         ),
                                       ],
                                     ),
@@ -167,13 +177,18 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
     );
   }
 
-  Widget _imageSidePanel() {
-    return Padding(
-      padding: const EdgeInsets.all(2),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: Image.asset("assets/images/angkor_wat.png", fit: BoxFit.cover),
-      ),
+  /// Puts two fields side by side (like Phone / Business Type, or
+  /// Password / Confirm Password in the reference design). The form
+  /// panel already scrolls, so this stays simple and doesn't need its
+  /// own mobile fallback.
+  Widget _twoUp(Widget left, Widget right) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: left),
+        const SizedBox(width: 14),
+        Expanded(child: right),
+      ],
     );
   }
 
@@ -188,7 +203,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
     required Color subtitleColor,
   }) {
     return Padding(
-      padding: EdgeInsets.all(isMobile ? 20 : 22),
+      padding: EdgeInsets.all(isMobile ? 20 : 32),
       child: Form(
         key: controller.formKey,
         child: Column(
@@ -198,61 +213,50 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Image.asset(
-                      'assets/icons/logo.png',
-                      width: isMobile ? 60 : 70,
-                      height: isMobile ? 60 : 70,
-                      fit: BoxFit.cover,
+                Expanded(
+                  child: Text(
+                    "Create Company Account",
+                    style: _font(
+                      "Create Company Account",
+                      color: titleColor,
+                      fontSize: isMobile ? 22 : 27,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
+                  ),
                 ),
                 Row(
                   children: [
-                    _circleIconButton(
-                      icon: Icons.arrow_back,
-                      isDark: isDark,
-                      onTap: () => Get.back(),
-                    ),
-                    const SizedBox(width: 8),
                     _circleIconButton(
                       icon: isDark ? Icons.light_mode : Icons.dark_mode,
                       isDark: isDark,
                       onTap: controller.themeController.toggleTheme,
                     ),
+                    const SizedBox(width: 8),
+                    _circleIconButton(
+                      icon: Icons.arrow_back,
+                      isDark: isDark,
+                      onTap: () => Get.back(),
+                    ),
                   ],
                 ),
               ],
             ),
-
-            SizedBox(height: isMobile ? 14 : 18),
-
-            Text(
-              "Create Company Account",
-              style: _font(
-                "Create Company Account",
-                color: titleColor,
-                fontSize: isMobile ? 22 : 26,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 3),
+            const SizedBox(height: 6),
             Text(
               "Register your tourism company or organization",
               style: _font(
                 "Register your tourism company or organization",
                 color: subtitleColor,
-                fontSize: 13,
+                fontSize: 13.5,
               ),
             ),
 
-            SizedBox(height: isMobile ? 16 : 20),
+            SizedBox(height: isMobile ? 20 : 26),
 
             _labeledField(
               label: 'Company / Organization Name',
               required: true,
-              titleColor: titleColor,
+              titleColor: fieldText,
               child: TextFormField(
                 controller: controller.companyNameController,
                 style: _font('x', color: fieldText, fontSize: 14),
@@ -266,12 +270,12 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                 validator: controller.validateCompanyName,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
             _labeledField(
               label: 'Email Address',
               required: true,
-              titleColor: titleColor,
+              titleColor: fieldText,
               child: TextFormField(
                 controller: controller.emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -286,62 +290,62 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                 validator: controller.validateEmail,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
-            _labeledField(
-              label: 'Phone Number',
-              required: true,
-              titleColor: titleColor,
-              child: TextFormField(
-                controller: controller.phoneController,
-                keyboardType: TextInputType.phone,
-                style: _font('x', color: fieldText, fontSize: 14),
-                cursorColor: primaryColor,
-                decoration: _decoration(
-                  hint: '+855 XX XXX XXX',
-                  fieldFill: fieldFill,
-                  fieldBorder: fieldBorder,
-                  fieldLabel: fieldLabel,
-                ),
-                validator: controller.validatePhone,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _labeledField(
-              label: 'Business Type',
-              titleColor: titleColor,
-              child: Obx(
-                () => DropdownButtonFormField<String>(
-                  value: controller.selectedBusinessType.value,
-                  isExpanded: true,
-                  dropdownColor: isDark ? const Color(0xFF10233F) : Colors.white,
+            _twoUp(
+              _labeledField(
+                label: 'Phone Number',
+                required: true,
+                titleColor: fieldText,
+                child: TextFormField(
+                  controller: controller.phoneController,
+                  keyboardType: TextInputType.phone,
                   style: _font('x', color: fieldText, fontSize: 14),
-                  icon: Icon(Icons.keyboard_arrow_down_rounded, color: fieldLabel),
+                  cursorColor: primaryColor,
                   decoration: _decoration(
-                    hint: 'Select type',
+                    hint: '+855 XX XXX XXX',
                     fieldFill: fieldFill,
                     fieldBorder: fieldBorder,
                     fieldLabel: fieldLabel,
                   ),
-                  items: controller.businessTypes
-                      .map(
-                        (type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(type, overflow: TextOverflow.ellipsis),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: controller.setBusinessType,
+                  validator: controller.validatePhone,
+                ),
+              ),
+              _labeledField(
+                label: 'Business Type',
+                titleColor: fieldText,
+                child: Obx(
+                  () => DropdownButtonFormField<String>(
+                    value: controller.selectedBusinessType.value,
+                    isExpanded: true,
+                    dropdownColor: isDark ? const Color(0xFF10233F) : Colors.white,
+                    style: _font('x', color: fieldText, fontSize: 14),
+                    icon: Icon(Icons.keyboard_arrow_down_rounded, color: fieldLabel),
+                    decoration: _decoration(
+                      hint: 'Select type',
+                      fieldFill: fieldFill,
+                      fieldBorder: fieldBorder,
+                      fieldLabel: fieldLabel,
+                    ),
+                    items: controller.businessTypes
+                        .map(
+                          (type) => DropdownMenuItem(
+                            value: type,
+                            child: Text(type, overflow: TextOverflow.ellipsis),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: controller.setBusinessType,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
             _labeledField(
               label: 'Address',
               required: true,
-              titleColor: titleColor,
+              titleColor: fieldText,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -412,72 +416,72 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
-
-            _labeledField(
-              label: 'Password',
-              required: true,
-              titleColor: titleColor,
-              child: Obx(
-                () => TextFormField(
-                  controller: controller.passwordController,
-                  obscureText: controller.obscurePassword.value,
-                  style: _font('x', color: fieldText, fontSize: 14),
-                  cursorColor: primaryColor,
-                  decoration: _decoration(
-                    hint: 'Create a password',
-                    fieldFill: fieldFill,
-                    fieldBorder: fieldBorder,
-                    fieldLabel: fieldLabel,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        controller.obscurePassword.value
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: fieldLabel,
-                        size: 19,
-                      ),
-                      onPressed: controller.togglePasswordVisibility,
-                    ),
-                  ),
-                  validator: controller.validatePassword,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _labeledField(
-              label: 'Confirm Password',
-              required: true,
-              titleColor: titleColor,
-              child: Obx(
-                () => TextFormField(
-                  controller: controller.confirmPasswordController,
-                  obscureText: controller.obscureConfirmPassword.value,
-                  style: _font('x', color: fieldText, fontSize: 14),
-                  cursorColor: primaryColor,
-                  decoration: _decoration(
-                    hint: 'Re-enter password',
-                    fieldFill: fieldFill,
-                    fieldBorder: fieldBorder,
-                    fieldLabel: fieldLabel,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        controller.obscureConfirmPassword.value
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: fieldLabel,
-                        size: 19,
-                      ),
-                      onPressed: controller.toggleConfirmPasswordVisibility,
-                    ),
-                  ),
-                  validator: controller.validateConfirmPassword,
-                ),
-              ),
-            ),
-
             const SizedBox(height: 14),
+
+            _twoUp(
+              _labeledField(
+                label: 'Password',
+                required: true,
+                titleColor: fieldText,
+                child: Obx(
+                  () => TextFormField(
+                    controller: controller.passwordController,
+                    obscureText: controller.obscurePassword.value,
+                    style: _font('x', color: fieldText, fontSize: 14),
+                    cursorColor: primaryColor,
+                    decoration: _decoration(
+                      hint: 'Create a password',
+                      fieldFill: fieldFill,
+                      fieldBorder: fieldBorder,
+                      fieldLabel: fieldLabel,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          controller.obscurePassword.value
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: fieldLabel,
+                          size: 19,
+                        ),
+                        onPressed: controller.togglePasswordVisibility,
+                      ),
+                    ),
+                    validator: controller.validatePassword,
+                  ),
+                ),
+              ),
+              _labeledField(
+                label: 'Confirm Password',
+                required: true,
+                titleColor: fieldText,
+                child: Obx(
+                  () => TextFormField(
+                    controller: controller.confirmPasswordController,
+                    obscureText: controller.obscureConfirmPassword.value,
+                    style: _font('x', color: fieldText, fontSize: 14),
+                    cursorColor: primaryColor,
+                    decoration: _decoration(
+                      hint: 'Re-enter password',
+                      fieldFill: fieldFill,
+                      fieldBorder: fieldBorder,
+                      fieldLabel: fieldLabel,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          controller.obscureConfirmPassword.value
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: fieldLabel,
+                          size: 19,
+                        ),
+                        onPressed: controller.toggleConfirmPasswordVisibility,
+                      ),
+                    ),
+                    validator: controller.validateConfirmPassword,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
 
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -539,18 +543,18 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
               ],
             ),
 
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
 
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 52,
               child: Obx(
                 () => ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                   onPressed: controller.isLoading.value ? null : controller.register,
@@ -563,27 +567,20 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                             color: Colors.white,
                           ),
                         )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.apartment_rounded, size: 18, color: Colors.white),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Create Account",
-                              style: _font(
-                                "Create Account",
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ],
+                      : Text(
+                          "Create Account",
+                          style: _font(
+                            "Create Account",
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
                 ),
               ),
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
 
             Center(
               child: Wrap(
@@ -659,23 +656,23 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
       fillColor: fieldFill,
       suffixIcon: suffixIcon,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: fieldBorder),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: fieldBorder),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: primaryColor, width: 1.4),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.redAccent),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.redAccent, width: 1.4),
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -39,6 +40,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
   LatLng? _pendingCenter;
   String? _resolvedAddress;
   bool _resolvingAddress = false;
+  bool _locatingUser = false;
 
   // Decorative city label shown as a chip next to the search bar, matching
   // the reference design. The Places search itself is already scoped to
@@ -53,6 +55,13 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
         ? LatLng(widget.initialLat!, widget.initialLng!)
         : _phnomPenh;
     _resolveAddress(_center);
+
+    // Only auto-locate when the picker was opened fresh (no lat/lng already
+    // chosen) — if someone is re-opening this to edit a location they
+    // already picked, respect that instead of jumping to GPS.
+    if (widget.initialLat == null || widget.initialLng == null) {
+      _useCurrentLocation();
+    }
   }
 
   @override
@@ -101,6 +110,40 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     await controller.animateCamera(CameraUpdate.newLatLngZoom(target, zoom));
     setState(() => _center = target);
     _resolveAddress(target);
+  }
+
+  /// Asks for the device's/browser's current position and, if granted,
+  /// re-centers the map on it. Called automatically when the picker opens
+  /// with no location already chosen, and also wired to the "locate me"
+  /// button so the user can retry if they denied it the first time.
+  Future<void> _useCurrentLocation() async {
+    setState(() => _locatingUser = true);
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        // User said no — quietly keep the default Phnom Penh center
+        // instead of blocking the flow.
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      if (!mounted) return;
+      await _animateTo(LatLng(position.latitude, position.longitude), zoom: 16);
+    } catch (_) {
+      // GPS unavailable, permission dialog dismissed, timed out, etc. —
+      // fail quietly and leave whatever center is already showing.
+    } finally {
+      if (mounted) setState(() => _locatingUser = false);
+    }
   }
 
   void _pickCity() {
@@ -339,6 +382,41 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // "Locate me" button — re-triggers the same GPS lookup that
+                // runs automatically on open, in case the user denied the
+                // permission prompt the first time or just wants to jump
+                // back to their current position after searching elsewhere.
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Material(
+                    color: Colors.white,
+                    shape: const CircleBorder(),
+                    elevation: 3,
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: _locatingUser ? null : _useCurrentLocation,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: _locatingUser
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.2,
+                                  color: accentRed,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.my_location,
+                                color: accentRed,
+                                size: 20,
+                              ),
                       ),
                     ),
                   ),

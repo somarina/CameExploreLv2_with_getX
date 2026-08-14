@@ -10,6 +10,8 @@ class PackageBookingServices {
     required int numberOfPeople,
     String? guestNote,
     String bookingType = "package",
+    String paymentMethod = "KHQR",
+    String paymentStatus = "pending",
   }) async {
     final Map<String, dynamic> body = {
       "booking_type": bookingType,
@@ -17,6 +19,8 @@ class PackageBookingServices {
       "start_date": DateFormat('yyyy-MM-dd').format(startDate),
       "number_of_people": numberOfPeople,
       "guest_note": guestNote ?? "",
+      "payment_method": paymentMethod,
+      "payment_status": paymentStatus,
     };
 
     return await baseApi.post(endpoint: "/bookings/package", data: body);

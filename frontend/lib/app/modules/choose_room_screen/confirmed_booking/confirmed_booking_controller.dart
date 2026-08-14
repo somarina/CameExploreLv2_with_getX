@@ -58,6 +58,9 @@ class ConfirmedBookingViewController extends GetxController {
           .trim();
 
   String get transactionDate => bookingData["transactionDate"] ?? "";
+  String get paymentMethod => bookingData["payment"] ?? bookingData["payment_method"] ?? "KHQR";
+  String get paymentStatus => bookingData["payment_status"] ??
+      (paymentMethod == "PAY_AT_HOTEL" ? "unpaid" : "paid");
 
 
 String get note => bookingData["note"] ?? bookingData["specialRequest"] ?? "";

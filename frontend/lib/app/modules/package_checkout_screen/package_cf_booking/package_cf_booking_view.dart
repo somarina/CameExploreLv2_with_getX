@@ -129,7 +129,20 @@ class PackageCfBookingView extends GetView<PackageCfBookingViewController> {
 
                         _detailRow("Guest Email", controller.email, context),
 
-                        _detailRow("Payment", controller.payment, context),
+                        _detailRow(
+                          "Payment",
+                          controller.payment == "VISA"
+                              ? "Visa / Card"
+                              : "KHQR",
+                          context,
+                        ),
+                        _detailRow(
+                          "Payment Status",
+                          controller.paymentStatus == "pending"
+                              ? "Waiting for payment verification"
+                              : "Paid",
+                          context,
+                        ),
 
                         _detailRow(
                           "Transaction Date",

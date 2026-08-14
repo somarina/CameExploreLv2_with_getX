@@ -98,22 +98,94 @@ class _CompanySettingsPageState extends State<CompanySettingsPage> {
   }
 
   void _pickLanguage() async {
-    final selected = await showModalBottomSheet<String>(
+    final selected = await showDialog<String>(
       context: context,
-      backgroundColor: widget.cardBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: ['English', 'Khmer'].map((lang) {
-            return ListTile(
-              leading: Icon(Icons.language, color: widget.mutedColor),
-              title: Text(lang, style: companyFont(lang, color: widget.titleColor, fontWeight: FontWeight.w600)),
-              onTap: () => Navigator.pop(context, lang),
-            );
-          }).toList(),
+      barrierColor: Colors.black.withOpacity(0.35),
+      builder: (_) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 320),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+                    decoration: BoxDecoration(
+                      color: widget.cardBg.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: Colors.white.withOpacity(0.15)),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 84,
+                          height: 84,
+                          child: Lottie.asset('assets/icons/language_translator_globe.json', repeat: true),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          "select_language".tr,
+                          style: companyFont("x", color: widget.titleColor, fontSize: 18, fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          "select_language_message".tr,
+                          textAlign: TextAlign.center,
+                          style: companyFont("x", color: widget.subtitleColor, fontSize: 13),
+                        ),
+                        const SizedBox(height: 20),
+                        ...['English', 'Khmer'].map((lang) {
+                          final isSelected = lang == _language;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: TextButton(
+                                onPressed: () => Navigator.pop(context, lang),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: isSelected ? widget.primaryColor : (widget.titleColor == Colors.white ? Colors.white : Colors.black).withOpacity(0.06),
+                                  padding: const EdgeInsets.symmetric(vertical: 13),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    side: BorderSide(color: isSelected ? widget.primaryColor : widget.cardBorder),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.language, size: 16, color: isSelected ? Colors.white : widget.mutedColor),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      lang,
+                                      style: companyFont(lang, color: isSelected ? Colors.white : widget.titleColor, fontSize: 13.5, fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 8)),
+                          child: Text(
+                            "cancel".tr,
+                            style: companyFont("x", color: widget.mutedColor, fontSize: 13, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

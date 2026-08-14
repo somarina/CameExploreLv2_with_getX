@@ -260,7 +260,7 @@ class OnboardingScreenView extends GetView<OnboardingScreenController> {
 
               // Monxaa card
               Positioned(
-                left: 20,
+                right: 30,
                 bottom: 38,
                 child: _TapScale(
                   child: _buildReviewCard(

@@ -1,5 +1,6 @@
 import 'package:dashboard/app/localization/app_translatation.dart';
 import 'package:dashboard/app/localization/localization_service.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,6 +11,33 @@ import 'app/routes/app_pages.dart';
 import 'app/core/web/maps_script_loader.dart';
 
 const String _googleMapsApiKey = String.fromEnvironment('GOOGLE_MAPS_API_KEY');
+
+// Applied app-wide via GetMaterialApp.scrollBehavior below. Removes the
+// visible scrollbar thumb/track from every scrollable in the app (sidebar,
+// tables, lists, dialogs, etc.) without changing scroll behavior itself —
+// mouse wheel, trackpad, touch drag, and keyboard scrolling all still work
+// exactly as before.
+class _NoScrollbarBehavior extends MaterialScrollBehavior {
+  @override
+  Widget buildScrollbar(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return child;
+  }
+
+  // Keep mouse-drag-to-scroll working on web/desktop (default Flutter
+  // behavior only allows touch/stylus to initiate drag scrolling).
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.trackpad,
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.invertedStylus,
+  };
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +82,7 @@ class DashboardApp extends StatelessWidget {
       return GetMaterialApp(
         title: 'CamExplore Dashboard',
         debugShowCheckedModeBanner: false,
+        scrollBehavior: _NoScrollbarBehavior(),
 
         // --- Translation setup ---
         translations: AppTranslatation(),

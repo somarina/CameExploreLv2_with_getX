@@ -85,8 +85,27 @@ class PackageCheckoutScreenViewController extends GetxController {
     }
   }
 
-  Future<bool> createBooking() async {
-    if (uploadedInvoice.value == null) {
+  bool validateCard() {
+    if (cardHolderCtrl.text.trim().isEmpty ||
+        cardNumberCtrl.text.replaceAll(' ', '').length < 12 ||
+        cardExpiryCtrl.text.trim().isEmpty ||
+        cardCvvCtrl.text.trim().length < 3) {
+      Get.snackbar("Error", "Please enter valid card details.",
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> createBooking({
+    String? paymentMethod,
+    String? paymentStatus,
+  }) async {
+    final method = paymentMethod ?? selectedPayment.value;
+    final status = paymentStatus ??
+        (method == "VISA" ? "paid" : "pending");
+
+    if (method == "KHQR" && uploadedInvoice.value == null) {
       Get.snackbar(
         "Invoice Required",
         "Please upload your payment invoice before finishing.",
@@ -109,6 +128,8 @@ class PackageCheckoutScreenViewController extends GetxController {
         startDate: date,
         numberOfPeople: adultCount,
         guestNote: noteCtrl.text.trim(),
+        paymentMethod: method,
+        paymentStatus: status,
       );
 
       return response != null;
@@ -186,6 +207,10 @@ class PackageCheckoutScreenViewController extends GetxController {
     lastNameCtrl.dispose();
     emailCtrl.dispose();
     phoneCtrl.dispose();
+    cardHolderCtrl.dispose();
+    cardNumberCtrl.dispose();
+    cardExpiryCtrl.dispose();
+    cardCvvCtrl.dispose();
     super.onClose();
   }
 }
