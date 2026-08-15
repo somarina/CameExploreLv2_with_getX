@@ -878,7 +878,9 @@ class _MessageInputBar extends StatelessWidget {
                         ? null
                         : () {
                             FocusScope.of(context).unfocus();
-                            controller.sendMessage();
+                            controller.pickAndIdentifyImage(
+                              ImageSource.gallery,
+                            );
                           },
                     child: Padding(
                       padding: const EdgeInsets.all(10),
