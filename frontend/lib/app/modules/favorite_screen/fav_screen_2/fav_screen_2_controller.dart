@@ -193,4 +193,33 @@ class FavScreen2ViewController extends GetxController {
 
     await favoriteController.getFavoriteLists();
   }
+
+  String buildShareText() {
+    final buffer = StringBuffer();
+
+    buffer.writeln(listName.value);
+    buffer.writeln();
+
+    if (favoriteItems.isEmpty) {
+      buffer.writeln("This list is empty.");
+      return buffer.toString();
+    }
+
+    for (int i = 0; i < favoriteItems.length; i++) {
+      final item = favoriteItems[i];
+
+      final name = item["name"]?.toString() ?? "Unknown";
+      final province = item["province"]?.toString() ?? "";
+
+      buffer.writeln("${i + 1}. $name");
+
+      if (province.isNotEmpty) {
+        buffer.writeln("   $province");
+      }
+
+      buffer.writeln();
+    }
+
+    return buffer.toString().trim();
+  }
 }

@@ -648,7 +648,9 @@ class ExploreView extends GetView<SearchResultScreenController> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            "Hotel",
+                            Get.locale?.languageCode == "kmKH"
+                                ? "សណ្ឋាគារ"
+                                : "Hotel",
                             style: GoogleFonts.googleSans(
                               fontSize: 12,
                               color: Theme.of(context).primaryColor,

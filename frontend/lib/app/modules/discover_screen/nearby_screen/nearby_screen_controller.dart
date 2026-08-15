@@ -22,15 +22,17 @@ class NearbyScreenController extends GetxController {
 
   final List<PlaceModel> _allNearbyPlaces = [];
 
+  static const double nearbyRadiusKm = 10.0;
+
   @override
   void onInit() async {
     super.onInit();
 
-    await favoriteController.loadFavoriteStatus();
+    getCategories();
 
     fetchNearbyPlaces();
 
-    getCategories();
+    await favoriteController.loadFavoriteStatus();   
   }
 
   // CATEGORY FILTER
@@ -80,6 +82,7 @@ class NearbyScreenController extends GetxController {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
       if (!serviceEnabled) {
+        debugPrint("Location service disabled");
         return;
       }
 
@@ -89,41 +92,73 @@ class NearbyScreenController extends GetxController {
         permission = await Geolocator.requestPermission();
 
         if (permission == LocationPermission.denied) {
+          debugPrint("Location permission denied");
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
+        debugPrint("Location permission denied forever");
         return;
       }
 
       Position user = await Geolocator.getCurrentPosition();
 
+      debugPrint(
+        "NEARBY USER LOCATION: "
+        "${user.latitude}, ${user.longitude}",
+      );
+
       final response = await service.fetchPlaces();
 
       final List<dynamic> data = (response["data"]?["items"] as List?) ?? [];
 
-      List<PlaceModel> places = data.map((e) {
-        final place = PlaceModel.fromJson(e);
+      // List<PlaceModel> places = data.map((e) {
+      //   final place = PlaceModel.fromJson(e);
 
-        place.distance =
-            Geolocator.distanceBetween(
-              user.latitude,
+      //   debugPrint(
+      //     "${place.nameEn}: "
+      //     "${place.latitude}, ${place.longitude}",
+      //   );
 
-              user.longitude,
+      //   place.distance =
+      //       Geolocator.distanceBetween(
+      //         user.latitude,
+      //         user.longitude,
+      //         place.latitude,
+      //         place.longitude,
+      //       ) /
+      //       1000;
 
-              place.latitude,
+      //   debugPrint("${place.nameEn} distance: ${place.distance} km");
 
-              place.longitude,
-            ) /
-            1000;
+      //   return place;
+      // }).toList();
 
-        return place;
-      }).toList();
+      List<PlaceModel> places = data
+          .map((e) {
+            final place = PlaceModel.fromJson(e);
+
+            place.distance =
+                Geolocator.distanceBetween(
+                  user.latitude,
+                  user.longitude,
+                  place.latitude,
+                  place.longitude,
+                ) /
+                1000;
+
+            return place;
+          })
+          .where((place) {
+            return place.distance <= nearbyRadiusKm;
+          })
+          .toList();
 
       places.sort((a, b) => a.distance.compareTo(b.distance));
 
-      // IMPORTANT
+      places.sort((a, b) => a.distance.compareTo(b.distance));
+
       _allNearbyPlaces
         ..clear()
         ..addAll(places);
@@ -165,5 +200,4 @@ class NearbyScreenController extends GetxController {
       isLoading.value = false;
     }
   }
-
 }

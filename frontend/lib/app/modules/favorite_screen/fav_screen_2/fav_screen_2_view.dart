@@ -67,7 +67,7 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
                       ),
                       onTap: () {
                         SharePlus.instance.share(
-                          ShareParams(text: controller.listName.value),
+                          ShareParams(text: controller.buildShareText()),
                         );
                       },
                     ),
@@ -255,7 +255,6 @@ class FavScreen2View extends GetView<FavScreen2ViewController> {
   }
 
   Widget _buildFavList(BuildContext context) {
-
     return Obx(
       () => ListView.separated(
         physics: NeverScrollableScrollPhysics(),

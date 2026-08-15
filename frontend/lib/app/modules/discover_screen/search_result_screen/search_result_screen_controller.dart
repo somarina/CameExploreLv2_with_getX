@@ -51,6 +51,7 @@ class SearchResultScreenController extends GetxController {
   void onInit() {
     super.onInit();
     loadSearchHistory();
+    nearbyController.getCategories(); // Load categories from NearbyScreenController
 
     final arguments = Get.arguments;
 
