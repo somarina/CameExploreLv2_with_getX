@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:frontend/app/core/api/services/base_api_service.dart';
 import 'package:intl/intl.dart';
 
@@ -24,5 +25,25 @@ class PackageBookingServices {
     };
 
     return await baseApi.post(endpoint: "/bookings/package", data: body);
+  }
+
+  /// Uploads the KHQR payment receipt/screenshot for a package booking so a
+  /// human (package owner/admin) can actually see and verify it — this is
+  /// what lets payment_status move past "pending".
+  Future<dynamic> uploadPaymentProof({
+    required String bookingId,
+    required String imagePath,
+  }) async {
+    final formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(
+        imagePath,
+        filename: imagePath.split('/').last,
+      ),
+    });
+
+    return await baseApi.postFormData(
+      endpoint: "/bookings/$bookingId/payment-proof",
+      data: formData,
+    );
   }
 }

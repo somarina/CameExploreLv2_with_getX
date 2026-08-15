@@ -40,3 +40,7 @@ class PackageBookingCreate(BaseModel):
 class BookingStatusUpdate(BaseModel):
     status: BookingStatus
     note: Optional[str] = None
+
+
+class PaymentStatusUpdate(BaseModel):
+    payment_status: PaymentStatus

@@ -400,6 +400,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
         child: Container(
           height: 50,
           decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: isSelected ? AppColors.lightPrimaryColor : Colors.grey,width: 2),
           ),
@@ -415,14 +416,14 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                           fontWeight: isSelected
                               ? .bold
                               : FontWeight.w400,
-                    color: isSelected ? Colors.black : Colors.grey.shade400,
+                    color: isSelected ? AppColors.lightPrimaryColor : Colors.grey.shade400,
                         )
                       : GoogleFonts.googleSans(
                           fontSize: 16,
                           fontWeight: isSelected
                               ? FontWeight.w700
                               : FontWeight.w400,
-                    color: isSelected ? Colors.black : Colors.grey.shade400,
+                    color: isSelected ? AppColors.lightPrimaryColor : Colors.grey.shade400,
                         ),
                 ),
               ),
@@ -545,6 +546,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
       obscureText: hide,
       maxLength: 32,
       validator: validator,
+      style: const TextStyle(color: Colors.black),
       decoration: _inputDecoration(
         hintText: hintText,
         suffixIcon: IconButton(
@@ -566,16 +568,15 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
       controller: ctrl,
       keyboardType: keyboardType,
       validator: validator,
+      style: const TextStyle(color: Colors.black),
       decoration: _inputDecoration(hintText: hintText),
     );
   }
 
-  InputDecoration _inputDecoration({
+InputDecoration _inputDecoration({
   required String hintText,
   Widget? suffixIcon,
 }) {
-  final isDark = Get.isDarkMode;
-
   return InputDecoration(
     hintText: hintText,
     hintStyle: controller.isEnglish
@@ -583,7 +584,7 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
         : GoogleFonts.googleSans(color: Colors.grey),
     suffixIcon: suffixIcon,
     filled: true,
-    fillColor: isDark ? Colors.grey[850] : Colors.white,  // ← fix
+    fillColor: Colors.white,
     contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
     errorStyle: controller.isEnglish
         ? GoogleFonts.spaceGrotesk(
@@ -593,8 +594,8 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
     errorMaxLines: 2,
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(20),
-      borderSide: BorderSide(
-        color: isDark ? Colors.grey[600]! : Color(0xFFE6E6E6),  // ← fix
+      borderSide: const BorderSide(
+        color: Color(0xFFE6E6E6),
         width: 2,
       ),
     ),
