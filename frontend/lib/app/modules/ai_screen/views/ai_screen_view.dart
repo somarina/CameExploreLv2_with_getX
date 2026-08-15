@@ -854,9 +854,7 @@ class _MessageInputBar extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? colors.primaryContainer
-                : Colors.white,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(30),
             border: Border.all(color: colors.primary.withValues(alpha: 0.08)),
             boxShadow: [
@@ -904,7 +902,8 @@ class _MessageInputBar extends StatelessWidget {
                   },
                   maxLines: 5,
                   minLines: 1,
-                  style: AppFonts.fontsGeneral,
+                  cursorColor: colors.primary,
+                  style: AppFonts.fontsGeneral.copyWith(color: Colors.black),
                   decoration: InputDecoration(
                     hintText: "Ask about places, food, or trip ideas...",
                     hintStyle: AppFonts.fontsGeneral.copyWith(

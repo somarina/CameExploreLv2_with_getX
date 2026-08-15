@@ -90,8 +90,12 @@ class PackageCheckoutScreenViewController extends GetxController {
         cardNumberCtrl.text.replaceAll(' ', '').length < 12 ||
         cardExpiryCtrl.text.trim().isEmpty ||
         cardCvvCtrl.text.trim().length < 3) {
-      Get.snackbar("Error", "Please enter valid card details.",
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Error",
+        "Please enter valid card details.",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return false;
     }
     return true;
@@ -102,8 +106,7 @@ class PackageCheckoutScreenViewController extends GetxController {
     String? paymentStatus,
   }) async {
     final method = paymentMethod ?? selectedPayment.value;
-    final status = paymentStatus ??
-        (method == "VISA" ? "paid" : "pending");
+    final status = paymentStatus ?? (method == "VISA" ? "paid" : "pending");
 
     if (method == "KHQR" && uploadedInvoice.value == null) {
       Get.snackbar(
@@ -132,7 +135,36 @@ class PackageCheckoutScreenViewController extends GetxController {
         paymentStatus: status,
       );
 
-      return response != null;
+      if (response == null) return false;
+
+      final bookingId =
+          response['data']?['_id'] ??
+          response['data']?['id'] ??
+          response['booking_id'] ??
+          response['id'];
+
+      // Actually send the picked receipt image to the server so a human
+      // (package owner/admin) can review it. Without this call the image
+      // only ever lived on-device and payment_status could never move
+      // past "pending".
+      if (method == "KHQR" &&
+          uploadedInvoice.value != null &&
+          bookingId != null) {
+        try {
+          await _bookingService.uploadPaymentProof(
+            bookingId: bookingId.toString(),
+            imagePath: uploadedInvoice.value!.path,
+          );
+        } catch (e) {
+          Get.snackbar(
+            "Receipt Upload Failed",
+            "Booking saved, but the receipt didn't upload. Please re-upload it from My Bookings.",
+            colorText: Colors.white,
+          );
+        }
+      }
+
+      return true;
     } catch (e) {
       Get.snackbar("Booking Failed", e.toString());
       return false;

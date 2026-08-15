@@ -1,7 +1,7 @@
 Map<String, String> kmKH = {
   "setting": "ការកំណត់",
   "theme": "ផ្ទាំង",
-  "security": "សុវត្ថិភាព​ និង​ កាេចូលប្រើប្រាស់",
+  "security": "សុវត្ថិភាព​ និង​ ការចូលប្រើប្រាស់",
   "feedback": "មតិស្ថាបនា",
   "condition": "លក្ខខណ្ឌ និង​ គោលការណ៍",
   "app": "អំពីកម្មវិធី",
@@ -235,7 +235,8 @@ Map<String, String> kmKH = {
   "No results found": "គ្មានលទ្ធផលដែលបានរកឃើញ",
   "No nearby places found": "គ្មានកន្លែងជិតៗដែលបានរកឃើញ",
   "Nearby": "កន្លែងជិតៗ",
-  "Activities near your current location": "កន្លែងដែលនៅជិតទីតាំងបច្ចុប្បន្នរបស់អ្នក",
+  "Activities near your current location":
+      "កន្លែងដែលនៅជិតទីតាំងបច្ចុប្បន្នរបស់អ្នក",
   "places": "កន្លែង",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   ///// Home
@@ -476,6 +477,7 @@ Map<String, String> kmKH = {
   "guest_number": "លេខទូរស័ព្ទភ្ញៀវ",
   "guest_email": "អ៊ីមែលភ្ញៀវ",
   "payment": "ការទូទាត់ប្រាក់",
+  "payment_status": "ស្ថានភាពទូទាត់ប្រាក់",
   "transaction_date": "កាលបរិច្ឆេទប្រតិបត្តិការ",
   "total_price": "តម្លៃសរុប",
   "back_to_home": "ត្រឡប់ទៅកាន់ទំព័រដើម",
@@ -615,5 +617,5 @@ Map<String, String> kmKH = {
   "resident_adult": "មនុស្សពេញវ័យស្នាក់នៅ",
   "non_resident_adult": "មនុស្សពេញវ័យមិនស្នាក់នៅ",
   "standard_rate": "តម្លៃទូទៅ",
-    "pay_via_card":"ទូទាត់តាមកាត",
+  "pay_via_card": "ទូទាត់តាមកាត",
 };

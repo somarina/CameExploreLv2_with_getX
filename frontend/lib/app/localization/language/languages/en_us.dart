@@ -242,7 +242,8 @@ Map<String, String> enUS = {
   "No results found": "No results found",
   "No nearby places found": "No nearby places found",
   "Nearby": "Nearby",
-  "Activities near your current location": "Activities near your current location",
+  "Activities near your current location":
+      "Activities near your current location",
   "places": "places",
   //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -489,6 +490,7 @@ Map<String, String> enUS = {
   "guest_number": "Guest Number",
   "guest_email": "Guest Email",
   "payment": "Payment",
+  "payment_status": "Payment Status",
   "transaction_date": "Transaction Date",
   "total_price": "Total Price",
   "back_to_home": "Back to Home",
@@ -626,5 +628,5 @@ Map<String, String> enUS = {
   "resident_adult": "Resident Adult",
   "non_resident_adult": "Non-Resident Adult",
   "standard_rate": "Standard Rate",
-  "pay_via_card":"Pay via Card",
+  "pay_via_card": "Pay via Card",
 };

@@ -2,15 +2,19 @@ from datetime import datetime, date, timedelta
 from typing import Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
+import cloudinary.uploader
 
 from app.db.daatabase import db
+from app.config.cloudinary_config import *
 from app.models.booking_models import (
     HotelBookingCreate,
     PackageBookingCreate,
     BookingStatusUpdate,
+    PaymentStatusUpdate,
 )
 from app.utils.auth_dependency import get_current_user_or_admin, require_company_or_admin, is_admin
+from app.utils.logger import log_success, log_error, log_info, log_upload
 
 router = APIRouter(prefix="/bookings", tags=["Bookings"])
 
@@ -58,6 +62,8 @@ def serialize_booking(b: dict) -> dict:
         "guest_note": b.get("guest_note"),
         "payment_method": b.get("payment_method", "KHQR"),
         "payment_status": b.get("payment_status", "pending"),
+        "payment_proof_url": b.get("payment_proof_url"),
+        "payment_verified_at": b.get("payment_verified_at"),
         "review_note": b.get("review_note"),
         "user_id": b.get("user_id"),
         "created_at": b.get("created_at"),
@@ -290,6 +296,96 @@ async def update_booking_status(
     )
     updated = await bookings_collection.find_one({"_id": oid})
     return ok("Booking status updated", serialize_booking(updated))
+
+
+# ── PAYMENT VERIFICATION (KHQR receipt upload + owner/admin approval) ──────
+
+@router.post("/{booking_id}/payment-proof")
+async def upload_payment_proof(
+    booking_id: str,
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user_or_admin),
+):
+    """
+    Guest uploads their KHQR payment receipt/screenshot for a booking.
+
+    This only stores the proof and keeps payment_status at "pending" —
+    it does NOT mark the booking as paid. A human (the hotel/package owner,
+    or an admin) still has to check the receipt and confirm it via
+    PUT /{booking_id}/payment-status. This is what fixes bookings getting
+    permanently stuck: previously the receipt image was only picked on
+    the phone and never actually sent to the server, so nobody could ever
+    review it and the status could never move past "pending".
+    """
+    oid = get_object_id(booking_id)
+    booking = await bookings_collection.find_one({"_id": oid})
+    if not booking:
+        err("Booking not found", 404)
+
+    if booking.get("user_id") != str(current_user["_id"]) and not is_admin(current_user):
+        err("You don't have permission to upload proof for this booking", 403)
+
+    try:
+        log_info(f"Payment proof upload started for booking {booking_id}")
+        log_upload(file.filename)
+
+        result = cloudinary.uploader.upload(
+            file.file,
+            folder="camexplore/payment_proofs",
+        )
+        proof_url = result["secure_url"]
+        log_success(f"Cloudinary upload success\n{proof_url}")
+    except Exception as e:
+        log_error(f"Payment proof upload failed: {str(e)}")
+        err(f"Failed to upload payment proof: {str(e)}", 500)
+
+    await bookings_collection.update_one(
+        {"_id": oid},
+        {"$set": {
+            "payment_proof_url": proof_url,
+            "payment_status": "pending",
+            "updated_at": datetime.utcnow(),
+        }},
+    )
+    updated = await bookings_collection.find_one({"_id": oid})
+    return ok("Payment proof uploaded — waiting for verification", serialize_booking(updated))
+
+
+@router.put("/{booking_id}/payment-status")
+async def update_payment_status(
+    booking_id: str,
+    payload: PaymentStatusUpdate,
+    current_user: dict = Depends(get_current_user_or_admin),
+):
+    """
+    Hotel/package owner or admin reviews the uploaded receipt and marks the
+    booking's payment as "paid" (verified) or "unpaid" (rejected).
+    """
+    oid = get_object_id(booking_id)
+    booking = await bookings_collection.find_one({"_id": oid})
+    if not booking:
+        err("Booking not found", 404)
+
+    user_id = str(current_user["_id"])
+    admin = is_admin(current_user)
+    owns_target = await owns_booking_target(user_id, booking)
+
+    if not (admin or owns_target):
+        err("Only the listing owner or an admin can verify payment", 403)
+
+    update_data = {
+        "payment_status": payload.payment_status,
+        "updated_at": datetime.utcnow(),
+    }
+    if payload.payment_status == "paid":
+        update_data["payment_verified_at"] = datetime.utcnow()
+        # Confirming payment also confirms the booking itself.
+        if booking.get("status") == "pending":
+            update_data["status"] = "confirmed"
+
+    await bookings_collection.update_one({"_id": oid}, {"$set": update_data})
+    updated = await bookings_collection.find_one({"_id": oid})
+    return ok("Payment status updated", serialize_booking(updated))
 
 
 # ── DELETE (admin only) ──────────────────────────────────────────────────

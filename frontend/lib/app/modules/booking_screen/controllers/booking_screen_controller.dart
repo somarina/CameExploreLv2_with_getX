@@ -50,6 +50,8 @@ class BookingModel {
   final String transactionDate;
   final String note;
   final List<dynamic> itinerary;
+  final String paymentMethod;
+  final String paymentStatus;
 
   BookingModel({
     required this.id,
@@ -81,9 +83,40 @@ class BookingModel {
     required this.transactionDate,
     this.note = '',
     this.itinerary = const [],
+    this.paymentMethod = 'KHQR',
+    this.paymentStatus = 'pending',
   });
 
   bool get isPackage => bookingType == 'package';
+
+  /// Human-readable payment method label, e.g. "Pay at Hotel" instead of
+  /// the raw backend value "PAY_AT_HOTEL".
+  String get paymentMethodLabel {
+    switch (paymentMethod.toUpperCase()) {
+      case 'PAY_AT_HOTEL':
+        return _isKhmer ? 'បង់នៅសណ្ឋាគារ' : 'Pay at Hotel';
+      case 'VISA':
+        return 'Visa / Mastercard';
+      case 'KHQR':
+      default:
+        return 'KHQR';
+    }
+  }
+
+  /// Human-readable payment status label.
+  String get paymentStatusLabel {
+    switch (paymentStatus.toLowerCase()) {
+      case 'paid':
+        return _isKhmer ? 'បានបង់ប្រាក់' : 'Paid';
+      case 'unpaid':
+        return _isKhmer ? 'មិនទាន់បង់ប្រាក់' : 'Unpaid';
+      case 'pending':
+      default:
+        return _isKhmer
+            ? 'កំពុងរង់ចាំផ្ទៀងផ្ទាត់ការទូទាត់'
+            : 'Waiting for payment verification';
+    }
+  }
 
   // Check language dynamically whenever getter is accessed
   bool get _isKhmer {
@@ -315,6 +348,8 @@ class BookingModel {
       transactionDate: formattedTransactionDate,
       note: note,
       itinerary: parsedItinerary,
+      paymentMethod: (json['payment_method'] ?? 'KHQR').toString(),
+      paymentStatus: (json['payment_status'] ?? 'pending').toString(),
     );
   }
 }
@@ -780,7 +815,18 @@ class BookingScreenController extends GetxController {
                       if (booking.note.isNotEmpty)
                         _buildDetailRow(context, 'note'.tr, booking.note),
 
-                      _buildDetailRow(context, 'payment'.tr, 'KHQR'),
+                      _buildDetailRow(
+                        context,
+                        'payment'.tr,
+                        booking.paymentMethodLabel,
+                      ),
+
+                      if (booking.paymentMethod.toUpperCase() == 'KHQR')
+                        _buildDetailRow(
+                          context,
+                          'payment_status'.tr,
+                          booking.paymentStatusLabel,
+                        ),
 
                       _buildDetailRow(
                         context,

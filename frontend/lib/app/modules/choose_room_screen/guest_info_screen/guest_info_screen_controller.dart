@@ -236,6 +236,28 @@ class GuestInfoScreenViewController extends GetxController {
             response['booking_id'] ??
             response['id'];
 
+        // For KHQR, actually send the picked receipt image to the server
+        // so a hotel/admin can review it. Previously this image was only
+        // held on-device and never uploaded, so payment_status could
+        // never move off "pending".
+        if (method == "KHQR" &&
+            uploadedInvoice.value != null &&
+            bookingId != null) {
+          try {
+            await _bookingServices.uploadPaymentProof(
+              bookingId: bookingId.toString(),
+              imagePath: uploadedInvoice.value!.path,
+            );
+          } catch (e) {
+            // Booking already exists at this point — don't block the
+            // success flow, just let the user know the receipt didn't
+            // make it through so they can retry from "My Bookings".
+            _showErrorSnackBar(
+              "Booking saved, but the receipt upload failed. Please re-upload it from My Bookings.",
+            );
+          }
+        }
+
         return bookingId?.toString();
       } else {
         _showErrorSnackBar(response?['message'] ?? "Failed to save booking");
